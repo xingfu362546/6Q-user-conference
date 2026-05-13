@@ -10,6 +10,7 @@
 | 项目 | 路径 |
 |------|------|
 | **本交接文档** | `oa-training-prototype/DEVELOPER_HANDOFF.md` |
+| **仓库根说明（clone 后先看）** | `README.md`（位于 requirement 仓库根目录，与 `oa-training-prototype/` 并列） |
 | **原型总入口（功能清单 + 导航）** | `oa-training-prototype/index.html` |
 | **设计变量（Claude Design 向）** | `oa-training-prototype/css/tokens.css` |
 | **管理端壳样式** | `oa-training-prototype/css/oa-shell-admin.css` |
