@@ -1,0 +1,191 @@
+/**
+ * OA 后台迭代用 · 页面内容区框架（与 eip-shell 侧栏顶栏组合使用）
+ * 用法：在业务页 ws-body 内包一层 .oa-frame，按需保留或删除各 slot 区块。
+ */
+.oa-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* 页顶：标题 + 主操作（复制后改文案与按钮） */
+.oa-frame__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+.oa-frame__title-row h1.page-title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+.oa-frame__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* 一句话摘要 / 状态条（可选） */
+.oa-frame__summary {
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary, #5c6370);
+  background: #fff;
+  border: 1px solid var(--border-default, #e2e5eb);
+  border-radius: 4px;
+}
+
+/* Tab 条（可选）：无 Tab 的页整段删掉即可 */
+.oa-frame__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--border-default, #e2e5eb);
+  border-radius: 4px 4px 0 0;
+  border-bottom: none;
+}
+.oa-frame__tabs li {
+  margin: 0;
+}
+.oa-frame__tabs a {
+  display: block;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: var(--text-secondary, #5c6370);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.oa-frame__tabs a:hover {
+  color: var(--text-primary, #111418);
+  background: #fafbfc;
+}
+.oa-frame__tabs a.is-active {
+  color: #1677ff;
+  font-weight: 600;
+  border-bottom-color: #1677ff;
+}
+
+/* 筛选区（可选）：白卡片 */
+.oa-frame__filters {
+  padding: 14px 16px 8px;
+  background: #fff;
+  border: 1px solid var(--border-default, #e2e5eb);
+  border-radius: 4px;
+}
+.oa-frame__filters + .oa-frame__card,
+.oa-frame__tabs + .oa-frame__filters {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* 工具条：列表上方次要操作 */
+.oa-frame__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #fafbfc;
+  border: 1px solid var(--border-default, #e2e5eb);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+.oa-frame__toolbar-meta {
+  font-size: 12px;
+  color: var(--text-muted, #8b939f);
+}
+.oa-frame__toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 主内容白卡片：表格 / 表单 / 分栏 */
+.oa-frame__card {
+  background: #fff;
+  border: 1px solid var(--border-default, #e2e5eb);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 0;
+}
+.oa-frame__toolbar + .oa-frame__card {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.oa-frame__split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  min-width: 0;
+}
+@media (min-width: 1100px) {
+  .oa-frame__split.has-rail {
+    grid-template-columns: 1fr minmax(240px, 280px);
+  }
+}
+.oa-frame__main {
+  min-width: 0;
+  padding: 0;
+}
+.oa-frame__rail {
+  border-top: 1px solid var(--border-default, #e2e5eb);
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary, #5c6370);
+  background: #fafbfc;
+}
+@media (min-width: 1100px) {
+  .oa-frame__split.has-rail .oa-frame__rail {
+    border-top: none;
+    border-left: 1px solid var(--border-default, #e2e5eb);
+  }
+}
+
+/* 占位：尚未接业务的区域 */
+.oa-frame__placeholder {
+  min-height: 120px;
+  margin: 16px;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--text-muted, #8b939f);
+  text-align: center;
+  border: 1px dashed var(--border-strong, #c8ced8);
+  border-radius: 4px;
+  background: #fafbfc;
+}
+
+/* 区块角标（演示用，定稿时可删） */
+.oa-frame__slot-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.02em;
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.oa-frame__footnote {
+  margin: 0;
+  padding-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted, #8b939f);
+  line-height: 1.45;
+}

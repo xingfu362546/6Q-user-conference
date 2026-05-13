@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学习计划 · 参学情况 · EIP管理系统（原型）</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/oa-shell-admin.css" />
+  <style>
+    .page-title { margin: 0 0 6px; font-size: 18px; font-weight: 650; color: #303133; }
+    .plan-meta { font-size: 13px; color: #909399; margin-bottom: 16px; }
+    .back-link { font-size: 12px; margin-bottom: 12px; }
+    .back-link a { color: #1677ff; text-decoration: none; }
+    .filter-card {
+      background: #fff; border: 1px solid #e4e7ed; border-radius: 4px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;
+    }
+    .field label { display: block; font-size: 12px; color: #909399; margin-bottom: 4px; }
+    .field input, .field select {
+      width: 180px; max-width: 100%; padding: 6px 10px; font-size: 13px; font-family: inherit;
+      border: 1px solid #dcdfe6; border-radius: 4px;
+    }
+    .btn { padding: 6px 14px; font-size: 13px; border-radius: 4px; border: 1px solid #dcdfe6; background: #fff; cursor: pointer; font-family: inherit; }
+    .btn-primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+    .table-card { background: #fff; border: 1px solid #e4e7ed; border-radius: 4px; overflow: hidden; }
+    table.grid { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.grid th, table.grid td { padding: 11px 10px; text-align: left; border-bottom: 1px solid #ebeef5; }
+    table.grid th { background: #fafafa; color: #909399; font-weight: 600; white-space: nowrap; }
+    tbody tr:hover { background: #f5f7fa; }
+    .st-ok { color: #15803d; font-weight: 600; }
+    .st-warn { color: #b45309; font-weight: 600; }
+    .st-bad { color: #b91c1c; font-weight: 600; }
+    .st-ing { color: #2563eb; font-weight: 600; }
+    .proto-note { margin-top: 14px; font-size: 12px; color: #909399; line-height: 1.55; padding: 12px; border: 1px dashed #dcdfe6; border-radius: 6px; background: #fafafa; }
+  </style>
+</head>
+<body class="oa-admin-body">
+  <div class="oa-adm">
+    <header class="oa-adm-topbar">
+      <div class="oa-adm-topbar__left">
+        <button type="button" class="oa-adm-iconbtn" aria-label="菜单">☰</button>
+        <span class="oa-adm-env">6Q-测试环境</span>
+      </div>
+      <div class="oa-adm-topbar__search">
+        <div class="oa-adm-search">
+          <span class="oa-adm-search__icon" aria-hidden="true">🔍</span>
+          <input type="search" placeholder="搜索菜单" readonly />
+        </div>
+      </div>
+      <div class="oa-adm-topbar__right"><span class="oa-adm-avatar" aria-hidden="true"></span></div>
+    </header>
+    <div class="oa-adm-body">
+      <aside class="oa-adm-side" aria-label="导航">
+        <div class="oa-adm-side__brand">EIP管理系统</div>
+        <nav class="oa-adm-nav">
+          <a href="#" class="oa-adm-nav__item">培训学习 <span class="oa-adm-nav__chev">›</span></a>
+          <div class="oa-adm-nav__sub">
+            <a href="admin-course-library.html" class="oa-adm-nav__subitem">课程库</a>
+            <a href="admin-learning-progress.html" class="oa-adm-nav__subitem">学习进度</a>
+            <a href="admin-learning-plan-list.html" class="oa-adm-nav__subitem is-active">学习计划</a>
+            <a href="admin-quiz-grading.html" class="oa-adm-nav__subitem">考试详情（示例）</a>
+          </div>
+        </nav>
+      </aside>
+      <div class="oa-adm-work">
+        <div class="oa-adm-workhead">
+          <div class="oa-adm-crumb">管理端 <span style="color:#d0d5dd">/</span> 培训学习 <span style="color:#d0d5dd">/</span> <a href="admin-learning-plan-list.html" style="color:#606266;text-decoration:none">学习计划</a> <span style="color:#d0d5dd">/</span> 参学情况</div>
+          <div class="oa-adm-user"><span class="oa-adm-avatar" aria-hidden="true"></span>管理员</div>
+        </div>
+        <div class="oa-adm-workbody">
+          <div class="back-link"><a href="admin-learning-plan-list.html">← 返回计划列表</a></div>
+          <h1 class="page-title" id="mon-title">参学情况</h1>
+          <p class="plan-meta" id="mon-range">计划周期：— · 按「人员 × 计划内课程」查看通关状态</p>
+
+          <div class="filter-card">
+            <div class="field">
+              <label for="f-course">课程</label>
+              <select id="f-course">
+                <option value="">全部课程</option>
+                <option value="新员工入职安全与合规培训（2026）">新员工入职安全与合规培训（2026）</option>
+                <option value="数据安全与隐私保护">数据安全与隐私保护</option>
+                <option value="办公系统使用指南">办公系统使用指南</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-name">姓名</label>
+              <input id="f-name" type="search" placeholder="模糊搜索" />
+            </div>
+            <div class="field">
+              <label for="f-st">通关状态</label>
+              <select id="f-st">
+                <option value="">全部</option>
+                <option value="ok">已通关</option>
+                <option value="late">未在规定时间通关</option>
+                <option value="ing">在学中</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="f-apply">筛选</button>
+          </div>
+
+          <div class="table-card">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th>姓名</th>
+                  <th>工号</th>
+                  <th>部门</th>
+                  <th>课程</th>
+                  <th>过关进度</th>
+                  <th>列表状态（计划维度）</th>
+                  <th>最近更新时间</th>
+                </tr>
+              </thead>
+              <tbody id="mon-tbody"></tbody>
+            </table>
+          </div>
+          <p class="proto-note">
+            <strong>未在规定时间通关</strong>：计划结束时间已过，该学员在该课程下仍未达到「全部过关条件」(示意为过关进度未满)。<strong>在学中</strong>：计划未结束且尚未通关。<strong>已通关</strong>：在计划周期内已完成该课全部过关项。现网应对每条过关条件算截止时间（若课内有更细子周期，以子规则为准）。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var plans = {
+        "0": { name: "新员工入职必修（春季）", range: "2026-03-01 ~ 2026-04-30（已结束）", ended: true },
+        "1": { name: "2026 Q2 合规强化周", range: "2026-06-01 ~ 2026-06-15（进行中）", ended: false },
+        "2": { name: "技术中心安全月", range: "2026-05-10 ~ 2026-05-31（进行中）", ended: false }
+      };
+      var q = new URLSearchParams(location.search);
+      var pid = q.get("plan") || "1";
+      var meta = plans[pid] || plans["1"];
+      document.getElementById("mon-title").textContent = "参学情况 · " + meta.name;
+      document.getElementById("mon-range").textContent = meta.range + " · 按「人员 × 计划内课程」查看通关状态";
+
+      var rows = [
+        { name: "徐小飞", no: "262", dept: "技术部", course: "新员工入职安全与合规培训（2026）", prog: "3/5", st: "ing", stKey: "ing", t: "2026-05-08 16:40" },
+        { name: "徐小飞", no: "262", dept: "技术部", course: "数据安全与隐私保护", prog: "5/5", st: "ok", stKey: "ok", t: "2026-05-06 18:05" },
+        { name: "周敏", no: "088", dept: "行政部", course: "办公系统使用指南", prog: "1/4", st: "late", stKey: "late", t: "2026-05-07 15:30" },
+        { name: "任杰杰", no: "101", dept: "技术部", course: "数据安全与隐私保护", prog: "5/5", st: "ok", stKey: "ok", t: "2026-05-06 18:05" },
+        { name: "赵六", no: "305", dept: "技术部", course: "信息化008", prog: "5/5", st: "ok", stKey: "ok", t: "2026-05-05 12:00" }
+      ];
+      if (meta.ended) {
+        rows.forEach(function (r) {
+          if (r.stKey === "ing") {
+            r.st = "late";
+            r.stKey = "late";
+          }
+        });
+      }
+
+      var labels = { ok: "已通关", late: "未在规定时间通关", ing: "在学中" };
+      var cls = { ok: "st-ok", late: "st-bad", ing: "st-ing" };
+
+      function render() {
+        var fc = document.getElementById("f-course").value.trim();
+        var fn = document.getElementById("f-name").value.trim().toLowerCase();
+        var fs = document.getElementById("f-st").value;
+        var tb = document.getElementById("mon-tbody");
+        tb.innerHTML = "";
+        rows.forEach(function (r) {
+          if (fc && r.course !== fc) return;
+          if (fn && r.name.toLowerCase().indexOf(fn) === -1) return;
+          if (fs && r.stKey !== fs) return;
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            r.name +
+            "</td><td>" +
+            r.no +
+            "</td><td>" +
+            r.dept +
+            "</td><td>" +
+            r.course +
+            "</td><td>" +
+            r.prog +
+            '</td><td class="' +
+            cls[r.stKey] +
+            '">' +
+            labels[r.stKey] +
+            "</td><td>" +
+            r.t +
+            "</td>";
+          tb.appendChild(tr);
+        });
+      }
+      document.getElementById("f-apply").addEventListener("click", render);
+      render();
+    })();
+  </script>
+</body>
+</html>

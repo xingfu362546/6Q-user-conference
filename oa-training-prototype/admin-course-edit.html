@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>编辑课程 · 课程库 · EIP（原型）</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/oa-shell-admin.css" />
+  <link rel="stylesheet" href="css/page-notes.css" />
+  <style>
+    .page-sub { margin: 0 0 16px; font-size: 13px; color: var(--text-muted); }
+    .panel { background: #fff; border: 1px solid var(--border-default); border-radius: 6px; margin-bottom: 16px; overflow: hidden; }
+    .panel-hd { padding: 12px 16px; font-weight: 600; font-size: 14px; border-bottom: 1px solid var(--border-default); background: #fafbfc; color: var(--text-secondary); }
+    .panel-bd { padding: 16px 18px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px 20px; }
+    .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .field .req { color: #dc2626; margin-right: 2px; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 8px 10px; font-size: 13px; font-family: inherit;
+      border: 1px solid #d0d5dd; border-radius: 4px; background: #fff;
+    }
+    .field textarea { min-height: 72px; resize: vertical; }
+    .radio-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .radio-row label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-primary); cursor: pointer; margin: 0; }
+    .radio-row input { width: auto; }
+    .num-input { max-width: 120px; }
+    .upload-zone {
+      border: 1px dashed #b4bcc6;
+      border-radius: 6px;
+      padding: 28px 20px;
+      text-align: center;
+      background: #fafbfc;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: default;
+    }
+    .upload-zone .icon { font-size: 28px; line-height: 1; margin-bottom: 8px; opacity: 0.45; }
+    .upload-zone .ext { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+    .req-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .btn { padding: 6px 14px; font-size: 13px; font-family: inherit; border-radius: 4px; border: 1px solid #d0d5dd; background: #fff; cursor: pointer; }
+    .btn-primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-danger { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
+    .btn-danger:hover { background: #fee2e2; }
+    .req-table-wrap { overflow-x: auto; border: 1px solid var(--border-default); border-radius: 4px; }
+    table.req { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1020px; }
+    .video-catalog-list {
+      max-height: 148px;
+      overflow: auto;
+      padding: 6px 8px;
+      margin-top: 4px;
+      border: 1px solid #e8eaef;
+      border-radius: 4px;
+      background: #fafbfc;
+    }
+    .video-catalog-list label { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; margin-bottom: 4px; cursor: pointer; line-height: 1.4; }
+    .video-catalog-list input { margin-top: 2px; flex-shrink: 0; }
+    .video-src-pick {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      border: 1px solid #e8eaef;
+      border-radius: 4px;
+      background: #fafbfc;
+    }
+    .video-src-pick label {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 12px;
+      line-height: 1.45;
+      cursor: pointer;
+      margin: 0;
+    }
+    .video-src-pick input { margin-top: 2px; flex-shrink: 0; }
+    .video-src-pick label.is-disabled { opacity: 0.45; cursor: not-allowed; }
+    .video-src-pick .sub { font-size: 11px; color: var(--text-muted); margin: -2px 0 0 22px; }
+    .wos-mode-pick {
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      border: 1px solid #e0e7ff;
+      border-radius: 4px;
+      background: #f8fafc;
+    }
+    .wos-mode-pick .wos-title { font-size: 11px; font-weight: 700; color: #4338ca; margin-bottom: 6px; }
+    .wos-mode-pick label { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.45; cursor: pointer; margin: 0 0 6px; }
+    .wos-mode-pick input { margin-top: 2px; flex-shrink: 0; }
+    .wos-mode-pick .wos-sub { font-size: 11px; color: var(--text-muted); margin: -4px 0 4px 22px; }
+    .meeting-select-wrap { margin-top: 4px; }
+    .meeting-select-wrap select { width: 100%; max-width: 100%; padding: 6px 8px; font-size: 12px; border: 1px solid #d0d5dd; border-radius: 4px; }
+    table.req th, table.req td { padding: 10px 10px; border-bottom: 1px solid #e8eaef; text-align: left; vertical-align: top; }
+    table.req th { background: #fafbfc; color: #5c6370; font-weight: 600; white-space: nowrap; }
+    table.req tr:last-child td { border-bottom: none; }
+    table.req select, table.req input[type="text"], table.req textarea {
+      width: 100%; max-width: 100%; padding: 6px 8px; font-size: 12px; font-family: inherit; border: 1px solid #d0d5dd; border-radius: 4px;
+    }
+    table.req textarea { min-height: 52px; resize: vertical; }
+    .hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .foot-actions { display: flex; gap: 10px; margin-top: 8px; padding-top: 16px; }
+    .meta-id { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+  </style>
+</head>
+<body class="oa-admin-body">
+  <div class="oa-adm">
+    <header class="oa-adm-topbar">
+      <div class="oa-adm-topbar__left">
+        <button type="button" class="oa-adm-iconbtn" aria-label="展开或收起菜单">☰</button>
+        <span class="oa-adm-env">6Q-测试环境</span>
+      </div>
+      <div class="oa-adm-topbar__search">
+        <div class="oa-adm-search">
+          <span class="oa-adm-search__icon" aria-hidden="true">🔍</span>
+          <input type="search" placeholder="搜索菜单" readonly aria-label="搜索菜单" />
+        </div>
+      </div>
+      <div class="oa-adm-topbar__right">
+        <a class="oa-adm-tool" href="emp-course-detail.html" title="进入员工端（培训学习 · 课程详情示例）">应用端</a>
+        <button type="button" class="oa-adm-tool">全屏</button>
+        <button type="button" class="oa-adm-tool">清除缓存 <span class="oa-caret">▾</span></button>
+        <button type="button" class="oa-adm-tool">简体中文 <span class="oa-caret">▾</span></button>
+        <span class="oa-adm-avatar" aria-hidden="true"></span>
+      </div>
+    </header>
+    <div class="oa-adm-body">
+      <aside class="oa-adm-side" aria-label="管理端导航">
+        <div class="oa-adm-side__brand">EIP管理系统</div>
+        <nav class="oa-adm-nav">
+          <a href="#" class="oa-adm-nav__item">常用菜单 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">设计中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">应用中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">流程中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">集成中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">系统管理 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">用户中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">开发管理中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">考勤配置 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">培训学习 <span class="oa-adm-nav__chev">›</span></a>
+          <div class="oa-adm-nav__sub">
+            <a href="#" class="oa-adm-nav__subitem">课程分类</a>
+            <a href="admin-course-library.html" class="oa-adm-nav__subitem is-active">课程库</a>
+            <a href="admin-learning-progress.html" class="oa-adm-nav__subitem">学习进度</a>
+            <a href="admin-quiz-grading.html" class="oa-adm-nav__subitem">考试详情（示例）</a>
+            <a href="#" class="oa-adm-nav__subitem">全部三级反馈</a>
+          </div>
+        </nav>
+      </aside>
+      <div class="oa-adm-work">
+        <div class="oa-adm-workhead">
+          <div class="oa-adm-crumb">管理端 <span style="color:#d0d5dd">/</span> <strong>培训学习</strong> <span style="color:#d0d5dd">/</span> 课程库 <span style="color:#d0d5dd">/</span> 编辑课程</div>
+          <div class="oa-adm-user"><span class="oa-adm-avatar" aria-hidden="true"></span>超级管理员</div>
+        </div>
+        <div class="oa-adm-workbody">
+        <div class="back-link"><a href="index.html">返回原型导航</a> · <a href="admin-course-library.html">返回课程库</a></div>
+        <h1 class="page-title">编辑课程</h1>
+        <p class="page-sub">字段结构对齐现网「新增课程」弹层；下方「过关要求」为清单迭代扩展区块。</p>
+        <!--
+          【页眉 · 课程创建状态 · 原型演示】
+          「演示：新建课程尚未创建」勾选后 #meta-course-id 会变为「—」，模拟无正式课程 ID。
+          与过关要求「观看/线下签到 → ①目录 → 本课程目录」联动：未创建时禁用本课单选并自动切到「其他课程」，
+          或请配置员改用「②会议签到」分支。取消勾选后恢复 data-saved-id / 默认 ID。
+        -->
+        <p class="meta-id">
+          课程ID：<strong id="meta-course-id">1008600123456789</strong>（编辑态只读）
+          <label style="margin-left:14px;font-weight:400;font-size:12px;color:var(--text-secondary);cursor:pointer;user-select:none">
+            <input type="checkbox" id="chk-course-draft" style="vertical-align:middle;margin:0 4px 0 0" />
+            演示：新建课程尚未创建（无有效课程ID，禁用「本课程目录」方式）
+          </label>
+        </p>
+
+        <section class="panel">
+          <div class="panel-hd">课程信息</div>
+          <div class="panel-bd">
+            <div class="form-grid">
+              <div class="field">
+                <label for="c-name"><span class="req" aria-hidden="true">*</span>课程名称</label>
+                <input id="c-name" type="text" placeholder="请输入" value="新员工入职安全与合规培训（2026）" />
+              </div>
+              <div class="field">
+                <label for="c-cat"><span class="req" aria-hidden="true">*</span>课程分类</label>
+                <select id="c-cat">
+                  <option value="">请输入</option>
+                  <option selected>合规类</option>
+                  <option>信息化一阶段第一节课</option>
+                </select>
+              </div>
+              <div class="field">
+                <label><span class="req" aria-hidden="true">*</span>状态</label>
+                <div class="radio-row">
+                  <label><input type="radio" name="pub" value="1" checked /> 已发布</label>
+                  <label><input type="radio" name="pub" value="0" /> 未发布</label>
+                </div>
+              </div>
+              <div class="field">
+                <label for="c-sort">排序值</label>
+                <input id="c-sort" class="num-input" type="number" min="0" step="1" value="0" />
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label for="c-remark">课程描述备注</label>
+                <textarea id="c-remark" placeholder="请输入"></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-hd">课程目录</div>
+          <div class="panel-bd">
+            <div class="field">
+              <label><span class="req" aria-hidden="true">*</span>课程内容</label>
+              <div class="upload-zone" role="button" tabindex="0">
+                <div class="icon" aria-hidden="true">上传</div>
+                <div>点击或将文件拖拽到这里上传</div>
+                <div class="ext">支持扩展名：.MP3 .MP4 .FLV .M4A</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-hd">课后资料</div>
+          <div class="panel-bd">
+            <div class="field">
+              <label>课程资料</label>
+              <div class="upload-zone">
+                <div class="icon" aria-hidden="true">上传</div>
+                <div>点击或将文件拖拽到这里上传</div>
+                <div class="ext">支持扩展名：Word、Excel、PPT、PDF</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!--
+          ========== 过关要求模块（与产品规则对齐，供评审/对接）==========
+          1) 类型「观看/线下签到」(option value 仍为 video)：绑定对象分两层
+             · 第一层「或」—— ① 观看指定目录视频  vs  ② 指定会议·线下扫码签到（.js-wos-mode，满足其一即本条过关）。
+             · 选①后：第二层为本课目录 vs 其他课程（.js-video-src）+ 勾选目录项（CATALOG_BY_COURSE 示意，实装时按课程拉目录）。
+             · 选②后：会议下拉 .js-meeting-select（MEETINGS 示意），学员会议现场扫码签到回写后即完成本条。
+             · 预设含<strong>两行</strong>独立「会议·线下签到」要求（不同 meetingId），便于与「仅目录」行对照区分多场线下。
+          2) 类型「考试」：问卷 + 考试达标分；类型「物料」：绑定对象列无操作（—）。
+          3) 保存 #btn-save-course：脚本内校验上述必填项；通过后可接真实保存接口。
+        -->
+        <section class="panel">
+          <div class="panel-hd" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <span>过关要求（清单扩展）</span>
+            <button type="button" class="page-note-pin" data-note-id="1" aria-label="过关要求说明">1</button>
+          </div>
+          <div class="panel-bd">
+            <div class="req-toolbar">
+              <span style="font-size:13px;color:var(--text-secondary)">配置学员需完成的条件；「考试」须在<strong>绑定对象</strong>中选问卷并填达标分；「<strong>观看/线下签到</strong>」支持<strong>或</strong>：① 按目录观看视频 ② 指定会议线下扫码签到（满足其一即可）；目录分支下再区分本课/其他课（见页眉「未创建」演示）。</span>
+              <button type="button" class="btn btn-primary" id="btn-add-req">添加一条要求</button>
+            </div>
+            <p class="hint" style="margin-top:0;margin-bottom:10px">要求类型：考试 / 物料上传 / 观看/线下签到</p>
+            <div class="req-table-wrap">
+              <table class="req" id="req-table">
+                <thead>
+                  <tr>
+                    <th style="width:140px">要求类型</th>
+                    <th style="min-width:200px">要求说明</th>
+                    <th style="min-width:300px">绑定对象<br /><span style="font-weight:400;color:var(--text-muted);white-space:normal">考试：问卷 · 观看/签到：目录或会议</span></th>
+                    <th style="width:140px">考试达标分<br /><span style="font-weight:400;color:var(--text-muted)">总分</span></th>
+                    <th style="width:72px">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="req-tbody"></tbody>
+              </table>
+            </div>
+            <datalist id="quiz-list">
+              <option value="结业测验-Q202601"></option>
+              <option value="情景模拟加试-Q202602"></option>
+              <option value="安全知识抽测-Q202603"></option>
+            </datalist>
+          </div>
+        </section>
+
+        <div class="foot-actions">
+          <button type="button" class="btn btn-primary" id="btn-save-course">保存</button>
+          <a href="admin-course-library.html" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;">取消</a>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    tpl-row：动态行模板。#req-tbody 内每行 .req-row。
+    bind-cell：.js-exam-bind（考试）| .js-video-bind（观看/线下签到）| .js-nobind（物料）三选一显隐。
+    观看/线下签到内部：.wos-mode-pick（或分支）→ .js-wos-catalog-branch | .js-wos-meeting-branch。
+  -->
+  <template id="tpl-row">
+    <tr class="req-row">
+      <td>
+        <select class="js-type" aria-label="要求类型">
+          <option value="exam">考试</option>
+          <option value="file">物料上传</option>
+          <option value="video">观看/线下签到</option>
+        </select>
+      </td>
+      <td>
+        <textarea class="js-desc" placeholder="要求说明，对员工端「过关要求」表格展示"></textarea>
+      </td>
+      <td class="bind-cell">
+        <div class="js-exam-bind" hidden>
+          <input type="search" class="js-quiz" list="quiz-list" placeholder="搜索问卷名称 / ID" autocomplete="off" />
+          <div class="hint">考试任务：对接卷王问卷（与「观看/线下签到」绑定数据源不同）</div>
+        </div>
+        <div class="js-video-bind" hidden>
+          <div class="wos-mode-pick" role="radiogroup" aria-label="观看或线下签到完成方式">
+            <div class="wos-title">完成方式（满足<strong>任一</strong>即视为本条过关）</div>
+            <label><input type="radio" class="js-wos-mode" name="wos_tmp" value="catalog" checked /> ① 观看指定<strong>目录视频</strong></label>
+            <div class="wos-sub">选定本课或其他课的目录课时，学员学完勾选项即满足本分支。</div>
+            <label><input type="radio" class="js-wos-mode" name="wos_tmp" value="meeting" /> ② 指定<strong>会议</strong> · 线下扫码签到</label>
+            <div class="wos-sub">对接会议/签到系统：学员在该会议完成<strong>线下扫码签到</strong>后，本条过关要求即完成（无需再走目录观看）。</div>
+          </div>
+          <div class="js-wos-catalog-branch">
+            <div class="video-src-pick" role="radiogroup" aria-label="目录视频绑定方式">
+              <label><input type="radio" class="js-video-src" name="video_src_tmp" value="current" /> 使用<strong>本课程</strong>名称与目录视频</label>
+              <div class="sub js-video-hint-current">读取上方「课程名称」与当前课程ID对应的目录；与下方「其他课程」二选一。</div>
+              <label class="js-label-video-other"><input type="radio" class="js-video-src" name="video_src_tmp" value="other" checked /> 从<strong>其他课程</strong>中选择课程与目录视频</label>
+              <div class="sub">从课程库选择一门<strong>非本页正在编辑</strong>的课程（下拉中已排除当前课），再勾选该课目录。</div>
+            </div>
+            <div class="js-video-panel-current" hidden>
+              <div class="js-current-course-line" style="font-size:12px;padding:6px 8px;margin-bottom:6px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:4px;color:#0369a1"></div>
+              <div class="js-current-catalog-wrap" hidden>
+                <div style="font-size:11px;font-weight:600;color:#5c6370;margin:0 0 4px">目录视频（考核标准，可多选）</div>
+                <div class="js-current-catalog-list video-catalog-list" role="group" aria-label="本课程目录视频"></div>
+              </div>
+            </div>
+            <div class="js-video-panel-other" hidden>
+              <select class="js-lib-course" aria-label="选择其他课程库课程">
+                <option value="">请选择其他课程</option>
+              </select>
+              <div class="js-other-catalog-wrap" hidden>
+                <div style="font-size:11px;font-weight:600;color:#5c6370;margin:8px 0 4px">该课目录视频（考核标准，可多选）</div>
+                <div class="js-other-catalog-list video-catalog-list" role="group" aria-label="其他课程目录视频"></div>
+              </div>
+            </div>
+            <div class="hint js-video-draft-blocked" hidden style="color:#b45309;margin-top:6px">当前为「课程尚未创建」演示状态：请先取消页眉「未创建」勾选，或改用「其他课程」目录方式。</div>
+          </div>
+          <div class="js-wos-meeting-branch" hidden>
+            <div class="meeting-select-wrap">
+              <span style="font-size:11px;font-weight:600;color:#5c6370;display:block;margin-bottom:4px">选择会议</span>
+              <select class="js-meeting-select" aria-label="选择需线下签到的会议">
+                <option value="">请选择会议</option>
+              </select>
+            </div>
+            <div class="hint" style="margin-top:6px">与会议管理/签到服务对接；保存后学员端展示会议名称，签到状态回写后本条自动满足。</div>
+          </div>
+          <div class="hint" style="margin-top:8px">可添加多行「观看/线下签到」组合不同条件；学员须完成<strong>本页全部配置行</strong>方可通关本课程。</div>
+        </div>
+        <span class="js-nobind">—</span>
+      </td>
+      <td class="exam-pass-cell">
+        <div class="js-pass-wrap" hidden>
+          <input type="number" class="js-pass-score num-input" min="0" max="999" step="1" value="60" title="考试总分不低于该分数即视为满足" aria-label="考试达标分数总分" />
+          <div class="hint">与清单「考试过关」一致</div>
+        </div>
+        <span class="js-no-pass">—</span>
+      </td>
+      <td><button type="button" class="btn btn-danger js-remove">删除</button></td>
+    </tr>
+  </template>
+
+  <script>
+    /**
+     * 过关要求表格 · 行内逻辑（与页内 HTML 注释、PAGE_NOTES 抽屉说明一致）
+     *
+     * 数据结构（示意，对接后由接口替换）：
+     *   LIB_COURSES / LIB_IDS — 课程库课程，用于「其他课程」下拉及保存白名单。
+     *   CATALOG_BY_COURSE — 各课程目录视频，用于本课/其他课勾选列表。
+     *   MEETINGS / MEETING_IDS — 会议列表，用于「会议签到」分支。
+     *
+     * 主流程函数：
+     *   syncWatchOfflineSubMode(tr) — 「观看/线下签到」：或分支 catalog | meeting，控制子面板显隐。
+     *   syncVideoModePanels(tr) — 目录分支内：本课 vs 其他课 + 目录勾选；处理「未创建」禁用本课。
+     *   refreshAllVideoRequirementRows() — 页眉「未创建」勾选变化时刷新所有视频行。
+     *   getMetaCourseId / isCourseNotCreatedDemo — 读页眉课程 ID 与演示开关。
+     */
+    (function () {
+      var tbody = document.getElementById("req-tbody");
+      var tpl = document.getElementById("tpl-row");
+
+      /** 与课程库列表（admin-course-library）示意数据一致；「其他课程」下拉会排除当前编辑课 ID */
+      var LIB_COURSES = [
+        { id: "1008600123456008", name: "信息化008" },
+        { id: "1008600123456002", name: "信息化002" },
+        { id: "1008600123456789", name: "新员工入职安全与合规培训（2026）" }
+      ];
+      var LIB_IDS = {};
+      LIB_COURSES.forEach(function (c) {
+        LIB_IDS[c.id] = true;
+      });
+
+      /** 示意：按课程 ID 的目录课时；实装时由「选课程 → 拉目录」接口填充；保存以勾选 id 为准 */
+      var CATALOG_BY_COURSE = {
+        "1008600123456008": [
+          { id: "c008-1", label: "第1节 · 概述（约 4 分钟）" },
+          { id: "c008-2", label: "第2节 · 要点讲解（约 8 分钟）" },
+          { id: "c008-3", label: "第3节 · 案例分析（约 9 分钟）" }
+        ],
+        "1008600123456002": [
+          { id: "c002-1", label: "第1节 · 入门（约 1 分钟）" },
+          { id: "c002-2", label: "第2节 · 进阶（约 2 分钟）" },
+          { id: "c002-3", label: "第3节 · 小测（约 1 分钟）" }
+        ],
+        "1008600123456789": [
+          { id: "c789-1", label: "第1节 · 安全合规导读（约 8 分钟）" },
+          { id: "c789-2", label: "第2节 · 数据分级与留存（约 10 分钟）" },
+          { id: "c789-3", label: "第3节 · 场景演练（约 12 分钟）" },
+          { id: "c789-4", label: "第4节 · 制度答疑（约 6 分钟）" }
+        ]
+      };
+
+      /** 示意：可选会议；实装对接会议/签到服务；保存校验 ID 落在 MEETING_IDS */
+      var MEETINGS = [
+        { id: "meet-202606-A01", label: "2026年Q2 合规宣贯会（总部 A 厅 · 需现场签到）" },
+        { id: "meet-202606-B02", label: "安全月启动会 · 分会场（杭州）" },
+        { id: "meet-202607-C03", label: "部门内训 · 周例会合并场（线上+线下签到）" }
+      ];
+      var MEETING_IDS = {};
+      MEETINGS.forEach(function (m) {
+        MEETING_IDS[m.id] = true;
+      });
+
+      var videoRadioSeq = 0;
+      var wosRadioSeq = 0;
+
+      function getMetaCourseId() {
+        var el = document.getElementById("meta-course-id");
+        if (!el) return "";
+        var t = String(el.textContent || "").trim();
+        if (!t || t.indexOf("—") === 0) return "";
+        return t;
+      }
+
+      function isCourseNotCreatedDemo() {
+        var ck = document.getElementById("chk-course-draft");
+        return !!(ck && ck.checked);
+      }
+
+      function getCurrentCourseDisplayName() {
+        var n = document.getElementById("c-name");
+        var v = n ? String(n.value || "").trim() : "";
+        return v || "（未填写课程名称）";
+      }
+
+      function assignVideoRadioGroup(tr) {
+        if (tr.getAttribute("data-video-radio-done") === "1") return;
+        videoRadioSeq += 1;
+        var name = "video_src_" + videoRadioSeq;
+        tr.querySelectorAll(".js-video-src").forEach(function (r) {
+          r.name = name;
+        });
+        tr.setAttribute("data-video-radio-done", "1");
+      }
+
+      function fillOtherCourseSelect(tr) {
+        var sel = tr.querySelector(".js-lib-course");
+        if (!sel) return;
+        var curId = getMetaCourseId();
+        while (sel.options.length > 1) sel.remove(1);
+        LIB_COURSES.forEach(function (c) {
+          if (curId && c.id === curId) return;
+          var opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.name + "（" + c.id + "）";
+          sel.appendChild(opt);
+        });
+      }
+
+      function fillCatalogList(listEl, courseId, inputClass) {
+        if (!listEl) return;
+        listEl.innerHTML = "";
+        if (!courseId || !CATALOG_BY_COURSE[courseId]) return;
+        CATALOG_BY_COURSE[courseId].forEach(function (item) {
+          var lab = document.createElement("label");
+          var inp = document.createElement("input");
+          inp.type = "checkbox";
+          inp.className = inputClass;
+          inp.value = item.id;
+          var sp = document.createElement("span");
+          sp.textContent = item.label;
+          lab.appendChild(inp);
+          lab.appendChild(sp);
+          listEl.appendChild(lab);
+        });
+      }
+
+      function renderCurrentCatalog(tr) {
+        var wrap = tr.querySelector(".js-current-catalog-wrap");
+        var list = tr.querySelector(".js-current-catalog-list");
+        var line = tr.querySelector(".js-current-course-line");
+        if (!wrap || !list || !line) return;
+        var cid = getMetaCourseId();
+        line.textContent = "";
+        var strong = document.createElement("strong");
+        strong.textContent = "当前课程：";
+        line.appendChild(strong);
+        line.appendChild(document.createTextNode(getCurrentCourseDisplayName()));
+        if (cid) {
+          line.appendChild(document.createTextNode(" · ID "));
+          var code = document.createElement("code");
+          code.style.fontSize = "11px";
+          code.textContent = cid;
+          line.appendChild(code);
+        }
+        list.innerHTML = "";
+        if (isCourseNotCreatedDemo() || !cid || !CATALOG_BY_COURSE[cid]) {
+          wrap.hidden = true;
+          return;
+        }
+        wrap.hidden = false;
+        fillCatalogList(list, cid, "js-catalog-vid-current");
+      }
+
+      function renderOtherCatalog(tr) {
+        var wrap = tr.querySelector(".js-other-catalog-wrap");
+        var list = tr.querySelector(".js-other-catalog-list");
+        var sel = tr.querySelector(".js-lib-course");
+        if (!wrap || !list || !sel) return;
+        var cid = String(sel.value).trim();
+        list.innerHTML = "";
+        if (!cid || !CATALOG_BY_COURSE[cid]) {
+          wrap.hidden = true;
+          return;
+        }
+        wrap.hidden = false;
+        fillCatalogList(list, cid, "js-catalog-vid-other");
+      }
+
+      function syncVideoModePanels(tr) {
+        var draft = isCourseNotCreatedDemo();
+        var curRadio = tr.querySelector('.js-video-src[value="current"]');
+        var labCur = curRadio ? curRadio.closest("label") : null;
+        if (curRadio) {
+          curRadio.disabled = draft;
+          if (labCur) labCur.classList.toggle("is-disabled", draft);
+        }
+        if (draft && curRadio && curRadio.checked) {
+          var other = tr.querySelector('.js-video-src[value="other"]');
+          if (other) other.checked = true;
+        }
+        var modeEl = tr.querySelector(".js-video-src:checked");
+        var modeVal = modeEl ? modeEl.value : "other";
+        var panelCur = tr.querySelector(".js-video-panel-current");
+        var panelOth = tr.querySelector(".js-video-panel-other");
+        var hintBlock = tr.querySelector(".js-video-draft-blocked");
+        if (hintBlock) hintBlock.hidden = !(draft && modeVal === "current");
+        if (panelCur) panelCur.hidden = modeVal !== "current";
+        if (panelOth) panelOth.hidden = modeVal !== "other";
+        if (modeVal === "current") {
+          renderCurrentCatalog(tr);
+        } else {
+          fillOtherCourseSelect(tr);
+          renderOtherCatalog(tr);
+        }
+      }
+
+      function assignWosRadioGroup(tr) {
+        if (tr.getAttribute("data-wos-radio-done") === "1") return;
+        wosRadioSeq += 1;
+        var wname = "wos_" + wosRadioSeq;
+        tr.querySelectorAll(".js-wos-mode").forEach(function (r) {
+          r.name = wname;
+        });
+        tr.setAttribute("data-wos-radio-done", "1");
+      }
+
+      function fillMeetingSelect(tr) {
+        var sel = tr.querySelector(".js-meeting-select");
+        if (!sel || sel.getAttribute("data-meeting-filled") === "1") return;
+        MEETINGS.forEach(function (m) {
+          var opt = document.createElement("option");
+          opt.value = m.id;
+          opt.textContent = m.label;
+          sel.appendChild(opt);
+        });
+        sel.setAttribute("data-meeting-filled", "1");
+      }
+
+      function syncWatchOfflineSubMode(tr) {
+        assignWosRadioGroup(tr);
+        var wos = tr.querySelector(".js-wos-mode:checked");
+        var wosVal = wos ? wos.value : "catalog";
+        var catBr = tr.querySelector(".js-wos-catalog-branch");
+        var meetBr = tr.querySelector(".js-wos-meeting-branch");
+        if (catBr) catBr.hidden = wosVal === "meeting";
+        if (meetBr) {
+          meetBr.hidden = wosVal !== "meeting";
+          if (wosVal === "meeting") fillMeetingSelect(tr);
+        }
+        if (wosVal === "catalog") {
+          assignVideoRadioGroup(tr);
+          syncVideoModePanels(tr);
+        }
+      }
+
+      function refreshAllVideoRequirementRows() {
+        tbody.querySelectorAll(".req-row").forEach(function (tr) {
+          if (tr.querySelector(".js-type").value === "video") syncWatchOfflineSubMode(tr);
+        });
+      }
+
+      function syncRow(tr) {
+        var type = tr.querySelector(".js-type").value;
+        var isExam = type === "exam";
+        var isVideo = type === "video";
+        tr.classList.toggle("is-exam", isExam);
+        var examBind = tr.querySelector(".js-exam-bind");
+        var videoBind = tr.querySelector(".js-video-bind");
+        var nobind = tr.querySelector(".js-nobind");
+        if (examBind) examBind.hidden = !isExam;
+        if (videoBind) {
+          videoBind.hidden = !isVideo;
+          if (isVideo) {
+            syncWatchOfflineSubMode(tr);
+          }
+        }
+        if (nobind) nobind.hidden = isExam || isVideo;
+        if (!isVideo) {
+          tr.removeAttribute("data-wos-radio-done");
+          tr.removeAttribute("data-video-radio-done");
+        }
+        var pwrap = tr.querySelector(".js-pass-wrap");
+        var pmark = tr.querySelector(".js-no-pass");
+        if (pwrap) pwrap.hidden = !isExam;
+        if (pmark) pmark.hidden = isExam;
+      }
+
+      function bindRow(tr) {
+        tr.querySelector(".js-type").addEventListener("change", function () {
+          syncRow(tr);
+        });
+        var courseSel = tr.querySelector(".js-lib-course");
+        if (courseSel) {
+          courseSel.addEventListener("change", function () {
+            renderOtherCatalog(tr);
+          });
+        }
+        tr.querySelectorAll(".js-video-src").forEach(function (r) {
+          r.addEventListener("change", function () {
+            syncVideoModePanels(tr);
+          });
+        });
+        tr.querySelectorAll(".js-wos-mode").forEach(function (r) {
+          r.addEventListener("change", function () {
+            syncWatchOfflineSubMode(tr);
+          });
+        });
+        tr.querySelector(".js-remove").addEventListener("click", function () {
+          if (tbody.querySelectorAll(".req-row").length <= 1) return;
+          tr.remove();
+        });
+        syncRow(tr);
+      }
+
+      function addRow(preset) {
+        var node = tpl.content.cloneNode(true);
+        var tr = node.querySelector(".req-row");
+        if (preset) {
+          tr.querySelector(".js-type").value = preset.type;
+          tr.querySelector(".js-desc").value = preset.desc || "";
+          if (preset.quiz) tr.querySelector(".js-quiz").value = preset.quiz;
+          if (preset.pass != null) tr.querySelector(".js-pass-score").value = String(preset.pass);
+        }
+        tbody.appendChild(tr);
+        bindRow(tr);
+        if (preset && preset.type === "video") {
+          if (preset.wosMode === "meeting") {
+            var wm = tr.querySelector('.js-wos-mode[value="meeting"]');
+            if (wm) wm.checked = true;
+          }
+          syncWatchOfflineSubMode(tr);
+          if (preset.wosMode === "meeting") {
+            fillMeetingSelect(tr);
+            if (preset.meetingId) {
+              var ms = tr.querySelector(".js-meeting-select");
+              if (ms) ms.value = preset.meetingId;
+            }
+          } else {
+            var src = preset.videoSource === "current" ? "current" : "other";
+            var rCur = tr.querySelector('.js-video-src[value="current"]');
+            var rOth = tr.querySelector('.js-video-src[value="other"]');
+            if (src === "current" && rCur) rCur.checked = true;
+            else if (rOth) rOth.checked = true;
+            syncVideoModePanels(tr);
+            if (src === "other" && preset.courseId) {
+              var sel = tr.querySelector(".js-lib-course");
+              fillOtherCourseSelect(tr);
+              sel.value = preset.courseId;
+              renderOtherCatalog(tr);
+            }
+            if (preset.videoIds && preset.videoIds.length) {
+              var selClass = src === "current" ? ".js-catalog-vid-current" : ".js-catalog-vid-other";
+              preset.videoIds.forEach(function (vid) {
+                var cb = tr.querySelector(selClass + '[value="' + vid + '"]');
+                if (cb) cb.checked = true;
+              });
+            }
+          }
+        }
+      }
+
+      document.getElementById("btn-add-req").addEventListener("click", function () {
+        addRow({ type: "file", desc: "" });
+      });
+
+      document.getElementById("btn-save-course").addEventListener("click", function () {
+        var rows = tbody.querySelectorAll(".req-row");
+        var msgs = [];
+        rows.forEach(function (tr, i) {
+          var n = i + 1;
+          var type = tr.querySelector(".js-type").value;
+          if (type === "exam") {
+            var q = (tr.querySelector(".js-quiz") && tr.querySelector(".js-quiz").value) || "";
+            if (!String(q).trim()) msgs.push("第 " + n + " 行：考试类须在「绑定对象」中选择或填写问卷。");
+            var passEl = tr.querySelector(".js-pass-score");
+            if (passEl && (passEl.value === "" || Number(passEl.value) < 0)) {
+              msgs.push("第 " + n + " 行：请填写有效的考试达标分。");
+            }
+          } else if (type === "video") {
+            var wosEl = tr.querySelector(".js-wos-mode:checked");
+            if (!wosEl) {
+              msgs.push("第 " + n + " 行：请选择「观看目录」或「会议签到」完成方式。");
+            } else if (wosEl.value === "meeting") {
+              var ms = tr.querySelector(".js-meeting-select");
+              var midMeet = ms ? String(ms.value).trim() : "";
+              if (!midMeet) msgs.push("第 " + n + " 行（会议分支）：请选择一场会议。");
+              else if (!MEETING_IDS[midMeet]) msgs.push("第 " + n + " 行：所选会议不在示意列表中。");
+            } else {
+              var modeEl = tr.querySelector(".js-video-src:checked");
+              if (!modeEl) {
+                msgs.push("第 " + n + " 行（目录分支）：请先选择「本课程」或「其他课程」。");
+              } else if (modeEl.value === "current") {
+                if (isCourseNotCreatedDemo()) {
+                  msgs.push("第 " + n + " 行：课程尚未创建时不可使用「本课程目录」方式，请改为「其他课程」或「会议签到」。");
+                } else {
+                  var mid = getMetaCourseId();
+                  if (!mid) {
+                    msgs.push("第 " + n + " 行：当前无有效课程ID，无法绑定本课程目录。");
+                  } else {
+                    var pickedCur = tr.querySelectorAll(".js-catalog-vid-current:checked");
+                    if (!pickedCur.length) {
+                      msgs.push("第 " + n + " 行（本课程目录）：请至少勾选一项目录视频。");
+                    }
+                  }
+                }
+              } else {
+                var sel = tr.querySelector(".js-lib-course");
+                var cid = sel ? String(sel.value).trim() : "";
+                if (!cid) msgs.push("第 " + n + " 行（其他课程目录）：请先选择一门课程。");
+                else if (!LIB_IDS[cid]) msgs.push("第 " + n + " 行：所选课程不在课程库示意列表中。");
+                else {
+                  var pickedOth = tr.querySelectorAll(".js-catalog-vid-other:checked");
+                  if (!pickedOth.length) {
+                    msgs.push("第 " + n + " 行（其他课程目录）：请至少勾选一项目录视频。");
+                  }
+                }
+              }
+            }
+          }
+        });
+        if (msgs.length) {
+          alert(msgs.join("\n"));
+          return;
+        }
+        alert("校验通过（原型）：已满足「考试绑定问卷、观看/签到（目录或会议）」等规则，可继续对接真实保存接口。");
+      });
+
+      var chkDraft = document.getElementById("chk-course-draft");
+      var metaIdEl = document.getElementById("meta-course-id");
+      if (chkDraft && metaIdEl) {
+        chkDraft.addEventListener("change", function () {
+          if (chkDraft.checked) {
+            if (!metaIdEl.getAttribute("data-saved-id")) {
+              metaIdEl.setAttribute("data-saved-id", metaIdEl.textContent);
+            }
+            metaIdEl.textContent = "—";
+          } else {
+            metaIdEl.textContent = metaIdEl.getAttribute("data-saved-id") || "1008600123456789";
+          }
+          refreshAllVideoRequirementRows();
+        });
+      }
+      var cname = document.getElementById("c-name");
+      if (cname) {
+        cname.addEventListener("input", function () {
+          tbody.querySelectorAll(".req-row").forEach(function (tr) {
+            if (tr.querySelector(".js-type").value !== "video") return;
+            var wcat = tr.querySelector('.js-wos-mode[value="catalog"]:checked');
+            if (!wcat) return;
+            var cur = tr.querySelector('.js-video-src[value="current"]');
+            if (cur && cur.checked) renderCurrentCatalog(tr);
+          });
+        });
+      }
+
+      addRow({ type: "exam", desc: "结业测验（系统判分与人工录入合并为考试总分，达标即过关）", quiz: "结业测验-Q202601", pass: 60 });
+      addRow({ type: "file", desc: "上传签字版《培训回执》扫描件" });
+      addRow({
+        type: "video",
+        desc: "本课程目录：完成第1、2节（演示「本课程」方式）",
+        videoSource: "current",
+        videoIds: ["c789-1", "c789-2"]
+      });
+      addRow({
+        type: "video",
+        desc: "线下签到①：参加「合规宣贯会」并完成现场扫码（演示会议分支）",
+        wosMode: "meeting",
+        meetingId: "meet-202606-A01"
+      });
+      addRow({
+        type: "video",
+        desc: "线下签到②：另需参加「安全月启动会」并完成分会场签到（与上条独立，用于区分多场线下）",
+        wosMode: "meeting",
+        meetingId: "meet-202606-B02"
+      });
+    })();
+  </script>
+  <script src="js/page-notes.js"></script>
+  <script>
+    window.PAGE_NOTES = {
+      drawerTitle: "编辑课程 · 过关要求说明",
+      sections: [
+        {
+          id: "1",
+          title: "过关要求：考试、资料与视频怎么配",
+          html:
+            '<p class="pn-lead">这里决定学员学完本课后，<strong>必须完成哪些条件</strong>才算培训过关。</p>' +
+            "<ul>" +
+            "<li><strong>考试</strong>：在「绑定对象」中选择问卷（与视频行数据源不同），并写明<strong>总分达标线</strong>。</li>" +
+            "<li><strong>物料上传</strong>：写清要交什么材料、有无格式要求；绑定对象列不适用。</li>" +
+            "<li><strong>观看/线下签到</strong>：先选<strong>目录观看</strong>或<strong>会议签到（或分支，满足其一）</strong>；目录下再选本课/其他课并勾选课时；会议下从示意列表选会议，学员<strong>线下扫码签到</strong>即完成本条。课程未创建时本课目录不可用（页眉演示开关）。</li>" +
+            "</ul>" +
+            "<p>保存后，员工端过关表、学习进度里引用的条件说明应与这里<strong>一致</strong>，避免出现「后台一套、前台一套」。</p>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart LR\n' +
+            "  B[在此维护\n过关条件] --> C[课程库展示]\n" +
+            "  B --> Y[学员端过关要求]\n" +
+            "  B --> G[管理员学习进度\n与过关明细]\n" +
+            "</pre></div>"
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

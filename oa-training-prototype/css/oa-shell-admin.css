@@ -1,0 +1,287 @@
+/**
+ * OA 管理端整体壳 · 对齐现网「顶栏 + 浅灰侧栏 + 主区」（图1 6Q-测试环境 / EIP）
+ * body 使用 class：oa-admin-body
+ */
+.oa-admin-body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #303133;
+  background: #f0f2f5;
+}
+
+.oa-adm {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* —— 顶栏 —— */
+.oa-adm-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  height: 48px;
+  padding: 0 12px 0 8px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+.oa-adm-topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.oa-adm-iconbtn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #606266;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.oa-adm-iconbtn:hover {
+  background: #f5f7fa;
+  color: #303133;
+}
+.oa-adm-env {
+  font-size: 15px;
+  font-weight: 700;
+  color: #303133;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.oa-adm-topbar__search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 8px;
+}
+.oa-adm-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+  height: 32px;
+  padding: 0 12px;
+  background: #f5f7fa;
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+}
+.oa-adm-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #303133;
+  outline: none;
+}
+.oa-adm-search input::placeholder {
+  color: #909399;
+}
+.oa-adm-search__icon {
+  flex-shrink: 0;
+  color: #909399;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.oa-adm-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.oa-adm-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 13px;
+  color: #606266;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+a.oa-adm-tool {
+  cursor: pointer;
+}
+.oa-adm-tool:hover {
+  background: #f5f7fa;
+  color: #303133;
+}
+.oa-adm-tool .oa-caret {
+  font-size: 10px;
+  color: #909399;
+  margin-left: 2px;
+}
+.oa-adm-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dcdfe6, #c0c4cc);
+  border: 1px solid #e4e7ed;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+/* —— 顶栏下：侧栏 + 工作区 —— */
+.oa-adm-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+.oa-adm-side {
+  width: 220px;
+  flex-shrink: 0;
+  background: #eceef2;
+  border-right: 1px solid #dcdfe6;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.oa-adm-side__brand {
+  padding: 14px 16px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #303133;
+  border-bottom: 1px solid #dcdfe6;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.oa-adm-nav {
+  padding: 8px 0 20px;
+  flex: 1;
+}
+.oa-adm-nav__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 10px 16px;
+  font-size: 13px;
+  color: #606266;
+  text-decoration: none;
+  cursor: default;
+  border-left: 3px solid transparent;
+}
+a.oa-adm-nav__item:hover {
+  background: rgba(255, 255, 255, 0.55);
+  color: #303133;
+}
+.oa-adm-nav__chev {
+  color: #c0c4cc;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.oa-adm-nav__sub {
+  padding: 2px 0 6px 0;
+  background: rgba(255, 255, 255, 0.35);
+  border-bottom: 1px solid #e4e7ed;
+}
+.oa-adm-nav__subitem {
+  display: block;
+  padding: 8px 16px 8px 28px;
+  font-size: 13px;
+  color: #606266;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+.oa-adm-nav__subitem:hover {
+  color: #409eff;
+  background: rgba(64, 158, 255, 0.06);
+}
+.oa-adm-nav__subitem.is-active {
+  color: #409eff;
+  font-weight: 600;
+  background: rgba(64, 158, 255, 0.1);
+  border-left-color: #409eff;
+}
+
+.oa-adm-work {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #f0f2f5;
+}
+.oa-adm-workhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  flex-shrink: 0;
+}
+.oa-adm-crumb {
+  font-size: 13px;
+  color: #909399;
+}
+.oa-adm-crumb strong {
+  color: #606266;
+  font-weight: 500;
+}
+.oa-adm-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #606266;
+}
+
+.oa-adm-workbody {
+  flex: 1;
+  padding: 16px 20px 32px;
+  overflow: auto;
+  min-width: 0;
+}
+
+.oa-adm-workbody .back-link {
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.oa-adm-workbody .back-link a {
+  color: #1677ff;
+  text-decoration: none;
+}
+.oa-adm-workbody .back-link a:hover {
+  text-decoration: underline;
+}
+.oa-adm-workbody .page-title {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 650;
+  color: #111418;
+}
+
+@media (max-width: 960px) {
+  .oa-adm-side {
+    display: none;
+  }
+  .oa-adm-topbar__search {
+    display: none;
+  }
+}

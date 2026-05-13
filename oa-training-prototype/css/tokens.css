@@ -1,0 +1,49 @@
+/**
+ * OA 培训学习原型 — 设计变量（对齐 Claude Design：克制、层次、留白）
+ */
+:root {
+  --bg-app: #f6f7f9;
+  --bg-surface: #ffffff;
+  --bg-subtle: #eef0f3;
+  --border-default: #e2e5eb;
+  --border-strong: #c8ced8;
+  --text-primary: #111418;
+  --text-secondary: #5c6370;
+  --text-muted: #8b939f;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-muted: rgba(37, 99, 235, 0.08);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(17, 20, 24, 0.04);
+  --shadow-md: 0 4px 24px rgba(17, 20, 24, 0.06);
+  --font-sans: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app: #0d0f12;
+    --bg-surface: #15181d;
+    --bg-subtle: #1c2128;
+    --border-default: #2a3039;
+    --border-strong: #3d4654;
+    --text-primary: #f1f3f5;
+    --text-secondary: #b4bcc6;
+    --text-muted: #7d8794;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-muted: rgba(96, 165, 250, 0.12);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+}

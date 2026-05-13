@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>课程库 · EIP管理系统（原型）</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/oa-shell-admin.css" />
+  <link rel="stylesheet" href="css/page-notes.css" />
+  <style>
+    .filter-card {
+      background: #fff;
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      padding: 16px 18px 8px;
+      margin-bottom: 12px;
+    }
+    .filter-rows { display: flex; flex-direction: column; gap: 12px; }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 20px;
+      align-items: flex-end;
+    }
+    .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .field input, .field select {
+      width: 200px;
+      max-width: 100%;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      border: 1px solid #d0d5dd;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .field.range input { width: 140px; }
+    .filter-actions { display: flex; gap: 10px; padding-bottom: 2px; }
+    .btn {
+      padding: 6px 18px;
+      font-size: 13px;
+      font-family: inherit;
+      border-radius: 4px;
+      border: 1px solid #d0d5dd;
+      background: #fff;
+      cursor: pointer;
+    }
+    .btn-primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .toolbar-row { margin-bottom: 12px; }
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      border-radius: 4px;
+      border: 1px solid #d0d5dd;
+      background: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .btn-add:hover { border-color: #1677ff; color: #1677ff; }
+    .table-card {
+      background: #fff;
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .table-scroll { overflow-x: auto; }
+    table.grid {
+      width: max(100%, 1400px);
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    table.grid th, table.grid td {
+      padding: 10px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e8eaef;
+      vertical-align: middle;
+    }
+    table.grid th {
+      background: #fafbfc;
+      color: #5c6370;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    table.grid tbody tr:hover { background: #f8fafc; }
+    table.grid tr:last-child td { border-bottom: none; }
+    .col-name { min-width: 140px; max-width: 220px; white-space: normal; }
+    a.course-link {
+      color: #1677ff;
+      text-decoration: none;
+      font-weight: 400;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      outline: none;
+    }
+    a.course-link:hover { text-decoration: underline; color: #0958d9; }
+    a.course-link:focus-visible {
+      outline: 2px solid #1677ff;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .status-pub { color: #1677ff; }
+    .cell-num { font-variant-numeric: tabular-nums; }
+    .op-edit { color: #1677ff; text-decoration: none; margin-right: 10px; }
+    .op-edit:hover { text-decoration: underline; }
+    .op-del { color: #dc2626; text-decoration: none; cursor: pointer; background: none; border: none; padding: 0; font-size: inherit; font-family: inherit; }
+    .op-del:hover { text-decoration: underline; }
+    a.pass-link {
+      color: #1677ff;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      text-decoration: none;
+    }
+    a.pass-link:hover { text-decoration: underline; }
+    .pager {
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid #e8eaef;
+    }
+
+    /* 课程详情弹窗 */
+    .cd-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 18, 26, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .cd-overlay.is-open { display: flex; }
+    .cd-modal {
+      width: min(720px, 100%);
+      max-height: min(90vh, 860px);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .cd-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid #e8eaef;
+      flex-shrink: 0;
+    }
+    .cd-hd h2 { margin: 0; font-size: 16px; font-weight: 650; }
+    .cd-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: #f4f5f7;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      color: #5c6370;
+    }
+    .cd-close:hover { background: #e8eaef; }
+    .cd-body { padding: 0 18px 18px; overflow: auto; flex: 1; }
+    .cd-summary {
+      margin: 16px 0 14px;
+      padding: 14px 16px;
+      background: #f7f8fa;
+      border-radius: 6px;
+      border: 1px solid #e8eaef;
+    }
+    .cd-summary h3 { margin: 0 0 10px; font-size: 18px; font-weight: 650; color: #111418; }
+    .cd-meta { font-size: 13px; color: #5c6370; margin-bottom: 10px; word-break: break-all; }
+    .cd-meta span { margin-right: 16px; }
+    .cd-stats { font-size: 13px; color: #5c6370; display: flex; flex-wrap: wrap; gap: 16px; }
+    .cd-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #e8eaef;
+      margin-bottom: 0;
+    }
+    .cd-tabs button {
+      appearance: none;
+      border: none;
+      background: none;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #5c6370;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .cd-tabs button:hover { color: #111418; }
+    .cd-tabs button[aria-selected="true"] {
+      color: #1677ff;
+      font-weight: 600;
+      border-bottom-color: #1677ff;
+    }
+    .cd-panel { padding: 16px 0; min-height: 120px; }
+    .cd-panel[hidden] { display: none; }
+    .cd-info-dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px 12px;
+      font-size: 13px;
+    }
+    .cd-info-dl dt { color: #8b939f; margin: 0; }
+    .cd-info-dl dd { margin: 0; color: #111418; }
+    .cd-muted { color: #8b939f; font-size: 13px; margin: 0 0 10px; }
+    .cd-doc-links a {
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 8px;
+      color: #1677ff;
+      font-size: 13px;
+    }
+    .cd-table-wrap { overflow-x: auto; border: 1px solid #e8eaef; border-radius: 4px; }
+    table.cd-req {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    table.cd-req th, table.cd-req td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e8eaef;
+      text-align: left;
+    }
+    table.cd-req th { background: #fafbfc; color: #5c6370; font-weight: 600; }
+    table.cd-req tr:last-child td { border-bottom: none; }
+    .cd-tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .cd-tag.exam { background: rgba(22, 119, 255, 0.12); color: #0958d9; }
+    .cd-tag.file { background: rgba(22, 163, 74, 0.12); color: #15803d; }
+    .cd-tag.video { background: rgba(234, 88, 12, 0.12); color: #c2410c; }
+    .cd-lesson-list { margin: 0; padding-left: 18px; font-size: 13px; color: #111418; line-height: 1.7; }
+  </style>
+</head>
+<body class="oa-admin-body">
+  <div class="oa-adm">
+    <header class="oa-adm-topbar">
+      <div class="oa-adm-topbar__left">
+        <button type="button" class="oa-adm-iconbtn" aria-label="展开或收起菜单">☰</button>
+        <span class="oa-adm-env">6Q-测试环境</span>
+      </div>
+      <div class="oa-adm-topbar__search">
+        <div class="oa-adm-search">
+          <span class="oa-adm-search__icon" aria-hidden="true">🔍</span>
+          <input type="search" placeholder="搜索菜单" readonly aria-label="搜索菜单" />
+        </div>
+      </div>
+      <div class="oa-adm-topbar__right">
+        <a class="oa-adm-tool" href="emp-course-detail.html" title="进入员工端（培训学习 · 课程详情示例）">应用端</a>
+        <button type="button" class="oa-adm-tool">全屏</button>
+        <button type="button" class="oa-adm-tool">清除缓存 <span class="oa-caret">▾</span></button>
+        <button type="button" class="oa-adm-tool">简体中文 <span class="oa-caret">▾</span></button>
+        <span class="oa-adm-avatar" aria-hidden="true"></span>
+      </div>
+    </header>
+    <div class="oa-adm-body">
+      <aside class="oa-adm-side" aria-label="管理端导航">
+        <div class="oa-adm-side__brand">EIP管理系统</div>
+        <nav class="oa-adm-nav">
+          <a href="#" class="oa-adm-nav__item">常用菜单 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">设计中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">应用中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">流程中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">集成中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">系统管理 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">用户中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">开发管理中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">考勤配置 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">培训学习 <span class="oa-adm-nav__chev">›</span></a>
+          <div class="oa-adm-nav__sub">
+            <a href="#" class="oa-adm-nav__subitem">课程分类</a>
+            <a href="admin-course-library.html" class="oa-adm-nav__subitem is-active">课程库</a>
+            <a href="admin-learning-progress.html" class="oa-adm-nav__subitem">学习进度</a>
+            <a href="admin-quiz-grading.html" class="oa-adm-nav__subitem">考试详情（示例）</a>
+            <a href="#" class="oa-adm-nav__subitem">全部三级反馈</a>
+          </div>
+        </nav>
+      </aside>
+      <div class="oa-adm-work">
+        <div class="oa-adm-workhead">
+          <div class="oa-adm-crumb">管理端 <span style="color:#d0d5dd">/</span> <strong>培训学习</strong> <span style="color:#d0d5dd">/</span> 课程库</div>
+          <div class="oa-adm-user"><span class="oa-adm-avatar" aria-hidden="true"></span>超级管理员</div>
+        </div>
+        <div class="oa-adm-workbody">
+        <div class="back-link"><a href="index.html">返回原型导航</a></div>
+        <h1 class="page-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          课程库
+          <button type="button" class="page-note-pin" data-note-id="1" aria-label="课程库说明1">1</button>
+        </h1>
+
+        <div class="filter-card">
+          <div class="filter-rows">
+            <div class="filter-row">
+              <div class="field">
+                <label for="q-name">课程名称</label>
+                <input id="q-name" type="text" placeholder="请输入" />
+              </div>
+              <div class="field">
+                <label for="q-id">课程ID</label>
+                <input id="q-id" type="text" placeholder="请输入" />
+              </div>
+              <div class="field">
+                <label for="q-type">课程类型</label>
+                <select id="q-type"><option>全部</option><option>必修</option><option>选修</option></select>
+              </div>
+              <div class="field">
+                <label for="q-status">状态</label>
+                <select id="q-status"><option>全部</option><option>已发布</option><option>草稿</option></select>
+              </div>
+            </div>
+            <div class="filter-row">
+              <div class="field range">
+                <label>创建时间</label>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <input type="date" aria-label="开始日期" />
+                  <span style="color:var(--text-muted)">至</span>
+                  <input type="date" aria-label="结束日期" />
+                </div>
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-primary">搜索</button>
+                <button type="button" class="btn">重置</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-row">
+          <a class="btn-add" href="admin-course-edit.html">+ 新增</a>
+        </div>
+
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="col-name">课程名称</th>
+                  <th>课程ID</th>
+                  <th>课程分类</th>
+                  <th>课程时长</th>
+                  <th>排序值</th>
+                  <th>状态</th>
+                  <th>已学完人数</th>
+                  <th>学习中人数</th>
+                  <th>通关人数</th>
+                  <th>更新人</th>
+                  <th>更新时间</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="col-name">
+                    <a href="#" class="course-link js-open-course-detail"
+                      data-name="信息化008"
+                      data-biz-id="1008600123456008"
+                      data-internal-id="1912401781538521088"
+                      data-updated="2025-04-16 15:04:50"
+                      data-cat="信息化一阶第一节课"
+                      data-status="已发布"
+                      data-desc="这个是课程描述备注"
+                      data-duration="0小时21分"
+                      data-lessons="5节课程，约0小时21分钟"
+                      data-learning="2"
+                      data-done="1"
+                    >信息化008</a>
+                  </td>
+                  <td class="cell-num">1008600123456008</td>
+                  <td>信息化一阶段第一节课</td>
+                  <td class="cell-num">1287</td>
+                  <td class="cell-num">8</td>
+                  <td><span class="status-pub">已发布</span></td>
+                  <td class="cell-num">12</td>
+                  <td class="cell-num">3</td>
+                  <td class="cell-num">
+                    <a class="pass-link" href="admin-learning-progress.html?courseId=1008600123456008&amp;courseName=%E4%BF%A1%E6%81%AF%E5%8C%96008&amp;filterPass=1" title="查看该课程学习进度（已满足全部过关要求）">7</a>
+                  </td>
+                  <td>超级管理员</td>
+                  <td class="cell-num">2026-05-08 10:22:15</td>
+                  <td class="cell-num">2026-04-01 09:00:00</td>
+                  <td>
+                    <a class="op-edit" href="admin-course-edit.html">编辑</a>
+                    <button type="button" class="op-del">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="col-name">
+                    <a href="#" class="course-link js-open-course-detail"
+                      data-name="信息化002"
+                      data-biz-id="1008600123456002"
+                      data-internal-id="1912401781538522002"
+                      data-updated="2026-03-15 11:30:22"
+                      data-cat="信息化一阶段第一节课"
+                      data-status="已发布"
+                      data-desc="—"
+                      data-duration="0小时3分"
+                      data-lessons="3节课程，约0小时3分钟"
+                      data-learning="0"
+                      data-done="45"
+                    >信息化002</a>
+                  </td>
+                  <td class="cell-num">1008600123456002</td>
+                  <td>信息化一阶段第一节课</td>
+                  <td class="cell-num">182</td>
+                  <td class="cell-num">2</td>
+                  <td><span class="status-pub">已发布</span></td>
+                  <td class="cell-num">45</td>
+                  <td class="cell-num">0</td>
+                  <td class="cell-num">
+                    <a class="pass-link" href="admin-learning-progress.html?courseId=1008600123456002&amp;courseName=%E4%BF%A1%E6%81%AF%E5%8C%96002&amp;filterPass=1" title="查看该课程学习进度（已满足全部过关要求）">38</a>
+                  </td>
+                  <td>超级管理员</td>
+                  <td class="cell-num">2026-05-06 14:08:00</td>
+                  <td class="cell-num">2026-03-15 11:30:22</td>
+                  <td>
+                    <a class="op-edit" href="admin-course-edit.html">编辑</a>
+                    <button type="button" class="op-del">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="col-name">
+                    <a href="#" class="course-link js-open-course-detail"
+                      data-name="新员工入职安全与合规培训（2026）"
+                      data-biz-id="1008600123456789"
+                      data-internal-id="1912401781538520999"
+                      data-updated="2026-05-07 16:40:33"
+                      data-cat="合规类"
+                      data-status="已发布"
+                      data-desc="全员必修，含视频学习与结业测验。"
+                      data-duration="1小时0分"
+                      data-lessons="8节课程，约1小时0分钟"
+                      data-learning="15"
+                      data-done="128"
+                    >新员工入职安全与合规培训（2026）</a>
+                  </td>
+                  <td class="cell-num">1008600123456789</td>
+                  <td>合规类</td>
+                  <td class="cell-num">3600</td>
+                  <td class="cell-num">1</td>
+                  <td><span class="status-pub">已发布</span></td>
+                  <td class="cell-num">128</td>
+                  <td class="cell-num">15</td>
+                  <td class="cell-num">
+                    <a class="pass-link" href="admin-learning-progress.html?courseId=1008600123456789&amp;courseName=%E6%96%B0%E5%91%98%E5%B7%A5%E5%85%A5%E8%81%8C%E5%AE%89%E5%85%A8%E4%B8%8E%E5%90%88%E8%A7%84%E5%9F%B9%E8%AE%AD%EF%BC%882026%EF%BC%89&amp;filterPass=1" title="查看该课程学习进度（已满足全部过关要求）">96</a>
+                  </td>
+                  <td>超级管理员</td>
+                  <td class="cell-num">2026-05-07 16:40:33</td>
+                  <td class="cell-num">2026-01-10 08:00:00</td>
+                  <td>
+                    <a class="op-edit" href="admin-course-edit.html">编辑</a>
+                    <button type="button" class="op-del">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager">共 3 条（示意）</div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 课程详情弹窗：对齐现网「详情」，含考核标准 + 过关要求 Tab -->
+  <div id="cd-overlay" class="cd-overlay" role="dialog" aria-modal="true" aria-labelledby="cd-title" aria-hidden="true">
+    <div class="cd-modal">
+      <div class="cd-hd">
+        <h2 id="cd-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0">
+          详情
+          <button type="button" class="page-note-pin" data-note-id="2" aria-label="详情弹窗说明2">2</button>
+        </h2>
+        <button type="button" class="cd-close" id="cd-close" aria-label="关闭">×</button>
+      </div>
+      <div class="cd-body">
+        <div class="cd-summary">
+          <h3 id="cd-sum-name">—</h3>
+          <div class="cd-meta">
+            <span id="cd-sum-internal">—</span>
+            <span id="cd-sum-time">—</span>
+          </div>
+          <div class="cd-stats">
+            <span id="cd-sum-lessons">—</span>
+            <span id="cd-sum-learning">—</span>
+            <span id="cd-sum-done">—</span>
+          </div>
+        </div>
+
+        <div class="cd-tabs" role="tablist" aria-label="课程详情">
+          <button type="button" role="tab" id="cd-tab-info" aria-selected="true" aria-controls="cd-panel-info">课程信息</button>
+          <button type="button" role="tab" id="cd-tab-catalog" aria-selected="false" aria-controls="cd-panel-catalog">课程目录</button>
+          <button type="button" role="tab" id="cd-tab-after" aria-selected="false" aria-controls="cd-panel-after">课后资料</button>
+          <button type="button" role="tab" id="cd-tab-standard" aria-selected="false" aria-controls="cd-panel-standard">考核标准</button>
+          <button type="button" role="tab" id="cd-tab-pass" aria-selected="false" aria-controls="cd-panel-pass">过关要求</button>
+        </div>
+
+        <div id="cd-panel-info" class="cd-panel" role="tabpanel" aria-labelledby="cd-tab-info">
+          <dl class="cd-info-dl">
+            <dt>课程名称</dt>
+            <dd id="cd-info-name">—</dd>
+            <dt>课程分类</dt>
+            <dd id="cd-info-cat">—</dd>
+            <dt>课程状态</dt>
+            <dd id="cd-info-status">—</dd>
+            <dt>课程描述备注</dt>
+            <dd id="cd-info-desc">—</dd>
+            <dt>课程总时长</dt>
+            <dd id="cd-info-duration">—</dd>
+          </dl>
+        </div>
+
+        <div id="cd-panel-catalog" class="cd-panel" role="tabpanel" aria-labelledby="cd-tab-catalog" hidden>
+          <p class="cd-muted">课时列表示意（与员工端目录数据来源一致）。</p>
+          <ul class="cd-lesson-list">
+            <li>第1节 · 概述（约 4 分钟）</li>
+            <li>第2节 · 要点讲解（约 8 分钟）</li>
+            <li>第3节 · 案例分析（约 9 分钟）</li>
+          </ul>
+        </div>
+
+        <div id="cd-panel-after" class="cd-panel" role="tabpanel" aria-labelledby="cd-tab-after" hidden>
+          <p class="cd-muted">课后资料附件列表（占位）。</p>
+        </div>
+
+        <div id="cd-panel-standard" class="cd-panel" role="tabpanel" aria-labelledby="cd-tab-standard" hidden>
+          <p class="cd-muted">由后台维护文档地址；与员工端「考核标准」Tab 一致，点击新窗口打开。</p>
+          <div class="cd-doc-links">
+            <a href="https://example.com/考核标准说明.pdf" target="_blank" rel="noopener noreferrer">查看《考核标准说明》</a>
+            <a href="https://example.com/评分细则.docx" target="_blank" rel="noopener noreferrer">查看《评分细则》</a>
+          </div>
+        </div>
+
+        <div id="cd-panel-pass" class="cd-panel" role="tabpanel" aria-labelledby="cd-tab-pass" hidden>
+          <!-- 课程详情·过关要求：与 admin-course-edit 配置项只读对照；详规见编辑页 HTML/脚本块注释 -->
+          <p class="cd-muted">对应编辑页「过关要求」：类型、说明；<strong>绑定对象</strong>对考试为问卷；<strong>观看/线下签到</strong>若配多条，按行分别展示（仅目录 / 单场会议各一行），与员工端列表一致，便于区分多场线下。</p>
+          <div class="cd-table-wrap">
+            <table class="cd-req">
+              <thead>
+                <tr>
+                  <th>要求类型</th>
+                  <th>要求说明</th>
+                  <th>绑定对象 / 条件</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="cd-tag exam">考试</span></td>
+                  <td>结业测验，考试总分不低于 60 分</td>
+                  <td>结业测验-Q202601（卷王）</td>
+                </tr>
+                <tr>
+                  <td><span class="cd-tag file">物料上传</span></td>
+                  <td>现场培训资料包（同一任务：现场照片、横幅合影、签字回执等多附件）</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><span class="cd-tag video">观看/线下签到</span></td>
+                  <td>本课程目录：完成第 1、2 节（目录考核）</td>
+                  <td>课：新员工入职安全与合规培训（2026）（1008600123456789）· 目录：第1节 · 安全合规导读、第2节 · 数据分级与留存</td>
+                </tr>
+                <tr>
+                  <td><span class="cd-tag video">观看/线下签到</span></td>
+                  <td>线下签到①：参加「合规宣贯会」并完成现场扫码</td>
+                  <td>会议：2026年Q2 合规宣贯会（总部 A 厅 · 需现场签到）· ID meet-202606-A01</td>
+                </tr>
+                <tr>
+                  <td><span class="cd-tag video">观看/线下签到</span></td>
+                  <td>线下签到②：另需参加「安全月启动会」并完成分会场签到</td>
+                  <td>会议：安全月启动会 · 分会场（杭州）· ID meet-202606-B02</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById("cd-overlay");
+      var closeBtn = document.getElementById("cd-close");
+      var tabs = Array.prototype.slice.call(document.querySelectorAll(".cd-tabs [role='tab']"));
+
+      function selectTab(id) {
+        tabs.forEach(function (t) {
+          var on = t.id === id;
+          t.setAttribute("aria-selected", on ? "true" : "false");
+          var panel = document.getElementById(t.getAttribute("aria-controls"));
+          if (panel) panel.hidden = !on;
+        });
+      }
+      tabs.forEach(function (t) {
+        t.addEventListener("click", function () {
+          selectTab(t.id);
+        });
+      });
+
+      function openDetail(btn) {
+        var d = btn.dataset;
+        document.getElementById("cd-sum-name").textContent = d.name || "—";
+        document.getElementById("cd-sum-internal").textContent = d.internalId || "—";
+        document.getElementById("cd-sum-time").textContent = d.updated || "—";
+        document.getElementById("cd-sum-lessons").textContent = d.lessons || "—";
+        document.getElementById("cd-sum-learning").textContent = (d.learning != null ? d.learning : "—") + "人学习中";
+        document.getElementById("cd-sum-done").textContent = (d.done != null ? d.done : "—") + "人已学习";
+
+        document.getElementById("cd-info-name").textContent = d.name || "—";
+        document.getElementById("cd-info-cat").textContent = d.cat || "—";
+        document.getElementById("cd-info-status").textContent = d.status || "—";
+        document.getElementById("cd-info-desc").textContent = d.desc && d.desc !== "—" ? d.desc : "（无）";
+        document.getElementById("cd-info-duration").textContent = d.duration || "—";
+
+        selectTab("cd-tab-info");
+        overlay.classList.add("is-open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+
+      function closeDetail() {
+        overlay.classList.remove("is-open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      document.querySelectorAll(".js-open-course-detail").forEach(function (el) {
+        el.addEventListener("click", function (e) {
+          e.preventDefault();
+          openDetail(el);
+        });
+      });
+      closeBtn.addEventListener("click", closeDetail);
+      overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) closeDetail();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && overlay.classList.contains("is-open")) closeDetail();
+      });
+    })();
+  </script>
+  <script src="js/page-notes.js"></script>
+  <script>
+    window.PAGE_NOTES = {
+      drawerTitle: "课程库 · 列表与详情说明",
+      sections: [
+        {
+          id: "1",
+          title: "列表里各入口做什么",
+          html:
+            '<p class="pn-lead">本页用于<strong>浏览全部课程</strong>并进入后续操作。</p>' +
+            "<ul>" +
+            "<li><strong>课程名称（链接）</strong>：打开本课程的<strong>只读详情</strong>，供核对封面、简介、过关条件等是否已配齐。</li>" +
+            "<li><strong>通关人数</strong>：跳到<strong>学习进度</strong>，并自动聚焦到该课程，便于查看哪些人已全部过关、哪些人还差哪一项。</li>" +
+            "<li><strong>编辑</strong>：进入课程维护页，重点维护过关要求（考试达标线、资料、视频等）；员工端展示的过关说明应与此处一致。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart TD\n' +
+            "  M[点课程名] --> D[课程详情\n只读]\n" +
+            "  T[点通关人数] --> J[学习进度\n按课筛选]\n" +
+            "  B[点编辑] --> W[维护课程与过关]\n" +
+            "</pre></div>"
+        },
+        {
+          id: "2",
+          title: "课程详情弹窗里看什么",
+          html:
+            '<p class="pn-lead">弹窗用于<strong>核对与评审</strong>，不在此处改数据；需要修改时从列表进入<strong>编辑</strong>。</p>' +
+            "<p><strong>过关要求</strong>页签中，考试类应写清<strong>总分达标线</strong>，并与编辑页、员工端一致；物料类可为<strong>同一任务多附件</strong>的说明；「观看/线下签到」若含多场会议，按<strong>多行</strong>只读展示以便核对。</p>" +
+            "<p>其他页签按你们制度展示封面、简介、课时等即可；若版式需与正式系统对齐，以视觉稿为准微调密度与标签。</p>"
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学习进度 · EIP管理系统（原型）</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/oa-shell-admin.css" />
+  <link rel="stylesheet" href="css/page-notes.css" />
+  <style>
+    .filter-card {
+      background: #fff;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px 8px;
+      margin-bottom: 14px;
+    }
+    .filter-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 20px;
+      align-items: flex-end;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .field input, .field select {
+      width: 200px;
+      max-width: 100%;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      border: 1px solid #d0d5dd;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .field.range input { width: 140px; }
+    .filter-actions { display: flex; gap: 10px; padding-bottom: 2px; }
+    .btn {
+      padding: 6px 18px;
+      font-size: 13px;
+      font-family: inherit;
+      border-radius: 4px;
+      border: 1px solid #d0d5dd;
+      background: #fff;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #1677ff;
+      border-color: #1677ff;
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .table-card {
+      background: #fff;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .table-scroll { overflow-x: auto; }
+    table.grid {
+      width: max(100%, 1720px);
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    table.grid th,
+    table.grid td {
+      padding: 10px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e8eaef;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    table.grid th {
+      background: #fafbfc;
+      color: #5c6370;
+      font-weight: 600;
+    }
+    table.grid td { color: #1a1d24; }
+    table.grid tbody tr:hover { background: #f8fafc; }
+    table.grid .col-name {
+      white-space: normal;
+      min-width: 160px;
+      max-width: 240px;
+    }
+    table.grid a.course-link {
+      color: #1677ff;
+      text-decoration: none;
+    }
+    table.grid a.course-link:hover { text-decoration: underline; }
+    .cell-num { font-variant-numeric: tabular-nums; }
+    .col-new { background: linear-gradient(90deg, rgba(59,130,246,.04), transparent); }
+    th.col-new { background: #eff6ff; color: #1e40af; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+    .pill-warn { background: #fff7ed; color: #c2410c; }
+    .pill-ok { background: #ecfdf5; color: #15803d; }
+    .link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #1677ff;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      font-family: inherit;
+    }
+    .link-btn:hover { color: #0958d9; }
+    .pager {
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid #e8eaef;
+    }
+
+    /* 弹层 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 18, 26, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 1000;
+    }
+    .modal-overlay.is-open { display: flex; }
+    .modal {
+      width: min(960px, 100%);
+      max-height: min(88vh, 900px);
+      background: #fff;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+    .modal-hd h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 650;
+    }
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      color: var(--text-secondary);
+    }
+    .modal-close:hover { background: var(--border-default); }
+    .modal-bd {
+      padding: 16px 18px 20px;
+      overflow: auto;
+      flex: 1;
+    }
+    .modal-meta {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 16px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+    }
+    .modal-meta dt { color: var(--text-muted); margin: 0; }
+    .modal-meta dd { margin: 0; font-weight: 500; }
+    .modal-bd h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .modal-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+    }
+    table.detail {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    table.detail th, table.detail td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-default);
+      text-align: left;
+      vertical-align: middle;
+    }
+    table.detail th {
+      background: #fafbfc;
+      color: #5c6370;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    table.detail tr:last-child td { border-bottom: none; }
+    .tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag.exam { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
+    .tag.file { background: rgba(22, 163, 74, 0.12); color: #15803d; }
+    .tag.video { background: rgba(234, 88, 12, 0.12); color: #c2410c; }
+    .ok { color: #15803d; font-weight: 600; }
+    .no { color: #b45309; font-weight: 600; }
+    .t-time { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+    .btn-sm {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: 1px solid #d0d5dd;
+      background: #fff;
+      color: var(--text-primary);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-sm.primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+    .btn-sm.primary:hover { filter: brightness(1.05); }
+    .proto-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .lib-banner {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #0958d9;
+      background: #e6f4ff;
+      border: 1px solid #91caff;
+      border-radius: 6px;
+    }
+    .lib-banner.is-on { display: block; }
+    .mat-files {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 420px;
+    }
+    .mat-files-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-bottom: 4px;
+      margin-bottom: 2px;
+      border-bottom: 1px dashed #e8eaef;
+    }
+    .mat-files-toolbar__hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .btn-mat-dl {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      border-radius: 4px;
+      border: 1px solid #1677ff;
+      background: #fff;
+      color: #1677ff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-mat-dl:hover:not(:disabled) {
+      background: #e6f4ff;
+    }
+    .btn-mat-dl:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+    .mat-file-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 8px 10px;
+      border: 1px solid #e8eaef;
+      border-radius: 6px;
+      background: #fafbfc;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .mat-file-line a {
+      color: #1677ff;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .mat-file-line a:hover {
+      text-decoration: underline;
+    }
+    .mat-file-meta {
+      margin-left: auto;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .mat-file-note {
+      flex: 1 0 100%;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .mat-task-foot {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .mat-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn-mat {
+      padding: 4px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      border-radius: 4px;
+      border: 1px solid #d0d5dd;
+      cursor: pointer;
+      background: #fff;
+      color: var(--text-primary);
+    }
+    .btn-mat:hover { filter: brightness(0.98); }
+    .btn-mat.pass {
+      background: #ecfdf5;
+      border-color: #86efac;
+      color: #15803d;
+      font-weight: 600;
+    }
+    .btn-mat.reject {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #b91c1c;
+      font-weight: 600;
+    }
+    .btn-mat:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .exam-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .exam-actions .btn-sm {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      border: 1px solid #d0d5dd;
+      background: #fff;
+      color: var(--text-primary);
+    }
+    .exam-actions .btn-sm.primary {
+      background: var(--accent, #2563eb);
+      border-color: var(--accent, #2563eb);
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="oa-admin-body">
+  <div class="oa-adm">
+    <header class="oa-adm-topbar">
+      <div class="oa-adm-topbar__left">
+        <button type="button" class="oa-adm-iconbtn" aria-label="展开或收起菜单">☰</button>
+        <span class="oa-adm-env">6Q-测试环境</span>
+      </div>
+      <div class="oa-adm-topbar__search">
+        <div class="oa-adm-search">
+          <span class="oa-adm-search__icon" aria-hidden="true">🔍</span>
+          <input type="search" placeholder="搜索菜单" readonly aria-label="搜索菜单" />
+        </div>
+      </div>
+      <div class="oa-adm-topbar__right">
+        <a class="oa-adm-tool" href="emp-course-detail.html" title="进入员工端（培训学习 · 课程详情示例）">应用端</a>
+        <button type="button" class="oa-adm-tool">全屏</button>
+        <button type="button" class="oa-adm-tool">清除缓存 <span class="oa-caret">▾</span></button>
+        <button type="button" class="oa-adm-tool">简体中文 <span class="oa-caret">▾</span></button>
+        <span class="oa-adm-avatar" aria-hidden="true"></span>
+      </div>
+    </header>
+    <div class="oa-adm-body">
+      <aside class="oa-adm-side" aria-label="管理端导航">
+        <div class="oa-adm-side__brand">EIP管理系统</div>
+        <nav class="oa-adm-nav">
+          <a href="#" class="oa-adm-nav__item">常用菜单 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">设计中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">应用中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">流程中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">集成中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">系统管理 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">用户中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">开发管理中心 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">考勤配置 <span class="oa-adm-nav__chev">›</span></a>
+          <a href="#" class="oa-adm-nav__item">培训学习 <span class="oa-adm-nav__chev">›</span></a>
+          <div class="oa-adm-nav__sub">
+            <a href="#" class="oa-adm-nav__subitem">课程分类</a>
+            <a href="admin-course-library.html" class="oa-adm-nav__subitem">课程库</a>
+            <a href="admin-learning-progress.html" class="oa-adm-nav__subitem is-active">学习进度</a>
+            <a href="admin-quiz-grading.html" class="oa-adm-nav__subitem">考试详情（示例）</a>
+            <a href="#" class="oa-adm-nav__subitem">全部三级反馈</a>
+          </div>
+        </nav>
+      </aside>
+      <div class="oa-adm-work">
+        <div class="oa-adm-workhead">
+          <div class="oa-adm-crumb">管理端 <span style="color:#d0d5dd">/</span> <strong>培训学习</strong> <span style="color:#d0d5dd">/</span> 学习进度</div>
+          <div class="oa-adm-user"><span class="oa-adm-avatar" aria-hidden="true"></span>管理员</div>
+        </div>
+        <div class="oa-adm-workbody">
+        <div class="back-link"><a href="index.html">返回原型导航</a></div>
+        <h1 class="page-title">
+          <span class="with-page-note">
+            <span>学习进度</span>
+            <button type="button" class="page-note-pin" data-note-id="1" aria-label="本页说明 1">1</button>
+          </span>
+        </h1>
+        <div id="lib-filter-banner" class="lib-banner" role="status" aria-live="polite"></div>
+
+        <div class="filter-card">
+          <div class="filter-rows">
+            <div class="filter-row">
+              <div class="field">
+                <label for="q-name">课程名称</label>
+                <input id="q-name" type="text" placeholder="请输入" />
+              </div>
+              <div class="field">
+                <label for="q-id">课程ID</label>
+                <input id="q-id" type="text" placeholder="请输入" />
+              </div>
+              <div class="field">
+                <label for="q-type">课程类型</label>
+                <select id="q-type"><option>全部</option><option>必修</option><option>选修</option></select>
+              </div>
+              <div class="field">
+                <label for="q-state">学习状态</label>
+                <select id="q-state"><option>全部</option><option>学习中</option><option>已学完</option></select>
+              </div>
+              <div class="field">
+                <label for="q-exam">考试结果</label>
+                <select id="q-exam">
+                  <option value="">全部</option>
+                  <option value="pass">通过</option>
+                  <option value="fail">未通过</option>
+                  <option value="pending">待评</option>
+                  <option value="none">无记录</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-row">
+              <div class="field range">
+                <label>创建时间</label>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <input type="date" aria-label="开始日期" />
+                  <span style="color:var(--text-muted)">至</span>
+                  <input type="date" aria-label="结束日期" />
+                </div>
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-primary" id="btn-lp-search">搜索</button>
+                <button type="button" class="btn" id="btn-lp-reset">重置</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;flex-wrap:wrap;gap:8px">
+          <span style="font-size:14px;font-weight:600;color:#374151">列表与成绩字段</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+            <button type="button" class="btn btn-primary" id="btn-lp-export" title="导出全部学员在当前列表课程下的物料提交明细（不受上方筛选隐藏行影响；对接后由接口返回每人真实附件）">导出物料提交（全量员工）</button>
+            <button type="button" class="page-note-pin" data-note-id="2" aria-label="列表说明 2">2</button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="col-name">课程名称</th>
+                  <th>课程ID</th>
+                  <th>姓名</th>
+                  <th>状态</th>
+                  <th>工号</th>
+                  <th>所属组织</th>
+                  <th>学习状态</th>
+                  <th>课程学习进度</th>
+                  <th>学习开始时间</th>
+                  <th>学习完成时间</th>
+                  <th>有效学习时长</th>
+                  <th>考试结果</th>
+                  <th>考试分数</th>
+                  <th class="col-new">过关进度</th>
+                  <th class="col-new">过关状态<br />更新时间</th>
+                  <th class="col-new">操作</th>
+                </tr>
+              </thead>
+              <tbody id="lp-tbody">
+                <tr data-course-id="1008600123456789" data-pass-complete="0" data-exam-result="pending">
+                  <td class="col-name"><a class="course-link" href="#">新员工入职安全与合规培训（2026）</a></td>
+                  <td class="cell-num">1008600123456789</td>
+                  <td>徐小飞</td>
+                  <td>正式</td>
+                  <td class="cell-num">262</td>
+                  <td>技术部</td>
+                  <td>学习中</td>
+                  <td class="cell-num">13.11%</td>
+                  <td class="cell-num">2026-05-01 09:00:00</td>
+                  <td class="cell-num">—</td>
+                  <td class="cell-num">05分48秒</td>
+                  <td>待评</td>
+                  <td class="cell-num">—</td>
+                  <td class="col-new"><span class="pill pill-warn">3 / 5</span></td>
+                  <td class="col-new t-time">2026-05-08 16:40</td>
+                  <td class="col-new">
+                    <button type="button" class="link-btn js-open-detail" data-user="徐小飞" data-course="新员工入职安全与合规培训（2026）" data-progress="3/5">查看</button>
+                  </td>
+                </tr>
+                <tr data-course-id="1008600987654321" data-pass-complete="1" data-exam-result="pass">
+                  <td class="col-name"><a class="course-link" href="#">数据安全与隐私保护</a></td>
+                  <td class="cell-num">1008600987654321</td>
+                  <td>任杰杰</td>
+                  <td>正式</td>
+                  <td class="cell-num">101</td>
+                  <td>技术部</td>
+                  <td>已学完</td>
+                  <td class="cell-num">100.00%</td>
+                  <td class="cell-num">2026-04-20 10:12:33</td>
+                  <td class="cell-num">2026-05-06 18:05:00</td>
+                  <td class="cell-num">42分10秒</td>
+                  <td>通过</td>
+                  <td class="cell-num">74 / 85</td>
+                  <td class="col-new"><span class="pill pill-ok">5 / 5</span></td>
+                  <td class="col-new t-time">2026-05-06 18:05</td>
+                  <td class="col-new">
+                    <button type="button" class="link-btn js-open-detail" data-user="任杰杰" data-course="数据安全与隐私保护" data-progress="5/5">查看</button>
+                  </td>
+                </tr>
+                <tr data-course-id="1008600555011223" data-pass-complete="0" data-exam-result="fail">
+                  <td class="col-name"><a class="course-link" href="#">办公系统使用指南</a></td>
+                  <td class="cell-num">1008600555011223</td>
+                  <td>周敏</td>
+                  <td>已离职</td>
+                  <td class="cell-num">088</td>
+                  <td>行政部</td>
+                  <td>学习中</td>
+                  <td class="cell-num">60.00%</td>
+                  <td class="cell-num">2026-05-07 14:22:01</td>
+                  <td class="cell-num">—</td>
+                  <td class="cell-num">12分03秒</td>
+                  <td>未通过</td>
+                  <td class="cell-num">48 / 85</td>
+                  <td class="col-new"><span class="pill pill-warn">1 / 4</span></td>
+                  <td class="col-new t-time">2026-05-07 15:30</td>
+                  <td class="col-new">
+                    <button type="button" class="link-btn js-open-detail" data-user="周敏" data-course="办公系统使用指南" data-progress="1/4">查看</button>
+                  </td>
+                </tr>
+                <tr data-course-id="1008600123456008" data-pass-complete="1" data-exam-result="none">
+                  <td class="col-name"><a class="course-link" href="#">信息化008</a></td>
+                  <td class="cell-num">1008600123456008</td>
+                  <td>赵六</td>
+                  <td>正式</td>
+                  <td class="cell-num">305</td>
+                  <td>技术部</td>
+                  <td>已学完</td>
+                  <td class="cell-num">100.00%</td>
+                  <td class="cell-num">2026-04-28 08:00:00</td>
+                  <td class="cell-num">2026-05-05 12:00:00</td>
+                  <td class="cell-num">18分20秒</td>
+                  <td>—</td>
+                  <td class="cell-num">—</td>
+                  <td class="col-new"><span class="pill pill-ok">5 / 5</span></td>
+                  <td class="col-new t-time">2026-05-05 12:00</td>
+                  <td class="col-new">
+                    <button type="button" class="link-btn js-open-detail" data-user="赵六" data-course="信息化008" data-progress="5/5">查看</button>
+                  </td>
+                </tr>
+                <tr data-course-id="1008600123456002" data-pass-complete="1" data-exam-result="none">
+                  <td class="col-name"><a class="course-link" href="#">信息化002</a></td>
+                  <td class="cell-num">1008600123456002</td>
+                  <td>钱七</td>
+                  <td>正式</td>
+                  <td class="cell-num">306</td>
+                  <td>技术部</td>
+                  <td>已学完</td>
+                  <td class="cell-num">100.00%</td>
+                  <td class="cell-num">2026-04-10 09:15:00</td>
+                  <td class="cell-num">2026-04-22 17:30:00</td>
+                  <td class="cell-num">25分01秒</td>
+                  <td>—</td>
+                  <td class="cell-num">—</td>
+                  <td class="col-new"><span class="pill pill-ok">5 / 5</span></td>
+                  <td class="col-new t-time">2026-04-22 17:30</td>
+                  <td class="col-new">
+                    <button type="button" class="link-btn js-open-detail" data-user="钱七" data-course="信息化002" data-progress="5/5">查看</button>
+                  </td>
+                </tr>
+                <tr data-course-id="1008600123456789" data-pass-complete="1" data-exam-result="none">
+                  <td class="col-name"><a class="course-link" href="#">新员工入职安全与合规培训（2026）</a></td>
+                  <td class="cell-num">1008600123456789</td>
+                  <td>孙八</td>
+                  <td>正式</td>
+                  <td class="cell-num">401</td>
+                  <td>人力资源部</td>
+                  <td>已学完</td>
+                  <td class="cell-num">100.00%</td>
+                  <td class="cell-num">2026-03-01 10:00:00</td>
+                  <td class="cell-num">2026-04-28 11:20:00</td>
+                  <td class="cell-num">55分00秒</td>
+                  <td>—</td>
+                  <td class="cell-num">—</td>
+                  <td class="col-new"><span class="pill pill-ok">5 / 5</span></td>
+                  <td class="col-new t-time">2026-04-28 11:20</td>
+                  <td class="col-new">
+                    <button type="button" class="link-btn js-open-detail" data-user="孙八" data-course="新员工入职安全与合规培训（2026）" data-progress="5/5">查看</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="lp-pager" class="pager">共 6 条（示意分页区域，可与现网对齐）</div>
+        </div>
+
+        <p class="proto-note">
+          列表「考试分数」为<strong>单场考试总分 / 满分</strong>示意；筛选区<strong>考试结果</strong>（通过 / 未通过 / 待评 / 无记录）。弹层内考试：卷面达标记为<strong>满足</strong>时可点<strong>否决</strong>改为不满足，不满足时可点<strong>通过</strong>覆盖为满足（演示键 <code>oa_train_exam_override</code>）；<strong>物料上传</strong>仍用 <code>oa_train_mat_audit</code> · <code>materials</code>。<strong>观看/线下签到</strong>在编辑页配置「目录」或「会议」或分支，本弹层仅展示聚合结果文案。<strong>列表外「导出物料提交（全量员工）」</strong>按学员×课程导出物料字段（原型中附件清单为示意；现网应对接「全员物料包」接口，与过关详情中附件一致）。
+        </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 过关要求详情弹层 -->
+  <div id="detail-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-hd">
+        <h2 id="modal-title">过关要求详情</h2>
+        <button type="button" class="modal-close" id="modal-close" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-bd">
+        <dl class="modal-meta">
+          <dt>员工</dt>
+          <dd id="m-user">—</dd>
+          <dt>课程</dt>
+          <dd id="m-course">—</dd>
+          <dt>过关进度</dt>
+          <dd id="m-progress">—</dd>
+        </dl>
+        <h3 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;font-size:14px;font-weight:600;color:var(--text-secondary)">
+          要求明细
+          <button type="button" class="page-note-pin" data-note-id="3" aria-label="弹层说明 3">3</button>
+        </h3>
+        <!--
+          弹层「要求明细」与 admin-requirement-detail、课程编辑页过关要求字段语义对齐。
+          「观看/线下签到」：后台可配 ①目录视频 或 ②会议线下扫码签到（或分支，满足其一）；目录分支下再分本课/其他课（见 admin-course-edit 注释）。
+        -->
+        <div class="modal-table-wrap">
+          <table class="detail">
+            <thead>
+              <tr>
+                <th>要求类型</th>
+                <th>要求说明</th>
+                <th>是否满足</th>
+                <th>满足情况</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="js-exam-row" data-exam-slot="final">
+                <td><span class="tag exam">考试</span></td>
+                <td>结业测验，总分不低于 60 分（课程库配置）</td>
+                <td class="js-exam-sat"><span class="no">未满足</span></td>
+                <td class="js-exam-detail">—</td>
+                <td class="t-time">2026-05-08 14:22</td>
+                <td class="js-exam-op">—</td>
+              </tr>
+              <tr class="js-modal-mat" data-mat-key="materials">
+                <td><span class="tag file">物料上传</span></td>
+                <td>现场培训资料包（同一任务：现场照片、横幅合影、签字回执等多附件）</td>
+                <td class="js-mat-sat"><span class="no">未满足</span></td>
+                <td class="js-mat-detail">—</td>
+                <td class="t-time js-mat-time">2026-05-08 11:05</td>
+                <td class="js-mat-op">
+                  <div class="mat-actions">
+                    <button type="button" class="btn-mat pass js-mat-pass" data-mat-key="materials">通过</button>
+                    <button type="button" class="btn-mat reject js-mat-reject" data-mat-key="materials">不通过</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- 本行类型名与编辑课程页 option 文案一致；满足情况可为目录进度或会议签到回写 -->
+              <tr>
+                <td><span class="tag video">观看/线下签到</span></td>
+                <td>目录视频或会议签到（满足其一）</td>
+                <td><span class="ok">已满足</span></td>
+                <td>目录 3/3 节已学完</td>
+                <td class="t-time">2026-05-08 16:40</td>
+                <td>—</td>
+              </tr>
+              <tr class="js-exam-row" data-exam-slot="mock">
+                <td><span class="tag exam">考试</span></td>
+                <td>情景模拟加试，总分不低于 60 分</td>
+                <td class="js-exam-sat"><span class="ok">已满足</span></td>
+                <td class="js-exam-detail">—</td>
+                <td class="t-time">2026-05-06 14:32</td>
+                <td class="js-exam-op">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mat-batch-download.js"></script>
+  <script src="js/exam-proto.js"></script>
+  <script>
+    (function () {
+      var overlay = document.getElementById("detail-overlay");
+      var closeBtn = document.getElementById("modal-close");
+      var titleEl = document.getElementById("modal-title");
+      var userEl = document.getElementById("m-user");
+      var courseEl = document.getElementById("m-course");
+      var progEl = document.getElementById("m-progress");
+
+      function openModal(user, course, progress) {
+        titleEl.textContent = "过关要求详情";
+        userEl.textContent = user;
+        courseEl.textContent = course;
+        var p = (progress || "").split("/");
+        progEl.textContent =
+          p.length === 2
+            ? "已满足 " + p[0].trim() + " / " + p[1].trim() + " 项过关要求（示意）"
+            : progress || "—";
+        overlay.classList.add("is-open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+      function closeModal() {
+        overlay.classList.remove("is-open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      document.querySelectorAll(".js-open-detail").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          openModal(
+            btn.getAttribute("data-user") || "—",
+            btn.getAttribute("data-course") || "—",
+            btn.getAttribute("data-progress") || "—"
+          );
+        });
+      });
+      closeBtn.addEventListener("click", closeModal);
+      overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) closeModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && overlay.classList.contains("is-open")) closeModal();
+      });
+    })();
+
+    (function () {
+      var MAT_LS = "oa_train_mat_audit";
+
+      function readUrlFilter() {
+        var params = new URLSearchParams(window.location.search);
+        return {
+          courseId: (params.get("courseId") || "").trim(),
+          courseName: params.get("courseName") || "",
+          filterPass: params.get("filterPass") === "1"
+        };
+      }
+
+      function fillLibBanner(u) {
+        if (!u.courseId && !u.courseName) return;
+        var nameEl = document.getElementById("q-name");
+        var idEl = document.getElementById("q-id");
+        if (u.courseName && nameEl) {
+          try {
+            nameEl.value = decodeURIComponent(u.courseName);
+          } catch (e) {
+            nameEl.value = u.courseName;
+          }
+        }
+        if (u.courseId && idEl) idEl.value = u.courseId;
+        var banner = document.getElementById("lib-filter-banner");
+        if (banner) {
+          var cn = u.courseName;
+          if (cn) {
+            try {
+              cn = decodeURIComponent(u.courseName);
+            } catch (e2) {}
+          }
+          var parts = ["已从<strong>课程库 · 通关人数</strong>带入筛选"];
+          if (u.courseId) parts.push("课程ID：<strong>" + u.courseId + "</strong>");
+          if (cn) parts.push("课程名称：<strong>" + cn + "</strong>");
+          if (u.filterPass) parts.push("仅展示<strong>已全部满足过关要求</strong>的学员");
+          banner.innerHTML = parts.join("，") + "。";
+          banner.classList.add("is-on");
+        }
+      }
+
+      function rowMatchesUrl(tr, u) {
+        if (u.courseId && tr.getAttribute("data-course-id") !== u.courseId) return false;
+        if (u.courseName && !u.courseId) {
+          var cell = tr.querySelector(".col-name");
+          var txt = cell ? cell.textContent.trim() : "";
+          var want = u.courseName;
+          try {
+            want = decodeURIComponent(u.courseName);
+          } catch (e3) {}
+          if (txt.indexOf(want) === -1) return false;
+        }
+        if (u.filterPass && tr.getAttribute("data-pass-complete") !== "1") return false;
+        return true;
+      }
+
+      function applyTableFilters() {
+        var u = readUrlFilter();
+        if (u.courseId || u.courseName) fillLibBanner(u);
+
+        var examSel = document.getElementById("q-exam");
+        var examVal = examSel ? examSel.value : "";
+        var tbody = document.getElementById("lp-tbody");
+        if (!tbody) return;
+        var rows = tbody.querySelectorAll("tr[data-course-id]");
+        var n = 0;
+        var hasUrl = !!(u.courseId || u.courseName);
+
+        rows.forEach(function (tr) {
+          var show = true;
+          if (hasUrl && !rowMatchesUrl(tr, u)) show = false;
+          if (show && examVal) {
+            if (tr.getAttribute("data-exam-result") !== examVal) show = false;
+          }
+          tr.style.display = show ? "" : "none";
+          if (show) n += 1;
+        });
+
+        var pager = document.getElementById("lp-pager");
+        if (pager) {
+          pager.textContent =
+            "共 " +
+            n +
+            " 条（" +
+            (hasUrl ? "含课程库带入条件；" : "") +
+            "「搜索」按筛选区条件过滤；「重置」清空并回到完整列表）";
+        }
+      }
+
+      function defaultMatAudit() {
+        return { materials: "pending" };
+      }
+
+      function matFilesBlockHtml() {
+        return window.oaBuildMatFilesHtml([
+          '<div class="mat-file-line"><a href="#">IMG_20260508_现场.jpg</a><span class="mat-file-meta">2.1 MB</span><span class="mat-file-note">含工牌与培训现场</span></div>',
+          '<div class="mat-file-line"><a href="#">培训横幅合影_20260508.pdf</a><span class="mat-file-meta">0.8 MB</span></div>',
+          '<div class="mat-file-line"><a href="#">回执_张三.pdf</a><span class="mat-file-meta">0.3 MB</span><span class="mat-file-note">签字版扫描件</span></div>'
+        ]);
+      }
+
+      function readMatAudit() {
+        try {
+          var s = localStorage.getItem(MAT_LS);
+          if (!s) return defaultMatAudit();
+          var o = JSON.parse(s);
+          var base = defaultMatAudit();
+          if (o.materials) return Object.assign(base, o);
+          if (o.photo || o.receipt) {
+            var p = o.photo || "pending";
+            var r = o.receipt || "pending";
+            o.materials =
+              p === "reject" || r === "reject"
+                ? "reject"
+                : p === "pass" && r === "pass"
+                  ? "pass"
+                  : "pending";
+          }
+          if (!o.materials) o.materials = "pending";
+          return Object.assign(base, o);
+        } catch (e) {
+          return defaultMatAudit();
+        }
+      }
+
+      function writeMatAudit(obj) {
+        var clean = { materials: obj.materials || "pending" };
+        localStorage.setItem(MAT_LS, JSON.stringify(clean));
+        try {
+          window.dispatchEvent(new CustomEvent("oa-mat-audit-changed"));
+        } catch (e2) {}
+      }
+
+      function renderMatModalRows() {
+        var m = readMatAudit();
+        document.querySelectorAll("#detail-overlay tr.js-modal-mat").forEach(function (tr) {
+          var key = tr.getAttribute("data-mat-key");
+          var st = m[key] || "pending";
+          var sat = tr.querySelector(".js-mat-sat");
+          var det = tr.querySelector(".js-mat-detail");
+          var op = tr.querySelector(".js-mat-op");
+          if (!sat || !det || !op) return;
+
+          if (key === "materials") {
+            var files = matFilesBlockHtml();
+            if (st === "pass") {
+              sat.innerHTML = '<span class="ok">已满足</span>';
+              det.innerHTML =
+                files +
+                '<div class="mat-task-foot"><span class="ok" style="font-weight:600">本任务审核：已通过</span>（以上附件一并生效）</div>';
+              op.innerHTML = '<span class="t-time" style="color:var(--text-muted)">已处理</span>';
+            } else if (st === "reject") {
+              sat.innerHTML = '<span class="no">未满足</span>';
+              det.innerHTML =
+                files +
+                '<div class="mat-task-foot"><span class="no" style="font-weight:600">本任务审核：不通过</span>，请按说明补充或替换后重新提交</div>';
+              op.innerHTML =
+                '<div class="mat-actions"><button type="button" class="btn-mat pass js-mat-pass" data-mat-key="materials">通过</button><button type="button" class="btn-mat reject js-mat-reject" data-mat-key="materials">不通过</button></div>';
+            } else {
+              sat.innerHTML = '<span class="no">未满足</span>';
+              det.innerHTML =
+                files +
+                '<div class="mat-task-foot" style="color:var(--text-muted)">已提交 <strong>3</strong> 个附件，待管理员对本任务<strong>统一审核</strong></div>';
+              op.innerHTML =
+                '<div class="mat-actions"><button type="button" class="btn-mat pass js-mat-pass" data-mat-key="materials">通过</button><button type="button" class="btn-mat reject js-mat-reject" data-mat-key="materials">不通过</button></div>';
+            }
+          }
+        });
+      }
+
+      var overlay = document.getElementById("detail-overlay");
+      if (overlay) {
+        overlay.addEventListener("click", function (e) {
+          var passBtn = e.target.closest(".js-mat-pass");
+          var rejBtn = e.target.closest(".js-mat-reject");
+          if (!passBtn && !rejBtn) return;
+          var key = (passBtn || rejBtn).getAttribute("data-mat-key");
+          if (!key) return;
+          var next = passBtn ? "pass" : "reject";
+          var m = readMatAudit();
+          m[key] = next;
+          writeMatAudit(m);
+          renderMatModalRows();
+        });
+      }
+
+      window.addEventListener("oa-mat-audit-changed", renderMatModalRows);
+      window.addEventListener("storage", function (e) {
+        if (e.key === MAT_LS) renderMatModalRows();
+      });
+
+      document.querySelectorAll(".js-open-detail").forEach(function (btn) {
+        btn.addEventListener(
+          "click",
+          function () {
+            setTimeout(renderMatModalRows, 0);
+          },
+          true
+        );
+      });
+
+      applyTableFilters();
+
+      var searchBtn = document.getElementById("btn-lp-search");
+      if (searchBtn) {
+        searchBtn.addEventListener("click", function () {
+          applyTableFilters();
+        });
+      }
+
+      var resetBtn = document.getElementById("btn-lp-reset");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          window.location.href = "admin-learning-progress.html";
+        });
+      }
+
+      function escapeCsvCell(val) {
+        var s = String(val == null ? "" : val).replace(/\r\n|\r|\n/g, " ").replace(/\s+/g, " ").trim();
+        if (/[",]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+
+      function matExportAuditLabel() {
+        try {
+          var s = localStorage.getItem(MAT_LS);
+          if (!s) return "待审核";
+          var o = JSON.parse(s);
+          var m = o.materials || "pending";
+          if (m === "pass") return "已通过";
+          if (m === "reject") return "不通过";
+          return "待审核";
+        } catch (e) {
+          return "待审核";
+        }
+      }
+
+      var MAT_EXPORT_TASK =
+        "现场培训资料包（同一任务：现场照片、横幅合影、签字回执等多附件）";
+      var MAT_EXPORT_FILES =
+        "IMG_20260508_现场.jpg；培训横幅合影_20260508.pdf；回执_学员提交.pdf";
+
+      var exportBtn = document.getElementById("btn-lp-export");
+      if (exportBtn) {
+        exportBtn.addEventListener("click", function () {
+          var tbody = document.getElementById("lp-tbody");
+          if (!tbody) return;
+          var headers = [
+            "工号",
+            "姓名",
+            "员工状态",
+            "所属组织",
+            "课程ID",
+            "课程名称",
+            "过关进度",
+            "物料任务说明",
+            "附件数量",
+            "附件名称清单",
+            "物料审核状态",
+            "过关状态更新时间"
+          ];
+          var lines = [headers.map(escapeCsvCell).join(",")];
+          var auditLabel = matExportAuditLabel();
+          tbody.querySelectorAll("tr[data-course-id]").forEach(function (tr) {
+            var tds = tr.querySelectorAll("td");
+            function tdText(i) {
+              var el = tds[i];
+              return el ? el.innerText.replace(/\s+/g, " ").trim() : "";
+            }
+            var row = [
+              tdText(4),
+              tdText(2),
+              tdText(3),
+              tdText(5),
+              tdText(1),
+              tdText(0),
+              tdText(13),
+              MAT_EXPORT_TASK,
+              "3",
+              MAT_EXPORT_FILES,
+              auditLabel,
+              tdText(14)
+            ];
+            lines.push(row.map(escapeCsvCell).join(","));
+          });
+          var bom = "\uFEFF";
+          var blob = new Blob([bom + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          a.download = "物料提交_全量员工_" + new Date().toISOString().slice(0, 10) + ".csv";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      renderMatModalRows();
+    })();
+
+    (function () {
+      var EXAM_META = {
+        final: { total: 38, max: 85, pass: 60, complete: false },
+        mock: { total: 82, max: 95, pass: 60, complete: true }
+      };
+
+      function detailHtml(meta) {
+        if (!meta.complete) {
+          return (
+            "考试总分 <span class=\"cell-num\">" +
+            meta.total +
+            "</span> / " +
+            meta.max +
+            " <span style=\"color:var(--text-muted);font-size:12px\">（成绩尚未最终确认）</span>"
+          );
+        }
+        var okLine = meta.total >= meta.pass ? " · 卷面已达标" : " · 卷面未达标";
+        return (
+          "考试总分 <strong>" +
+          meta.total +
+          "</strong> / " +
+          meta.max +
+          "（达标线 " +
+          meta.pass +
+          "）" +
+          okLine
+        );
+      }
+
+      function examOpHtml(slot, meta, sat) {
+        var base = "admin-quiz-grading.html?exam=" + encodeURIComponent(slot);
+        var parts = [
+          "<a class=\"btn-sm\" href=\"" +
+            base +
+            "\" target=\"_blank\" rel=\"noopener noreferrer\">查看考试内容</a>"
+        ];
+        if (!meta.complete) {
+          parts.push(
+            "<a class=\"btn-sm primary\" href=\"" +
+              base +
+              "\" target=\"_blank\" rel=\"noopener noreferrer\">考试详情</a>"
+          );
+        }
+        if (sat) {
+          parts.push(
+            "<button type=\"button\" class=\"btn-mat reject js-exam-veto\" data-exam-slot=\"" +
+              slot +
+              "\">否决</button>"
+          );
+        } else {
+          parts.push(
+            "<button type=\"button\" class=\"btn-mat pass js-exam-pass\" data-exam-slot=\"" +
+              slot +
+              "\">通过</button>"
+          );
+        }
+        return '<div class="exam-actions">' + parts.join("") + "</div>";
+      }
+
+      function renderExamModalRows() {
+        if (!window.OaExamProto) return;
+        document.querySelectorAll("#detail-overlay tr.js-exam-row").forEach(function (tr) {
+          var slot = tr.getAttribute("data-exam-slot");
+          var meta = EXAM_META[slot];
+          if (!meta) return;
+          var satCell = tr.querySelector(".js-exam-sat");
+          var detCell = tr.querySelector(".js-exam-detail");
+          var opCell = tr.querySelector(".js-exam-op");
+          if (!satCell || !detCell || !opCell) return;
+          var sat = OaExamProto.satisfied(slot, meta);
+          satCell.innerHTML = sat ? '<span class="ok">已满足</span>' : '<span class="no">未满足</span>';
+          detCell.innerHTML = detailHtml(meta);
+          opCell.innerHTML = examOpHtml(slot, meta, sat);
+        });
+      }
+
+      var overlayExam = document.getElementById("detail-overlay");
+      if (overlayExam) {
+        overlayExam.addEventListener("click", function (e) {
+          var v = e.target.closest(".js-exam-veto");
+          var p = e.target.closest(".js-exam-pass");
+          if (!v && !p) return;
+          if (!window.OaExamProto) return;
+          var slot = (v || p).getAttribute("data-exam-slot");
+          if (!slot) return;
+          if (v) OaExamProto.set(slot, "must_fail");
+          else {
+            var cur = OaExamProto.get(slot);
+            if (cur === "must_fail") OaExamProto.set(slot, "none");
+            else OaExamProto.set(slot, "must_pass");
+          }
+          renderExamModalRows();
+        });
+      }
+
+      window.addEventListener("oa-exam-override-changed", renderExamModalRows);
+      window.addEventListener("storage", function (e) {
+        if (e.key === "oa_train_exam_override") renderExamModalRows();
+      });
+
+      document.querySelectorAll(".js-open-detail").forEach(function (btn) {
+        btn.addEventListener(
+          "click",
+          function () {
+            setTimeout(renderExamModalRows, 0);
+          },
+          true
+        );
+      });
+
+      renderExamModalRows();
+    })();
+  </script>
+  <script src="js/page-notes.js"></script>
+  <script>
+    window.PAGE_NOTES = {
+      drawerTitle: "学习进度 · 功能与流程说明",
+      sections: [
+        {
+          id: "1",
+          title: "本页解决的管理问题",
+          html:
+            '<p class="pn-lead">帮助培训管理员<strong>一眼掌握</strong>：谁在学哪门课、考试是否通过、过关还差哪些条件。</p>' +
+            "<ul>" +
+            "<li>可按课程名称、课程类型、学习状态等缩小范围。</li>" +
+            "<li><strong>考试结果</strong>用于筛出「已通过 / 未通过 / 尚待人工阅卷 / 尚未产生考试记录」的学员，便于催办或复核。</li>" +
+            "<li>从<strong>课程库 · 通关人数</strong>进入时，本页会带上对应课程，方便直接看该课全部或已过关学员名单。</li>" +
+            "<li>点<strong>搜索</strong>应用筛选；<strong>重置</strong>清空条件回到完整列表。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart TD\n' +
+            "  K[课程库关心\n多少人通关] --> L[本页按课查看学员]\n" +
+            "  L --> S[筛选与搜索]\n" +
+            "  S --> M[定位到具体学员]\n" +
+            "</pre></div>"
+        },
+        {
+          id: "2",
+          title: "列表里的成绩与过关信息怎么看",
+          html:
+            '<p class="pn-lead">列表用<strong>单场考试总分 / 满分</strong>概括成绩；是否通过结合达标线与阅卷完成状态。</p>' +
+            '<div class="pn-list-fields">' +
+            '<p class="pn-list-fields__title">列表字段说明 v1.0.0</p>' +
+            '<table class="pn-list-fields__table">' +
+            "<thead><tr><th>元素名称</th><th>数据类型</th><th>说明</th></tr></thead>" +
+            "<tbody>" +
+            '<tr class="pn-lf-group"><td colspan="3">列表信息</td></tr>' +
+            "<tr><td>所属组织</td><td>文本</td><td>学员当前所在单位，与人事或组织调整保持一致，列表中应展示最新组织。</td></tr>" +
+            "<tr><td>学习状态</td><td>枚举</td><td>" +
+            "<strong>1.</strong> 已学完：课程视频等学习进度达到制度约定完成度（如观看到 100%，即有效学习时长达到课程要求）。<br/>" +
+            "<strong>2.</strong> 未学完：尚未达到上述完成度。</td></tr>" +
+            "<tr><td>有效学习时长</td><td>时长</td><td>记录学员有效收听、观看的累计时长；不含快进、拖拽等不计入考核的播放方式（具体口径以制度为准）。</td></tr>" +
+            "<tr><td>学习开始时间 / 学习完成时间</td><td>日期时间</td><td>统一按「年-月-日 时:分:秒」形式展示；未完成时完成时间可为空或显示「—」。</td></tr>" +
+            "<tr><td>考试分数</td><td>数值</td><td>本场考试总分相对满分；与课程达标线比较后归入考试结果（通过 / 未通过 / 待评等）。</td></tr>" +
+            "<tr><td>过关进度</td><td>文本</td><td>本课过关条件中已完成项数与总项数的概括，便于扫一眼还差几项。</td></tr>" +
+            "<tr><td>过关状态更新时间</td><td>日期时间</td><td>最近一次过关相关状态变化的时间（如交卷、资料审阅、学习进度变化等），便于催办与对账。</td></tr>" +
+            "<tr><td>考试结果</td><td>枚举</td><td>结合总分与阅卷进度展示：已通过、未通过、尚待人工阅卷、尚无考试记录等，与筛选项含义一致。</td></tr>" +
+            "</tbody></table></div>" +
+            "<ul>" +
+            "<li>点<strong>查看</strong>可展开该学员在本课下的全部过关条件明细。</li>" +
+            "<li>「<strong>导出物料提交（全量员工）</strong>」导出<strong>本列表中全部学员×课程行</strong>的物料维度字段（工号、课程、附件清单、物料审核状态等），便于批量留档；<strong>不受</strong>上方筛选隐藏行影响。原型附件列为示意；现网由接口返回每人真实附件。物料审核状态与弹层演示同源（<code>oa_train_mat_audit</code>）。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart LR\n' +
+            "  Z[考试总分] --> B{是否达到\n课程达标线}\n" +
+            "  B -->|是| G[卷面可记为满足]\n" +
+            "  B -->|否| N[未满足]\n" +
+            "</pre></div>"
+        },
+        {
+          id: "3",
+          title: "过关要求明细里要办的事",
+          html:
+            '<p class="pn-lead">这里把「考试、上传资料、看视频」等条件<strong>逐项摊开</strong>，并给出当前是否满足与最近更新时间。</p>' +
+            "<ul>" +
+            "<li><strong>考试</strong>：展示<strong>考试总分</strong>与是否满足；可「考试详情」打开整卷阅览页；卷面达标且已满足时可「否决」，不满足时可「通过」覆盖（与详情页同源）。</li>" +
+            "<li><strong>物料上传</strong>：学员提交后，管理员在此<strong>通过</strong>或<strong>不通过</strong>；结论会同步到员工端过关表中的<strong>审核结果</strong>，便于学员自查。</li>" +
+            "<li><strong>观看/线下签到</strong>：以<strong>目录进度</strong>或<strong>会议线下签到记录</strong>为准（配置为「或」时满足其一即可），一般不再额外人工点选。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">sequenceDiagram\n' +
+            "  participant Y as 学员\n" +
+            "  participant G as 管理员\n" +
+            "  Y->>G: 提交培训资料\n" +
+            "  G->>Y: 审阅通过或退回说明\n" +
+            "  Y->>Y: 按结论补充或重传\n" +
+            "</pre></div>"
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

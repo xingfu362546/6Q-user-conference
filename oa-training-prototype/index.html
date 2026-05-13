@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OA 培训学习模块 · 原型导航</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/page-notes.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-primary);
+      background: var(--bg-app);
+      text-wrap: pretty;
+    }
+    .shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: var(--space-6) var(--space-4);
+    }
+    header {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+    }
+    h1 {
+      margin: 0 0 var(--space-2);
+      font-size: clamp(1.5rem, 4vw, 1.85rem);
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+    .lede {
+      margin: 0;
+      color: var(--text-secondary);
+      max-width: 52ch;
+    }
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .panel-head {
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-default);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: var(--space-2) 0;
+    }
+    .nav-list li {
+      border-bottom: 1px solid var(--border-default);
+    }
+    .nav-list li:last-child { border-bottom: none; }
+    .nav-list a {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-2);
+      padding: var(--space-4) var(--space-5);
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    .nav-list a .nav-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .nav-list a:hover {
+      background: var(--accent-muted);
+    }
+    .nav-list a[aria-disabled="true"] {
+      color: var(--text-muted);
+      pointer-events: none;
+      cursor: default;
+    }
+    .nav-list .nav-desc {
+      display: block;
+      margin-top: var(--space-2);
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .nav-meta {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .matrix-wrap { overflow-x: auto; margin-top: var(--space-5); }
+    table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    table.matrix th,
+    table.matrix td {
+      border: 1px solid var(--border-default);
+      padding: var(--space-3) var(--space-3);
+      text-align: left;
+      vertical-align: top;
+    }
+    table.matrix th {
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    table.matrix td:nth-child(5),
+    table.matrix td:nth-child(6) { min-width: 14rem; max-width: 28rem; }
+    .order-badge {
+      display: inline-block;
+      min-width: 1.25rem;
+      padding: 2px 6px;
+      margin-right: var(--space-2);
+      border-radius: var(--radius-sm);
+      background: var(--accent-muted);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    footer {
+      margin-top: var(--space-6);
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .collab {
+      margin-bottom: var(--space-5);
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .collab h2 {
+      margin: 0 0 var(--space-3);
+      font-size: 0.95rem;
+      font-weight: 650;
+      color: var(--text-primary);
+    }
+    .collab ol {
+      margin: 0;
+      padding-left: 1.35em;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+    .collab li { margin-bottom: var(--space-2); }
+    .collab li:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>培训学习模块 · 原型入口</h1>
+      <p class="lede">
+        本目录为 OA 内 <strong>培训学习</strong> 可点击原型：统一从下方入口进入各页，页间链接与真实业务路径一致。迭代节奏为<strong>功能清单驱动</strong>；每做一页或改版一页，需先拿到<strong>现系统截图</strong>与范围说明，再出稿并在关键节点与你确认逻辑。
+      </p>
+    </header>
+
+    <section class="collab" aria-labelledby="collab-title">
+      <h2 id="collab-title">产品经理协作约定（与 Agent 对齐）</h2>
+      <ol>
+        <li><strong>设计规范</strong>：后台页遵循干净、留白充足的后台视觉（Claude Design 向），层次清晰、可读优先。</li>
+        <li><strong>截图门禁</strong>：每设计或改版一个页面之前，会先向你<strong>索要该页面对应的现系统截图</strong>（或明确参考稿），收到后再动手布局与组件。</li>
+        <li><strong>逻辑对齐</strong>：动手前或首版完成后，会列出我认为的<strong>核心信息架构与交互要点</strong>，请你确认或纠偏后再细化。</li>
+        <li><strong>清单驱动</strong>：以你提供的<strong>功能清单</strong>为唯一优先级来源，按条目逐步实现；每轮你补充的<strong>修改点 / 调整点</strong>会落到对应页面与导航说明。</li>
+      </ol>
+    </section>
+
+    <section class="panel" style="margin-bottom: var(--space-5);" aria-labelledby="matrix-title">
+      <div class="panel-head" id="matrix-title">
+        <span class="with-page-note">
+          <span>功能清单摘要（Excel 原文结构）</span>
+          <button type="button" class="page-note-pin" data-note-id="1" aria-label="查看说明 1">1</button>
+        </span>
+      </div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>一级模块</th>
+              <th>二级模块</th>
+              <th>三级模块</th>
+              <th>功能描述</th>
+              <th>实现方案 / 字段说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>OA-员工端</td>
+              <td>课程学习</td>
+              <td>课程详情</td>
+              <td>新增「考核标准」Tab：后台维护文档地址，前端点击跳转查看。</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>OA-员工端</td>
+              <td>课程学习</td>
+              <td>课程详情</td>
+              <td>将原「考试信息」替换为「过关要求」Tab：表格展示多条件说明与上传入口；考试类条件跳转「卷王」考试。</td>
+              <td>列：要求类型（考试 / 物料上传 / <strong>观看/线下签到</strong>）、要求说明、是否满足、满足情况（分数/物料多附件/目录或会议签到）、操作。</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>OA-后台端</td>
+              <td>培训学习</td>
+              <td>学习进度</td>
+              <td>列表增加「过关进度」字段；「查看」进入详情，展示该用户在本课程下各过关要求及参数。</td>
+              <td>列表「考试分数」为单场<strong>考试总分/满分</strong>；详情展示总分、达标线、是否满足；可「查看考试内容」阅览整卷；卷面达标且已满足时可「否决」，不满足时可「通过」。</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>OA-后台端</td>
+              <td>培训学习</td>
+              <td>学习进度</td>
+              <td>「考试详情页」：整卷阅览；页头展示业务汇总的<strong>考试总分</strong>，并提供否决/通过与学习进度弹层同源。</td>
+              <td>卷王回传答卷按题号顺序展示；本页不设分支分值录入，版心单列与页头对齐。</td>
+            </tr>
+            <!-- 清单第5行：详规与交互见 admin-course-edit.html 内「过关要求」模块注释 + 页眉「未创建」演示说明 -->
+            <tr>
+              <td>5</td>
+              <td>OA-后台端</td>
+              <td>培训学习</td>
+              <td>课程库</td>
+              <td>新建/编辑课程时可维护过关要求项及各要求说明与条件。</td>
+              <td>类型含<strong>观看/线下签到</strong>：绑定对象支持「目录观看」或「会议签到」或分支；目录下再本课/其他课+勾选课时；考试行配<strong>达标分</strong>。</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>OA-后台端 / 员工端</td>
+              <td>培训学习</td>
+              <td>学习计划</td>
+              <td>后台创建计划：多课程 + 组织穿梭选人；保存后通知参学人，临期催办未通关。员工端展示计划及课程归属徽章。后台「参学情况」查看每人每课是否在规定周期内通关。</td>
+              <td>列表页、新建/编辑表单（无封面）、参学监控列表；状态含<strong>已通关 / 在学中 / 未在规定时间通关</strong>。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="nav-title">
+      <div class="panel-head" id="nav-title">
+        <span class="with-page-note">
+          <span>原型页面导航（建议实现顺序）</span>
+          <button type="button" class="page-note-pin" data-note-id="2" aria-label="查看说明 2">2</button>
+        </span>
+      </div>
+      <ul class="nav-list" id="page-nav">
+        <li>
+          <a href="oa-iter-shell-framework.html">
+            <span class="nav-row">
+              <span><span class="order-badge">0</span>基础设施 · OA 通用页面框架</span>
+              <span class="nav-meta">模板</span>
+            </span>
+            <span class="nav-desc">侧栏顶栏 + 标题区、可选 Tab、筛选、工具条、主表与可选右侧栏；新模块可先复制再按清单与截图替换，无需先提供全系统截图。</span>
+          </a>
+        </li>
+        <li>
+          <a href="emp-course-detail.html">
+            <span class="nav-row">
+              <span><span class="order-badge">1</span>员工端 · 课程详情</span>
+              <span class="nav-meta">可预览</span>
+            </span>
+            <span class="nav-desc">含「考核标准」「过关要求」Tab 及外链卷王；与清单序号 1～2 对应。</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-learning-progress.html">
+            <span class="nav-row">
+              <span><span class="order-badge">2</span>后台 · 学习进度列表</span>
+              <span class="nav-meta">已对照截图</span>
+            </span>
+            <span class="nav-desc">原列保留；「考试分数」为考试总分/满分单列；新增过关进度、过关状态更新时间、查看（弹层）。</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-learning-progress.html">
+            <span class="nav-row">
+              <span><span class="order-badge">3</span>后台 · 过关要求详情（弹层）</span>
+              <span class="nav-meta">已对照列表截图</span>
+            </span>
+            <span class="nav-desc">在学习进度列表点击「查看」打开弹层（独立详情页 admin-requirement-detail 仍保留作深链备用）。</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-course-library.html">
+            <span class="nav-row">
+              <span><span class="order-badge">4</span>后台 · 课程库</span>
+              <span class="nav-meta">已对照列表截图</span>
+            </span>
+            <span class="nav-desc">列表页「+ 新增 / 编辑」进入编辑课程页；编辑页过关要求配置见清单序号 5。</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-quiz-grading.html">
+            <span class="nav-row">
+              <span><span class="order-badge">5</span>后台 · 考试详情</span>
+              <span class="nav-meta">可预览</span>
+            </span>
+            <span class="nav-desc">答卷按题号顺序阅览；页头展示总分与否决/通过（<code>?exam=mock</code> 为归档卷仅页头示意）。</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-learning-plan-list.html">
+            <span class="nav-row">
+              <span><span class="order-badge">6</span>后台 · 学习计划</span>
+              <span class="nav-meta">新增</span>
+            </span>
+            <span class="nav-desc">列表 → 新建（多课程、组织穿梭、富文本介绍、无封面）→ 参学情况（通关/未按期通关/在学中）。</span>
+          </a>
+        </li>
+        <li>
+          <a href="emp-learning-plan.html">
+            <span class="nav-row">
+              <span><span class="order-badge">7</span>员工端 · 我的学习计划</span>
+              <span class="nav-meta">新增</span>
+            </span>
+            <span class="nav-desc">计划总览表展示每计划<strong>通关进度</strong>与<strong>计划完成情况</strong>；卡片内展示每门课通关状态（与后台参学情况对齐）。</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#b91c1c">OA第三个调优版本v1.0.0</p>
+      清单中「已满足/为满足」按语义理解为「未满足」。设计基调：干净后台、层次清晰、充足留白。各页红色数字标记打开<strong>同一侧说明抽屉</strong>，文内整合本页全部说明，并自动滚动到与数字对应的段落。
+    </footer>
+  </div>
+  <script src="js/page-notes.js"></script>
+  <script>
+    window.PAGE_NOTES = {
+      drawerTitle: "培训学习原型 · 功能说明",
+      sections: [
+        {
+          id: "1",
+          title: "功能清单摘要：这张表在业务上管什么",
+          html:
+            '<p class="pn-lead">把「谁要在员工端做什么、谁要在后台管什么」摊在一张表里，方便和制度、培训方案对齐口径。</p>' +
+            "<ul>" +
+            "<li><strong>考试与成绩</strong>：学员与列表侧以<strong>考试总分</strong>与达标线对照；详情页阅览整卷并在页头做否决/通过。</li>" +
+            "<li><strong>过关要求</strong>：考试达标线、资料上传、视频学完等条件写清楚；资料上传后需要管理员<strong>审阅通过</strong>才算过关。</li>" +
+            "<li><strong>学习进度</strong>：管理员能按课程、考试结果筛人，点开能看到每位学员各项条件是否满足。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart TB\n' +
+            "  Z[制度与培训目标] --> K[课程与考试安排]\n" +
+            "  K --> X[学员学习与考试]\n" +
+            "  X --> H[管理员跟进与归档]\n" +
+            "</pre></div>"
+        },
+        {
+          id: "2",
+          title: "页面导航：建议的业务走读顺序",
+          html:
+            '<p class="pn-lead">按「学员先看到什么 → 管理员后管什么」走一遍，评审时故事比较顺。</p>' +
+            "<ul>" +
+            "<li><strong>1 员工端课程详情</strong>：学员看到课程介绍、考核标准、过关要做什么（考试、交材料、看视频等）。</li>" +
+            "<li><strong>2～3 学习进度</strong>：管理员看名单与分数，点「查看」展开某位学员的过关明细；也可从通知链接打开单独的过关详情页。</li>" +
+            "<li><strong>4 课程库</strong>：维护课程信息与过关条件，从通关人数跳到对应课程的学习名单。</li>" +
+            "<li><strong>5 考试详情</strong>：查看整卷与页头总分，在页头否决或通过与过关条件联动。</li>" +
+            "<li><strong>6 后台学习计划</strong>：新建计划（课程多选、组织穿梭、消息规则说明）、参学情况列表。</li>" +
+            "<li><strong>7 员工端学习计划</strong>：查看被纳入的计划及课程上的计划归属提示。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart LR\n' +
+            "  A[学员\n课程与过关] --> B[管理员\n学习进度]\n" +
+            "  B --> C{需要处理?}\n" +
+            "  C -->|考试待人工分| D[阅卷打分]\n" +
+            "  C -->|资料待审| E[通过或退回]\n" +
+            "  F[课程库维护] --> A\n" +
+            "</pre></div>"
+        }
+      ]
+    };
+  </script>
+</body>
+</html>
