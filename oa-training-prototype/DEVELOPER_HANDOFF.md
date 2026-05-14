@@ -1,230 +1,184 @@
 # OA 培训学习模块 · 开发者交接说明
 
-> **文档用途**：开发同学 clone / pull 本仓库后，建议**先阅读本文**，再按「推荐阅读顺序」打开对应 HTML 原型，对照页面内 `proto-note`、HTML 注释、`window.PAGE_NOTES` 与脚本中的演示键实现真实后端与前端工程。  
-> **范围**：以 `oa-training-prototype/` 目录下**培训学习**相关可点击原型为主；文末简要列出仓库根目录其它静态页（非本模块核心）。
+> **文档版本**：`2026.05.2` · 与根目录 `CHANGELOG.md` **[1.2.0]** 对齐（见该文件「发布命名约定」与版本小节）。  
+> **文档用途**：开发 clone / pull 后建议**先读本文 §1～§4**，再按 §3 顺序打开 HTML；对照页内 `proto-note`、HTML 注释、`window.PAGE_NOTES` 与演示键落地实现。  
+> **范围**：`oa-training-prototype/` 下培训学习可点击原型；文末 §9 为仓库外历史文件说明。
 
 ---
 
-## 1. 文档与代码位置（请先确认）
+## 1. 版本与发布命名（Push 前必读）
+
+### 1.1 与功能清单的关系
+
+- **版本号**：语义化 `v主.次.修订`（例 `v1.2.0`），与 **Git 注解标签**一致。  
+- **版本名称**（对外可读、建议写入 Codeup 发布说明）：`YYYY.MM-主题短语`，例：`2026.05-培训学习交付迭代3`。  
+- **每次 Push 对外可交付时**：更新根目录 `CHANGELOG.md` → 更新本文 **§4 功能清单表** 中「首次纳入版本」列（若有新行）→ `git tag -a vX.Y.Z -m "版本名称: …"` → `git push origin main` 且 `git push origin vX.Y.Z`。  
+- **权威关系**：`index.html` 中矩阵为需求**原文摘要**；**是否「迭代 / 新增」及首次纳入版本**以 **本文 §4** 与 **`CHANGELOG.md`** 为准（避免仅看 HTML 产生定义偏差）。
+
+### 1.2 需求性质标识（开发定义用）
+
+| 标识 | 含义 | 开发理解要点 |
+|------|------|----------------|
+| **迭代** | 在既有 **培训学习** 业务域内，对原有流程/页面做能力或字段增强 | 在现有模块与接口上扩展；注意兼容旧数据、旧入口与权限 |
+| **新增** | **新模块**或原 Excel 清单**未单独成行**的端到端能力 | 新路由、新表结构、新消息/定时任务等需**单独拆需求单与接口契约** |
+
+---
+
+## 2. 文档与代码位置
 
 | 项目 | 路径 |
 |------|------|
+| **变更记录 / 发版约定** | `CHANGELOG.md`（仓库根目录） |
 | **本交接文档** | `oa-training-prototype/DEVELOPER_HANDOFF.md` |
-| **仓库根说明（clone 后先看）** | `README.md`（位于 requirement 仓库根目录，与 `oa-training-prototype/` 并列） |
-| **原型总入口（功能清单 + 导航）** | `oa-training-prototype/index.html` |
-| **设计变量（Claude Design 向）** | `oa-training-prototype/css/tokens.css` |
-| **管理端壳样式** | `oa-training-prototype/css/oa-shell-admin.css` |
-| **员工端壳样式** | `oa-training-prototype/css/oa-shell-emp.css` |
-| **侧栏说明抽屉脚本** | `oa-training-prototype/js/page-notes.js`（各页 `window.PAGE_NOTES`） |
-| **考试/弹层共用逻辑** | `oa-training-prototype/js/exam-proto.js` |
-| **物料批量下载（原型）** | `oa-training-prototype/js/mat-batch-download.js` |
-
-**仓库根目录**（相对 `testProject/`）：其它 HTML/脚本不在本 MD 逐页展开，见 §8。
+| **仓库根说明** | `README.md` |
+| **原型总入口（功能清单矩阵）** | `oa-training-prototype/index.html` |
+| **设计变量** | `oa-training-prototype/css/tokens.css` |
+| **管理端 / 员工端壳** | `css/oa-shell-admin.css`、`css/oa-shell-emp.css` |
+| **侧栏说明** | `js/page-notes.js` + 各页 `window.PAGE_NOTES` |
+| **考试演示** | `js/exam-proto.js` |
+| **物料批量下载（原型）** | `js/mat-batch-download.js` |
 
 ---
 
-## 2. 推荐阅读顺序（整体解析流程）
+## 3. 推荐阅读顺序（整体解析流程）
 
-建议按业务故事走读，与 `index.html` 中「原型页面导航」序号一致：
+与 `index.html`「原型页面导航」序号一致：
 
 ```text
-index.html（读功能清单矩阵 + 导航说明）
+index.html（读 §4 与矩阵 + 导航）
     ↓
-0  oa-iter-shell-framework.html（可选：通用后台框架模板）
+0  oa-iter-shell-framework.html（可选）
     ↓
-1  emp-course-detail.html（员工：课程详情、考核标准、过关要求）
+1  emp-course-detail.html
     ↓
-2～3  admin-learning-progress.html（管理：学习进度列表 + 过关弹层）
+2～3  admin-learning-progress.html（含弹层）
     ↓
-4  admin-course-library.html → admin-course-edit.html（管理：课程库 / 编辑课程与过关配置）
+4  admin-course-library.html → admin-course-edit.html
     ↓
-5  admin-quiz-grading.html（管理：考试详情整卷阅览 + 页头否决/通过）
+5  admin-quiz-grading.html
     ↓
-6  admin-learning-plan-list.html → admin-learning-plan-form.html → admin-learning-plan-monitor.html（管理：学习计划）
+6  admin-learning-plan-*.html
     ↓
-7  emp-learning-plan.html（员工：我的学习计划）
+7  emp-learning-plan.html
 ```
 
-**并行深链（不阻塞主路径）**：
-
-- `admin-requirement-detail.html`：过关要求独立详情页（URL 参数 `user` / `course`），与列表弹层语义对齐。
+**深链**：`admin-requirement-detail.html`（`user` / `course` 参数）与弹层语义对齐。
 
 ---
 
-## 3. 功能清单 ↔ HTML 路径 ↔ 实现要点（总表）
+## 4. 功能清单 ↔ 需求性质 ↔ 版本 ↔ HTML（**开发定义主表**）
 
-> 下列「功能清单」与 `index.html` 内表格 **序号 1～6** 一致；「实现方案」列在页面中为表格第六列，此处合并摘要。
+> 与 `index.html` 表格 **序号 1～6** 一致。扩展行不在 HTML 矩阵中，**须单独排期**。
 
-| 序号 | 一级 | 二级 | 三级 | 功能描述（原文摘要） | 主要原型页面（相对 `oa-training-prototype/`） |
-|------|------|------|------|----------------------|-----------------------------------------------|
-| 1 | OA-员工端 | 课程学习 | 课程详情 | 新增「考核标准」Tab：后台维护文档地址，前端跳转查看 | `emp-course-detail.html` |
-| 2 | OA-员工端 | 课程学习 | 课程详情 | 「过关要求」Tab：多条件表格、上传入口；考试跳转卷王 | `emp-course-detail.html` |
-| 3 | OA-后台端 | 培训学习 | 学习进度 | 列表「过关进度」；「查看」详情展示各过关要求 | `admin-learning-progress.html`（弹层同页） |
-| 4 | OA-后台端 | 培训学习 | 学习进度 | 考试详情页：整卷阅览；页头总分 + 否决/通过 | `admin-quiz-grading.html` |
-| 5 | OA-后台端 | 培训学习 | 课程库 | 新建/编辑课程维护过关要求项及条件 | `admin-course-library.html` → `admin-course-edit.html` |
-| 6 | OA-后台 / 员工端 | 培训学习 | 学习计划 | 多课程 + 组织穿梭；通知与临期催办；参学通关监控；员工端计划与课程归属 | `admin-learning-plan-*.html`、`emp-learning-plan.html` |
+### 4.1 主清单（Excel / index 矩阵）
 
-**清单外已落地的扩展能力（建议在评审/拆任务时单列）**：
+| 序号 | 需求性质 | 首次纳入版本 | 版本名称（示例） | 一级–三级 | 功能描述（摘要） | 主要 HTML（`oa-training-prototype/`） |
+|:----:|:--------:|:------------:|:----------------|-----------|------------------|----------------------------------------|
+| 1 | **迭代** | v1.0.0 | `2026.05-培训学习原型基线` | 员工端 / 课程学习 / 课程详情 | 考核标准 Tab、文档跳转 | `emp-course-detail.html` |
+| 2 | **迭代** | v1.0.0 | 同上 | 同上 | 过关要求 Tab；考试跳转卷王 | `emp-course-detail.html` |
+| 3 | **迭代** | v1.0.0 | 同上 | 后台 / 学习进度 | 列表过关进度、查看明细弹层 | `admin-learning-progress.html` |
+| 4 | **迭代** | v1.0.0 | 同上 | 后台 / 学习进度 | 考试详情整卷、页头否决/通过 | `admin-quiz-grading.html` |
+| 5 | **迭代** | v1.0.0 | 同上 | 后台 / 课程库 | 编辑课程、过关要求配置 | `admin-course-library.html`、`admin-course-edit.html` |
+| 6 | **新增** | v1.1.0 | `2026.05-学习计划模块初版` | 后台+员工 / 学习计划 | 多课程、组织穿梭、通知与临期、参学监控、员工端计划与通关展示 | `admin-learning-plan-list.html`、`admin-learning-plan-form.html`、`admin-learning-plan-monitor.html`、`emp-learning-plan.html` |
 
-| 能力 | 页面 / 脚本 | 说明 |
-|------|----------------|------|
-| 物料多附件批量下载（原型 ZIP） | `admin-learning-progress.html`、`admin-requirement-detail.html` + `js/mat-batch-download.js` | ≥2 附件时显示「批量下载」；现网建议改服务端打包 |
-| 学习进度 · 全员物料导出 CSV | `admin-learning-progress.html` | 按钮「导出物料提交（全量员工）」；列与 `oa_train_mat_audit` 等对齐需求见页内说明 |
-| 过关详情独立页 + 物料审核同源 | `admin-requirement-detail.html` | `localStorage` 键 `oa_train_mat_audit` 与弹层演示一致 |
-| 课程库带参跳转学习进度 | `admin-course-library.html` → `admin-learning-progress.html` | URL：`courseId`、`courseName`、`filterPass` 等（见学习进度页脚本） |
+### 4.2 清单外扩展（HTML 矩阵未单独成行）
 
----
-
-## 4. 各页面需求解析（路径 + 注释来源 + 对接提示）
-
-### 4.1 `index.html` — 总入口
-
-- **功能**：功能清单矩阵（§3）、原型导航链接、`window.PAGE_NOTES` 抽屉（说明 1、2）。
-- **页脚注释**：「已满足/为满足」语义上按「未满足」理解；红数字 pin 打开侧栏说明。
-- **开发注意**：真实系统可保留本页作「需求导航」，或把矩阵迁入 Wiki / 需求系统，链接仍指向各静态原型或替换为正式路由。
+| 扩展 ID | 需求性质 | 首次纳入版本 | 版本名称（示例） | 能力说明 | 页面 / 脚本 |
+|---------|:--------:|:------------:|:----------------|----------|----------------|
+| E1 | **新增** | v1.2.0 | `2026.05-培训学习交付迭代3` | 物料多附件「批量下载」（原型 ZIP；现网建议服务端打包） | `admin-learning-progress.html`、`admin-requirement-detail.html`、`js/mat-batch-download.js` |
+| E2 | **新增** | v1.2.0 | 同上 | 学习进度「导出物料提交（全量员工）」CSV | `admin-learning-progress.html` |
+| E3 | **迭代** | v1.0.0 | 基线内深链增强 | 过关要求独立详情页，与弹层同源 | `admin-requirement-detail.html` |
+| E4 | **迭代** | v1.0.0 | 基线内集成 | 课程库带参跳转学习进度 | `admin-course-library.html` → `admin-learning-progress.html` |
 
 ---
 
-### 4.2 `emp-course-detail.html` — 员工端 · 课程详情（清单 1、2）
+## 5. 各页面需求解析（路径 + 注释来源 + 对接提示）
 
-- **对应清单**：考核标准 Tab；过关要求 Tab（考试 / 物料上传 / 观看线下签到）。
-- **`proto-note`（页内）**：  
-  - 更新时间口径：考试 / 物料 / 观看签到。  
-  - 考试是否满足与后台 **`oa_train_exam_override`** 同源。  
-  - 物料：**多附件任务级审核**，**`oa_train_mat_audit` · `materials`**。  
-  - 多场会议时过关表多行展示。  
-  - 「去考试」「重新考试」新窗口卷王。
-- **`PAGE_NOTES`**：`data-note-id="1"` 等，抽屉内有过关与审核结果说明（见源码 `window.PAGE_NOTES`）。
-- **开发注意**：Tab 与表格列与后台编辑页、学习进度弹层字段语义对齐；外链考核标准 URL 应由课程配置下发。
+### 5.1 `index.html` — 总入口
 
----
+- **功能**：功能清单矩阵（**定义以 §4 为准**）、导航、`PAGE_NOTES`。  
+- **页脚**：「已满足/为满足」→ 语义「未满足」；红数字打开侧栏。
 
-### 4.3 `admin-learning-progress.html` — 后台 · 学习进度 + 过关弹层（清单 3）
+### 5.2 `emp-course-detail.html` — 清单 1、2（迭代）
 
-- **列表**：考试分数为单场总分/满分；过关进度、过关状态更新时间、「查看」打开弹层。
-- **`proto-note`（页脚）**：考试否决/通过演示键 **`oa_train_exam_override`**；物料 **`oa_train_mat_audit`**；观看/线下签到配置见 `admin-course-edit.html`；**导出物料提交（全量员工）** 的 CSV 列与全量行逻辑说明。
-- **弹层**：`#detail-overlay` 内表格与 `admin-requirement-detail.html` 一致；含考试行、物料行、观看/线下签到行。
-- **`PAGE_NOTES`**：三节（本页管理问题、列表字段、过关明细要办的事）；第二节含 **导出物料提交** 规则。
-- **URL 参数**：`courseId`、`courseName`、`filterPass` 等 — 从课程库「通关人数」等入口带入时展示 `lib-filter-banner` 并参与筛选（见页内脚本 `readUrlFilter` / `applyTableFilters`）。
-- **脚本**：`js/mat-batch-download.js`、`js/exam-proto.js`。
-- **开发注意**：导出当前为前端生成 CSV + 示意附件列；**现网应接批量接口**。弹层与详情页、考试页状态需与同一学员-课程维度一致。
+- **`proto-note`**：考试 **`oa_train_exam_override`**；物料 **`oa_train_mat_audit`**；多场会议多行；卷王新窗口。  
+- **`PAGE_NOTES`**：过关与审核说明。
 
----
+### 5.3 `admin-learning-progress.html` — 清单 3 + E1、E2（迭代 + 新增扩展）
 
-### 4.4 `admin-requirement-detail.html` — 过关要求独立详情（深链，清单 3 辅助）
+- **`proto-note`**：考试 / 物料 / 导出物料全量 / 观看签到配置引用编辑页。  
+- **`PAGE_NOTES`**：列表字段、导出规则、弹层操作。  
+- **脚本**：`mat-batch-download.js`、`exam-proto.js`。
 
-- **`proto-note`**：`user` / `course` URL 参数对接；**`oa_train_exam_override`**、**`oa_train_mat_audit`**；观看/线下签到规则见 `admin-course-edit.html`。
-- **物料区**：通过 `oaBuildMatFilesHtml` 引入批量下载条（附件 ≥2）。
-- **开发注意**：用于通知/工单中的直达链接；数据接口应与弹层同源。
+### 5.4 `admin-requirement-detail.html` — E3（迭代）
 
----
+- **`proto-note`**：URL 参数；与弹层同源键；物料区含批量下载（E1）。
 
-### 4.5 `admin-quiz-grading.html` — 考试详情 / 阅卷（清单 4）
+### 5.5 `admin-quiz-grading.html` — 清单 4（迭代）
 
-- **`proto-note`**：页头考试总分为业务汇总；否决/通过与学习进度弹层同源 **`oa_train_exam_override`**；主观题调分不在本页演示。
-- **查询参数**：`?exam=mock` 与默认 `final` 切换归档卷示意（见页内脚本注释）。
-- **脚本**：`js/exam-proto.js`。
-- **开发注意**：按题号顺序展示答卷；页头操作需回写过关条件满足状态。
+- **`proto-note`**、**`?exam=mock`**：见页内脚本与 `exam-proto.js`。
 
----
+### 5.6 `admin-course-library.html` / `admin-course-edit.html` — 清单 5 + E4（迭代）
 
-### 4.6 `admin-course-library.html` — 课程库列表（清单 5 入口）
+- **块注释**：页眉「未创建课程」演示；过关要求模块总规（约 235–243 行）；`tpl-row`（约 287–291 行）。
 
-- **功能**：课程列表、通关人数链接到 `admin-learning-progress.html` 带参筛选等（见页面链接）。
-- **开发注意**：「编辑」进入 `admin-course-edit.html`。
+### 5.7 `oa-iter-shell-framework.html` — 导航 0
 
----
+- 布局模板，非业务必选。
 
-### 4.7 `admin-course-edit.html` — 编辑课程 + 过关要求配置（清单 5）
+### 5.8 学习计划子模块 — 清单 6、员工端 7（新增）
 
-- **HTML 块注释（约 158–163 行）**：**页眉「演示：新建课程尚未创建」** — 无正式课程 ID 时与「本课程目录」联动禁用等。
-- **HTML 块注释（约 235–243 行）**：**过关要求模块总规** —  
-  - 观看/线下签到：`或` 分支 ①目录 vs ②会议签到；目录下本课/其他课；会议多行示例。  
-  - 考试：问卷 + 达标分；物料：绑定对象列无操作。  
-  - 保存按钮校验。
-- **HTML 块注释（约 287–291 行）**：`tpl-row` 模板结构说明（`js-exam-bind` / `js-video-bind` / `js-nobind`）。
-- **`PAGE_NOTES`**：`data-note-id="1"` 过关要求抽屉。
-- **开发注意**：员工端过关表、学习进度、编辑页三处「观看/线下签到」文案与结构需一致。
+| 文件 | 要点 |
+|------|------|
+| `admin-learning-plan-list.html` | `proto-note`：参学、消息；链表单 / 监控 |
+| `admin-learning-plan-form.html` | 无封面；通知条；穿梭框；保存校验 |
+| `admin-learning-plan-monitor.html` | 通关状态枚举；`?plan=` |
+| `emp-learning-plan.html` | 计划列表通关汇总 + 卡片内课程状态 |
+
+### 5.9 `js/mat-batch-download.js` — E1（新增）
+
+- 头注释；`oaBuildMatFilesHtml`；现网改接口打包。
+
+### 5.10 `js/exam-proto.js`
+
+- 考试演示逻辑；对接后保留否决/通过语义。
 
 ---
 
-### 4.8 `oa-iter-shell-framework.html` — 通用框架（导航 0）
+## 6. 跨页面演示键与本地状态（实现时替换）
 
-- **功能**：新模块可复制壳：顶栏、侧栏、筛选、表格等占位。
-- **开发注意**：非业务必选，仅布局参考。
-
----
-
-### 4.9 学习计划子模块（清单 6 + 员工端 7）
-
-| 文件 | 职责 | 关键注释 / 交互 |
-|------|------|-----------------|
-| `admin-learning-plan-list.html` | 计划列表 | `proto-note`：参学情况按人×课看通关；消息计划创建与临期；跳转编辑 / 参学情况 |
-| `admin-learning-plan-form.html` | 新建/编辑 | **无计划封面**；绿色通知条：保存后通知与临期催办；课程多选、组织穿梭、富文本与字数；保存前校验（原型 `alert`） |
-| `admin-learning-plan-monitor.html` | 参学监控 | `proto-note`：已通关 / 在学中 / **未在规定时间通关** 口径；`?plan=` 切换示例计划 |
-| `emp-learning-plan.html` | 我的学习计划 | 计划列表表：通关进度与计划完成情况；卡片内每课通关状态与计划徽章 |
-
-**开发注意**：计划与课程、人员、消息中心、过关引擎的关联需在后端建模；前端列表字段与监控页、员工端展示应对齐同一套状态枚举。
+| 键 / 概念 | 含义（原型） |
+|-----------|----------------|
+| `oa_train_exam_override` | 考试是否满足过关的人工覆盖 |
+| `oa_train_mat_audit` · `materials` | 物料任务级审核 |
+| `localStorage` | 原型跨页同步；**现网改为接口** |
 
 ---
 
-### 4.10 `js/mat-batch-download.js`
+## 7. 与产品 / 设计的约定（摘自 `index.html`）
 
-- **文件头注释**：原型用 JSZip CDN；正式环境建议**服务端打包下载**。
-- **API**：`window.oaBuildMatFilesHtml(lineHtmlArray)` — 附件 ≥2 时出现「批量下载」工具条。
-- **事件**：`.js-mat-batch-dl` 点击生成 ZIP（当前为占位文本文件，文件名取自链接文案）。
-
----
-
-### 4.11 `js/exam-proto.js`
-
-- **用途**：考试相关 DOM 更新、与学习进度/详情页协同的演示逻辑（具体以源码为准）。
-- **开发注意**：替换为真实接口后保留「否决/通过」与 `oa_train_exam_override` 语义。
+1. 后台视觉：Claude Design 向，留白与层次。  
+2. 以功能清单为优先级来源。  
+3. 「已满足/为满足」→ 按「未满足」理解。
 
 ---
 
-## 5. 跨页面演示键与本地状态（实现时替换）
+## 8. Git 发版检查清单（替代「仅口头 Push」）
 
-| 键 / 概念 | 出现位置 | 含义（原型） |
-|-----------|-----------|----------------|
-| `oa_train_exam_override` | 学习进度弹层、过关详情、考试详情页文案 | 考试是否满足过关的人工覆盖 |
-| `oa_train_mat_audit` · `materials` | 同上 + 物料导出 CSV 状态列 | 物料任务级审核状态 |
-| `localStorage` 读写 | `admin-learning-progress.html`、`admin-requirement-detail.html` 等 | 原型跨页同步审阅状态；**现网应改为接口** |
-
----
-
-## 6. 与产品 / 设计的约定（摘自 `index.html` 协作区）
-
-1. 后台视觉：干净、留白、层次清晰（Claude Design 向）。  
-2. 迭代以功能清单为优先级来源。  
-3. 清单中「已满足/为满足」按「未满足」理解（页脚说明）。
+1. `CHANGELOG.md` 已追加 `[x.y.z]` 与**版本名称**一行。  
+2. 本文 **§4** 已更新对应行的「首次纳入版本 / 需求性质」（新能力必标 **新增**）。  
+3. `git tag -a vX.Y.Z -m "版本名称: YYYY.MM-…"`  
+4. `git push origin main` && `git push origin vX.Y.Z`  
+5. Codeup 发布说明粘贴**同一版本名称**。
 
 ---
 
-## 7. 确认后再执行 Git（由负责人操作）
-
-本文档路径：`oa-training-prototype/DEVELOPER_HANDOFF.md`  
-
-**请你确认**：路径与内容是否满足「开发 pull 后先读 MD 再解析各页」的要求。  
-
-确认无误后，在仓库根目录执行（示例）：
-
-```bash
-git add oa-training-prototype/DEVELOPER_HANDOFF.md
-git commit -m "docs: 增加 OA 培训学习模块开发者交接说明 DEVELOPER_HANDOFF.md"
-git push origin main
-```
-
-（若你希望我方 Agent 代为 push，请在确认后明确回复「可以 push」。）
-
----
-
-## 8. 仓库内其它文件（非本 MD 逐条拆解）
+## 9. 仓库外或其它说明
 
 | 路径 | 说明 |
 |------|------|
-| `kanjia-modal-cultural-quote.html`（若存在于仓库根） | 砍价弹窗 + 6Q经句区 UI 原型，与 OA 培训模块独立 |
+| 历史曾存在的根目录静态页（如砍价弹窗 HTML） | 若不在当前 Git 跟踪中，以现仓库 `git ls-files` 为准；与 OA 培训模块独立 |
 
 ---
 
-**文档版本**：与仓库内原型迭代同步；变更功能时请同步更新本 MD 的 §3～§4 与相关 `proto-note` / `PAGE_NOTES`。
+**维护**：变更需求性质或版本时，必须同步 **§4**、**`CHANGELOG.md`**、**Git 标签** 与（可选）**`index.html` 矩阵下方说明**。
