@@ -1,0 +1,118 @@
+/**
+ * 员工端 · 培训「课程管理」业务区：与 oa-shell-emp.css 联用。
+ * 原 EIP 管理端壳中的课程库/学习进度/学习计划/考试等页，迁至员工端后复用本区样式。
+ * 侧栏「课程管理」分组在现网由权限控制显隐；本原型固定展示，仅作菜单目录隔离示意。
+ * 侧栏一级为分组标题（可点跳转默认页）+ 收起按钮；二级为分组内菜单（字号小于一级）。
+ */
+.oa-emp-side__group {
+  margin: 0;
+}
+.oa-emp-side__group + .oa-emp-side__group {
+  margin-top: 6px;
+}
+.oa-emp-side > .oa-emp-side__cta + .oa-emp-side__group {
+  margin-top: 0;
+}
+.oa-emp-side__group-head {
+  display: flex;
+  align-items: stretch;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 10px 0 10px;
+  gap: 0;
+}
+.oa-emp-side__toggle {
+  flex-shrink: 0;
+  width: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #909399;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  min-height: 32px;
+}
+.oa-emp-side__toggle:hover {
+  background: #f0f2f5;
+  color: #606266;
+}
+.oa-emp-side__toggle:focus-visible {
+  outline: 2px solid #409eff;
+  outline-offset: 1px;
+}
+.oa-emp-side__chev {
+  display: block;
+  font-size: 9px;
+  line-height: 1;
+  transition: transform 0.18s ease;
+  transform: rotate(0deg);
+}
+.oa-emp-side__group.is-collapsed .oa-emp-side__chev {
+  transform: rotate(-90deg);
+}
+.oa-emp-side__group-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 8px 8px 8px 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border-radius: 4px;
+  min-width: 0;
+  border-left: 3px solid transparent;
+}
+.oa-emp-side__group-title:hover {
+  background: #f5f7fa;
+  color: #409eff;
+}
+.oa-emp-side__sublinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 2px;
+}
+.oa-emp-side__group.is-collapsed .oa-emp-side__sublinks {
+  display: none;
+}
+.oa-emp-biz-headwrap {
+  flex-shrink: 0;
+  margin: 0 0 12px;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+}
+.oa-emp-biz-head-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.oa-emp-biz-crumb {
+  font-size: 13px;
+  color: #606266;
+}
+.oa-emp-biz-crumb strong {
+  color: #303133;
+  font-weight: 600;
+}
+.oa-emp-biz-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #606266;
+}
+.oa-emp-biz-workpad {
+  flex: 1;
+  min-width: 0;
+  padding: 0 20px 28px;
+}

@@ -6,6 +6,7 @@
   <title>我的学习计划 · OA 培训学习（原型）</title>
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/oa-shell-emp.css" />
+  <link rel="stylesheet" href="css/oa-shell-emp-biz.css" />
   <style>
     .doc-tabs {
       display: flex; align-items: center; gap: 4px; padding: 0 16px;
@@ -89,13 +90,13 @@
       <div class="oa-emp-topbar__brand">6Q-测试环境</div>
       <div class="oa-emp-modwrap">
         <ul class="oa-emp-modnav" aria-label="顶部模块菜单">
-          <li><a href="#">首页</a></li>
-          <li><a href="#">人力资源</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">首页</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">人力资源</a></li>
           <li><a href="emp-course-detail.html" class="is-active">培训学习</a></li>
         </ul>
       </div>
       <div class="oa-emp-topbar__tools">
-        <a class="oa-emp-barlink" href="admin-learning-plan-list.html" title="管理端">管理端</a>
+        <a class="oa-emp-barlink" href="index.html" title="返回原型导航">原型导航</a>
         <div class="oa-emp-userpill">
           <span class="oa-emp-avatar" aria-hidden="true"></span>
           <span class="oa-emp-username">余炜炜</span>
@@ -103,11 +104,30 @@
       </div>
     </header>
     <div class="oa-emp-row">
-      <aside class="oa-emp-side" aria-label="培训学习 · 侧栏">
-        <button type="button" class="oa-emp-side__cta">去学习</button>
-        <a href="emp-course-detail.html">课程学习</a>
-        <a href="emp-learning-plan.html" class="is-active">我的学习计划</a>
-        <a href="#">学习档案</a>
+      <aside class="oa-emp-side" aria-label="培训学习">
+        <a href="emp-course-detail.html" class="oa-emp-side__cta">去学习</a>
+        <div class="oa-emp-side__group" data-side-group="learn">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-learn" title="展开或收起「学员学习」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="emp-course-detail.html" class="oa-emp-side__group-title">学员学习</a>
+          </div>
+          <div id="oa-emp-side-sub-learn" class="oa-emp-side__sublinks">
+            <a href="emp-course-detail.html">课程学习</a>
+            <a href="emp-learning-plan.html" class="is-active">我的学习计划</a>
+          </div>
+        </div>
+        <div class="oa-emp-side__group" data-side-group="mgmt">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-mgmt" title="展开或收起「课程管理」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="admin-course-library.html" class="oa-emp-side__group-title">课程管理</a>
+          </div>
+          <div id="oa-emp-side-sub-mgmt" class="oa-emp-side__sublinks">
+            <a href="admin-course-library.html">课程库</a>
+            <a href="admin-learning-progress.html">学习进度</a>
+            <a href="admin-learning-plan-list.html">学习计划</a>
+            <a href="admin-quiz-grading.html">考试详情</a>
+          </div>
+        </div>
       </aside>
       <div class="oa-emp-main">
         <nav class="doc-tabs" aria-label="页签">
@@ -115,7 +135,7 @@
           <a href="emp-learning-plan.html" class="is-active">我的学习计划</a>
         </nav>
         <div class="main-inner">
-      <div class="back-link"><a href="index.html">返回原型导航</a> · <a href="admin-learning-plan-list.html">管理端计划列表</a></div>
+      <div class="back-link"><a href="index.html">返回原型导航</a> · <a href="admin-learning-plan-list.html">业务端 · 学习计划列表</a></div>
       <h1>我的学习计划</h1>
       <p class="lede">此处聚合您被纳入的<strong>学习计划</strong>。顶部<strong>计划列表</strong>汇总每计划的通关进度与完成情况；展开卡片可查看每门课在计划内的<strong>课程通关状态</strong>。</p>
 
@@ -222,11 +242,12 @@
       </article>
 
       <p class="note">
-        列表中<strong>通关进度</strong>为计划维度下「已满足该课全部过关条件」的课程门数；<strong>计划完成情况</strong>在计划结束且仍有未通关课程时显示「未在期内全部通关」，与后台参学监控口径一致。临期消息提醒规则不变。
+        列表中<strong>通关进度</strong>为计划维度下「已满足该课全部过关条件」的课程门数；<strong>计划完成情况</strong>在计划结束且仍有未通关课程时显示「未在期内全部通关」，与业务侧「参学情况」监控口径一致。临期消息提醒规则不变。
       </p>
         </div>
       </div>
     </div>
   </div>
+  <script src="js/oa-emp-side-nav.js" defer></script>
 </body>
 </html>

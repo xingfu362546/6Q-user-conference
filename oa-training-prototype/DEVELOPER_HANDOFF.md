@@ -1,6 +1,6 @@
 # OA 培训学习模块 · 开发者交接说明
 
-> **文档版本**：`2026.05.2` · 与根目录 `CHANGELOG.md` **[1.2.0]** 对齐（见该文件「发布命名约定」与版本小节）。  
+> **文档版本**：`2026.05.3` · 与根目录 `CHANGELOG.md` **[1.2.0]** 对齐（见该文件「发布命名约定」与版本小节）；**相对 2026.05.2** 补充了「课程管理在员工端侧栏」的承载说明与侧栏交互（收起/展开、字号层级）及对应静态资源路径。  
 > **文档用途**：开发 clone / pull 后建议**先读本文 §1～§4**，再按 §3 顺序打开 HTML；对照页内 `proto-note`、HTML 注释、`window.PAGE_NOTES` 与演示键落地实现。  
 > **范围**：`oa-training-prototype/` 下培训学习可点击原型；文末 §9 为仓库外历史文件说明。
 
@@ -33,10 +33,20 @@
 | **仓库根说明** | `README.md` |
 | **原型总入口（功能清单矩阵）** | `oa-training-prototype/index.html` |
 | **设计变量** | `oa-training-prototype/css/tokens.css` |
-| **管理端 / 员工端壳** | `css/oa-shell-admin.css`、`css/oa-shell-emp.css` |
-| **侧栏说明** | `js/page-notes.js` + 各页 `window.PAGE_NOTES` |
+| **员工端壳（顶栏 + 侧栏 + 主区灰底）** | `css/oa-shell-emp.css` |
+| **员工端 · 培训业务区样式（面包屑顶条、侧栏分组等）** | `css/oa-shell-emp-biz.css` |
+| **系统管理端壳（仅通用框架示例，非本模块业务后台）** | `css/oa-shell-admin.css`；示例页 `oa-iter-shell-framework.html` |
+| **侧栏分组收起/展开（原型）** | `js/oa-emp-side-nav.js`（培训相关页 `</body>` 前已引用） |
+| **侧栏说明抽屉** | `js/page-notes.js` + 各页 `window.PAGE_NOTES` |
 | **考试演示** | `js/exam-proto.js` |
 | **物料批量下载（原型）** | `js/mat-batch-download.js` |
+
+### 2.1 入口与信息架构（与 `index.html` 一致）
+
+- **业务承载**：课程库、学习进度、学习计划、考试详情等原「EIP 管理端培训」能力，在原型中统一放在**员工端**侧栏 **「课程管理」** 分组下，与 **「学员学习」** 目录并列；现网由**权限**控制「课程管理」是否展示（原型固定两分组均展示，仅作目录隔离示意）。  
+- **HTML 文件名**：多数仍为 `admin-*.html`，属历史命名；**路由/菜单归属以产品定义为准**（员工端工作台），勿仅凭文件名推断为系统管理员后台。  
+- **侧栏交互**：一级为分组标题（**14px / 字重 600**，可点跳转该分组默认页：学员学习 → `emp-course-detail.html`，课程管理 → `admin-course-library.html`）；左侧 **▼** 仅负责收起/展开该分组下二级菜单；二级项 **13px**、缩进展示。含当前 `is-active` 项的分组在页面加载时由脚本自动展开。  
+- **「去学习」**：`emp-course-detail.html`、`emp-learning-plan.html` 侧栏顶部为链至 `emp-course-detail.html` 的 CTA 样式链接。
 
 ---
 
@@ -64,6 +74,8 @@ index.html（读 §4 与矩阵 + 导航）
 
 **深链**：`admin-requirement-detail.html`（`user` / `course` 参数）与弹层语义对齐。
 
+**壳与侧栏**：上述 `emp-*` 与 `admin-*`（培训子页）均使用 `oa-emp-body` + `oa-shell-emp.css` + `oa-shell-emp-biz.css`；侧栏结构见 **§2.1**。
+
 ---
 
 ## 4. 功能清单 ↔ 需求性质 ↔ 版本 ↔ HTML（**开发定义主表**）
@@ -76,10 +88,10 @@ index.html（读 §4 与矩阵 + 导航）
 |:----:|:--------:|:------------:|:----------------|-----------|------------------|----------------------------------------|
 | 1 | **迭代** | v1.0.0 | `2026.05-培训学习原型基线` | 员工端 / 课程学习 / 课程详情 | 考核标准 Tab、文档跳转 | `emp-course-detail.html` |
 | 2 | **迭代** | v1.0.0 | 同上 | 同上 | 过关要求 Tab；考试跳转卷王 | `emp-course-detail.html` |
-| 3 | **迭代** | v1.0.0 | 同上 | 后台 / 学习进度 | 列表过关进度、查看明细弹层 | `admin-learning-progress.html` |
-| 4 | **迭代** | v1.0.0 | 同上 | 后台 / 学习进度 | 考试详情整卷、页头否决/通过 | `admin-quiz-grading.html` |
-| 5 | **迭代** | v1.0.0 | 同上 | 后台 / 课程库 | 编辑课程、过关要求配置 | `admin-course-library.html`、`admin-course-edit.html` |
-| 6 | **新增** | v1.1.0 | `2026.05-学习计划模块初版` | 后台+员工 / 学习计划 | 多课程、组织穿梭、通知与临期、参学监控、员工端计划与通关展示 | `admin-learning-plan-list.html`、`admin-learning-plan-form.html`、`admin-learning-plan-monitor.html`、`emp-learning-plan.html` |
+| 3 | **迭代** | v1.0.0 | 同上 | 员工端 · 培训学习 · **课程管理** / 学习进度 | 列表过关进度、查看明细弹层 | `admin-learning-progress.html` |
+| 4 | **迭代** | v1.0.0 | 同上 | 员工端 · 培训学习 · **课程管理** / 学习进度 | 考试详情整卷、页头否决/通过 | `admin-quiz-grading.html` |
+| 5 | **迭代** | v1.0.0 | 同上 | 员工端 · 培训学习 · **课程管理** / 课程库 | 编辑课程、过关要求配置 | `admin-course-library.html`、`admin-course-edit.html` |
+| 6 | **新增** | v1.1.0 | `2026.05-学习计划模块初版` | 员工端 · **课程管理** + **学员学习** / 学习计划 | 业务侧：多课程、组织穿梭、通知与临期、参学监控；学员侧：我的计划与通关展示 | `admin-learning-plan-list.html`、`admin-learning-plan-form.html`、`admin-learning-plan-monitor.html`、`emp-learning-plan.html` |
 
 ### 4.2 清单外扩展（HTML 矩阵未单独成行）
 
@@ -96,30 +108,35 @@ index.html（读 §4 与矩阵 + 导航）
 
 ### 5.1 `index.html` — 总入口
 
-- **功能**：功能清单矩阵（**定义以 §4 为准**）、导航、`PAGE_NOTES`。  
+- **功能**：功能清单矩阵（**定义以 §4 为准**）、导航、`PAGE_NOTES`；矩阵与导航已按 **员工端侧栏「学员学习 / 课程管理」** 口径表述。  
 - **页脚**：「已满足/为满足」→ 语义「未满足」；红数字打开侧栏。
 
 ### 5.2 `emp-course-detail.html` — 清单 1、2（迭代）
 
+- **壳**：员工端侧栏含「去学习」CTA + 两分组（§2.1）；`js/oa-emp-side-nav.js`。  
 - **`proto-note`**：考试 **`oa_train_exam_override`**；物料 **`oa_train_mat_audit`**；多场会议多行；卷王新窗口。  
 - **`PAGE_NOTES`**：过关与审核说明。
 
 ### 5.3 `admin-learning-progress.html` — 清单 3 + E1、E2（迭代 + 新增扩展）
 
+- **壳**：员工端 + 侧栏「课程管理」分组（见 §2.1）；`js/oa-emp-side-nav.js`。  
 - **`proto-note`**：考试 / 物料 / 导出物料全量 / 观看签到配置引用编辑页。  
 - **`PAGE_NOTES`**：列表字段、导出规则、弹层操作。  
 - **脚本**：`mat-batch-download.js`、`exam-proto.js`。
 
 ### 5.4 `admin-requirement-detail.html` — E3（迭代）
 
+- **壳**：同 §5.3（员工端侧栏）。  
 - **`proto-note`**：URL 参数；与弹层同源键；物料区含批量下载（E1）。
 
 ### 5.5 `admin-quiz-grading.html` — 清单 4（迭代）
 
+- **壳**：同 §5.3。  
 - **`proto-note`**、**`?exam=mock`**：见页内脚本与 `exam-proto.js`。
 
 ### 5.6 `admin-course-library.html` / `admin-course-edit.html` — 清单 5 + E4（迭代）
 
+- **壳**：同 §5.3。  
 - **块注释**：页眉「未创建课程」演示；过关要求模块总规（约 235–243 行）；`tpl-row`（约 287–291 行）。
 
 ### 5.7 `oa-iter-shell-framework.html` — 导航 0
@@ -130,10 +147,10 @@ index.html（读 §4 与矩阵 + 导航）
 
 | 文件 | 要点 |
 |------|------|
-| `admin-learning-plan-list.html` | `proto-note`：参学、消息；链表单 / 监控 |
-| `admin-learning-plan-form.html` | 无封面；通知条；穿梭框；保存校验 |
-| `admin-learning-plan-monitor.html` | 通关状态枚举；`?plan=` |
-| `emp-learning-plan.html` | 计划列表通关汇总 + 卡片内课程状态 |
+| `admin-learning-plan-list.html` | 员工端壳 + 侧栏；`proto-note`：参学、消息；链表单 / 监控 |
+| `admin-learning-plan-form.html` | 同上；无封面；通知条；穿梭框；保存校验 |
+| `admin-learning-plan-monitor.html` | 同上；通关状态枚举；`?plan=` |
+| `emp-learning-plan.html` | 员工端壳 + 侧栏 + `oa-emp-side-nav.js`；计划列表通关汇总 + 卡片内课程状态 |
 
 ### 5.9 `js/mat-batch-download.js` — E1（新增）
 
@@ -142,6 +159,10 @@ index.html（读 §4 与矩阵 + 导航）
 ### 5.10 `js/exam-proto.js`
 
 - 考试演示逻辑；对接后保留否决/通过语义。
+
+### 5.11 `js/oa-emp-side-nav.js`（侧栏原型）
+
+- 培训相关页侧栏：分组 **收起/展开**（`▼` 切换父级 `is-collapsed`）；**含 `is-active` 二级项的分组**在脚本执行时会自动去掉收起态并同步 `aria-expanded`。实现时若改路由或 SSR，需保留同等无障碍语义（`aria-expanded`、`aria-controls`）。
 
 ---
 
@@ -157,7 +178,7 @@ index.html（读 §4 与矩阵 + 导航）
 
 ## 7. 与产品 / 设计的约定（摘自 `index.html`）
 
-1. 后台视觉：Claude Design 向，留白与层次。  
+1. **业务工作台**视觉（列表 / 表单 / 侧栏）：Claude Design 向，留白与层次；**系统管理端**通用壳见 `oa-iter-shell-framework.html`，与培训业务页分离。  
 2. 以功能清单为优先级来源。  
 3. 「已满足/为满足」→ 按「未满足」理解。
 

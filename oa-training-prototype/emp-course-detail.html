@@ -6,6 +6,7 @@
   <title>课程详情 · OA 培训学习（原型）</title>
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/oa-shell-emp.css" />
+  <link rel="stylesheet" href="css/oa-shell-emp-biz.css" />
   <link rel="stylesheet" href="css/page-notes.css" />
   <style>
     * { box-sizing: border-box; }
@@ -473,24 +474,24 @@
       <div class="oa-emp-topbar__brand">6Q-测试环境</div>
       <div class="oa-emp-modwrap">
         <ul class="oa-emp-modnav" aria-label="顶部模块菜单">
-          <li><a href="#">首页</a></li>
-          <li><a href="#">个人中心</a></li>
-          <li><a href="#">应用中心</a></li>
-          <li><a href="#">人力资源</a></li>
-          <li><a href="#">考勤与假期</a></li>
-          <li><a href="#">流程中心</a></li>
-          <li><a href="#">会议管理</a></li>
-          <li><a href="#">项目管理</a></li>
-          <li><a href="#">采购管理</a></li>
-          <li><a href="#">财务系统</a></li>
-          <li><a href="#">报表中心</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">首页</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">个人中心</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">应用中心</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">人力资源</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">考勤与假期</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">流程中心</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">会议管理</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">项目管理</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">采购管理</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">财务系统</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">报表中心</a></li>
           <li><a href="emp-course-detail.html" class="is-active">培训学习</a></li>
-          <li><a href="#">三级反馈管理</a></li>
-          <li><a href="#">资产管理</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">三级反馈管理</a></li>
+          <li><a href="index.html" title="原型占位 · 返回总入口">资产管理</a></li>
         </ul>
       </div>
       <div class="oa-emp-topbar__tools">
-        <a class="oa-emp-barlink" href="admin-learning-progress.html" title="进入管理端（培训学习 · 学习进度）">管理端</a>
+        <a class="oa-emp-barlink" href="index.html" title="返回原型导航">原型导航</a>
         <button type="button" class="oa-emp-tool" aria-label="通知 18 条未读">
           <span aria-hidden="true">🔔</span>
           <span class="oa-emp-tool-badge">18</span>
@@ -506,19 +507,37 @@
     </header>
 
     <div class="oa-emp-row">
-      <aside class="oa-emp-side" aria-label="培训学习 · 侧栏">
-        <button type="button" class="oa-emp-side__cta">去学习</button>
-        <a href="emp-course-detail.html" class="is-active">课程学习</a>
-        <a href="emp-learning-plan.html">我的学习计划</a>
-        <a href="#">关联考试</a>
-        <a href="#">学习档案</a>
+      <aside class="oa-emp-side" aria-label="培训学习">
+        <a href="emp-course-detail.html" class="oa-emp-side__cta">去学习</a>
+        <div class="oa-emp-side__group" data-side-group="learn">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-learn" title="展开或收起「学员学习」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="emp-course-detail.html" class="oa-emp-side__group-title">学员学习</a>
+          </div>
+          <div id="oa-emp-side-sub-learn" class="oa-emp-side__sublinks">
+            <a href="emp-course-detail.html" class="is-active">课程学习</a>
+            <a href="emp-learning-plan.html">我的学习计划</a>
+          </div>
+        </div>
+        <div class="oa-emp-side__group" data-side-group="mgmt">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-mgmt" title="展开或收起「课程管理」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="admin-course-library.html" class="oa-emp-side__group-title">课程管理</a>
+          </div>
+          <div id="oa-emp-side-sub-mgmt" class="oa-emp-side__sublinks">
+            <a href="admin-course-library.html">课程库</a>
+            <a href="admin-learning-progress.html">学习进度</a>
+            <a href="admin-learning-plan-list.html">学习计划</a>
+            <a href="admin-quiz-grading.html">考试详情</a>
+          </div>
+        </div>
       </aside>
 
       <div class="oa-emp-main">
       <nav class="doc-tabs" aria-label="工作台页签">
-        <a href="#">首页</a>
-        <a href="#">课程学习</a>
-        <a href="#">关联考试</a>
+        <a href="index.html" title="返回原型总入口">首页</a>
+        <a href="emp-course-detail.html">课程学习</a>
+        <a href="admin-quiz-grading.html" title="培训关联考试入口（示意）">关联考试</a>
         <a href="emp-course-detail.html" class="is-active">课程详情</a>
       </nav>
 
@@ -658,7 +677,7 @@
           </div>
 
           <div id="panel-standard" class="panel-body" role="tabpanel" aria-labelledby="tab-standard" hidden>
-            <p class="muted">由后台维护文档地址；员工点击在新窗口打开。</p>
+            <p class="muted">由课程库维护文档地址；学员点击在新窗口打开。</p>
             <div class="doc-links">
               <a href="https://example.com/考核标准说明.pdf" target="_blank" rel="noopener noreferrer">查看《考核标准说明》（示例链接）</a>
               <a href="https://example.com/评分细则.docx" target="_blank" rel="noopener noreferrer">查看《评分细则》（示例链接）</a>
@@ -668,7 +687,7 @@
           <div id="panel-pass" class="panel-body" role="tabpanel" aria-labelledby="tab-pass" hidden>
             <div style="display:flex;align-items:flex-start;gap:10px;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap">
               <p class="muted" style="margin:0;flex:1;min-width:220px">
-                替代原「考试信息」Tab；考试类在<strong>新窗口</strong>打开「卷王」。物料类展示<strong>审核结果</strong>（管理员通过/不通过后与后台一致；演示用 <code>localStorage</code> 与后台弹层同步）。
+                替代原「考试信息」Tab；考试类在<strong>新窗口</strong>打开「卷王」。物料类展示<strong>审核结果</strong>（业务侧审阅通过/不通过后与学习进度弹层一致；演示用 <code>localStorage</code> 与业务侧弹层同步）。
               </p>
               <button type="button" class="page-note-pin" data-note-id="1" aria-label="过关要求说明">1</button>
             </div>
@@ -700,14 +719,14 @@
                     <td>现场培训资料包（同一任务：照片、横幅合影、签字回执等多附件）</td>
                     <td id="emp-mat-sat"><span class="no">未满足</span></td>
                     <td id="emp-mat-detail">—</td>
-                    <td id="emp-mat-audit" class="cell-time">待管理员审核</td>
+                    <td id="emp-mat-audit" class="cell-time">待业务侧审核</td>
                     <td class="cell-time">2026-05-08 11:05</td>
                     <td><button type="button" class="btn btn-primary">去上传</button></td>
                   </tr>
-                  <!-- 与后台过关要求多行一致：目录与每场会议各一行，便于学员区分多场线下 -->
+                  <!-- 与课程编辑页过关要求多行一致：目录与每场会议各一行，便于学员区分多场线下 -->
                   <tr>
                     <td><span class="tag video">观看/线下签到</span></td>
-                    <td>本课程目录：学完第 1、2 节（与后台「目录」行一致）</td>
+                    <td>本课程目录：学完第 1、2 节（与课程库「目录」行一致）</td>
                     <td><span class="ok">已满足</span></td>
                     <td>第 1、2 节已学完（2/2）</td>
                     <td class="cell-time">—</td>
@@ -747,7 +766,7 @@
           </div>
 
           <p class="proto-note">
-            原型说明：「更新时间」——考试：最后一次交卷；考试是否满足与后台<strong>考试总分 + 否决/通过</strong>同源（<code>oa_train_exam_override</code>）。物料：多附件任务级审核（<code>oa_train_mat_audit</code> · <code>materials</code>）。「观看/线下签到」若配置多场会议，过关表按<strong>多行</strong>展示，与课程库详情、编辑页一致。「去考试」「重新考试」为新窗口卷王。
+            原型说明：「更新时间」——考试：最后一次交卷；考试是否满足与业务侧<strong>考试总分 + 否决/通过</strong>同源（<code>oa_train_exam_override</code>）。物料：多附件任务级审核（<code>oa_train_mat_audit</code> · <code>materials</code>）。「观看/线下签到」若配置多场会议，过关表按<strong>多行</strong>展示，与课程库详情、编辑页一致。「去考试」「重新考试」为新窗口卷王。
           </p>
         </article>
       </div>
@@ -869,8 +888,8 @@
           ps.innerHTML = '<span class="no">未满足</span>';
           pd.innerHTML =
             files +
-            '<div class="mat-task-foot" style="color:var(--text-muted)">已提交 <strong>3</strong> 个附件，待管理员对本任务<strong>统一审核</strong></div>';
-          pa.textContent = "待管理员审核";
+            '<div class="mat-task-foot" style="color:var(--text-muted)">已提交 <strong>3</strong> 个附件，待业务侧对本任务<strong>统一审核</strong></div>';
+          pa.textContent = "待业务侧审核";
           pa.style.color = "";
           pa.style.fontWeight = "";
         }
@@ -923,6 +942,7 @@
       });
     })();
   </script>
+  <script src="js/oa-emp-side-nav.js" defer></script>
   <script src="js/page-notes.js"></script>
   <script>
     window.PAGE_NOTES = {
@@ -932,13 +952,13 @@
           id: "1",
           title: "过关要求表在帮学员做什么",
           html:
-            '<p class="pn-lead">本页签把管理员在后台配好的条件，整理成学员<strong>要办的几件事</strong>：考试去哪考、资料交什么、<strong>观看/线下签到</strong>（目录学习一行；每场需签到的会议各一行，便于区分多场线下）。</p>' +
-            "<p><strong>审核结果</strong>列表示资料是否已被管理员审过：上传后需等待通过或退回说明；通过后该项才算在过关进度里站住脚。</p>" +
-            "<p>考试类展示<strong>考试总分</strong>与是否满足；管理员在后台的否决/通过会同步影响本表（演示用 <code>oa_train_exam_override</code>）。</p>" +
+            '<p class="pn-lead">本页签把业务侧在<strong>课程库</strong>配好的条件，整理成学员<strong>要办的几件事</strong>：考试去哪考、资料交什么、<strong>观看/线下签到</strong>（目录学习一行；每场需签到的会议各一行，便于区分多场线下）。</p>' +
+            "<p><strong>审核结果</strong>列表示资料是否已被业务侧审过：上传后需等待通过或退回说明；通过后该项才算在过关进度里站住脚。</p>" +
+            "<p>考试类展示<strong>考试总分</strong>与是否满足；业务侧在学习进度中的否决/通过会同步影响本表（演示用 <code>oa_train_exam_override</code>）。</p>" +
             '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart LR\n' +
             "  Y[学员\n本页] --> K[参加考试]\n" +
             "  Y --> Z[上传资料]\n" +
-            "  G[管理员审资料] --> S[通过或退回]\n" +
+            "  G[业务侧审资料] --> S[通过或退回]\n" +
             "  S --> Y\n" +
             "</pre></div>" +
             "<p>本表描述的是培训业务本身，与门户顶栏、菜单外壳无关；换壳后仍应保留上述信息结构。</p>"

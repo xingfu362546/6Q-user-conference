@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>学习计划 · EIP管理系统（原型）</title>
+  <title>学习计划 · OA 培训学习（员工端 · 课程管理）</title>
   <link rel="stylesheet" href="css/tokens.css" />
-  <link rel="stylesheet" href="css/oa-shell-admin.css" />
+  <link rel="stylesheet" href="css/oa-shell-emp.css" />
+  <link rel="stylesheet" href="css/oa-shell-emp-biz.css" />
   <style>
     .page-title { margin: 0 0 8px; font-size: 18px; font-weight: 650; color: #303133; }
     .back-link { font-size: 12px; margin-bottom: 12px; }
@@ -36,44 +37,61 @@
     .proto-note { margin-top: 16px; font-size: 12px; color: #909399; line-height: 1.6; padding: 12px 14px; border: 1px dashed #dcdfe6; border-radius: 6px; background: #fafafa; }
   </style>
 </head>
-<body class="oa-admin-body">
-  <div class="oa-adm">
-    <header class="oa-adm-topbar">
-      <div class="oa-adm-topbar__left">
-        <button type="button" class="oa-adm-iconbtn" aria-label="展开或收起菜单">☰</button>
-        <span class="oa-adm-env">6Q-测试环境</span>
+<body class="oa-emp-body">
+  <!-- 原 EIP「管理端」培训菜单已迁至员工端；侧栏「课程管理」与「学员学习」目录隔离（现网按权限显隐）。 -->
+  <div class="oa-emp">
+    <header class="oa-emp-topbar">
+      <div class="oa-emp-topbar__brand">6Q-测试环境</div>
+      <div class="oa-emp-modwrap">
+        <ul class="oa-emp-modnav" aria-label="顶部模块菜单">
+          <li><a href="#">首页</a></li>
+          <li><a href="#">人力资源</a></li>
+          <li><a href="#">流程中心</a></li>
+          <li><a href="emp-course-detail.html" class="is-active">培训学习</a></li>
+        </ul>
       </div>
-      <div class="oa-adm-topbar__search">
-        <div class="oa-adm-search">
-          <span class="oa-adm-search__icon" aria-hidden="true">🔍</span>
-          <input type="search" placeholder="搜索菜单" readonly aria-label="搜索菜单" />
+      <div class="oa-emp-topbar__tools">
+        <a class="oa-emp-barlink" href="index.html" title="返回原型导航">原型导航</a>
+        <button type="button" class="oa-emp-tool" aria-label="通知"><span aria-hidden="true">🔔</span></button>
+        <div class="oa-emp-userpill">
+          <span class="oa-emp-avatar" aria-hidden="true"></span>
+          <span class="oa-emp-username">李明明</span>
         </div>
-      </div>
-      <div class="oa-adm-topbar__right">
-        <a class="oa-adm-tool" href="emp-learning-plan.html">应用端</a>
-        <button type="button" class="oa-adm-tool">全屏</button>
-        <span class="oa-adm-avatar" aria-hidden="true"></span>
       </div>
     </header>
-    <div class="oa-adm-body">
-      <aside class="oa-adm-side" aria-label="管理端导航">
-        <div class="oa-adm-side__brand">EIP管理系统</div>
-        <nav class="oa-adm-nav">
-          <a href="#" class="oa-adm-nav__item">培训学习 <span class="oa-adm-nav__chev">›</span></a>
-          <div class="oa-adm-nav__sub">
-            <a href="admin-course-library.html" class="oa-adm-nav__subitem">课程库</a>
-            <a href="admin-learning-progress.html" class="oa-adm-nav__subitem">学习进度</a>
-            <a href="admin-learning-plan-list.html" class="oa-adm-nav__subitem is-active">学习计划</a>
-            <a href="admin-quiz-grading.html" class="oa-adm-nav__subitem">考试详情（示例）</a>
+    <div class="oa-emp-row">
+      <aside class="oa-emp-side" aria-label="培训学习">
+        <div class="oa-emp-side__group" data-side-group="learn">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-learn" title="展开或收起「学员学习」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="emp-course-detail.html" class="oa-emp-side__group-title">学员学习</a>
           </div>
-        </nav>
-      </aside>
-      <div class="oa-adm-work">
-        <div class="oa-adm-workhead">
-          <div class="oa-adm-crumb">管理端 <span style="color:#d0d5dd">/</span> <strong>培训学习</strong> <span style="color:#d0d5dd">/</span> 学习计划</div>
-          <div class="oa-adm-user"><span class="oa-adm-avatar" aria-hidden="true"></span>管理员</div>
+          <div id="oa-emp-side-sub-learn" class="oa-emp-side__sublinks">
+            <a href="emp-course-detail.html">课程学习</a>
+            <a href="emp-learning-plan.html">我的学习计划</a>
+          </div>
         </div>
-        <div class="oa-adm-workbody">
+        <div class="oa-emp-side__group" data-side-group="mgmt">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-mgmt" title="展开或收起「课程管理」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="admin-course-library.html" class="oa-emp-side__group-title">课程管理</a>
+          </div>
+          <div id="oa-emp-side-sub-mgmt" class="oa-emp-side__sublinks">
+            <a href="admin-course-library.html">课程库</a>
+            <a href="admin-learning-progress.html">学习进度</a>
+            <a href="admin-learning-plan-list.html" class="is-active">学习计划</a>
+            <a href="admin-quiz-grading.html">考试详情</a>
+          </div>
+        </div>
+      </aside>
+      <div class="oa-emp-main">
+        <div class="oa-emp-biz-headwrap">
+          <div class="oa-emp-biz-head-inner">
+            <div class="oa-emp-biz-crumb">培训学习 <span style="color:#d0d5dd">/</span> <strong>学习计划</strong></div>
+            <div class="oa-emp-biz-user"><span class="oa-emp-avatar" aria-hidden="true" style="width:24px;height:24px"></span><span>李明明</span></div>
+          </div>
+        </div>
+        <div class="oa-emp-biz-workpad">
           <div class="back-link"><a href="index.html">返回原型导航</a></div>
           <h1 class="page-title">学习计划</h1>
           <div class="toolbar-row">
@@ -150,5 +168,6 @@
       </div>
     </div>
   </div>
+  <script src="js/oa-emp-side-nav.js" defer></script>
 </body>
 </html>

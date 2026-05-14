@@ -209,23 +209,46 @@
 .oa-emp-side__cta:hover {
   filter: brightness(1.03);
 }
-.oa-emp-side a {
+.oa-emp-side__sublinks a {
   display: block;
-  padding: 10px 20px;
-  font-size: 14px;
+  padding: 8px 12px 8px 28px;
+  font-size: 13px;
   color: #606266;
   text-decoration: none;
   border-left: 3px solid transparent;
 }
-.oa-emp-side a:hover {
+.oa-emp-side__sublinks a:hover {
   color: #409eff;
   background: #ecf5ff;
 }
-.oa-emp-side a.is-active {
+.oa-emp-side__sublinks a.is-active {
   color: #409eff;
   font-weight: 600;
   background: #ecf5ff;
   border-left-color: #409eff;
+}
+
+/* 「去学习」用 <a> 复用按钮视觉，需覆盖侧栏通用链接样式 */
+.oa-emp-side a.oa-emp-side__cta {
+  margin: 0 12px 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: linear-gradient(180deg, #79bbff 0%, #409eff 100%);
+  border: 1px solid #337ecc;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(64, 158, 255, 0.25);
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+.oa-emp-side a.oa-emp-side__cta:hover {
+  color: #fff;
+  background: linear-gradient(180deg, #79bbff 0%, #409eff 100%);
+  filter: brightness(1.03);
 }
 
 .oa-emp-main {

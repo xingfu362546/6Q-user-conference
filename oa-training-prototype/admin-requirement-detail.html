@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>过关要求详情 · EIP（原型）</title>
+  <title>过关要求详情 · OA 培训学习（员工端 · 课程管理）</title>
   <link rel="stylesheet" href="css/tokens.css" />
-  <link rel="stylesheet" href="css/oa-shell-admin.css" />
+  <link rel="stylesheet" href="css/oa-shell-emp.css" />
+  <link rel="stylesheet" href="css/oa-shell-emp-biz.css" />
   <link rel="stylesheet" href="css/page-notes.css" />
   <style>
     .page-title { margin: 0 0 8px; font-size: 18px; font-weight: 650; }
@@ -197,56 +198,61 @@
     .exam-actions .btn-sm.primary { background: #1677ff; border-color: #1677ff; color: #fff; }
   </style>
 </head>
-<body class="oa-admin-body">
-  <div class="oa-adm">
-    <header class="oa-adm-topbar">
-      <div class="oa-adm-topbar__left">
-        <button type="button" class="oa-adm-iconbtn" aria-label="展开或收起菜单">☰</button>
-        <span class="oa-adm-env">6Q-测试环境</span>
+<body class="oa-emp-body">
+  <!-- 原 EIP「管理端」培训菜单已迁至员工端；侧栏「课程管理」与「学员学习」目录隔离（现网按权限显隐）。 -->
+  <div class="oa-emp">
+    <header class="oa-emp-topbar">
+      <div class="oa-emp-topbar__brand">6Q-测试环境</div>
+      <div class="oa-emp-modwrap">
+        <ul class="oa-emp-modnav" aria-label="顶部模块菜单">
+          <li><a href="#">首页</a></li>
+          <li><a href="#">人力资源</a></li>
+          <li><a href="#">流程中心</a></li>
+          <li><a href="emp-course-detail.html" class="is-active">培训学习</a></li>
+        </ul>
       </div>
-      <div class="oa-adm-topbar__search">
-        <div class="oa-adm-search">
-          <span class="oa-adm-search__icon" aria-hidden="true">🔍</span>
-          <input type="search" placeholder="搜索菜单" readonly aria-label="搜索菜单" />
+      <div class="oa-emp-topbar__tools">
+        <a class="oa-emp-barlink" href="index.html" title="返回原型导航">原型导航</a>
+        <button type="button" class="oa-emp-tool" aria-label="通知"><span aria-hidden="true">🔔</span></button>
+        <div class="oa-emp-userpill">
+          <span class="oa-emp-avatar" aria-hidden="true"></span>
+          <span class="oa-emp-username">李明明</span>
         </div>
-      </div>
-      <div class="oa-adm-topbar__right">
-        <a class="oa-adm-tool" href="emp-course-detail.html" title="进入员工端（培训学习 · 课程详情示例）">应用端</a>
-        <button type="button" class="oa-adm-tool">全屏</button>
-        <button type="button" class="oa-adm-tool">清除缓存 <span class="oa-caret">▾</span></button>
-        <button type="button" class="oa-adm-tool">简体中文 <span class="oa-caret">▾</span></button>
-        <span class="oa-adm-avatar" aria-hidden="true"></span>
       </div>
     </header>
-    <div class="oa-adm-body">
-      <aside class="oa-adm-side" aria-label="管理端导航">
-        <div class="oa-adm-side__brand">EIP管理系统</div>
-        <nav class="oa-adm-nav">
-          <a href="#" class="oa-adm-nav__item">常用菜单 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">设计中心 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">应用中心 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">流程中心 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">集成中心 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">系统管理 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">用户中心 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">开发管理中心 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">考勤配置 <span class="oa-adm-nav__chev">›</span></a>
-          <a href="#" class="oa-adm-nav__item">培训学习 <span class="oa-adm-nav__chev">›</span></a>
-          <div class="oa-adm-nav__sub">
-            <a href="#" class="oa-adm-nav__subitem">课程分类</a>
-            <a href="admin-course-library.html" class="oa-adm-nav__subitem">课程库</a>
-            <a href="admin-learning-progress.html" class="oa-adm-nav__subitem is-active">学习进度</a>
-            <a href="admin-quiz-grading.html" class="oa-adm-nav__subitem">考试详情（示例）</a>
-            <a href="#" class="oa-adm-nav__subitem">全部三级反馈</a>
+    <div class="oa-emp-row">
+      <aside class="oa-emp-side" aria-label="培训学习">
+        <div class="oa-emp-side__group" data-side-group="learn">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-learn" title="展开或收起「学员学习」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="emp-course-detail.html" class="oa-emp-side__group-title">学员学习</a>
           </div>
-        </nav>
-      </aside>
-      <div class="oa-adm-work">
-        <div class="oa-adm-workhead">
-          <div class="oa-adm-crumb">管理端 <span style="color:#d0d5dd">/</span> <strong>培训学习</strong> <span style="color:#d0d5dd">/</span> 学习进度 <span style="color:#d0d5dd">/</span> 过关要求详情</div>
-          <div class="oa-adm-user"><span class="oa-adm-avatar" aria-hidden="true"></span>管理员</div>
+          <div id="oa-emp-side-sub-learn" class="oa-emp-side__sublinks">
+            <a href="emp-course-detail.html">课程学习</a>
+            <a href="emp-learning-plan.html">我的学习计划</a>
+          </div>
         </div>
-        <div class="oa-adm-workbody">
+        <div class="oa-emp-side__group" data-side-group="mgmt">
+          <div class="oa-emp-side__group-head">
+            <button type="button" class="oa-emp-side__toggle" aria-expanded="true" aria-controls="oa-emp-side-sub-mgmt" title="展开或收起「课程管理」"><span class="oa-emp-side__chev" aria-hidden="true">▼</span></button>
+            <a href="admin-course-library.html" class="oa-emp-side__group-title">课程管理</a>
+          </div>
+          <div id="oa-emp-side-sub-mgmt" class="oa-emp-side__sublinks">
+            <a href="admin-course-library.html">课程库</a>
+            <a href="admin-learning-progress.html" class="is-active">学习进度</a>
+            <a href="admin-learning-plan-list.html">学习计划</a>
+            <a href="admin-quiz-grading.html">考试详情</a>
+          </div>
+        </div>
+      </aside>
+      <div class="oa-emp-main">
+        <div class="oa-emp-biz-headwrap">
+          <div class="oa-emp-biz-head-inner">
+            <div class="oa-emp-biz-crumb">培训学习 <span style="color:#d0d5dd">/</span> 学习进度 <span style="color:#d0d5dd">/</span> <strong>过关要求详情</strong></div>
+            <div class="oa-emp-biz-user"><span class="oa-emp-avatar" aria-hidden="true" style="width:24px;height:24px"></span><span>李明明</span></div>
+          </div>
+        </div>
+        <div class="oa-emp-biz-workpad">
         <div class="back-link">
           <a href="index.html">返回原型导航</a>
           <span aria-hidden="true"> · </span>
@@ -254,7 +260,7 @@
         </div>
 
         <p class="banner">
-          主流程为列表内 <strong>查看</strong> 弹层。本页为深链备用；菜单与其它后台页一致。
+          主流程为学习进度列表内 <strong>查看</strong> 弹层。本页为深链备用；壳层与「课程管理」其它页一致。
         </p>
 
         <section class="summary">
@@ -280,7 +286,7 @@
             <button type="button" class="page-note-pin" data-note-id="2" aria-label="说明2">2</button>
           </h2>
           <p class="muted" style="margin:0 0 12px;font-size:13px;">
-            与员工端一致；物料上传为<strong>同一任务多附件</strong>列表展示（多个附件时可<strong>批量下载</strong>），由管理员对<strong>整条任务</strong>点通过/不通过（<code>oa_train_mat_audit</code> · <code>materials</code>）。
+            与员工端一致；物料上传为<strong>同一任务多附件</strong>列表展示（多个附件时可<strong>批量下载</strong>），由业务侧对<strong>整条任务</strong>点通过/不通过（<code>oa_train_mat_audit</code> · <code>materials</code>）。
           </p>
           <div class="table-wrap">
             <table class="data" id="req-audit-table">
@@ -431,7 +437,7 @@
               sat.innerHTML = '<span class="no">未满足</span>';
               det.innerHTML =
                 files +
-                '<div class="mat-task-foot" style="color:var(--text-muted)">已提交 <strong>3</strong> 个附件，待管理员对本任务<strong>统一审核</strong></div>';
+                '<div class="mat-task-foot" style="color:var(--text-muted)">已提交 <strong>3</strong> 个附件，待业务侧对本任务<strong>统一审核</strong></div>';
               op.innerHTML =
                 '<div class="mat-actions"><button type="button" class="btn-mat pass js-req-pass" data-mat-key="materials">通过</button><button type="button" class="btn-mat reject js-req-reject" data-mat-key="materials">不通过</button></div>';
             }
@@ -539,6 +545,7 @@
       renderReqExam();
     })();
   </script>
+  <script src="js/oa-emp-side-nav.js" defer></script>
   <script src="js/page-notes.js"></script>
   <script>
     window.PAGE_NOTES = {
@@ -548,7 +555,7 @@
           id: "1",
           title: "什么时候会打开这一页",
           html:
-            '<p class="pn-lead">日常以「学习进度 → 查看」里的明细为主；本页适合放在<strong>通知、工单或邮件里的直达链接</strong>，让管理员不必先找列表就能打开某位学员、某门课的过关表。</p>' +
+            '<p class="pn-lead">日常以「学习进度 → 查看」里的明细为主；本页适合放在<strong>通知、工单或邮件里的直达链接</strong>，让业务侧不必先找列表就能打开某位学员、某门课的过关表。</p>' +
             "<p>页面结构与学习进度中的过关明细<strong>一致</strong>，避免同一件事两套说法。</p>" +
             '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart LR\n' +
             "  A[学习进度\n常用入口] --> B[过关明细]\n" +
@@ -560,14 +567,14 @@
           id: "2",
           title: "表格上每一项在业务里代表什么",
           html:
-            '<p class="pn-lead">从上到下看：先看清<strong>条件类型</strong>，再看<strong>是否满足</strong>与<strong>满足情况</strong>（分数、附件、完成度等），最后是<strong>管理员要点的动作</strong>。</p>' +
+            '<p class="pn-lead">从上到下看：先看清<strong>条件类型</strong>，再看<strong>是否满足</strong>与<strong>满足情况</strong>（分数、附件、完成度等），最后是<strong>业务侧要点的动作</strong>。</p>' +
             "<ul>" +
             "<li><strong>考试</strong>：展示<strong>考试总分</strong>；可「考试详情」打开整卷阅览页；满足时可「否决」、不满足时可「通过」（与列表弹层、考试详情页同源）。</li>" +
-            "<li><strong>物料上传</strong>：管理员「通过」或「不通过」后，学员在员工端同一门课的过关表里能看到<strong>审核结果</strong>，便于对照修改。</li>" +
-            "<li><strong>观看/线下签到</strong>：以<strong>目录完成度</strong>或<strong>会议线下扫码签到</strong>回写为准（后台配置为「或」时满足其一），一般不再人工点选。</li>" +
+            "<li><strong>物料上传</strong>：业务侧「通过」或「不通过」后，学员在员工端同一门课的过关表里能看到<strong>审核结果</strong>，便于对照修改。</li>" +
+            "<li><strong>观看/线下签到</strong>：以<strong>目录完成度</strong>或<strong>会议线下扫码签到</strong>回写为准（课程库配置为「或」时满足其一），一般不再人工点选。</li>" +
             "</ul>" +
             '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart TB\n' +
-            "  G[管理员在本页\n做出审阅结论] --> Y[学员在员工端\n看到最新状态]\n" +
+            "  G[业务侧在本页\n做出审阅结论] --> Y[学员在员工端\n看到最新状态]\n" +
             "  G --> J[与学习进度里\n同一条记录对齐]\n" +
             "</pre></div>"
         }
