@@ -104,22 +104,118 @@
       color: #e5e7eb;
       font-size: 12px;
     }
-    .video-controls .bar {
+    .video-seek-wrap {
       flex: 1;
-      height: 4px;
-      background: rgba(255,255,255,.2);
-      border-radius: 2px;
-      position: relative;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .video-controls .bar::after {
-      content: "";
+    .video-seek {
+      position: relative;
+      height: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .video-seek__track {
       position: absolute;
       left: 0;
-      top: 0;
-      width: 4%;
-      height: 100%;
+      right: 0;
+      height: 4px;
+      background: rgba(255,255,255,.25);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+    .video-seek__fill {
+      position: absolute;
+      left: 0;
+      height: 4px;
+      width: var(--seek-pct, 4%);
       background: var(--accent);
       border-radius: 2px;
+      pointer-events: none;
+      transition: width 0.05s linear;
+    }
+    .video-seek__input {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      margin: 0;
+      height: 14px;
+      background: transparent;
+      cursor: not-allowed;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .video-seek__input::-webkit-slider-runnable-track {
+      height: 4px;
+      background: transparent;
+    }
+    .video-seek__input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      margin-top: -4px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--accent);
+      box-shadow: 0 1px 3px rgba(0,0,0,.35);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .video-seek-wrap.is-seek-unlocked .video-seek__input {
+      cursor: pointer;
+    }
+    .video-seek-wrap.is-seek-unlocked .video-seek__input::-webkit-slider-thumb {
+      opacity: 1;
+    }
+    .video-seek-wrap.is-seek-unlocked .video-seek__input::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--accent);
+      box-shadow: 0 1px 3px rgba(0,0,0,.35);
+    }
+    .video-seek-hint {
+      font-size: 10px;
+      color: #9ca3af;
+      line-height: 1.3;
+    }
+    .video-seek-wrap.is-seek-unlocked .video-seek-hint--locked {
+      display: none;
+    }
+    .video-seek-wrap.is-seek-unlocked .video-seek-hint--unlocked {
+      display: block;
+    }
+    .video-seek-wrap.is-seek-locked .video-seek-hint--locked {
+      display: block;
+    }
+    .video-seek-wrap.is-seek-locked .video-seek-hint--unlocked {
+      display: none;
+    }
+    .video-proto-demo {
+      margin: 0;
+      padding: 6px 12px 8px;
+      font-size: 11px;
+      color: #9ca3af;
+      background: rgba(0,0,0,.35);
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .video-proto-demo label {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .video-proto-demo input {
+      margin: 0;
+    }
+    .video-shell-note {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
     }
     .catalog {
       border: 1px solid var(--border-default);
@@ -548,15 +644,52 @@
           <h1 class="course-title">课程名称</h1>
 
           <div class="player-grid">
-            <div class="video-shell" aria-label="视频播放（示意）">
+            <div class="video-shell" aria-label="视频播放（示意）" style="position:relative">
+              <div class="video-shell-note">
+                <button type="button" class="page-note-pin" data-note-id="2" aria-label="播放器进度条说明">2</button>
+              </div>
               <div class="video-stage" id="video-stage-label">当前播放：抖音.mp4（1368培训星级认证课程 · 原型占位）</div>
               <div class="video-controls">
                 <span>播放</span>
-                <div class="bar" title="进度"></div>
-                <span style="font-variant-numeric: tabular-nums">00:00 / 00:47</span>
+                <!--
+                  【播放器 · 进度条拖动】
+                  现网：过关要求中「观看/线下签到」且绑定为「目录观看」的任务全部满足前，进度条不可拖动（防未学完拖进度）。
+                  全部满足后解锁，允许拖动定位已学内容。
+                  原型：#video-seek-wrap 默认 is-seek-unlocked（与过关表「本课程目录」行已满足一致）；
+                  勾选 #demo-watch-not-done 可演示锁定态。
+                -->
+                <div class="video-seek-wrap is-seek-unlocked" id="video-seek-wrap">
+                  <label class="video-seek">
+                    <span class="video-seek__track" aria-hidden="true"></span>
+                    <span class="video-seek__fill" id="video-seek-fill" aria-hidden="true"></span>
+                    <input
+                      type="range"
+                      class="video-seek__input"
+                      id="video-seek-input"
+                      min="0"
+                      max="47"
+                      value="2"
+                      step="1"
+                      aria-label="播放进度"
+                      aria-valuemin="0"
+                      aria-valuemax="47"
+                      aria-valuenow="2"
+                      title="目录观看任务完成后可拖动进度"
+                    />
+                  </label>
+                  <span class="video-seek-hint video-seek-hint--locked" id="video-seek-hint-locked">目录观看任务未完成 · 进度条不可拖动</span>
+                  <span class="video-seek-hint video-seek-hint--unlocked">可拖动进度条回顾已学片段</span>
+                </div>
+                <span id="video-time-label" style="font-variant-numeric: tabular-nums">00:02 / 00:47</span>
                 <span>音量</span>
                 <span>全屏</span>
               </div>
+              <p class="video-proto-demo">
+                <label>
+                  <input type="checkbox" id="demo-watch-not-done" />
+                  演示：目录观看任务<strong>未完成</strong>（锁定进度条，不可拖动）
+                </label>
+              </p>
             </div>
 
             <aside class="catalog" aria-label="课程目录">
@@ -724,10 +857,10 @@
                     <td><button type="button" class="btn btn-primary">去上传</button></td>
                   </tr>
                   <!-- 与课程编辑页过关要求多行一致：目录与每场会议各一行，便于学员区分多场线下 -->
-                  <tr>
+                  <tr id="js-watch-catalog-row" data-watch-catalog="catalog">
                     <td><span class="tag video">观看/线下签到</span></td>
                     <td>本课程目录：学完第 1、2 节（与课程库「目录」行一致）</td>
-                    <td><span class="ok">已满足</span></td>
+                    <td class="js-watch-catalog-sat"><span class="ok">已满足</span></td>
                     <td>第 1、2 节已学完（2/2）</td>
                     <td class="cell-time">—</td>
                     <td class="cell-time">2026-05-08 16:40</td>
@@ -766,7 +899,7 @@
           </div>
 
           <p class="proto-note">
-            原型说明：「更新时间」——考试：最后一次交卷；考试是否满足与业务侧<strong>考试总分 + 否决/通过</strong>同源（<code>oa_train_exam_override</code>）。物料：多附件任务级审核（<code>oa_train_mat_audit</code> · <code>materials</code>）。「观看/线下签到」若配置多场会议，过关表按<strong>多行</strong>展示，与课程库详情、编辑页一致。「去考试」「重新考试」为新窗口卷王。
+            原型说明：「更新时间」——考试：最后一次交卷；考试是否满足与业务侧<strong>考试总分 + 否决/通过</strong>同源（<code>oa_train_exam_override</code>）。物料：多附件任务级审核（<code>oa_train_mat_audit</code> · <code>materials</code>）。「观看/线下签到」若配置多场会议，过关表按<strong>多行</strong>展示，与课程库详情、编辑页一致。「去考试」「重新考试」为新窗口卷王。<strong>播放器进度条</strong>：过关要求中<strong>本课目录观看</strong>任务全部满足后方可拖动定位；未完成时锁定（见播放器下方演示勾选与说明钉 <strong>2</strong>）。
           </p>
         </article>
       </div>
@@ -809,6 +942,53 @@
           if (id) setCurrentVideo(id);
         });
       });
+
+      var seekWrap = document.getElementById("video-seek-wrap");
+      var seekInput = document.getElementById("video-seek-input");
+      var seekFill = document.getElementById("video-seek-fill");
+      var timeLabel = document.getElementById("video-time-label");
+      var demoNotDone = document.getElementById("demo-watch-not-done");
+      var catalogSatCell = document.querySelector(".js-watch-catalog-sat");
+
+      function pad2(n) {
+        return (n < 10 ? "0" : "") + n;
+      }
+      function formatTime(sec) {
+        var s = Math.max(0, Math.min(47, Math.round(sec)));
+        return pad2(Math.floor(s / 60)) + ":" + pad2(s % 60);
+      }
+      function setSeekUi(sec) {
+        if (!seekInput) return;
+        var pct = (sec / 47) * 100;
+        seekInput.value = String(sec);
+        seekInput.setAttribute("aria-valuenow", String(sec));
+        if (seekFill) seekFill.style.setProperty("--seek-pct", pct + "%");
+        if (timeLabel) timeLabel.textContent = formatTime(sec) + " / 00:47";
+      }
+      function isCatalogWatchSatisfied() {
+        if (demoNotDone && demoNotDone.checked) return false;
+        if (!catalogSatCell) return true;
+        return !!catalogSatCell.querySelector(".ok");
+      }
+      function applySeekLock() {
+        if (!seekWrap || !seekInput) return;
+        var unlocked = isCatalogWatchSatisfied();
+        seekWrap.classList.toggle("is-seek-unlocked", unlocked);
+        seekWrap.classList.toggle("is-seek-locked", !unlocked);
+        seekInput.disabled = !unlocked;
+        seekInput.title = unlocked
+          ? "目录观看任务已完成，可拖动进度"
+          : "目录观看任务未完成，不可拖动进度";
+      }
+      if (seekInput) {
+        seekInput.addEventListener("input", function () {
+          if (seekInput.disabled) return;
+          setSeekUi(Number(seekInput.value));
+        });
+        setSeekUi(Number(seekInput.value));
+      }
+      if (demoNotDone) demoNotDone.addEventListener("change", applySeekLock);
+      applySeekLock();
     })();
 
     (function () {
@@ -946,8 +1126,23 @@
   <script src="js/page-notes.js"></script>
   <script>
     window.PAGE_NOTES = {
-      drawerTitle: "课程详情 · 过关要求（学员视角）",
+      drawerTitle: "课程详情 · 功能说明",
       sections: [
+        {
+          id: "2",
+          title: "播放器进度条：何时可拖动",
+          html:
+            '<p class="pn-lead">学完<strong>本课目录观看</strong>类过关任务后，才允许在播放器里<strong>拖动进度条</strong>回顾视频；未学完前进度条锁定，避免跳过未计入有效学习时长的片段。</p>' +
+            "<ul>" +
+            "<li><strong>锁定</strong>：过关要求 Tab 中「本课程目录：学完第 x、y 节」仍为<strong>未满足</strong>时，进度条不可拖（原型可勾选播放器下「演示：目录观看任务未完成」）。</li>" +
+            "<li><strong>解锁</strong>：上述目录观看任务<strong>已满足</strong>后，可拖动进度条并更新当前时间示意。</li>" +
+            "<li><strong>现网</strong>：以服务端目录完成度为准自动切换；仅「目录观看」类条件触发，单场会议签到行不单独控制播放器拖动。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart LR\n' +
+            "  W[目录观看\n未满足] --> L[进度条锁定]\n" +
+            "  D[目录观看\n已满足] --> U[进度条可拖动]\n" +
+            "</pre></div>"
+        },
         {
           id: "1",
           title: "过关要求表在帮学员做什么",

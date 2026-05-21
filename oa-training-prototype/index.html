@@ -250,10 +250,18 @@
               <td>业务侧创建计划：多课程 + 组织穿梭选人；保存后通知参学人，临期催办未通关。学员端「我的学习计划」展示计划及课程归属徽章。「参学情况」查看每人每课是否在规定周期内通关。</td>
               <td>列表页、新建/编辑表单（无封面）、参学监控列表；状态含<strong>已通关 / 在学中 / 未在规定时间通关</strong>。</td>
             </tr>
+            <tr>
+              <td>7</td>
+              <td>OA-员工端</td>
+              <td>课程学习</td>
+              <td>课程详情 · 播放器</td>
+              <td>过关要求中<strong>本课目录观看</strong>任务全部满足后，视频播放器<strong>进度条可拖动</strong>；未完成前进度条锁定不可拖（防未学完跳进度）。</td>
+              <td>与过关表「观看/线下签到 · 目录」行联动；<code>emp-course-detail.html</code> 播放器区 HTML 注释 + 说明钉 <strong>2</strong> + 演示勾选。</td>
+            </tr>
           </tbody>
         </table>
         <p style="margin:12px 0 0;font-size:0.8125rem;color:var(--text-secondary);line-height:1.5;padding-top:12px;border-top:1px solid var(--border-default)">
-          <strong>需求定义提示：</strong>上表为功能<strong>原文摘要</strong>。每条需求属「迭代」或「新增」、以及<strong>首次纳入的版本号 / 版本名称</strong>，以 <code>oa-training-prototype/DEVELOPER_HANDOFF.md</code> <strong>§4 功能清单主表</strong> 与根目录 <code>CHANGELOG.md</code> 为准，便于开发拆接口与排期。发版时请按 CHANGELOG 内约定打 <code>git tag</code> 并填写 Codeup 版本名称。
+          <strong>需求定义提示：</strong>上表为功能<strong>原文摘要</strong>（序号 1～7）。每条需求属「迭代」或「新增」、以及<strong>首次纳入的版本号 / 版本名称</strong>，以 <code>oa-training-prototype/DEVELOPER_HANDOFF.md</code> <strong>§4 功能清单主表</strong> 与根目录 <code>CHANGELOG.md</code> 为准，便于开发拆接口与排期。发版时请按 CHANGELOG 内约定打 <code>git tag</code> 并填写 Codeup 版本名称。
         </p>
       </div>
     </section>
@@ -281,7 +289,7 @@
               <span><span class="order-badge">1</span>员工端 · 课程详情</span>
               <span class="nav-meta">可预览</span>
             </span>
-            <span class="nav-desc">含「考核标准」「过关要求」Tab 及外链卷王；与清单序号 1～2 对应。</span>
+            <span class="nav-desc">含「考核标准」「过关要求」Tab 及外链卷王；播放器进度条在目录观看过关后可拖动（清单 7）；与清单序号 1～2、7 对应。</span>
           </a>
         </li>
         <li>
@@ -359,6 +367,7 @@
             "<ul>" +
             "<li><strong>考试与成绩</strong>：学员与列表侧以<strong>考试总分</strong>与达标线对照；详情页阅览整卷并在页头做否决/通过。</li>" +
             "<li><strong>过关要求</strong>：考试达标线、资料上传、视频学完等条件写清楚；资料上传后需要业务侧<strong>审阅通过</strong>才算过关。</li>" +
+            "<li><strong>播放器进度</strong>：本课<strong>目录观看</strong>过关后才允许拖动进度条，未学完前锁定。</li>" +
             "<li><strong>学习进度</strong>：业务侧能按课程、考试结果筛人，点开能看到每位学员各项条件是否满足。</li>" +
             "</ul>" +
             '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart TB\n' +
@@ -373,7 +382,7 @@
           html:
             '<p class="pn-lead">按「学员先看到什么 → 有权限的业务用户在员工端侧栏「课程管理」里跟什么」走一遍，评审时故事比较顺。</p>' +
             "<ul>" +
-            "<li><strong>1 员工端 · 学员学习 · 课程详情</strong>：学员看到课程介绍、考核标准、过关要做什么（考试、交材料、看视频等）。</li>" +
+            "<li><strong>1 员工端 · 学员学习 · 课程详情</strong>：学员看到课程介绍、考核标准、过关要做什么（考试、交材料、看视频等）；目录观看过关后播放器进度条可拖动（清单 7）。</li>" +
             "<li><strong>2～3 员工端 · 课程管理 · 学习进度</strong>：业务侧看名单与分数，点「查看」展开某位学员的过关明细；也可从通知链接打开单独的过关详情页。</li>" +
             "<li><strong>4 员工端 · 课程管理 · 课程库</strong>：维护课程信息与过关条件，从通关人数跳到对应课程的学习名单。</li>" +
             "<li><strong>5 员工端 · 课程管理 · 考试详情</strong>：查看整卷与页头总分，在页头否决或通过与过关条件联动。</li>" +
