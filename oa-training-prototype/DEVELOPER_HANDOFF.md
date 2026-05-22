@@ -1,6 +1,6 @@
 # OA 培训学习模块 · 开发者交接说明
 
-> **文档版本**：`2026.05.4` · 与根目录 `CHANGELOG.md` **[1.2.0]** 对齐（见该文件「发布命名约定」与版本小节）；**相对 2026.05.3** 补充清单 **序号 7**：课程详情播放器在目录观看过关后可拖动进度条。  
+> **文档版本**：`2026.05.5` · 与根目录 `CHANGELOG.md` **[1.2.0]** 对齐（见该文件「发布命名约定」与版本小节）；**相对 2026.05.4** 补充清单 **序号 8**：课程详情「同系列课程」分类目录 Tab 与备注说明。  
 > **文档用途**：开发 clone / pull 后建议**先读本文 §1～§4**，再按 §3 顺序打开 HTML；对照页内 `proto-note`、HTML 注释、`window.PAGE_NOTES` 与演示键落地实现。  
 > **范围**：`oa-training-prototype/` 下培训学习可点击原型；文末 §9 为仓库外历史文件说明。
 
@@ -80,7 +80,7 @@ index.html（读 §4 与矩阵 + 导航）
 
 ## 4. 功能清单 ↔ 需求性质 ↔ 版本 ↔ HTML（**开发定义主表**）
 
-> 与 `index.html` 表格 **序号 1～7** 一致。扩展行不在 HTML 矩阵中，**须单独排期**。
+> 与 `index.html` 表格 **序号 1～8** 一致。扩展行不在 HTML 矩阵中，**须单独排期**。
 
 ### 4.1 主清单（Excel / index 矩阵）
 
@@ -93,6 +93,7 @@ index.html（读 §4 与矩阵 + 导航）
 | 5 | **迭代** | v1.0.0 | 同上 | 员工端 · 培训学习 · **课程管理** / 课程库 | 编辑课程、过关要求配置 | `admin-course-library.html`、`admin-course-edit.html` |
 | 6 | **新增** | v1.1.0 | `2026.05-学习计划模块初版` | 员工端 · **课程管理** + **学员学习** / 学习计划 | 业务侧：多课程、组织穿梭、通知与临期、参学监控；学员侧：我的计划与通关展示 | `admin-learning-plan-list.html`、`admin-learning-plan-form.html`、`admin-learning-plan-monitor.html`、`emp-learning-plan.html` |
 | 7 | **迭代** | v1.2.1 | `2026.05-课程详情播放器进度可拖` | 员工端 / 课程学习 / 课程详情 · 播放器 | 本课**目录观看**过关要求满足后进度条可拖动；未满足前锁定 | `emp-course-detail.html`（`#video-seek-wrap`、`#demo-watch-not-done`、说明钉 **2**） |
+| 8 | **迭代** | v1.2.1 | 同上 | 员工端 / 课程学习 / 课程详情 · 课程目录 | **同系列课程** Tab：系列树形目录；可点播课时与课时列表共用 `data-video-id` 切换播放 | `emp-course-detail.html`（`#cat-panel-type`、`cat-dir-tree`、说明钉 **3**、`catalog-proto-note`） |
 
 ### 4.2 清单外扩展（HTML 矩阵未单独成行）
 
@@ -112,12 +113,13 @@ index.html（读 §4 与矩阵 + 导航）
 - **功能**：功能清单矩阵（**定义以 §4 为准**）、导航、`PAGE_NOTES`；矩阵与导航已按 **员工端侧栏「学员学习 / 课程管理」** 口径表述。  
 - **页脚**：「已满足/为满足」→ 语义「未满足」；红数字打开侧栏。
 
-### 5.2 `emp-course-detail.html` — 清单 1、2、7（迭代）
+### 5.2 `emp-course-detail.html` — 清单 1、2、7、8（迭代）
 
 - **壳**：员工端侧栏含「去学习」CTA + 两分组（§2.1）；`js/oa-emp-side-nav.js`。  
+- **清单 8 · 课程目录 / 同系列课程**：侧栏 `aside.catalog` 内 Tab **课时列表**（`#cat-panel-linear`）与 **同系列课程**（`#cat-panel-type`）；后者为 `details/summary` 树（`#cat-dir-tree`），对齐现网系列分类侧栏。仅 `.js-cat-item`（含 `data-video-id`）可点切换播放器；无 video-id 的叶子为课程包名称占位。脚本 `setCurrentVideo` 两侧 Tab 同步 `is-current`。目录区 HTML 注释、`catalog-proto-note`、说明钉 **3**、`PAGE_NOTES` §3。  
 - **清单 7 · 播放器进度条**：`#video-seek-wrap` 在过关表「本课程目录观看」行（`#js-watch-catalog-row` / `.js-watch-catalog-sat` 含 `.ok`）满足后为 **`is-seek-unlocked`**，`<input type="range">` 可拖并更新 `#video-time-label`；未满足或勾选 **`#demo-watch-not-done`** 时为 **`is-seek-locked`**（`disabled` + 无滑块柄）。播放器区 HTML 注释、`PAGE_NOTES` 说明钉 **2**、页底 `proto-note` 已写明规则。  
-- **`proto-note`**：考试 **`oa_train_exam_override`**；物料 **`oa_train_mat_audit`**；多场会议多行；卷王新窗口；进度条与目录观看过关联动。  
-- **`PAGE_NOTES`**：说明钉 **1** 过关与审核；**2** 进度条锁定/解锁规则。
+- **`proto-note`**：考试 **`oa_train_exam_override`**；物料 **`oa_train_mat_audit`**；多场会议多行；卷王新窗口；进度条与目录观看；**目录双 Tab / 同系列树**（说明钉 **3**）。  
+- **`PAGE_NOTES`**：说明钉 **1** 过关与审核；**2** 进度条；**3** 课时列表与同系列课程。
 
 ### 5.3 `admin-learning-progress.html` — 清单 3 + E1、E2（迭代 + 新增扩展）
 

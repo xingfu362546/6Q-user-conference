@@ -368,6 +368,15 @@
       color: var(--accent);
       font-weight: 600;
     }
+    .catalog-proto-note {
+      margin: 0;
+      padding: 8px 12px 10px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      border-top: 1px dashed var(--border-strong);
+      background: var(--bg-subtle);
+    }
     .catalog-list { list-style: none; margin: 0; padding: 8px 0; }
     .catalog-list li {
       padding: 10px 14px;
@@ -692,9 +701,20 @@
               </p>
             </div>
 
+            <!--
+              【课程目录 · 课时列表 / 同系列课程】
+              · 课时列表：本课扁平课时，展示学习状态、时长、观看进度上报时间（与过关「目录观看」统计口径相关）。
+              · 同系列课程：按培训产品/系列树展示（对齐现网学员端分类侧栏）；系列节点 details 展开收起；
+                叶子分「仅课程名」（不可点播）与「课时项」（.js-cat-item，可切换左侧播放器，与课时列表共用 data-video-id）。
+              · 切换 Tab 不丢当前播放课时；点任一侧栏可播放项时，两侧 is-current 同步。
+              · 现网数据与课程库/内容中心系列分类同源；过关要求配置「其他课程+勾选课时」时，学员侧从本树定位（见课程编辑页注释）。
+            -->
             <aside class="catalog" aria-label="课程目录">
               <div class="catalog-head" id="cat-head">
-                <span>课程目录</span>
+                <span class="with-page-note" style="display:inline-flex;align-items:center;gap:6px">
+                  <span>课程目录</span>
+                  <button type="button" class="page-note-pin" data-note-id="3" aria-label="课程目录与同系列说明">3</button>
+                </span>
                 <span class="catalog-sub">共 5 讲 · 含分类目录</span>
               </div>
               <div class="cat-tabs" role="tablist" aria-label="目录展示方式">
@@ -790,6 +810,9 @@
 
                 </div>
               </div>
+              <p class="catalog-proto-note">
+                原型说明（目录）：默认「课时列表」；「同系列课程」为<strong>树形分类</strong>，仅带 <code>data-video-id</code> 的叶子可切换播放。系列下无 video-id 的条目为<strong>课程包/子课名称占位</strong>，现网是否可点击进入以产品为准。说明钉 <strong>3</strong>。
+              </p>
             </aside>
           </div>
 
@@ -899,7 +922,7 @@
           </div>
 
           <p class="proto-note">
-            原型说明：「更新时间」——考试：最后一次交卷；考试是否满足与业务侧<strong>考试总分 + 否决/通过</strong>同源（<code>oa_train_exam_override</code>）。物料：多附件任务级审核（<code>oa_train_mat_audit</code> · <code>materials</code>）。「观看/线下签到」若配置多场会议，过关表按<strong>多行</strong>展示，与课程库详情、编辑页一致。「去考试」「重新考试」为新窗口卷王。<strong>播放器进度条</strong>：过关要求中<strong>本课目录观看</strong>任务全部满足后方可拖动定位；未完成时锁定（见播放器下方演示勾选与说明钉 <strong>2</strong>）。
+            原型说明：「更新时间」——考试：最后一次交卷；考试是否满足与业务侧<strong>考试总分 + 否决/通过</strong>同源（<code>oa_train_exam_override</code>）。物料：多附件任务级审核（<code>oa_train_mat_audit</code> · <code>materials</code>）。「观看/线下签到」若配置多场会议，过关表按<strong>多行</strong>展示，与课程库详情、编辑页一致。「去考试」「重新考试」为新窗口卷王。<strong>播放器进度条</strong>：过关要求中<strong>本课目录观看</strong>任务全部满足后方可拖动定位；未完成时锁定（说明钉 <strong>2</strong>）。<strong>课程目录</strong>：「课时列表 / 同系列课程」双 Tab 与树形分类见侧栏说明钉 <strong>3</strong> 及目录区底部灰字说明。
           </p>
         </article>
       </div>
@@ -1128,6 +1151,27 @@
     window.PAGE_NOTES = {
       drawerTitle: "课程详情 · 功能说明",
       sections: [
+        {
+          id: "3",
+          title: "课程目录：课时列表与同系列课程",
+          html:
+            '<p class="pn-lead">右侧目录区提供两种看法：<strong>课时列表</strong>只看本课；<strong>同系列课程</strong>按培训系列树浏览，方便学员在同产品线下找到其它课或课时入口。</p>' +
+            "<ul>" +
+            "<li><strong>课时列表</strong>：扁平展示本课各讲；含时长、标签、学习状态、「观看进度最近上报」等，与过关要求里<strong>本课目录观看</strong>统计对应。</li>" +
+            "<li><strong>同系列课程</strong>：树形结构（<code>details/summary</code> 展开系列）；顶层「全部课程」为示意根节点。</li>" +
+            "<li><strong>可点击播放</strong>：仅带课时标识的叶子（原型为 <code>.js-cat-item</code> + <code>data-video-id</code>）会切换左侧播放器；纯课程名称行仅展示，不切换视频。</li>" +
+            "<li><strong>联动</strong>：在任一侧栏点同一课时，两侧 Tab 内当前项高亮同步；系列名写入播放器占位文案（<code>data-series</code>）。</li>" +
+            "<li><strong>配置侧</strong>：业务在课程库维护系列分类；过关要求若绑定「其他课程目录+勾选课时」，学员从本树定位对应课时（与 <code>admin-course-edit.html</code> 过关要求注释一致）。</li>" +
+            "</ul>" +
+            '<div class="pn-mermaid-wrap"><pre class="mermaid">flowchart TB\n' +
+            "  T[Tab 课时列表] --> L[本课扁平课时]\n" +
+            "  S[Tab 同系列课程] --> R[系列树]\n" +
+            "  R --> N[课程名占位]\n" +
+            "  R --> V[可点播课时]\n" +
+            "  V --> P[播放器]\n" +
+            "  L --> P\n" +
+            "</pre></div>"
+        },
         {
           id: "2",
           title: "播放器进度条：何时可拖动",

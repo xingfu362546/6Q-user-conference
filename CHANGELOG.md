@@ -34,6 +34,7 @@
 ### 迭代
 
 - **清单 7**：员工端课程详情 — 过关要求中**本课目录观看**任务满足后，视频播放器**进度条可拖动**；未完成前锁定。见 `emp-course-detail.html`、`index.html` 矩阵序号 7、`DEVELOPER_HANDOFF.md` §4.1 / §5.2。
+- **清单 8**：员工端课程详情 — 课程目录增加 **「同系列课程」** Tab（系列树形分类、可点播课时与课时列表联动）；HTML 注释、说明钉 3、`catalog-proto-note` 与交接文档 §5.2 已补充。
 
 ---
 
@@ -85,4 +86,4 @@
 
 ## 与 `index.html` 功能矩阵的关系
 
-`oa-training-prototype/index.html` 中表格为需求**原文摘要**（含序号 **1～7**）；**是否迭代 / 新增**及**版本归属**以 **DEVELOPER_HANDOFF.md §4** 与 **本 CHANGELOG** 为权威说明（避免仅看 HTML 表格产生理解偏差）。
+`oa-training-prototype/index.html` 中表格为需求**原文摘要**（含序号 **1～8**）；**是否迭代 / 新增**及**版本归属**以 **DEVELOPER_HANDOFF.md §4** 与 **本 CHANGELOG** 为权威说明（避免仅看 HTML 表格产生理解偏差）。
