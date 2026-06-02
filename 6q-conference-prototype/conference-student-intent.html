@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学员意向分析 · 课程会务详情 · 6Q 原型</title>
+  <link rel="stylesheet" href="css/6q-conference.css" />
+  <link rel="stylesheet" href="css/6q-intent-premium.css" />
+</head>
+<body class="q-app intent-theme" data-cf-page="intent">
+  <header id="q-topbar-mount"></header>
+  <div class="q-body">
+    <aside id="q-sidenav-mount" class="q-sidenav"></aside>
+    <div class="q-main">
+      <nav id="q-doc-tabs-mount" class="q-doc-tabs"></nav>
+      <div class="q-breadcrumb">线下课程会务 / 课程会务 / <strong>学员意向分析</strong></div>
+      <div class="q-content-wrap">
+        <nav id="q-subnav-mount" class="q-subnav" aria-label="会务子菜单"></nav>
+        <main class="q-page">
+          <!-- Hero -->
+          <section class="intent-hero" aria-labelledby="intent-hero-title">
+            <div class="intent-hero__inner">
+              <div>
+                <p class="intent-hero__eyebrow">Course Conference · Intent Intelligence</p>
+                <h1 class="intent-hero__title" id="intent-hero-title">第12551期 · 如何说孩子才会听，怎么听孩子才肯说</h1>
+                <p class="intent-hero__sub">
+                  基于标签平台全量计算结果，聚焦本期学员购买意向。标签命中持续有效，直至平台重新计算。
+                </p>
+                <div class="intent-hero__meta">
+                  <span class="intent-hero__pill">会务 CF-2025-12551</span>
+                  <span class="intent-hero__pill">广州 · 待上课</span>
+                </div>
+              </div>
+              <div class="intent-hero__actions">
+                <a class="q-btn" href="../user-tag-admin/tag-list.html" target="_blank" rel="noopener">标签平台</a>
+                <a class="q-btn" href="conference-intent-strategy.html">本期分析策略</a>
+              </div>
+            </div>
+          </section>
+
+          <!-- KPI -->
+          <div class="intent-kpi" role="group" aria-label="汇总指标">
+            <div class="intent-kpi__card">
+              <div class="intent-kpi__icon intent-kpi__icon--slate" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <div class="intent-kpi__label">本期学员</div>
+                <div class="intent-kpi__value" id="stat-total">6</div>
+              </div>
+            </div>
+            <div class="intent-kpi__card">
+              <div class="intent-kpi__icon intent-kpi__icon--blue" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <div>
+                <div class="intent-kpi__label">命中关注标签</div>
+                <div class="intent-kpi__value intent-kpi__value--accent" id="stat-watch">—</div>
+              </div>
+            </div>
+            <div class="intent-kpi__card">
+              <div class="intent-kpi__icon intent-kpi__icon--rose" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="intent-kpi__label">高意向学员</div>
+                <div class="intent-kpi__value" id="stat-high">—</div>
+              </div>
+            </div>
+            <div class="intent-kpi__card">
+              <div class="intent-kpi__icon intent-kpi__icon--amber" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+              </div>
+              <div>
+                <div class="intent-kpi__label">当前列表</div>
+                <div class="intent-kpi__value" id="stat-list">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="intent-strategy-banner" class="intent-strategy-banner" role="status"></div>
+
+          <p class="intent-notice">
+            本页为<strong>只读分析</strong>：策略由「本期分析策略」或会务工具模板维护，此处不可编辑。
+            跟进与 AI 分列展示；意向分 = 标签权重 + AI 分（≤25）。
+            <a href="../docs/course-student-intent/INTENT-STRATEGY-CONFIG.md" target="_blank" rel="noopener">配置说明</a>
+          </p>
+
+          <!-- 学员列表（全宽） -->
+          <div class="intent-workspace intent-workspace--analysis">
+            <section class="intent-table-panel intent-table-panel--full" aria-label="学员列表">
+              <div class="intent-table-panel__head">
+                <div>
+                  <h2 class="intent-table-panel__title">本期学员意向一览</h2>
+                  <p class="intent-table-panel__sub">按意向总分降序 · 跟进与 AI 提炼分列展示</p>
+                </div>
+                <input class="q-input intent-search" type="search" id="student-search" placeholder="搜索姓名 / 会员 ID" />
+                <button type="button" class="q-btn" id="btn-export-mock">导出</button>
+              </div>
+              <div class="intent-table-wrap">
+                <table class="intent-table">
+                  <thead>
+                    <tr>
+                      <th>学员</th>
+                      <th>意向分</th>
+                      <th>意向度</th>
+                      <th>命中标签</th>
+                      <th>跟进内容</th>
+                      <th>AI提炼分析</th>
+                      <th>推荐产品</th>
+                      <th>社区</th>
+                      <th>学习</th>
+                      <th>视频</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-tbody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-drawer-backdrop" id="drawer-backdrop" aria-hidden="true">
+    <aside class="q-drawer" role="dialog" aria-labelledby="drawer-name">
+      <div class="q-drawer__head">
+        <div>
+          <h2 class="q-drawer__title" id="drawer-name">学员</h2>
+          <p class="q-cell-muted" id="drawer-meta" style="margin:4px 0 0"></p>
+        </div>
+        <button type="button" class="q-drawer__close" id="drawer-close" aria-label="关闭">×</button>
+      </div>
+      <div class="q-drawer__tabs" role="tablist">
+        <button type="button" class="is-active" data-tab="tags" role="tab">标签命中</button>
+        <button type="button" data-tab="follow" role="tab">会务跟进</button>
+        <button type="button" data-tab="ai" role="tab">AI提炼分析</button>
+        <button type="button" data-tab="course" role="tab">产品推荐</button>
+        <button type="button" data-tab="community" role="tab">社区</button>
+        <button type="button" data-tab="learn" role="tab">学习</button>
+        <button type="button" data-tab="video" role="tab">视频</button>
+      </div>
+      <div class="q-drawer__body">
+        <div class="q-drawer-panel is-active" id="panel-tags" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-follow" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-ai" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-course" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-community" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-learn" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-video" role="tabpanel"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="q-toast" id="toast" role="status"></div>
+
+  <script src="js/6q-shell.js"></script>
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/intent-strategy-core.js"></script>
+  <script src="../6q-conference-app-prototype/js/course-recommend.js"></script>
+  <script src="js/conference-intent.js"></script>
+</body>
+</html>

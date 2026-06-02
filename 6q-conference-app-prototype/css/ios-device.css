@@ -1,0 +1,228 @@
+/* iPhone 15 Pro 风格预览外框 */
+:root {
+  --ios-shell: #1c1c1e;
+  --ios-bezel: #2c2c2e;
+  --ios-screen-w: 393px;
+  --ios-screen-h: 852px;
+  --ios-radius-outer: 55px;
+  --ios-radius-inner: 47px;
+}
+
+body.app-body {
+  align-items: center;
+  padding: 24px 16px 40px;
+  background: linear-gradient(165deg, #e8eaed 0%, #d1d5db 45%, #b8bcc4 100%);
+}
+
+.ios-device {
+  flex-shrink: 0;
+  filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.28))
+    drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
+}
+
+.ios-device__shell {
+  position: relative;
+  width: calc(var(--ios-screen-w) + 24px);
+  padding: 12px;
+  background: linear-gradient(
+    145deg,
+    #3a3a3c 0%,
+    var(--ios-shell) 18%,
+    #0a0a0a 50%,
+    var(--ios-shell) 82%,
+    #48484a 100%
+  );
+  border-radius: var(--ios-radius-outer);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* 侧键 */
+.ios-device__btn {
+  position: absolute;
+  background: #3a3a3c;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.ios-device__btn--silent {
+  left: -3px;
+  top: 128px;
+  width: 3px;
+  height: 28px;
+  border-radius: 2px 0 0 2px;
+}
+
+.ios-device__btn--vol-up {
+  left: -3px;
+  top: 178px;
+  width: 3px;
+  height: 52px;
+  border-radius: 2px 0 0 2px;
+}
+
+.ios-device__btn--vol-down {
+  left: -3px;
+  top: 242px;
+  width: 3px;
+  height: 52px;
+  border-radius: 2px 0 0 2px;
+}
+
+.ios-device__btn--power {
+  right: -3px;
+  top: 200px;
+  width: 3px;
+  height: 72px;
+  border-radius: 0 2px 2px 0;
+}
+
+.ios-device__screen {
+  position: relative;
+  width: var(--ios-screen-w);
+  height: var(--ios-screen-h);
+  border-radius: var(--ios-radius-inner);
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.85);
+}
+
+/* 状态栏 + 灵动岛 */
+.ios-status-bar {
+  flex-shrink: 0;
+  height: 54px;
+  padding: 14px 28px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  z-index: 20;
+  background: var(--app-bg, #f5f5f5);
+  color: #000;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.ios-device__screen:has(.intent-theme) .ios-status-bar {
+  background: var(--intent-card, #fff);
+}
+
+.ios-status-bar__time {
+  width: 54px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-status-bar__island {
+  position: absolute;
+  left: 50%;
+  top: 11px;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 37px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 25;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.ios-status-bar__icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 68px;
+  justify-content: flex-end;
+}
+
+.ios-status-bar__icons svg {
+  display: block;
+}
+
+/* 屏幕内 APP 区域 */
+.ios-device__screen > .phone-frame,
+.ios-device__screen > .phone-frame.intent-theme {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  min-height: unset;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* 底部 Home 指示条 */
+.ios-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 3px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.ios-device__screen:has(.intent-theme) .ios-home-indicator {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+/* 固定底栏限制在屏幕内 */
+.ios-device__screen .fab-stack {
+  position: absolute;
+  bottom: 62px;
+  right: 14px;
+  left: auto;
+  width: auto;
+  max-width: none;
+  transform: none;
+  pointer-events: none;
+}
+
+.ios-device__screen .app-tabbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: none;
+  transform: none;
+  padding-bottom: 14px;
+}
+
+.ios-device__screen .detail-cta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: none;
+  transform: none;
+  padding-bottom: 22px;
+}
+
+/* 学员列表顶栏与状态栏衔接 */
+.ios-device__screen .app-nav {
+  padding-top: 0;
+}
+
+@media (max-height: 940px) {
+  body.app-body {
+    padding: 12px 8px 24px;
+  }
+  .ios-device {
+    transform: scale(0.92);
+    transform-origin: top center;
+  }
+}
+
+@media (max-height: 860px) {
+  .ios-device {
+    transform: scale(0.85);
+  }
+}

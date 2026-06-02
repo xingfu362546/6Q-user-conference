@@ -1,2 +1,29 @@
 node_modules/
 **/node_modules/
+
+# 本地 IDE / Agent 配置
+.cursor/
+.agents/
+
+# 密钥与本地配置
+.env
+.env.*
+*.pem
+
+# 绩效 / 人事等敏感表格
+*绩效*.xlsx
+6Q-信息部*.xlsx
+perf_may*.xlsx
+
+# 临时产物与解压目录
+_check_doc*
+_scope_*
+_fl.zip
+_fl_unzip/
+_fl_preview.json
+test-results/
+output/
+*.log
+
+# 嵌套 Git 仓库
+信息部项目仓库/

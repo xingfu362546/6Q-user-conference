@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>意向洞察中控 · 会务 APP</title>
+  <link rel="stylesheet" href="css/app-conference.css" />
+  <link rel="stylesheet" href="css/app-intent-cyber.css" />
+  <link rel="stylesheet" href="css/ios-device.css" />
+</head>
+<body class="app-body">
+  <div class="phone-frame intent-theme">
+    <header class="intent-nav">
+      <button type="button" class="intent-nav__back" onclick="location.href='app-students.html'">‹</button>
+      <span class="intent-nav__title">意向洞察中控</span>
+      <button type="button" class="intent-nav__action" id="btnReanalyze">重新分析</button>
+    </header>
+
+    <div class="dash-scroll">
+      <div class="dash-hero">
+        <p class="dash-hero__conf" id="confName"></p>
+        <p class="dash-hero__time" id="analyzedTime"></p>
+        <div class="dash-ring-wrap">
+          <canvas id="ringCanvas" width="440" height="440"></canvas>
+          <div class="dash-ring-center">
+            <span class="dash-ring-center__num" id="totalNum">0</span>
+            <span class="dash-ring-center__label">本期学员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-kpi-row">
+        <a class="dash-kpi dash-kpi--high" href="app-intent-list.html?level=high">
+          <div class="dash-kpi__num" id="kpiHigh">0</div>
+          <div class="dash-kpi__label">高意向 ›</div>
+        </a>
+        <a class="dash-kpi dash-kpi--mid" href="app-intent-list.html?level=mid">
+          <div class="dash-kpi__num" id="kpiMid">0</div>
+          <div class="dash-kpi__label">中意向 ›</div>
+        </a>
+        <a class="dash-kpi dash-kpi--low" href="app-intent-list.html?level=low">
+          <div class="dash-kpi__num" id="kpiLow">0</div>
+          <div class="dash-kpi__label">低意向 ›</div>
+        </a>
+      </div>
+
+      <div class="dash-section-title">
+        <span>优先跟进 TOP</span>
+        <a href="app-intent-list.html?level=high">查看全部高意向</a>
+      </div>
+      <div id="priorityList"></div>
+
+      <div class="dash-section-title">
+        <span>本期高频推荐产品</span>
+        <span style="font-size:12px;color:#999;font-weight:400">产品维度 · 按学员 AI 推荐聚合</span>
+      </div>
+      <div id="dashCourseList"></div>
+
+      <p class="dash-footnote">
+        意向度规则与关注标签策略来自 <strong>6Q 会务后台 · 学员意向分析</strong>，APP 端只读展示并自动拉取最新分析结果。未展示字段请进入学员详情查看。
+      </p>
+    </div>
+  </div>
+
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/app-intent-core.js"></script>
+  <script src="js/course-recommend.js"></script>
+  <script src="js/app-intent-dashboard.js"></script>
+  <script src="js/ios-wrap.js"></script>
+</body>
+</html>

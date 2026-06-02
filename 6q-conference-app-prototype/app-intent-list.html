@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>意向学员列表 · 会务 APP</title>
+  <link rel="stylesheet" href="css/app-conference.css" />
+  <link rel="stylesheet" href="css/app-intent-cyber.css" />
+  <link rel="stylesheet" href="css/ios-device.css" />
+</head>
+<body class="app-body">
+  <div class="phone-frame intent-theme">
+    <header class="intent-nav">
+      <button type="button" class="intent-nav__back" onclick="history.back()">‹</button>
+      <span class="intent-nav__title" id="pageTitle">意向学员</span>
+      <span class="intent-nav__extra"></span>
+    </header>
+
+    <nav class="intent-tabs" id="intentTabs"></nav>
+
+    <div class="intent-list-scroll" id="intentList"></div>
+  </div>
+
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/app-intent-core.js"></script>
+  <script src="js/course-recommend.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var level = params.get("level") || "high";
+      var I = window.AppIntent;
+
+      var tabs = [
+        { key: "high", label: "高意向" },
+        { key: "mid", label: "中意向" },
+        { key: "low", label: "低意向" },
+        { key: "all", label: "全部" },
+      ];
+
+      var tabsEl = document.getElementById("intentTabs");
+      tabsEl.innerHTML = tabs
+        .map(function (t) {
+          return (
+            '<a class="intent-tab' +
+            (t.key === level ? " is-active" : "") +
+            '" href="app-intent-list.html?level=' +
+            t.key +
+            '">' +
+            t.label +
+            "</a>"
+          );
+        })
+        .join("");
+
+      var titles = {
+        high: "高意向学员",
+        mid: "中意向学员",
+        low: "低意向学员",
+        all: "全部学员",
+      };
+      document.getElementById("pageTitle").textContent =
+        titles[level] || "意向学员";
+
+      var students = I.getByLevel(level === "all" ? null : level);
+      var listEl = document.getElementById("intentList");
+
+      if (!students.length) {
+        listEl.innerHTML = '<p class="intent-empty">暂无该档位学员</p>';
+        return;
+      }
+
+      listEl.innerHTML = students
+        .map(function (s) {
+          var tags = I.hitTagNames(s.hits, 2);
+          return (
+            '<a class="intent-card" href="app-student-detail.html?id=' +
+            encodeURIComponent(s.id) +
+            '">' +
+            '<div class="priority-card__avatar" style="background:' +
+            I.avatarGradient(s.id) +
+            '">' +
+            s.name.charAt(0) +
+            "</div>" +
+            '<div class="priority-card__info">' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">' +
+            '<span class="priority-card__name">' +
+            s.name +
+            "</span>" +
+            '<span class="intent-badge intent-badge--' +
+            s.intentLevel +
+            '">' +
+            s.intentLabel +
+            "意向</span>" +
+            "</div>" +
+            '<div class="intent-card__summary">' +
+            (s.ai && s.ai.summary ? s.ai.summary : "—") +
+            "</div>" +
+            window.CourseRecommend.renderListHint(s) +
+            '<div class="intent-card__tags">' +
+            tags
+              .map(function (n) {
+                return '<span class="intent-mini-tag">' + n + "</span>";
+              })
+              .join("") +
+            "</div>" +
+            "</div>" +
+            '<div class="priority-card__score">' +
+            '<div class="priority-card__score-num">' +
+            s.intentScore +
+            "</div>" +
+            '<div class="priority-card__score-label">分</div>' +
+            "</div>" +
+            "</a>"
+          );
+        })
+        .join("");
+    })();
+  </script>
+  <script src="js/ios-wrap.js"></script>
+</body>
+</html>

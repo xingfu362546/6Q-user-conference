@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>学员意向详情 · 会务 APP</title>
+  <link rel="stylesheet" href="css/app-conference.css" />
+  <link rel="stylesheet" href="css/app-intent-cyber.css" />
+  <link rel="stylesheet" href="css/ios-device.css" />
+</head>
+<body class="app-body">
+  <div class="phone-frame intent-theme">
+    <header class="intent-nav">
+      <button type="button" class="intent-nav__back" onclick="history.back()">‹</button>
+      <span class="intent-nav__title" id="studentName">学员详情</span>
+      <span class="intent-nav__extra"></span>
+    </header>
+
+    <div class="detail-scroll" id="detailRoot"></div>
+  </div>
+
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/app-intent-core.js"></script>
+  <script src="js/course-recommend.js"></script>
+  <script>
+    (function () {
+      var id = new URLSearchParams(location.search).get("id");
+      var s = window.AppIntent.getById(id);
+      var root = document.getElementById("detailRoot");
+
+      if (!s) {
+        root.innerHTML =
+          '<p style="padding:40px;text-align:center;color:#888">未找到学员</p>';
+        return;
+      }
+
+      document.getElementById("studentName").textContent = s.name;
+      document.title = s.name + " · 意向详情";
+
+      var maxScore = 120;
+      var pct = Math.min(100, Math.round((s.intentScore / maxScore) * 100));
+
+      var tagHtml = (s.hits || [])
+        .map(function (code) {
+          var t = window.AppIntent.tagByCode(code);
+          if (!t) return "";
+          return (
+            '<span class="detail-tag">' +
+            t.name +
+            "<small>权重 +" +
+            t.weight +
+            " · " +
+            t.parentName +
+            "</small></span>"
+          );
+        })
+        .join("");
+
+      root.innerHTML =
+        '<div class="detail-hero">' +
+        '<div class="detail-hero__avatar priority-card__avatar" style="width:64px;height:64px;margin:0 auto 8px;font-size:24px;background:' +
+        window.AppIntent.avatarGradient(s.id) +
+        '">' +
+        s.name.charAt(0) +
+        "</div>" +
+        '<p class="detail-hero__phone">' +
+        s.phone +
+        (s.trainTag ? " · " + s.trainTag : "") +
+        "</p>" +
+        '<div class="detail-hero__level detail-hero__level--' +
+        s.intentLevel +
+        '">' +
+        s.intentLabel +
+        "意向</div>" +
+        '<p class="detail-hero__score">意向分 ' +
+        s.intentScore +
+        "</p>" +
+        "</div>" +
+        '<div class="detail-score-bar">' +
+        '<div class="detail-score-bar__row"><span>标签权重合计</span><span>' +
+        s.tagScore +
+        " 分</span></div>" +
+        '<div class="detail-score-bar__row"><span>AI 权重分</span><span>' +
+        s.aiScore +
+        " / 25</span></div>" +
+        '<div class="detail-score-bar__track"><div class="detail-score-bar__fill" style="width:' +
+        pct +
+        '%"></div></div>' +
+        '<p class="detail-score-bar__hint">公式：Σ 命中标签权重 + AI 分（与后台一致）</p>' +
+        "</div>" +
+        window.CourseRecommend.renderDetailBlock(s) +
+        '<section class="detail-block">' +
+        '<h3 class="detail-block__title">命中标签</h3>' +
+        '<div class="detail-tag-list">' +
+        (tagHtml || "<p>暂无命中</p>") +
+        "</div>" +
+        "</section>" +
+        '<section class="detail-block">' +
+        '<h3 class="detail-block__title">会务跟进</h3>' +
+        "<p><strong>" +
+        (s.follow && s.follow.tag !== "—" ? s.follow.tag : "暂无") +
+        "</strong></p>" +
+        "<p>" +
+        (s.follow && s.follow.content !== "—" ? s.follow.content : "暂无跟进记录，建议在「会务跟进」中补充。") +
+        "</p>" +
+        (s.follow && s.follow.time !== "—"
+          ? '<p style="margin-top:8px;font-size:11px">' + s.follow.time + "</p>"
+          : "") +
+        "</section>" +
+        '<section class="detail-block">' +
+        '<h3 class="detail-block__title">AI 提炼分析</h3>' +
+        "<p>" +
+        (s.ai && s.ai.full ? s.ai.full : "—") +
+        "</p>" +
+        "</section>" +
+        '<section class="detail-block">' +
+        '<h3 class="detail-block__title">行为摘要</h3>' +
+        "<ul>" +
+        "<li><strong>社区</strong>：" +
+        (s.community || "—") +
+        "</li>" +
+        "<li><strong>学习</strong>：" +
+        (s.learn || "—") +
+        "</li>" +
+        "<li><strong>视频</strong>：" +
+        (s.video || "—") +
+        "</li>" +
+        "</ul>" +
+        "</section>";
+
+      window.CourseRecommend.bindCopyButtons(root);
+    })();
+  </script>
+  <script src="js/ios-wrap.js"></script>
+</body>
+</html>

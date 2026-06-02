@@ -1,0 +1,4384 @@
+{
+  "new_template": {
+    "path": "d:\\wechatFile\\xwechat_files\\wxid_wrdi6300otls12_0f21\\msg\\file\\2026-05\\6Q-VV部V月度绩效考核表1.2版（VVV）(4)(2).xlsx",
+    "exists": true,
+    "sheets": {
+      "月度绩效V1.2版-（总监 经理）": {
+        "dimensions": "A1:N28",
+        "max_row": 28,
+        "max_col": 14,
+        "cells": [
+          {
+            "addr": "A1",
+            "row": 1,
+            "col": 1,
+            "type": "value",
+            "value": "2026年5月月度绩效考核表1.2版（VVV部-VVV）-经理/总监适用"
+          },
+          {
+            "addr": "A2",
+            "row": 2,
+            "col": 1,
+            "type": "value",
+            "value": "姓名：VVV             部门：VVV              岗位：VVV               评价人：VVV              考核期： 2026年5月              填写日期：2026.05.20"
+          },
+          {
+            "addr": "A3",
+            "row": 3,
+            "col": 1,
+            "type": "value",
+            "value": "5月工作关键结果考评指标\n（需结合公司/部门OGSM、项目目标、岗位职责、特殊价值贡献等）"
+          },
+          {
+            "addr": "A4",
+            "row": 4,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B4",
+            "row": 4,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C4",
+            "row": 4,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D4",
+            "row": 4,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E4",
+            "row": 4,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F4",
+            "row": 4,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G4",
+            "row": 4,
+            "col": 7,
+            "type": "value",
+            "value": "关键成果（M）"
+          },
+          {
+            "addr": "H4",
+            "row": 4,
+            "col": 8,
+            "type": "value",
+            "value": "自评分"
+          },
+          {
+            "addr": "I4",
+            "row": 4,
+            "col": 9,
+            "type": "value",
+            "value": "上级评分"
+          },
+          {
+            "addr": "J4",
+            "row": 4,
+            "col": 10,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "K4",
+            "row": 4,
+            "col": 11,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A5",
+            "row": 5,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B5",
+            "row": 5,
+            "col": 2,
+            "type": "value",
+            "value": "本月核心\n绩效指标\n（V%）"
+          },
+          {
+            "addr": "C5",
+            "row": 5,
+            "col": 3,
+            "type": "value",
+            "value": "出具VV方案V1.0"
+          },
+          {
+            "addr": "D5",
+            "row": 5,
+            "col": 4,
+            "type": "value",
+            "value": "5月20日前完成方案V1.0\n方案质量为优秀"
+          },
+          {
+            "addr": "E5",
+            "row": 5,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F5",
+            "row": 5,
+            "col": 6,
+            "type": "value",
+            "value": "准时性：\n①提前或准时完成：4分；\n②延迟完成：0分。\n方案质量：\n①优秀：16分；\n②良好：14分；\n③合格：12分；\n④基本合格：8分；\n⑤不合格：0分。"
+          },
+          {
+            "addr": "G5",
+            "row": 5,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：5月20日完成方案V1.0\nKR2：方案质量为优秀"
+          },
+          {
+            "addr": "H5",
+            "row": 5,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "I5",
+            "row": 5,
+            "col": 9,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J5",
+            "row": 5,
+            "col": 10,
+            "type": "formula",
+            "value": "=H5*20%+I5*80%"
+          },
+          {
+            "addr": "A6",
+            "row": 6,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E6",
+            "row": 6,
+            "col": 5,
+            "type": "value",
+            "value": 0.1
+          },
+          {
+            "addr": "G6",
+            "row": 6,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：\nKR2："
+          },
+          {
+            "addr": "H6",
+            "row": 6,
+            "col": 8,
+            "type": "value",
+            "value": 30
+          },
+          {
+            "addr": "I6",
+            "row": 6,
+            "col": 9,
+            "type": "value",
+            "value": 27
+          },
+          {
+            "addr": "J6",
+            "row": 6,
+            "col": 10,
+            "type": "formula",
+            "value": "=H6*20%+I6*80%"
+          },
+          {
+            "addr": "A7",
+            "row": 7,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E7",
+            "row": 7,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "G7",
+            "row": 7,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：\nKR2："
+          },
+          {
+            "addr": "H7",
+            "row": 7,
+            "col": 8,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "I7",
+            "row": 7,
+            "col": 9,
+            "type": "value",
+            "value": 9
+          },
+          {
+            "addr": "J7",
+            "row": 7,
+            "col": 10,
+            "type": "formula",
+            "value": "=H7*20%+I7*80%"
+          },
+          {
+            "addr": "A8",
+            "row": 8,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B8",
+            "row": 8,
+            "col": 2,
+            "type": "value",
+            "value": "本月常规\n绩效指标\n（X%）\n\n\n\n\nV%+X%=85%"
+          },
+          {
+            "addr": "C8",
+            "row": 8,
+            "col": 3,
+            "type": "value",
+            "value": "工资的核算与发放"
+          },
+          {
+            "addr": "D8",
+            "row": 8,
+            "col": 4,
+            "type": "value",
+            "value": "1、工资核算准确率100%\n2、每月10日前完成发放\n准时率100%"
+          },
+          {
+            "addr": "E8",
+            "row": 8,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F8",
+            "row": 8,
+            "col": 6,
+            "type": "value",
+            "value": "准确性：\n①出现1处错误，扣1分；\n①出现2处错误，扣2分；\n以此类推，错误每增加1处，多扣除1分。\n准时性：\n①工资提前或准时发放：5分；\n②工资延迟发放：0分。"
+          },
+          {
+            "addr": "G8",
+            "row": 8,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：工资核算准确率100%\nKR2：工资10号前发放，发放准时"
+          },
+          {
+            "addr": "H8",
+            "row": 8,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "I8",
+            "row": 8,
+            "col": 9,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J8",
+            "row": 8,
+            "col": 10,
+            "type": "formula",
+            "value": "=H8*20%+I8*80%"
+          },
+          {
+            "addr": "A9",
+            "row": 9,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E9",
+            "row": 9,
+            "col": 5,
+            "type": "value",
+            "value": 0.15
+          },
+          {
+            "addr": "G9",
+            "row": 9,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：\nKR2："
+          },
+          {
+            "addr": "H9",
+            "row": 9,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "I9",
+            "row": 9,
+            "col": 9,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J9",
+            "row": 9,
+            "col": 10,
+            "type": "formula",
+            "value": "=H9*20%+I9*80%"
+          },
+          {
+            "addr": "A10",
+            "row": 10,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B10",
+            "row": 10,
+            "col": 2,
+            "type": "value",
+            "value": "行为态度指标\n（15%）"
+          },
+          {
+            "addr": "C10",
+            "row": 10,
+            "col": 3,
+            "type": "value",
+            "value": "团队建设与人才培养"
+          },
+          {
+            "addr": "D10",
+            "row": 10,
+            "col": 4,
+            "type": "value",
+            "value": "1.根据团队现状，规划并推动人才培养计划；\n2.及时给予反馈与辅导，帮助下属提升能力；\n3.根据下属特点，差异化分配任务与培养资源；\n4.建立团队内部经验分享机制，促进共同成长。"
+          },
+          {
+            "addr": "E10",
+            "row": 10,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F10",
+            "row": 10,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节严重程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G10",
+            "row": 10,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H10",
+            "row": 10,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "I10",
+            "row": 10,
+            "col": 9,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J10",
+            "row": 10,
+            "col": 10,
+            "type": "formula",
+            "value": "=H10*20%+I10*80%"
+          },
+          {
+            "addr": "A11",
+            "row": 11,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "C11",
+            "row": 11,
+            "col": 3,
+            "type": "value",
+            "value": "跨部门协同"
+          },
+          {
+            "addr": "D11",
+            "row": 11,
+            "col": 4,
+            "type": "value",
+            "value": "1.主动建立跨部门信息共享渠道，保障信息透明；\n2.积极响应跨部门的合理协同需求，主动高效配合；\n3.尊重协同部门的工作节奏与优先级，合理调配资源；\n4.对协作中遇到的问题及时复盘，形成约定，双赢发展。"
+          },
+          {
+            "addr": "E11",
+            "row": 11,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F11",
+            "row": 11,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节严重程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G11",
+            "row": 11,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H11",
+            "row": 11,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "I11",
+            "row": 11,
+            "col": 9,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J11",
+            "row": 11,
+            "col": 10,
+            "type": "formula",
+            "value": "=H11*20%+I11*80%"
+          },
+          {
+            "addr": "A12",
+            "row": 12,
+            "col": 1,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "C12",
+            "row": 12,
+            "col": 3,
+            "type": "value",
+            "value": "压力应对与问题解决"
+          },
+          {
+            "addr": "D12",
+            "row": 12,
+            "col": 4,
+            "type": "value",
+            "value": "1.面对压力情绪稳定，维持良好工作状态；\n2.面对困难不轻易放弃，多路径尝试推动解决；\n3.遇到问题先分析根因，带着解决方案向上沟通；\n4.在资源或条件不足时，主动协调或调整策略推进。"
+          },
+          {
+            "addr": "E12",
+            "row": 12,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F12",
+            "row": 12,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节严重程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G12",
+            "row": 12,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H12",
+            "row": 12,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "I12",
+            "row": 12,
+            "col": 9,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J12",
+            "row": 12,
+            "col": 10,
+            "type": "formula",
+            "value": "=H12*20%+I12*80%"
+          },
+          {
+            "addr": "A13",
+            "row": 13,
+            "col": 1,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "C13",
+            "row": 13,
+            "col": 3,
+            "type": "value",
+            "value": "目标承接与责任承担"
+          },
+          {
+            "addr": "D13",
+            "row": 13,
+            "col": 4,
+            "type": "value",
+            "value": "1.对上级目标快速理解并转化为团队行动计划；\n2.在资源或条件不足时，主动协调或争取支持；\n3.目标达成过程中主动跟进，出现问题及时兜底解决；\n4.对团队交付成果负责，不将问题归因于下属或外部。"
+          },
+          {
+            "addr": "E13",
+            "row": 13,
+            "col": 5,
+            "type": "value",
+            "value": 0.03
+          },
+          {
+            "addr": "F13",
+            "row": 13,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节严重程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G13",
+            "row": 13,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H13",
+            "row": 13,
+            "col": 8,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "I13",
+            "row": 13,
+            "col": 9,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J13",
+            "row": 13,
+            "col": 10,
+            "type": "formula",
+            "value": "=H13*20%+I13*80%"
+          },
+          {
+            "addr": "A14",
+            "row": 14,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B14",
+            "row": 14,
+            "col": 2,
+            "type": "value",
+            "value": "加减分"
+          },
+          {
+            "addr": "C14",
+            "row": 14,
+            "col": 3,
+            "type": "value",
+            "value": "加分项（特殊价值贡献）"
+          },
+          {
+            "addr": "E14",
+            "row": 14,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F14",
+            "row": 14,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "H14",
+            "row": 14,
+            "col": 8,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "I14",
+            "row": 14,
+            "col": 9,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "J14",
+            "row": 14,
+            "col": 10,
+            "type": "formula",
+            "value": "=H14*20%+I14*80%"
+          },
+          {
+            "addr": "A15",
+            "row": 15,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "C15",
+            "row": 15,
+            "col": 3,
+            "type": "value",
+            "value": "减分项（差错与失误）"
+          },
+          {
+            "addr": "E15",
+            "row": 15,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F15",
+            "row": 15,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "H15",
+            "row": 15,
+            "col": 8,
+            "type": "value",
+            "value": -1
+          },
+          {
+            "addr": "I15",
+            "row": 15,
+            "col": 9,
+            "type": "value",
+            "value": -1
+          },
+          {
+            "addr": "J15",
+            "row": 15,
+            "col": 10,
+            "type": "formula",
+            "value": "=H15*20%+I15*80%"
+          },
+          {
+            "addr": "A16",
+            "row": 16,
+            "col": 1,
+            "type": "value",
+            "value": "1.月度绩效管理程序：\n①提前对标：月初对标本月重点工作计划（职员/主管：2-4项；经理/总监：4-6项）。\n②过程管理：月中对被考核者的关键工作目标达成情况进行过程督查。\n③结果评价：月底对被考核者的关键工作目标达成情况进行评价。\n④绩效反馈：考核者给予被考核者绩效反馈，必要时可共同制定绩效改进计划。\n⑤加减分严格参照加减分标准，不符合将退回。\n2.综合分数=自评*20%+上级领导评分*80%。"
+          },
+          {
+            "addr": "E16",
+            "row": 16,
+            "col": 5,
+            "type": "formula",
+            "value": "=SUM(E5:E13)"
+          },
+          {
+            "addr": "F16",
+            "row": 16,
+            "col": 6,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "H16",
+            "row": 16,
+            "col": 8,
+            "type": "formula",
+            "value": "=SUM(H5:H15)"
+          },
+          {
+            "addr": "I16",
+            "row": 16,
+            "col": 9,
+            "type": "formula",
+            "value": "=SUM(I5:I15)"
+          },
+          {
+            "addr": "J16",
+            "row": 16,
+            "col": 10,
+            "type": "formula",
+            "value": "=SUM(J5:J15)"
+          },
+          {
+            "addr": "A17",
+            "row": 17,
+            "col": 1,
+            "type": "value",
+            "value": "被考核人\n（签名+日期）"
+          },
+          {
+            "addr": "E17",
+            "row": 17,
+            "col": 5,
+            "type": "value",
+            "value": "考核人\n（签名+日期）"
+          },
+          {
+            "addr": "H17",
+            "row": 17,
+            "col": 8,
+            "type": "value",
+            "value": "领导最终评定及意见"
+          },
+          {
+            "addr": "H18",
+            "row": 18,
+            "col": 8,
+            "type": "value",
+            "value": "最终评定"
+          },
+          {
+            "addr": "I18",
+            "row": 18,
+            "col": 9,
+            "type": "value",
+            "value": "意见"
+          },
+          {
+            "addr": "A20",
+            "row": 20,
+            "col": 1,
+            "type": "value",
+            "value": "下个月（6月）核心工作目标制定\n（需结合公司/部门OGSM、项目目标、岗位职责、特殊价值贡献等）"
+          },
+          {
+            "addr": "A21",
+            "row": 21,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B21",
+            "row": 21,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C21",
+            "row": 21,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D21",
+            "row": 21,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E21",
+            "row": 21,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F21",
+            "row": 21,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G21",
+            "row": 21,
+            "col": 7,
+            "type": "value",
+            "value": "存在挑战/需求资源"
+          },
+          {
+            "addr": "J21",
+            "row": 21,
+            "col": 10,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A22",
+            "row": 22,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B22",
+            "row": 22,
+            "col": 2,
+            "type": "value",
+            "value": "下月核心目标\n（3-4项）"
+          },
+          {
+            "addr": "A23",
+            "row": 23,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "A24",
+            "row": 24,
+            "col": 1,
+            "type": "value",
+            "value": 3
+          }
+        ],
+        "merged_ranges": [
+          "C15:D15",
+          "F16:G16",
+          "C14:D14",
+          "B8:B9",
+          "I18:K18",
+          "A1:K1",
+          "B14:B15",
+          "E17:F19",
+          "B5:B7",
+          "G24:I24",
+          "F15:G15",
+          "J24:K24",
+          "A17:C19",
+          "B10:B13",
+          "B22:B24",
+          "I19:K19",
+          "A3:K3",
+          "G17:G19",
+          "G22:I22",
+          "A2:K2",
+          "D17:D19",
+          "A16:D16",
+          "J22:K22",
+          "G21:I21",
+          "J21:K21",
+          "A20:K20",
+          "H17:K17",
+          "G23:I23",
+          "F14:G14",
+          "J23:K23"
+        ]
+      },
+      "月度绩效V1.2版-（主管 职员）": {
+        "dimensions": "A1:N28",
+        "max_row": 28,
+        "max_col": 14,
+        "cells": [
+          {
+            "addr": "A1",
+            "row": 1,
+            "col": 1,
+            "type": "value",
+            "value": "2026年5月月度绩效考核表1.2版（VVV部-VVV）-员工/主管适用"
+          },
+          {
+            "addr": "A2",
+            "row": 2,
+            "col": 1,
+            "type": "value",
+            "value": "姓名：VVV             部门：VVV              岗位：VVV               评价人：VVV              考核期： 2026年5月              填写日期：2026.05.20"
+          },
+          {
+            "addr": "A3",
+            "row": 3,
+            "col": 1,
+            "type": "value",
+            "value": "5月工作关键结果考评指标\n（需结合公司/部门OGSM、项目目标、岗位职责、特殊价值贡献等）"
+          },
+          {
+            "addr": "A4",
+            "row": 4,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B4",
+            "row": 4,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C4",
+            "row": 4,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D4",
+            "row": 4,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E4",
+            "row": 4,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F4",
+            "row": 4,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G4",
+            "row": 4,
+            "col": 7,
+            "type": "value",
+            "value": "关键成果（M）"
+          },
+          {
+            "addr": "H4",
+            "row": 4,
+            "col": 8,
+            "type": "value",
+            "value": "自评分"
+          },
+          {
+            "addr": "I4",
+            "row": 4,
+            "col": 9,
+            "type": "value",
+            "value": "上级评分"
+          },
+          {
+            "addr": "J4",
+            "row": 4,
+            "col": 10,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "K4",
+            "row": 4,
+            "col": 11,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A5",
+            "row": 5,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B5",
+            "row": 5,
+            "col": 2,
+            "type": "value",
+            "value": "本月核心\n绩效指标\n（V%）"
+          },
+          {
+            "addr": "C5",
+            "row": 5,
+            "col": 3,
+            "type": "value",
+            "value": "出具VV方案V1.0"
+          },
+          {
+            "addr": "D5",
+            "row": 5,
+            "col": 4,
+            "type": "value",
+            "value": "5月20日前完成方案V1.0\n方案质量为优秀"
+          },
+          {
+            "addr": "E5",
+            "row": 5,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F5",
+            "row": 5,
+            "col": 6,
+            "type": "value",
+            "value": "准时性：\n①提前或准时完成：4分；\n②延迟完成：0分。\n方案质量：\n①优秀：16分；\n②良好：14分；\n③合格：12分；\n④基本合格：8分；\n⑤不合格：0分。"
+          },
+          {
+            "addr": "G5",
+            "row": 5,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：5月20日完成方案V1.0\nKR2：方案质量为优秀"
+          },
+          {
+            "addr": "H5",
+            "row": 5,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "I5",
+            "row": 5,
+            "col": 9,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J5",
+            "row": 5,
+            "col": 10,
+            "type": "formula",
+            "value": "=H5*20%+I5*80%"
+          },
+          {
+            "addr": "A6",
+            "row": 6,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E6",
+            "row": 6,
+            "col": 5,
+            "type": "value",
+            "value": 0.1
+          },
+          {
+            "addr": "G6",
+            "row": 6,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：\nKR2："
+          },
+          {
+            "addr": "H6",
+            "row": 6,
+            "col": 8,
+            "type": "value",
+            "value": 30
+          },
+          {
+            "addr": "I6",
+            "row": 6,
+            "col": 9,
+            "type": "value",
+            "value": 28
+          },
+          {
+            "addr": "J6",
+            "row": 6,
+            "col": 10,
+            "type": "formula",
+            "value": "=H6*20%+I6*80%"
+          },
+          {
+            "addr": "A7",
+            "row": 7,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E7",
+            "row": 7,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "G7",
+            "row": 7,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：\nKR2："
+          },
+          {
+            "addr": "H7",
+            "row": 7,
+            "col": 8,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "I7",
+            "row": 7,
+            "col": 9,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J7",
+            "row": 7,
+            "col": 10,
+            "type": "formula",
+            "value": "=H7*20%+I7*80%"
+          },
+          {
+            "addr": "A8",
+            "row": 8,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B8",
+            "row": 8,
+            "col": 2,
+            "type": "value",
+            "value": "本月常规\n绩效指标\n（X%）\n\n\n\nV%+X%=85%"
+          },
+          {
+            "addr": "C8",
+            "row": 8,
+            "col": 3,
+            "type": "value",
+            "value": "工资的核算与发放"
+          },
+          {
+            "addr": "D8",
+            "row": 8,
+            "col": 4,
+            "type": "value",
+            "value": "1、工资核算准确率100%\n2、每月10日前完成发放\n准时率100%"
+          },
+          {
+            "addr": "E8",
+            "row": 8,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F8",
+            "row": 8,
+            "col": 6,
+            "type": "value",
+            "value": "准确性：\n①出现1处错误，扣1分；\n①出现2处错误，扣2分；\n以此类推，错误每增加1处，多扣除1分。\n准时性：\n①工资提前或准时发放：5分；\n②工资延迟发放：0分。"
+          },
+          {
+            "addr": "G8",
+            "row": 8,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：工资核算准确率100%\nKR2：工资10号前发放，发放准时"
+          },
+          {
+            "addr": "H8",
+            "row": 8,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "I8",
+            "row": 8,
+            "col": 9,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J8",
+            "row": 8,
+            "col": 10,
+            "type": "formula",
+            "value": "=H8*20%+I8*80%"
+          },
+          {
+            "addr": "A9",
+            "row": 9,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E9",
+            "row": 9,
+            "col": 5,
+            "type": "value",
+            "value": 0.15
+          },
+          {
+            "addr": "G9",
+            "row": 9,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：\nKR2："
+          },
+          {
+            "addr": "H9",
+            "row": 9,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "I9",
+            "row": 9,
+            "col": 9,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J9",
+            "row": 9,
+            "col": 10,
+            "type": "formula",
+            "value": "=H9*20%+I9*80%"
+          },
+          {
+            "addr": "A10",
+            "row": 10,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B10",
+            "row": 10,
+            "col": 2,
+            "type": "value",
+            "value": "行为态度指标\n（15%）"
+          },
+          {
+            "addr": "C10",
+            "row": 10,
+            "col": 3,
+            "type": "value",
+            "value": "工作高四效"
+          },
+          {
+            "addr": "D10",
+            "row": 10,
+            "col": 4,
+            "type": "value",
+            "value": "1.第一时间响应并确认分配的工作任务；\n2.严守时间节点，任务期限内达成任务；\n3.任务未准时达成时主动报备并采取补救措施；\n4.关键进展主动同步，交办事项主动闭环完型。"
+          },
+          {
+            "addr": "E10",
+            "row": 10,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F10",
+            "row": 10,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节及影响程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G10",
+            "row": 10,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H10",
+            "row": 10,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "I10",
+            "row": 10,
+            "col": 9,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J10",
+            "row": 10,
+            "col": 10,
+            "type": "formula",
+            "value": "=H10*20%+I10*80%"
+          },
+          {
+            "addr": "A11",
+            "row": 11,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "C11",
+            "row": 11,
+            "col": 3,
+            "type": "value",
+            "value": "主动性与责任承担"
+          },
+          {
+            "addr": "D11",
+            "row": 11,
+            "col": 4,
+            "type": "value",
+            "value": "1.主动履行本岗位与所参与项目相关职责；\n2.主动补位，在团队需要时承担额外任务；\n3.遇到卡点时先全力以赴，必要时再向上求助；\n4.对工作任务尽心尽责，对工作结果主动负责。"
+          },
+          {
+            "addr": "E11",
+            "row": 11,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F11",
+            "row": 11,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节及影响程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G11",
+            "row": 11,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H11",
+            "row": 11,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "I11",
+            "row": 11,
+            "col": 9,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J11",
+            "row": 11,
+            "col": 10,
+            "type": "formula",
+            "value": "=H11*20%+I11*80%"
+          },
+          {
+            "addr": "A12",
+            "row": 12,
+            "col": 1,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "C12",
+            "row": 12,
+            "col": 3,
+            "type": "value",
+            "value": "团队协作与配合度"
+          },
+          {
+            "addr": "D12",
+            "row": 12,
+            "col": 4,
+            "type": "value",
+            "value": "1.积极响应同事协作请求，三赢高效沟通；\n2.主动分享关键信息，保持团队协作畅通；\n3.以团队目标为重，主动承担边界模糊的工作；\n4.工作带教/交接清晰完整，实时做好一传三进。"
+          },
+          {
+            "addr": "E12",
+            "row": 12,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F12",
+            "row": 12,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节及影响程度，扣1-4分/项。扣完即止。"
+          },
+          {
+            "addr": "G12",
+            "row": 12,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H12",
+            "row": 12,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "I12",
+            "row": 12,
+            "col": 9,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J12",
+            "row": 12,
+            "col": 10,
+            "type": "formula",
+            "value": "=H12*20%+I12*80%"
+          },
+          {
+            "addr": "A13",
+            "row": 13,
+            "col": 1,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "C13",
+            "row": 13,
+            "col": 3,
+            "type": "value",
+            "value": "工作规范与严谨性"
+          },
+          {
+            "addr": "D13",
+            "row": 13,
+            "col": 4,
+            "type": "value",
+            "value": "1.严格遵守公司制度与工作操作规范；\n2.工作记录清晰可溯，便于协作与交接；\n3.成果交付完整准确，无遗漏、无错误；\n4.工作失误及时复盘改进，不出现同质性错误。"
+          },
+          {
+            "addr": "E13",
+            "row": 13,
+            "col": 5,
+            "type": "value",
+            "value": 0.03
+          },
+          {
+            "addr": "F13",
+            "row": 13,
+            "col": 6,
+            "type": "value",
+            "value": "在本考核期内：\n每出现1项关键任务未达成考核目标，视情节及影响程度，扣1-3分/项。扣完即止。"
+          },
+          {
+            "addr": "G13",
+            "row": 13,
+            "col": 7,
+            "type": "value",
+            "value": "（选填-关键事件）"
+          },
+          {
+            "addr": "H13",
+            "row": 13,
+            "col": 8,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "I13",
+            "row": 13,
+            "col": 9,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J13",
+            "row": 13,
+            "col": 10,
+            "type": "formula",
+            "value": "=H13*20%+I13*80%"
+          },
+          {
+            "addr": "A14",
+            "row": 14,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B14",
+            "row": 14,
+            "col": 2,
+            "type": "value",
+            "value": "加减分"
+          },
+          {
+            "addr": "C14",
+            "row": 14,
+            "col": 3,
+            "type": "value",
+            "value": "加分项（特殊价值贡献）"
+          },
+          {
+            "addr": "E14",
+            "row": 14,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F14",
+            "row": 14,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "H14",
+            "row": 14,
+            "col": 8,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "I14",
+            "row": 14,
+            "col": 9,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "J14",
+            "row": 14,
+            "col": 10,
+            "type": "formula",
+            "value": "=H14*20%+I14*80%"
+          },
+          {
+            "addr": "A15",
+            "row": 15,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "C15",
+            "row": 15,
+            "col": 3,
+            "type": "value",
+            "value": "减分项（差错与失误）"
+          },
+          {
+            "addr": "E15",
+            "row": 15,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F15",
+            "row": 15,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "H15",
+            "row": 15,
+            "col": 8,
+            "type": "value",
+            "value": -1
+          },
+          {
+            "addr": "I15",
+            "row": 15,
+            "col": 9,
+            "type": "value",
+            "value": -1
+          },
+          {
+            "addr": "J15",
+            "row": 15,
+            "col": 10,
+            "type": "formula",
+            "value": "=H15*20%+I15*80%"
+          },
+          {
+            "addr": "A16",
+            "row": 16,
+            "col": 1,
+            "type": "value",
+            "value": "1.月度绩效管理程序：\n①提前对标：月初对标本月重点工作计划（职员/主管：2-4项；经理/总监：4-6项）。\n②过程管理：月中对被考核者的关键工作目标达成情况进行过程督查。\n③结果评价：月底对被考核者的关键工作目标达成情况进行评价。\n④绩效反馈：考核者给予被考核者绩效反馈，必要时可共同制定绩效改进计划。\n⑤加减分严格参照加减分标准，不符合将退回。\n2.综合分数=自评*20%+上级领导评分*80%。"
+          },
+          {
+            "addr": "E16",
+            "row": 16,
+            "col": 5,
+            "type": "formula",
+            "value": "=SUM(E5:E13)"
+          },
+          {
+            "addr": "F16",
+            "row": 16,
+            "col": 6,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "H16",
+            "row": 16,
+            "col": 8,
+            "type": "formula",
+            "value": "=SUM(H5:H15)"
+          },
+          {
+            "addr": "I16",
+            "row": 16,
+            "col": 9,
+            "type": "formula",
+            "value": "=SUM(I5:I15)"
+          },
+          {
+            "addr": "J16",
+            "row": 16,
+            "col": 10,
+            "type": "formula",
+            "value": "=SUM(J5:J15)"
+          },
+          {
+            "addr": "A17",
+            "row": 17,
+            "col": 1,
+            "type": "value",
+            "value": "被考核人\n（签名+日期）"
+          },
+          {
+            "addr": "E17",
+            "row": 17,
+            "col": 5,
+            "type": "value",
+            "value": "考核人\n（签名+日期）"
+          },
+          {
+            "addr": "H17",
+            "row": 17,
+            "col": 8,
+            "type": "value",
+            "value": "领导最终评定及意见"
+          },
+          {
+            "addr": "H18",
+            "row": 18,
+            "col": 8,
+            "type": "value",
+            "value": "最终评定"
+          },
+          {
+            "addr": "I18",
+            "row": 18,
+            "col": 9,
+            "type": "value",
+            "value": "意见"
+          },
+          {
+            "addr": "A20",
+            "row": 20,
+            "col": 1,
+            "type": "value",
+            "value": "下个月（6月）核心工作目标制定\n（需结合公司/部门OGSM、项目目标、岗位职责、特殊价值贡献等）"
+          },
+          {
+            "addr": "A21",
+            "row": 21,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B21",
+            "row": 21,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C21",
+            "row": 21,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D21",
+            "row": 21,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E21",
+            "row": 21,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F21",
+            "row": 21,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G21",
+            "row": 21,
+            "col": 7,
+            "type": "value",
+            "value": "存在挑战/需求资源"
+          },
+          {
+            "addr": "J21",
+            "row": 21,
+            "col": 10,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A22",
+            "row": 22,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B22",
+            "row": 22,
+            "col": 2,
+            "type": "value",
+            "value": "下月核心目标\n（3-4项）"
+          },
+          {
+            "addr": "A23",
+            "row": 23,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "A24",
+            "row": 24,
+            "col": 1,
+            "type": "value",
+            "value": 3
+          }
+        ],
+        "merged_ranges": [
+          "C15:D15",
+          "F16:G16",
+          "C14:D14",
+          "B8:B9",
+          "I18:K18",
+          "A1:K1",
+          "B14:B15",
+          "E17:F19",
+          "B5:B7",
+          "G24:I24",
+          "F15:G15",
+          "J24:K24",
+          "A17:C19",
+          "B10:B13",
+          "B22:B24",
+          "I19:K19",
+          "A3:K3",
+          "G17:G19",
+          "G22:I22",
+          "A2:K2",
+          "D17:D19",
+          "A16:D16",
+          "J22:K22",
+          "G21:I21",
+          "J21:K21",
+          "A20:K20",
+          "H17:K17",
+          "G23:I23",
+          "F14:G14",
+          "J23:K23"
+        ]
+      },
+      "月度绩效1.1版（总监 经理 主管 职员）  ": {
+        "dimensions": "A1:M18",
+        "max_row": 18,
+        "max_col": 13,
+        "cells": [
+          {
+            "addr": "A1",
+            "row": 1,
+            "col": 1,
+            "type": "value",
+            "value": "2025年10月月度绩效考核表1.1版（VVV部-VVV）"
+          },
+          {
+            "addr": "A2",
+            "row": 2,
+            "col": 1,
+            "type": "value",
+            "value": "姓名：VVV              部门：VVVVV              岗位：VVVVV              评价人：VVV              考核期： 2025年10月              填写日期：2025.10.23"
+          },
+          {
+            "addr": "A3",
+            "row": 3,
+            "col": 1,
+            "type": "value",
+            "value": "工作关键结果考评指标\n（需结合公司/部门OGSM、项目目标、岗位说明书、特殊价值贡献）"
+          },
+          {
+            "addr": "A4",
+            "row": 4,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B4",
+            "row": 4,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C4",
+            "row": 4,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D4",
+            "row": 4,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E4",
+            "row": 4,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F4",
+            "row": 4,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G4",
+            "row": 4,
+            "col": 7,
+            "type": "value",
+            "value": "关键成果（M）"
+          },
+          {
+            "addr": "H4",
+            "row": 4,
+            "col": 8,
+            "type": "value",
+            "value": "自评分"
+          },
+          {
+            "addr": "I4",
+            "row": 4,
+            "col": 9,
+            "type": "value",
+            "value": "上级评分"
+          },
+          {
+            "addr": "J4",
+            "row": 4,
+            "col": 10,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "K4",
+            "row": 4,
+            "col": 11,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A5",
+            "row": 5,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B5",
+            "row": 5,
+            "col": 2,
+            "type": "value",
+            "value": "关键目标\n（100%）"
+          },
+          {
+            "addr": "C5",
+            "row": 5,
+            "col": 3,
+            "type": "value",
+            "value": "出具VV制度"
+          },
+          {
+            "addr": "D5",
+            "row": 5,
+            "col": 4,
+            "type": "value",
+            "value": "10月25日前完成制度发文"
+          },
+          {
+            "addr": "E5",
+            "row": 5,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F5",
+            "row": 5,
+            "col": 6,
+            "type": "value",
+            "value": "①提前/按时完成，得20分；\n②延迟1天完成，扣4分；\n以此类推，每延迟1天完成，多扣4分。"
+          },
+          {
+            "addr": "G5",
+            "row": 5,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：4月15日完成制度V1.0；\nKR2：经过两轮意见征集、反馈与内容完善，已于10月18日完成终稿，并于10月20日完成发文。"
+          },
+          {
+            "addr": "H5",
+            "row": 5,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J5",
+            "row": 5,
+            "col": 10,
+            "type": "formula",
+            "value": "=H5*20%+I5*80%"
+          },
+          {
+            "addr": "A6",
+            "row": 6,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "D6",
+            "row": 6,
+            "col": 4,
+            "type": "value",
+            "value": "制度质量为优秀"
+          },
+          {
+            "addr": "E6",
+            "row": 6,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F6",
+            "row": 6,
+            "col": 6,
+            "type": "value",
+            "value": "制度质量：\n①优秀：20分；\n②良好：16分；\n③合格：12分；\n④基本合格：8分；\n⑤不合格：0分。"
+          },
+          {
+            "addr": "G6",
+            "row": 6,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：制度质量为优秀"
+          },
+          {
+            "addr": "H6",
+            "row": 6,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J6",
+            "row": 6,
+            "col": 10,
+            "type": "formula",
+            "value": "=H6*20%+I6*80%"
+          },
+          {
+            "addr": "A7",
+            "row": 7,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E7",
+            "row": 7,
+            "col": 5,
+            "type": "value",
+            "value": 0.3
+          },
+          {
+            "addr": "H7",
+            "row": 7,
+            "col": 8,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J7",
+            "row": 7,
+            "col": 10,
+            "type": "formula",
+            "value": "=H7*20%+I7*80%"
+          },
+          {
+            "addr": "A8",
+            "row": 8,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "E8",
+            "row": 8,
+            "col": 5,
+            "type": "value",
+            "value": 0.3
+          },
+          {
+            "addr": "H8",
+            "row": 8,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J8",
+            "row": 8,
+            "col": 10,
+            "type": "formula",
+            "value": "=H8*20%+I8*80%"
+          },
+          {
+            "addr": "A9",
+            "row": 9,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B9",
+            "row": 9,
+            "col": 2,
+            "type": "value",
+            "value": "加减分项"
+          },
+          {
+            "addr": "C9",
+            "row": 9,
+            "col": 3,
+            "type": "value",
+            "value": "加分项（上限10分）"
+          },
+          {
+            "addr": "E9",
+            "row": 9,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F9",
+            "row": 9,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "J9",
+            "row": 9,
+            "col": 10,
+            "type": "formula",
+            "value": "=H9*20%+I9*80%"
+          },
+          {
+            "addr": "A10",
+            "row": 10,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "C10",
+            "row": 10,
+            "col": 3,
+            "type": "value",
+            "value": "减分项"
+          },
+          {
+            "addr": "E10",
+            "row": 10,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F10",
+            "row": 10,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "J10",
+            "row": 10,
+            "col": 10,
+            "type": "formula",
+            "value": "=H10*20%+I10*80%"
+          },
+          {
+            "addr": "A11",
+            "row": 11,
+            "col": 1,
+            "type": "value",
+            "value": "1.月度绩效管理程序：\n①提前对标：月初对标当月2-4项关键工作目标，文字确认。\n②过程管理：月中对被考核者的关键工作目标达成情况进行过程督查。\n③结果评价：月底对被考核者的关键工作目标达成情况进行评价。\n④绩效反馈：给予被考核者绩效反馈，必要时可共同制定绩效改进计划。\n2.综合分数=自评*20%+上级领导评分*80%。"
+          },
+          {
+            "addr": "E11",
+            "row": 11,
+            "col": 5,
+            "type": "formula",
+            "value": "=SUM(E5:E8)"
+          },
+          {
+            "addr": "F11",
+            "row": 11,
+            "col": 6,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "H11",
+            "row": 11,
+            "col": 8,
+            "type": "formula",
+            "value": "=SUM(H5:H9)-H10"
+          },
+          {
+            "addr": "I11",
+            "row": 11,
+            "col": 9,
+            "type": "formula",
+            "value": "=SUM(I5:I9)-I10"
+          },
+          {
+            "addr": "J11",
+            "row": 11,
+            "col": 10,
+            "type": "formula",
+            "value": "=SUM(J5:J9)-J10"
+          },
+          {
+            "addr": "A12",
+            "row": 12,
+            "col": 1,
+            "type": "value",
+            "value": "被考核人\n（签名+日期）"
+          },
+          {
+            "addr": "E12",
+            "row": 12,
+            "col": 5,
+            "type": "value",
+            "value": "考核人\n（签名+日期）"
+          },
+          {
+            "addr": "H12",
+            "row": 12,
+            "col": 8,
+            "type": "value",
+            "value": "领导确认"
+          }
+        ],
+        "merged_ranges": [
+          "E12:F12",
+          "B9:B10",
+          "F11:G11",
+          "B5:B8",
+          "H12:I12",
+          "C10:D10",
+          "A3:K3",
+          "J12:K12",
+          "F10:G10",
+          "A2:K2",
+          "C9:D9",
+          "C13:D13",
+          "A11:D11",
+          "A12:C12",
+          "A1:K1",
+          "F9:G9",
+          "C5:C6"
+        ]
+      },
+      "月度绩效1.0版（主管 职员） ": {
+        "dimensions": "A1:M24",
+        "max_row": 24,
+        "max_col": 13,
+        "cells": [
+          {
+            "addr": "A1",
+            "row": 1,
+            "col": 1,
+            "type": "value",
+            "value": "2025年4月月度绩效考核表1.0版（VVV部-VVV）"
+          },
+          {
+            "addr": "A2",
+            "row": 2,
+            "col": 1,
+            "type": "value",
+            "value": "姓名：VVV              部门：VVVVV              岗位：VVVVV              评价人：VVV              考核期： 2025年4月              填写日期：2025.04.28                   "
+          },
+          {
+            "addr": "A3",
+            "row": 3,
+            "col": 1,
+            "type": "value",
+            "value": "工作关键结果考评指标\n（需结合公司/部门OGSM、项目目标、岗位说明书、特殊价值贡献）"
+          },
+          {
+            "addr": "A4",
+            "row": 4,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B4",
+            "row": 4,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C4",
+            "row": 4,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D4",
+            "row": 4,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E4",
+            "row": 4,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F4",
+            "row": 4,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G4",
+            "row": 4,
+            "col": 7,
+            "type": "value",
+            "value": "关键成果（M）"
+          },
+          {
+            "addr": "H4",
+            "row": 4,
+            "col": 8,
+            "type": "value",
+            "value": "自评分"
+          },
+          {
+            "addr": "I4",
+            "row": 4,
+            "col": 9,
+            "type": "value",
+            "value": "上级评分"
+          },
+          {
+            "addr": "J4",
+            "row": 4,
+            "col": 10,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "K4",
+            "row": 4,
+            "col": 11,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A5",
+            "row": 5,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B5",
+            "row": 5,
+            "col": 2,
+            "type": "value",
+            "value": "工作成果\n（85%）"
+          },
+          {
+            "addr": "C5",
+            "row": 5,
+            "col": 3,
+            "type": "value",
+            "value": "出具VV方案V1.0"
+          },
+          {
+            "addr": "D5",
+            "row": 5,
+            "col": 4,
+            "type": "value",
+            "value": "4月20日前完成方案V1.0\n方案质量为优秀"
+          },
+          {
+            "addr": "E5",
+            "row": 5,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F5",
+            "row": 5,
+            "col": 6,
+            "type": "value",
+            "value": "方案质量：\n①优秀：20分；\n②良好：16分；\n③合格：12分；\n④基本合格：8分；\n⑤不合格：0分。"
+          },
+          {
+            "addr": "G5",
+            "row": 5,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：4月15日完成方案V1.0\nKR2：方案质量为优秀"
+          },
+          {
+            "addr": "H5",
+            "row": 5,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "I5",
+            "row": 5,
+            "col": 9,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J5",
+            "row": 5,
+            "col": 10,
+            "type": "formula",
+            "value": "=H5*20%+I5*80%"
+          },
+          {
+            "addr": "A6",
+            "row": 6,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "C6",
+            "row": 6,
+            "col": 3,
+            "type": "value",
+            "value": "2025年3月份全职员工工资的核算与发放"
+          },
+          {
+            "addr": "D6",
+            "row": 6,
+            "col": 4,
+            "type": "value",
+            "value": "工资核算准确率100%"
+          },
+          {
+            "addr": "E6",
+            "row": 6,
+            "col": 5,
+            "type": "value",
+            "value": 0.05
+          },
+          {
+            "addr": "F6",
+            "row": 6,
+            "col": 6,
+            "type": "value",
+            "value": "准确性：\n①出现1处错误，扣1分；\n①出现2处错误，扣2分；\n以此类推，错误每增加1处，多扣除1分。"
+          },
+          {
+            "addr": "G6",
+            "row": 6,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：3月工资核算准确率100%"
+          },
+          {
+            "addr": "H6",
+            "row": 6,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "I6",
+            "row": 6,
+            "col": 9,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J6",
+            "row": 6,
+            "col": 10,
+            "type": "formula",
+            "value": "=H6*20%+I6*80%"
+          },
+          {
+            "addr": "A7",
+            "row": 7,
+            "col": 1,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "D7",
+            "row": 7,
+            "col": 4,
+            "type": "value",
+            "value": "每月10日前完成发放\n准时率100%"
+          },
+          {
+            "addr": "E7",
+            "row": 7,
+            "col": 5,
+            "type": "value",
+            "value": 0.05
+          },
+          {
+            "addr": "F7",
+            "row": 7,
+            "col": 6,
+            "type": "value",
+            "value": "准时性：\n①工资提前或准时发放：5分；\n②工资延迟发放：0分。"
+          },
+          {
+            "addr": "G7",
+            "row": 7,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：3月工资发放准时率100%"
+          },
+          {
+            "addr": "H7",
+            "row": 7,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "I7",
+            "row": 7,
+            "col": 9,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J7",
+            "row": 7,
+            "col": 10,
+            "type": "formula",
+            "value": "=H7*20%+I7*80%"
+          },
+          {
+            "addr": "A8",
+            "row": 8,
+            "col": 1,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "E8",
+            "row": 8,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "H8",
+            "row": 8,
+            "col": 8,
+            "type": "value",
+            "value": 18
+          },
+          {
+            "addr": "I8",
+            "row": 8,
+            "col": 9,
+            "type": "value",
+            "value": 15
+          },
+          {
+            "addr": "J8",
+            "row": 8,
+            "col": 10,
+            "type": "formula",
+            "value": "=H8*20%+I8*80%"
+          },
+          {
+            "addr": "A9",
+            "row": 9,
+            "col": 1,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "E9",
+            "row": 9,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "H9",
+            "row": 9,
+            "col": 8,
+            "type": "value",
+            "value": 16
+          },
+          {
+            "addr": "I9",
+            "row": 9,
+            "col": 9,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J9",
+            "row": 9,
+            "col": 10,
+            "type": "formula",
+            "value": "=H9*20%+I9*80%"
+          },
+          {
+            "addr": "A10",
+            "row": 10,
+            "col": 1,
+            "type": "value",
+            "value": 6
+          },
+          {
+            "addr": "E10",
+            "row": 10,
+            "col": 5,
+            "type": "value",
+            "value": 0.15
+          },
+          {
+            "addr": "H10",
+            "row": 10,
+            "col": 8,
+            "type": "value",
+            "value": 15
+          },
+          {
+            "addr": "I10",
+            "row": 10,
+            "col": 9,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J10",
+            "row": 10,
+            "col": 10,
+            "type": "formula",
+            "value": "=H10*20%+I10*80%"
+          },
+          {
+            "addr": "A11",
+            "row": 11,
+            "col": 1,
+            "type": "value",
+            "value": 7
+          },
+          {
+            "addr": "B11",
+            "row": 11,
+            "col": 2,
+            "type": "value",
+            "value": "发展潜能\n（15%）"
+          },
+          {
+            "addr": "C11",
+            "row": 11,
+            "col": 3,
+            "type": "value",
+            "value": "岗位承担"
+          },
+          {
+            "addr": "D11",
+            "row": 11,
+            "col": 4,
+            "type": "value",
+            "value": "1.主动履行本职岗位相关职责；\n2.主动承担临时或额外的任务分配；\n3.对工作成果的主人翁意识，呈现闭环思维；\n4.为6Q事业的发展积极献计献策、开源节流。"
+          },
+          {
+            "addr": "E11",
+            "row": 11,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F11",
+            "row": 11,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：4分；\n②良好：3分；\n③称职：2分；\n④基本称职：1分；\n⑤不称职：0分。"
+          },
+          {
+            "addr": "G11",
+            "row": 11,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H11",
+            "row": 11,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J11",
+            "row": 11,
+            "col": 10,
+            "type": "formula",
+            "value": "=H11*20%+I11*80%"
+          },
+          {
+            "addr": "A12",
+            "row": 12,
+            "col": 1,
+            "type": "value",
+            "value": 8
+          },
+          {
+            "addr": "C12",
+            "row": 12,
+            "col": 3,
+            "type": "value",
+            "value": "团队合作"
+          },
+          {
+            "addr": "D12",
+            "row": 12,
+            "col": 4,
+            "type": "value",
+            "value": "1.善于协同团队成员共同寻求解决方案；\n2.善于协同团队成员共同完成复杂的工作任务；\n3.做决定或计划前能够征求团队的建议和意见；\n4.主动协助团队成员解决工作中的卡点难点。"
+          },
+          {
+            "addr": "E12",
+            "row": 12,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F12",
+            "row": 12,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：4分；\n②良好：3分；\n③称职：2分；\n④基本称职：1分；\n⑤不称职：0分。"
+          },
+          {
+            "addr": "G12",
+            "row": 12,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H12",
+            "row": 12,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J12",
+            "row": 12,
+            "col": 10,
+            "type": "formula",
+            "value": "=H12*20%+I12*80%"
+          },
+          {
+            "addr": "A13",
+            "row": 13,
+            "col": 1,
+            "type": "value",
+            "value": 9
+          },
+          {
+            "addr": "C13",
+            "row": 13,
+            "col": 3,
+            "type": "value",
+            "value": "学以致用"
+          },
+          {
+            "addr": "D13",
+            "row": 13,
+            "col": 4,
+            "type": "value",
+            "value": "1.能够快速理解、掌握新知识/新技能；\n2.能够将已有知识/技能跨场景灵活运用；\n3.能够对岗位工作经验进行一传三进；\n4.能够带着解决方案汇报工作。"
+          },
+          {
+            "addr": "E13",
+            "row": 13,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F13",
+            "row": 13,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：4分；\n②良好：3分；\n③称职：2分；\n④基本称职：1分；\n⑤不称职：0分。"
+          },
+          {
+            "addr": "G13",
+            "row": 13,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H13",
+            "row": 13,
+            "col": 8,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J13",
+            "row": 13,
+            "col": 10,
+            "type": "formula",
+            "value": "=H13*20%+I13*80%"
+          },
+          {
+            "addr": "A14",
+            "row": 14,
+            "col": 1,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "C14",
+            "row": 14,
+            "col": 3,
+            "type": "value",
+            "value": "综合能力/素养"
+          },
+          {
+            "addr": "D14",
+            "row": 14,
+            "col": 4,
+            "type": "value",
+            "value": "1.执行能力；\n2.复盘能力；\n3.问题解决能力；\n4.目标管理能力。"
+          },
+          {
+            "addr": "E14",
+            "row": 14,
+            "col": 5,
+            "type": "value",
+            "value": 0.03
+          },
+          {
+            "addr": "F14",
+            "row": 14,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：3分；\n②良好：2分；\n③称职：1分；\n④不称职：0分。"
+          },
+          {
+            "addr": "G14",
+            "row": 14,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H14",
+            "row": 14,
+            "col": 8,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J14",
+            "row": 14,
+            "col": 10,
+            "type": "formula",
+            "value": "=H14*20%+I14*80%"
+          },
+          {
+            "addr": "A15",
+            "row": 15,
+            "col": 1,
+            "type": "value",
+            "value": 11
+          },
+          {
+            "addr": "B15",
+            "row": 15,
+            "col": 2,
+            "type": "value",
+            "value": "加减分"
+          },
+          {
+            "addr": "C15",
+            "row": 15,
+            "col": 3,
+            "type": "value",
+            "value": "特殊价值贡献"
+          },
+          {
+            "addr": "E15",
+            "row": 15,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "J15",
+            "row": 15,
+            "col": 10,
+            "type": "formula",
+            "value": "=H15*20%+I15*80%"
+          },
+          {
+            "addr": "A16",
+            "row": 16,
+            "col": 1,
+            "type": "value",
+            "value": 12
+          },
+          {
+            "addr": "C16",
+            "row": 16,
+            "col": 3,
+            "type": "value",
+            "value": "差错与失误"
+          },
+          {
+            "addr": "E16",
+            "row": 16,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F16",
+            "row": 16,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "H16",
+            "row": 16,
+            "col": 8,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "J16",
+            "row": 16,
+            "col": 10,
+            "type": "formula",
+            "value": "=H16*20%+I16*80%"
+          },
+          {
+            "addr": "A17",
+            "row": 17,
+            "col": 1,
+            "type": "value",
+            "value": "1.考核指标设置：本月工作中提取最重要的若干项（4-8项以内）作为考核指标。\n2.综合分数=自评*20%+上级领导评分*80%。"
+          },
+          {
+            "addr": "E17",
+            "row": 17,
+            "col": 5,
+            "type": "formula",
+            "value": "=SUM(E5:E14)"
+          },
+          {
+            "addr": "F17",
+            "row": 17,
+            "col": 6,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "H17",
+            "row": 17,
+            "col": 8,
+            "type": "formula",
+            "value": "=SUM(H5:H15)-H16"
+          },
+          {
+            "addr": "I17",
+            "row": 17,
+            "col": 9,
+            "type": "formula",
+            "value": "=SUM(I5:I15)-I16"
+          },
+          {
+            "addr": "J17",
+            "row": 17,
+            "col": 10,
+            "type": "formula",
+            "value": "=SUM(J5:J15)-J16"
+          },
+          {
+            "addr": "A18",
+            "row": 18,
+            "col": 1,
+            "type": "value",
+            "value": "被考核人\n（签名+日期）"
+          },
+          {
+            "addr": "G18",
+            "row": 18,
+            "col": 7,
+            "type": "value",
+            "value": "考核人\n（签名+日期）"
+          }
+        ],
+        "merged_ranges": [
+          "H18:K18",
+          "A17:D17",
+          "C18:F18",
+          "A3:K3",
+          "F15:G15",
+          "C15:D15",
+          "C16:D16",
+          "F16:G16",
+          "C19:D19",
+          "A2:K2",
+          "C6:C7",
+          "B11:B14",
+          "B5:B10",
+          "A18:B18",
+          "A1:K1",
+          "F17:G17",
+          "B15:B16"
+        ]
+      },
+      "月度绩效1.0版（总监 经理） ": {
+        "dimensions": "A1:M24",
+        "max_row": 24,
+        "max_col": 13,
+        "cells": [
+          {
+            "addr": "A1",
+            "row": 1,
+            "col": 1,
+            "type": "value",
+            "value": "2025年4月月度绩效考核表1.0版（VVV部-VVV）"
+          },
+          {
+            "addr": "A2",
+            "row": 2,
+            "col": 1,
+            "type": "value",
+            "value": "姓名：VVV              部门：VVVVV              岗位：VVVVV              评价人：VVV              考核期： 2025年4月              填写日期：2025.04.28                   "
+          },
+          {
+            "addr": "A3",
+            "row": 3,
+            "col": 1,
+            "type": "value",
+            "value": "工作关键结果考评指标\n（需结合公司/部门OGSM、项目目标、岗位说明书、特殊价值贡献）"
+          },
+          {
+            "addr": "A4",
+            "row": 4,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B4",
+            "row": 4,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C4",
+            "row": 4,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D4",
+            "row": 4,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E4",
+            "row": 4,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F4",
+            "row": 4,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G4",
+            "row": 4,
+            "col": 7,
+            "type": "value",
+            "value": "关键成果（M）"
+          },
+          {
+            "addr": "H4",
+            "row": 4,
+            "col": 8,
+            "type": "value",
+            "value": "自评分"
+          },
+          {
+            "addr": "I4",
+            "row": 4,
+            "col": 9,
+            "type": "value",
+            "value": "上级评分"
+          },
+          {
+            "addr": "J4",
+            "row": 4,
+            "col": 10,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "K4",
+            "row": 4,
+            "col": 11,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A5",
+            "row": 5,
+            "col": 1,
+            "type": "value",
+            "value": 1
+          },
+          {
+            "addr": "B5",
+            "row": 5,
+            "col": 2,
+            "type": "value",
+            "value": "工作成果\n（85%）"
+          },
+          {
+            "addr": "C5",
+            "row": 5,
+            "col": 3,
+            "type": "value",
+            "value": "出具VV方案V1.0"
+          },
+          {
+            "addr": "D5",
+            "row": 5,
+            "col": 4,
+            "type": "value",
+            "value": "4月20日前完成方案V1.0\n方案质量为优秀"
+          },
+          {
+            "addr": "E5",
+            "row": 5,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "F5",
+            "row": 5,
+            "col": 6,
+            "type": "value",
+            "value": "方案质量：\n①优秀：20分；\n②良好：16分；\n③合格：12分；\n④基本合格：8分；\n⑤不合格：0分。"
+          },
+          {
+            "addr": "G5",
+            "row": 5,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：4月15日完成方案V1.0\nKR2：方案质量为优秀"
+          },
+          {
+            "addr": "H5",
+            "row": 5,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "I5",
+            "row": 5,
+            "col": 9,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J5",
+            "row": 5,
+            "col": 10,
+            "type": "formula",
+            "value": "=H5*20%+I5*80%"
+          },
+          {
+            "addr": "A6",
+            "row": 6,
+            "col": 1,
+            "type": "value",
+            "value": 2
+          },
+          {
+            "addr": "C6",
+            "row": 6,
+            "col": 3,
+            "type": "value",
+            "value": "2025年3月份全职员工工资的核算与发放"
+          },
+          {
+            "addr": "D6",
+            "row": 6,
+            "col": 4,
+            "type": "value",
+            "value": "工资核算准确率100%"
+          },
+          {
+            "addr": "E6",
+            "row": 6,
+            "col": 5,
+            "type": "value",
+            "value": 0.05
+          },
+          {
+            "addr": "F6",
+            "row": 6,
+            "col": 6,
+            "type": "value",
+            "value": "准确性：\n①出现1处错误，扣1分；\n①出现2处错误，扣2分；\n以此类推，错误每增加1处，多扣除1分。"
+          },
+          {
+            "addr": "G6",
+            "row": 6,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：3月工资核算准确率100%"
+          },
+          {
+            "addr": "H6",
+            "row": 6,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "I6",
+            "row": 6,
+            "col": 9,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J6",
+            "row": 6,
+            "col": 10,
+            "type": "formula",
+            "value": "=H6*20%+I6*80%"
+          },
+          {
+            "addr": "A7",
+            "row": 7,
+            "col": 1,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "D7",
+            "row": 7,
+            "col": 4,
+            "type": "value",
+            "value": "每月10日前完成发放\n准时率100%"
+          },
+          {
+            "addr": "E7",
+            "row": 7,
+            "col": 5,
+            "type": "value",
+            "value": 0.05
+          },
+          {
+            "addr": "F7",
+            "row": 7,
+            "col": 6,
+            "type": "value",
+            "value": "准时性：\n①工资提前或准时发放：5分；\n②工资延迟发放：0分。"
+          },
+          {
+            "addr": "G7",
+            "row": 7,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：3月工资发放准时率100%"
+          },
+          {
+            "addr": "H7",
+            "row": 7,
+            "col": 8,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "I7",
+            "row": 7,
+            "col": 9,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "J7",
+            "row": 7,
+            "col": 10,
+            "type": "formula",
+            "value": "=H7*20%+I7*80%"
+          },
+          {
+            "addr": "A8",
+            "row": 8,
+            "col": 1,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "E8",
+            "row": 8,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "H8",
+            "row": 8,
+            "col": 8,
+            "type": "value",
+            "value": 18
+          },
+          {
+            "addr": "I8",
+            "row": 8,
+            "col": 9,
+            "type": "value",
+            "value": 15
+          },
+          {
+            "addr": "J8",
+            "row": 8,
+            "col": 10,
+            "type": "formula",
+            "value": "=H8*20%+I8*80%"
+          },
+          {
+            "addr": "A9",
+            "row": 9,
+            "col": 1,
+            "type": "value",
+            "value": 5
+          },
+          {
+            "addr": "E9",
+            "row": 9,
+            "col": 5,
+            "type": "value",
+            "value": 0.2
+          },
+          {
+            "addr": "H9",
+            "row": 9,
+            "col": 8,
+            "type": "value",
+            "value": 16
+          },
+          {
+            "addr": "I9",
+            "row": 9,
+            "col": 9,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J9",
+            "row": 9,
+            "col": 10,
+            "type": "formula",
+            "value": "=H9*20%+I9*80%"
+          },
+          {
+            "addr": "A10",
+            "row": 10,
+            "col": 1,
+            "type": "value",
+            "value": 6
+          },
+          {
+            "addr": "E10",
+            "row": 10,
+            "col": 5,
+            "type": "value",
+            "value": 0.15
+          },
+          {
+            "addr": "H10",
+            "row": 10,
+            "col": 8,
+            "type": "value",
+            "value": 15
+          },
+          {
+            "addr": "I10",
+            "row": 10,
+            "col": 9,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J10",
+            "row": 10,
+            "col": 10,
+            "type": "formula",
+            "value": "=H10*20%+I10*80%"
+          },
+          {
+            "addr": "A11",
+            "row": 11,
+            "col": 1,
+            "type": "value",
+            "value": 7
+          },
+          {
+            "addr": "B11",
+            "row": 11,
+            "col": 2,
+            "type": "value",
+            "value": "发展潜能\n（15%）\n"
+          },
+          {
+            "addr": "C11",
+            "row": 11,
+            "col": 3,
+            "type": "value",
+            "value": "岗位承担"
+          },
+          {
+            "addr": "D11",
+            "row": 11,
+            "col": 4,
+            "type": "value",
+            "value": "1.主动履行本职岗位相关职责；\n2.主动承担临时或额外的任务分配；\n3.对工作成果的主人翁意识，呈现闭环思维；\n4.为6Q事业的发展积极献计献策、开源节流。"
+          },
+          {
+            "addr": "E11",
+            "row": 11,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F11",
+            "row": 11,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：4分；\n②良好：3分；\n③称职：2分；\n④基本称职：1分；\n⑤不称职：0分。"
+          },
+          {
+            "addr": "G11",
+            "row": 11,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H11",
+            "row": 11,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J11",
+            "row": 11,
+            "col": 10,
+            "type": "formula",
+            "value": "=H11*20%+I11*80%"
+          },
+          {
+            "addr": "A12",
+            "row": 12,
+            "col": 1,
+            "type": "value",
+            "value": 8
+          },
+          {
+            "addr": "C12",
+            "row": 12,
+            "col": 3,
+            "type": "value",
+            "value": "团队合作"
+          },
+          {
+            "addr": "D12",
+            "row": 12,
+            "col": 4,
+            "type": "value",
+            "value": "1.善于协同团队成员共同完成复杂的工作任务；\n2.善于对团队成员进行潜能开发与适当授权；\n3.成为团队的精神领袖，影响下属的做事方式；\n4.鼓励团队合作，创造和谐向上的团队氛围。"
+          },
+          {
+            "addr": "E12",
+            "row": 12,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F12",
+            "row": 12,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：4分；\n②良好：3分；\n③称职：2分；\n④基本称职：1分；\n⑤不称职：0分。"
+          },
+          {
+            "addr": "G12",
+            "row": 12,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H12",
+            "row": 12,
+            "col": 8,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J12",
+            "row": 12,
+            "col": 10,
+            "type": "formula",
+            "value": "=H12*20%+I12*80%"
+          },
+          {
+            "addr": "A13",
+            "row": 13,
+            "col": 1,
+            "type": "value",
+            "value": 9
+          },
+          {
+            "addr": "C13",
+            "row": 13,
+            "col": 3,
+            "type": "value",
+            "value": "学以致用"
+          },
+          {
+            "addr": "D13",
+            "row": 13,
+            "col": 4,
+            "type": "value",
+            "value": "1.能够快速理解、掌握新知识/新技能；\n2.能够将已有知识/技能跨场景灵活运用；\n3.能够对岗位工作经验进行一传三进；\n4.能够带着解决方案汇报工作。"
+          },
+          {
+            "addr": "E13",
+            "row": 13,
+            "col": 5,
+            "type": "value",
+            "value": 0.04
+          },
+          {
+            "addr": "F13",
+            "row": 13,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：4分；\n②良好：3分；\n③称职：2分；\n④基本称职：1分；\n⑤不称职：0分。"
+          },
+          {
+            "addr": "G13",
+            "row": 13,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H13",
+            "row": 13,
+            "col": 8,
+            "type": "value",
+            "value": 4
+          },
+          {
+            "addr": "J13",
+            "row": 13,
+            "col": 10,
+            "type": "formula",
+            "value": "=H13*20%+I13*80%"
+          },
+          {
+            "addr": "A14",
+            "row": 14,
+            "col": 1,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "C14",
+            "row": 14,
+            "col": 3,
+            "type": "value",
+            "value": "综合能力/素养"
+          },
+          {
+            "addr": "D14",
+            "row": 14,
+            "col": 4,
+            "type": "value",
+            "value": "1.领导决策能力；\n2.统筹协调能力；\n3.目标管理能力；\n4.危机管理能力。"
+          },
+          {
+            "addr": "E14",
+            "row": 14,
+            "col": 5,
+            "type": "value",
+            "value": 0.03
+          },
+          {
+            "addr": "F14",
+            "row": 14,
+            "col": 6,
+            "type": "value",
+            "value": "①优秀：3分；\n②良好：2分；\n③称职：1分；\n④不称职：0分。"
+          },
+          {
+            "addr": "G14",
+            "row": 14,
+            "col": 7,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "H14",
+            "row": 14,
+            "col": 8,
+            "type": "value",
+            "value": 3
+          },
+          {
+            "addr": "J14",
+            "row": 14,
+            "col": 10,
+            "type": "formula",
+            "value": "=H14*20%+I14*80%"
+          },
+          {
+            "addr": "A15",
+            "row": 15,
+            "col": 1,
+            "type": "value",
+            "value": 11
+          },
+          {
+            "addr": "B15",
+            "row": 15,
+            "col": 2,
+            "type": "value",
+            "value": "加减分"
+          },
+          {
+            "addr": "C15",
+            "row": 15,
+            "col": 3,
+            "type": "value",
+            "value": "特殊价值贡献"
+          },
+          {
+            "addr": "E15",
+            "row": 15,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F15",
+            "row": 15,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "J15",
+            "row": 15,
+            "col": 10,
+            "type": "formula",
+            "value": "=H15*20%+I15*80%"
+          },
+          {
+            "addr": "A16",
+            "row": 16,
+            "col": 1,
+            "type": "value",
+            "value": 12
+          },
+          {
+            "addr": "C16",
+            "row": 16,
+            "col": 3,
+            "type": "value",
+            "value": "差错与失误"
+          },
+          {
+            "addr": "E16",
+            "row": 16,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F16",
+            "row": 16,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "I16",
+            "row": 16,
+            "col": 9,
+            "type": "value",
+            "value": -10
+          },
+          {
+            "addr": "J16",
+            "row": 16,
+            "col": 10,
+            "type": "formula",
+            "value": "=H16*20%+I16*80%"
+          },
+          {
+            "addr": "A17",
+            "row": 17,
+            "col": 1,
+            "type": "value",
+            "value": "1.考核指标设置：本月工作中提取最重要的若干项（4-8项以内）作为考核指标。\n2.综合分数=自评*20%+上级领导评分*80%。"
+          },
+          {
+            "addr": "E17",
+            "row": 17,
+            "col": 5,
+            "type": "formula",
+            "value": "=SUM(E5:E14)"
+          },
+          {
+            "addr": "F17",
+            "row": 17,
+            "col": 6,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "H17",
+            "row": 17,
+            "col": 8,
+            "type": "formula",
+            "value": "=SUM(H5:H15)-H16"
+          },
+          {
+            "addr": "I17",
+            "row": 17,
+            "col": 9,
+            "type": "formula",
+            "value": "=SUM(I5:I15)-I16"
+          },
+          {
+            "addr": "J17",
+            "row": 17,
+            "col": 10,
+            "type": "formula",
+            "value": "=SUM(J5:J15)-J16"
+          },
+          {
+            "addr": "A18",
+            "row": 18,
+            "col": 1,
+            "type": "value",
+            "value": "被考核人\n（签名+日期）"
+          },
+          {
+            "addr": "G18",
+            "row": 18,
+            "col": 7,
+            "type": "value",
+            "value": "考核人\n（签名+日期）"
+          }
+        ],
+        "merged_ranges": [
+          "H18:K18",
+          "A17:D17",
+          "C18:F18",
+          "A3:K3",
+          "F15:G15",
+          "C15:D15",
+          "C16:D16",
+          "F16:G16",
+          "C19:D19",
+          "A2:K2",
+          "C6:C7",
+          "B11:B14",
+          "B5:B10",
+          "A18:B18",
+          "A1:K1",
+          "F17:G17",
+          "B15:B16"
+        ]
+      }
+    },
+    "sheetnames": [
+      "月度绩效V1.2版-（总监 经理）",
+      "月度绩效V1.2版-（主管 职员）",
+      "月度绩效1.1版（总监 经理 主管 职员）  ",
+      "月度绩效1.0版（主管 职员） ",
+      "月度绩效1.0版（总监 经理） "
+    ]
+  },
+  "old_data": {
+    "path": "d:\\wechatFile\\xwechat_files\\wxid_wrdi6300otls12_0f21\\msg\\file\\2026-05\\6Q-信息部5月度绩效考核表1.1版（余炜烽）.xlsx",
+    "exists": true,
+    "sheets": {
+      "月度绩效（总监 经理 主管 职员）": {
+        "dimensions": "A1:M18",
+        "max_row": 18,
+        "max_col": 13,
+        "cells": [
+          {
+            "addr": "A1",
+            "row": 1,
+            "col": 1,
+            "type": "value",
+            "value": "2026年5月月度绩效考核表（信息部-余炜烽）"
+          },
+          {
+            "addr": "A2",
+            "row": 2,
+            "col": 1,
+            "type": "value",
+            "value": "姓名：余炜烽              部门：信息部              岗位：C端产品主管              评价人：陈秋香              考核期： 2026年5月              填写日期：2026.05.28"
+          },
+          {
+            "addr": "A3",
+            "row": 3,
+            "col": 1,
+            "type": "value",
+            "value": "工作关键结果考评指标\n（需结合公司/部门OGSM、项目目标、岗位说明书、特殊价值贡献）"
+          },
+          {
+            "addr": "A4",
+            "row": 4,
+            "col": 1,
+            "type": "value",
+            "value": "序号"
+          },
+          {
+            "addr": "B4",
+            "row": 4,
+            "col": 2,
+            "type": "value",
+            "value": "指标类型"
+          },
+          {
+            "addr": "C4",
+            "row": 4,
+            "col": 3,
+            "type": "value",
+            "value": "关键目标（O)"
+          },
+          {
+            "addr": "D4",
+            "row": 4,
+            "col": 4,
+            "type": "value",
+            "value": "考核目标（SMART)"
+          },
+          {
+            "addr": "E4",
+            "row": 4,
+            "col": 5,
+            "type": "value",
+            "value": "KR权重\n（100%）"
+          },
+          {
+            "addr": "F4",
+            "row": 4,
+            "col": 6,
+            "type": "value",
+            "value": "考核标准"
+          },
+          {
+            "addr": "G4",
+            "row": 4,
+            "col": 7,
+            "type": "value",
+            "value": "关键成果（M）"
+          },
+          {
+            "addr": "H4",
+            "row": 4,
+            "col": 8,
+            "type": "value",
+            "value": "自评分"
+          },
+          {
+            "addr": "I4",
+            "row": 4,
+            "col": 9,
+            "type": "value",
+            "value": "上级评分"
+          },
+          {
+            "addr": "J4",
+            "row": 4,
+            "col": 10,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "K4",
+            "row": 4,
+            "col": 11,
+            "type": "value",
+            "value": "备注"
+          },
+          {
+            "addr": "A5",
+            "row": 5,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B5",
+            "row": 5,
+            "col": 2,
+            "type": "value",
+            "value": "关键目标\n（100%）"
+          },
+          {
+            "addr": "C5",
+            "row": 5,
+            "col": 3,
+            "type": "value",
+            "value": "宏象系统规划与建设管理"
+          },
+          {
+            "addr": "D5",
+            "row": 5,
+            "col": 4,
+            "type": "value",
+            "value": "业务管理系统功能迭代\n①完成《2026夏令营信息化功能开发》；\n②完成《领袖营导师营前磨课安排与排课管理1.0》；\n③完成《6Q官网门户1.0》；\n④完成《平台运营管理与活动开发项目》; \n"
+          },
+          {
+            "addr": "E5",
+            "row": 5,
+            "col": 5,
+            "type": "value",
+            "value": "20%"
+          },
+          {
+            "addr": "F5",
+            "row": 5,
+            "col": 6,
+            "type": "value",
+            "value": "根据项目进度的匹配情况提分：\n①匹配度=100%，则20分；\n②90%≤匹配度＜100%：15分；\n③80%≤匹配度＜90%：12分；\n③70%≤匹配度＜80%：10分；\n③度匹配＜70%：0分；"
+          },
+          {
+            "addr": "G5",
+            "row": 5,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：100%完成《2026夏令营信息化功能开发》原型工作；\nKR2：100%完成平台活动的原型工作（砍价活动）；\nKR3：100%完成《领袖营导师营前磨课安排与排课管理1.0》的验收与上线工作； \nKR4：100%完成《6Q门户官网1.0》的验收与上线工作；\n"
+          },
+          {
+            "addr": "H5",
+            "row": 5,
+            "col": 8,
+            "type": "value",
+            "value": 20
+          },
+          {
+            "addr": "J5",
+            "row": 5,
+            "col": 10,
+            "type": "formula",
+            "value": "=H5*20%+I5*80%"
+          },
+          {
+            "addr": "A6",
+            "row": 6,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "D6",
+            "row": 6,
+            "col": 4,
+            "type": "value",
+            "value": "业务管理系统新增业务\n①完成《2026夏令营信息化功能开发》产品工作；\n②完成《领袖营导师营前磨课安排与排课管理1.0》上线；\n③完成《6Q官网门户1.0》上线；\n④完成《导学师1.0》原型工作； \n⑤完成《平台运营管理与活动开发项目》上线; "
+          },
+          {
+            "addr": "E6",
+            "row": 6,
+            "col": 5,
+            "type": "value",
+            "value": "30%"
+          },
+          {
+            "addr": "F6",
+            "row": 6,
+            "col": 6,
+            "type": "value",
+            "value": "按匹配项目进度情况进行评分：\n①匹配度=100%，则30分；\n②90%≤匹配度＜100%：25分；\n③80%≤匹配度＜90%：20分；\n③70%≤匹配度＜80%：15分；\n③度匹配＜70%：0分；\n"
+          },
+          {
+            "addr": "G6",
+            "row": 6,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：100%《领袖营导师营前磨课安排与排课管理1.0》导师培训与上线工作；\nKR2：100%完成《平台运营管理与活动开发项目》业务方验收与上线工作；\nKR3：100%完成《领袖营信息化2026年冬令营版本》产品与测试工作。\nKR4：100%完成《6Q官网门户1.0》上线工作\nKR5：100%完成《导学师1.0》原型工作（原型，岗位工作推进图，产品框架图，产品商业规划图，产品功能迭代规划，竞品分析文档）"
+          },
+          {
+            "addr": "H6",
+            "row": 6,
+            "col": 8,
+            "type": "value",
+            "value": 30
+          },
+          {
+            "addr": "J6",
+            "row": 6,
+            "col": 10,
+            "type": "formula",
+            "value": "=H6*20%+I6*80%"
+          },
+          {
+            "addr": "A7",
+            "row": 7,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "D7",
+            "row": 7,
+            "col": 4,
+            "type": "value",
+            "value": "内部管理系统功能迭代\n①《6Q经营管理驾驶舱2.0》\n②《内部管理平台调优》"
+          },
+          {
+            "addr": "E7",
+            "row": 7,
+            "col": 5,
+            "type": "value",
+            "value": "25%"
+          },
+          {
+            "addr": "F7",
+            "row": 7,
+            "col": 6,
+            "type": "value",
+            "value": "根据项目任务完成进度得分：\n①完成率100%，得25分；\n②90%≤完成率＜100%，得22分；\n③80%≤完成率＜90%，得20分；\n④完成率＜80%，则18分；"
+          },
+          {
+            "addr": "G7",
+            "row": 7,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：完成驾驶舱使用过程中调优需求沟通1次，原型设计工作 5+张；\nKR2：100%完成《内部管理平台调优版本第二版本》需求与原型工作"
+          },
+          {
+            "addr": "H7",
+            "row": 7,
+            "col": 8,
+            "type": "value",
+            "value": 25
+          },
+          {
+            "addr": "J7",
+            "row": 7,
+            "col": 10,
+            "type": "formula",
+            "value": "=H7*20%+I7*80%"
+          },
+          {
+            "addr": "A8",
+            "row": 8,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "C8",
+            "row": 8,
+            "col": 3,
+            "type": "value",
+            "value": "其他战略性项目"
+          },
+          {
+            "addr": "D8",
+            "row": 8,
+            "col": 4,
+            "type": "value",
+            "value": "AI应用开发项目\n①配合完成招标工作；\n②完成《6Q数字人项目1.0》；\n③完成《领袖营AI助手1.0》；\n④完成《总导师AI问答1.0》；\n⑤完成《AI导学师1.0》\n⑥完成《AI机器人购买与分析》"
+          },
+          {
+            "addr": "E8",
+            "row": 8,
+            "col": 5,
+            "type": "value",
+            "value": "25%"
+          },
+          {
+            "addr": "F8",
+            "row": 8,
+            "col": 6,
+            "type": "value",
+            "value": "根据项目任务完成进度得分：\n①完成率100%，得25分；\n②90%≤完成率＜100%，得20分；\n③80%≤完成率＜90%，得15分；\n④70%≤完成率＜80%，得12分；\n⑤60%≤完成率＜70%，得10分；\n⑥完成率＜60%，则0分。"
+          },
+          {
+            "addr": "G8",
+            "row": 8,
+            "col": 7,
+            "type": "value",
+            "value": "KR1：完成《6Q数字人项目1.0》验收工作；\nKR2：完成《领袖营AI助手1.0》验收工作；\nKR3：完成《总导师AI问答1.0》开发工作；\nKR4：完成《AI导学师1.0》的需求、原型与UI设计工作。\nKR5：完成《AI机器人购买与分析》的需求调研，采购方案以及协助采购工作"
+          },
+          {
+            "addr": "H8",
+            "row": 8,
+            "col": 8,
+            "type": "value",
+            "value": 25
+          },
+          {
+            "addr": "J8",
+            "row": 8,
+            "col": 10,
+            "type": "formula",
+            "value": "=H8*20%+I8*80%"
+          },
+          {
+            "addr": "A9",
+            "row": 9,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "B9",
+            "row": 9,
+            "col": 2,
+            "type": "value",
+            "value": "加减分项"
+          },
+          {
+            "addr": "C9",
+            "row": 9,
+            "col": 3,
+            "type": "value",
+            "value": "加分项（上限10分）"
+          },
+          {
+            "addr": "E9",
+            "row": 9,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F9",
+            "row": 9,
+            "col": 6,
+            "type": "value",
+            "value": "AI工程化岗位工作"
+          },
+          {
+            "addr": "H9",
+            "row": 9,
+            "col": 8,
+            "type": "value",
+            "value": 10
+          },
+          {
+            "addr": "J9",
+            "row": 9,
+            "col": 10,
+            "type": "formula",
+            "value": "=H9*20%+I9*80%"
+          },
+          {
+            "addr": "A10",
+            "row": 10,
+            "col": 1,
+            "type": "formula",
+            "value": "=ROW()-4"
+          },
+          {
+            "addr": "C10",
+            "row": 10,
+            "col": 3,
+            "type": "value",
+            "value": "减分项"
+          },
+          {
+            "addr": "E10",
+            "row": 10,
+            "col": 5,
+            "type": "value",
+            "value": "/"
+          },
+          {
+            "addr": "F10",
+            "row": 10,
+            "col": 6,
+            "type": "value",
+            "value": "（事项说明）"
+          },
+          {
+            "addr": "J10",
+            "row": 10,
+            "col": 10,
+            "type": "formula",
+            "value": "=H10*20%+I10*80%"
+          },
+          {
+            "addr": "A11",
+            "row": 11,
+            "col": 1,
+            "type": "value",
+            "value": "1.月度绩效管理程序：\n①提前对标：月初对标当月2-4项关键工作目标，文字确认。\n②过程管理：月中对被考核者的关键工作目标达成情况进行过程督查。\n③结果评价：月底对被考核者的关键工作目标达成情况进行评价。\n④绩效反馈：给予被考核者绩效反馈，必要时可共同制定绩效改进计划。\n2.综合分数=自评*20%+上级领导评分*80%。"
+          },
+          {
+            "addr": "E11",
+            "row": 11,
+            "col": 5,
+            "type": "formula",
+            "value": "=SUM(E5:E8)"
+          },
+          {
+            "addr": "F11",
+            "row": 11,
+            "col": 6,
+            "type": "value",
+            "value": "综合得分"
+          },
+          {
+            "addr": "H11",
+            "row": 11,
+            "col": 8,
+            "type": "formula",
+            "value": "=SUM(H5:H9)-H10"
+          },
+          {
+            "addr": "I11",
+            "row": 11,
+            "col": 9,
+            "type": "formula",
+            "value": "=SUM(I5:I9)-I10"
+          },
+          {
+            "addr": "J11",
+            "row": 11,
+            "col": 10,
+            "type": "formula",
+            "value": "=SUM(J5:J9)-J10"
+          },
+          {
+            "addr": "A12",
+            "row": 12,
+            "col": 1,
+            "type": "value",
+            "value": "被考核人\n（签名+日期）"
+          },
+          {
+            "addr": "E12",
+            "row": 12,
+            "col": 5,
+            "type": "value",
+            "value": "考核人\n（签名+日期）"
+          },
+          {
+            "addr": "H12",
+            "row": 12,
+            "col": 8,
+            "type": "value",
+            "value": "领导确认"
+          }
+        ],
+        "merged_ranges": [
+          "E12:F12",
+          "B9:B10",
+          "F11:G11",
+          "B5:B8",
+          "H12:I12",
+          "C10:D10",
+          "A3:K3",
+          "J12:K12",
+          "F10:G10",
+          "A2:K2",
+          "C9:D9",
+          "C5:C7",
+          "A11:D11",
+          "A12:C12",
+          "A1:K1",
+          "F9:G9"
+        ]
+      }
+    },
+    "sheetnames": [
+      "月度绩效（总监 经理 主管 职员）"
+    ]
+  }
+}

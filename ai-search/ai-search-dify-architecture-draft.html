@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 超级搜索 · Dify 架构方案（定稿草稿）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f7f6f3; --card: #fff; --text: #1a1a1a; --text-2: #5c5c5c;
+      --accent: #ff7a45; --accent-soft: rgba(255,122,69,.12);
+      --line: #e8e6e1; --blue: #3b6fd9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 32px 20px 64px; }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    .badge { display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; margin-bottom: 12px; }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
+    h2 { font-size: 17px; margin: 36px 0 14px; padding-bottom: 6px; border-bottom: 2px solid var(--accent-soft); }
+    h3 { font-size: 15px; margin: 20px 0 8px; }
+    p, li { font-size: 14px; color: var(--text-2); }
+    ul { padding-left: 20px; margin-bottom: 12px; }
+    .card { background: var(--card); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; border: 1px solid var(--line); }
+    .card.decision { border-left: 4px solid var(--accent); }
+    .diagram { background: var(--card); border-radius: 12px; padding: 20px 12px; margin: 14px 0; border: 1px solid var(--line); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+    th { background: #faf9f7; font-weight: 600; }
+    code { font-size: 12px; background: #f0efec; padding: 2px 5px; border-radius: 4px; color: #c44d1a; }
+    pre { font-size: 12px; background: #f5f5f5; padding: 12px; border-radius: 8px; overflow: auto; margin: 10px 0; color: #333; }
+    a.back { color: var(--accent); font-weight: 600; font-size: 14px; }
+    .footer { font-size: 12px; color: #999; text-align: center; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">定稿草稿 v4 · 会话与意图收敛</span>
+    <h1>AI 超级搜索 × Dify 方案</h1>
+    <p class="subtitle">期数 HTTP + SSE；<strong>首次提交</strong>由 BFF/Dify 定 Tab；<strong>切 Tab</strong>只刷类目；<strong>同一 sessionId</strong> 多轮由 LLM 读上下文；<strong>仅在新关键词提交时</strong>清空 AI 对话。</p>
+    <p>
+      <a class="back" href="ai-search-v1.html">← 交互原型（统一版）</a>
+      &nbsp;·&nbsp;
+      <a class="back" href="ai-search-v2-all.html">全部 Tab 瀑布参考页</a>
+    </p>
+
+    <div class="card decision">
+      <strong>已确认决策（v4）</strong>
+      <ul>
+        <li><strong>① 期数</strong>：直接 HTTP；LLM 只抽参，不编造期数。</li>
+        <li><strong>② 响应</strong>：<code>SSE 流式</code> + <code>cards</code>；<code>event:route</code> 定 Tab。</li>
+        <li><strong>③ 知识库</strong>：课程/期数不进库；亮点来自 API。</li>
+        <li><strong>④ 意图收敛</strong>：首次搜索仅两类落地 —— <code>ai_course_*</code>（4 类合并路由）→ AI智搜；<code>general_search</code> → 全部 Tab。<code>ai_unsupported</code> <strong>仅</strong>在「已在 AI 对话内」且垂类/闲聊时出现。</li>
+        <li><strong>⑤ Tab 切换</strong>：只按搜索框 keyword 请求对应类目 API，<strong>不走</strong>意图路由、<strong>不清</strong> AI 历史。</li>
+        <li><strong>⑥ 对话保留</strong>：除非用户<strong>提交与上轮不同的新关键词</strong>（顶部搜索/回车），否则 APP <strong>不得清空</strong> AI 聊天；续聊、切 Tab 返回 AI 均保留。</li>
+        <li><strong>⑦ 多轮</strong>：BFF 固定 <code>sessionId</code> 调 Dify；节点 1/2 传入 <code>history[]</code>，由 LLM 结合上下文理解「还有吗」「南宁站」等，不靠前端 <code>includes</code> 猜。</li>
+      </ul>
+    </div>
+
+    <!-- 总架构：一张图 -->
+    <h2>1. 总架构（APP ↔ BFF ↔ Dify ↔ HTTP）</h2>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  APP["APP 三屏"] --> BFF["搜索 BFF"]
+  BFF --> D1["Dify：意图+抽参 JSON"]
+  D1 --> BFF
+  BFF --> API["业务 HTTP<br/>期数/课程/线上课…"]
+  BFF --> D2["Dify：流式生成导语<br/>禁止写具体期数"]
+  API --> BFF
+  D2 --> BFF
+  BFF -->|SSE text + event cards| APP
+      </pre>
+    </div>
+    <p><strong>要点：</strong>慢接口在 <strong>BFF</strong> 调，不交给 Dify Tool 直连（便于超时、缓存、鉴权）。Dify 分两段：<strong>① 抽参（快、JSON）</strong> → <strong>② 流式文案（吃 API 结果）</strong>。</p>
+
+    <!-- 意图穷举 -->
+    <h2>2. 用户意图穷举：关键词 → LLM 判断 → 查什么 → 去哪个页面</h2>
+    <p>建议 Dify 第一个节点<strong>只输出 JSON</strong>（意图 + 槽位），BFF 按表路由；规则可兜底 LLM。</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>意图 code</th>
+          <th>用户典型说法 / 关键词</th>
+          <th>LLM 需抽取的 HTTP 参数</th>
+          <th>数据来源（无知识库）</th>
+          <th>APP 表现</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>phase_query</code></td>
+          <td>期数、第N期、开课、最近、哪些课、<strong>城市+开课</strong>（广州最近有哪些课）</td>
+          <td><code>city</code> <code>time_window</code>(如30天) <code>course_id?</code> <code>status=open</code></td>
+          <td><code>GET /sessions</code></td>
+          <td>AI智搜 + 期数卡片（图2）</td>
+        </tr>
+        <tr>
+          <td><code>course_by_name</code></td>
+          <td>精确课名：智慧父母一阶、高EQ、工作坊</td>
+          <td><code>course_name</code> 或 <code>course_id</code> <code>city?</code></td>
+          <td><code>GET /courses/search</code> + <code>GET /sessions?course_id=</code></td>
+          <td>AI智搜：亮点用 API 的 description（图1）</td>
+        </tr>
+        <tr>
+          <td><code>instructor_query</code></td>
+          <td>总导师、授课导师、6Q张三、老师的课</td>
+          <td><code>instructor_id</code> 或 <code>instructor_name</code></td>
+          <td><code>GET /courses?instructor=</code> + 期数 API</td>
+          <td>AI智搜：多课程列表+期数（图3）</td>
+        </tr>
+        <tr>
+          <td><code>enroll_action</code></td>
+          <td>报读、报名、还有名额、排队、南宁站还有吗</td>
+          <td>继承上轮 <code>course_id</code> <code>city</code> <code>phase_no?</code></td>
+          <td><code>GET /sessions</code>（多轮上下文）</td>
+          <td>AI智搜 续聊追加卡片</td>
+        </tr>
+        <tr>
+          <td><code>online_course</code></td>
+          <td>线上、专栏、免费、人已学习、网课</td>
+          <td><code>keyword</code> <code>type=online</code></td>
+          <td><code>GET /search/online-courses</code></td>
+          <td>首次搜索 → <strong>全部 Tab</strong> 内「线上课程」区块；手动切 Tab → 线上课程 Tab（图4）</td>
+        </tr>
+        <tr>
+          <td><code>mall</code></td>
+          <td>商城、公仔、盲盒、潮玩、¥</td>
+          <td><code>keyword</code> <code>type=mall</code></td>
+          <td><code>GET /search/mall</code></td>
+          <td>首次搜索 → 全部 Tab 商城区块；手动切 Tab → 6Q商城 Tab（图5）</td>
+        </tr>
+        <tr>
+          <td><code>content_article</code></td>
+          <td>文章、是不是骗局、专题</td>
+          <td><code>keyword</code> <code>type=article</code></td>
+          <td><code>GET /search/articles</code></td>
+          <td>首次搜索 → 全部 Tab 文章区块；手动切 Tab → 文章列表（图6）</td>
+        </tr>
+        <tr>
+          <td><code>content_video</code></td>
+          <td>视频、试看、次播</td>
+          <td><code>keyword</code> <code>type=video</code></td>
+          <td><code>GET /search/videos</code></td>
+          <td>首次搜索 → 全部 Tab 视频区块；手动切 Tab → 视频列表（图7）</td>
+        </tr>
+        <tr>
+          <td><code>content_audio</code></td>
+          <td>音频、听过、采访</td>
+          <td><code>keyword</code> <code>type=audio</code></td>
+          <td><code>GET /search/audios</code></td>
+          <td>首次搜索 → 全部 Tab 音频区块；手动切 Tab → 音频列表（图8）</td>
+        </tr>
+        <tr>
+          <td><code>general_search</code></td>
+          <td>泛搜、垂类词、抽象词（见 §2.1）、商品/内容类首次 query</td>
+          <td><code>keyword</code> <code>types[]?</code></td>
+          <td>BFF 并行各垂类 API，按相关度拼区块</td>
+          <td><strong>全部 Tab</strong>（首次提交）</td>
+        </tr>
+        <tr>
+          <td><code>ai_unsupported</code></td>
+          <td><strong>仅</strong> AI 对话内：商城/音频/盲盒等与报读无关（见 §2.1）</td>
+          <td>—</td>
+          <td>—</td>
+          <td>小Q +「去全部看看」；<strong>不清</strong>上文；可跳全部 Tab</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.1 抽象词 / 歧义词穷举（须写入 Dify Prompt + BFF 兜底）</h3>
+    <p>下列词语<strong>不能</strong>单独作为「进 AI 智搜」的依据；须结合 <code>history</code>、完整句、或是否出现课名/城市/期数/报读动作。单独出现时默认 <code>general_search</code> → 全部 Tab。</p>
+
+    <table>
+      <thead>
+        <tr><th>类别</th><th>词表（示例，可扩展）</th><th>单独出现时的默认</th><th>结合上下文可升级为</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>品牌/缩写</td>
+          <td><code>6Q</code>、<code>EQ</code>、<code>六Q</code>、<code>领袖营</code>、<code>高EQ</code></td>
+          <td><code>general_search</code></td>
+          <td>带课名/期数/报读 → <code>ai_course_*</code></td>
+        </tr>
+        <tr>
+          <td>阶别/模糊课级</td>
+          <td><code>一阶</code>、<code>二阶</code>、<code>三阶</code>、<code>初阶</code>、<code>进阶</code>、<code>工作坊</code></td>
+          <td><code>general_search</code></td>
+          <td>+「智慧父母/高EQ/课名」或 history 已有 course → AI</td>
+        </tr>
+        <tr>
+          <td>泛化教育词</td>
+          <td><code>课程</code>、<code>课</code>、<code>上课</code>、<code>学习</code>、<code>培训</code>、<code>教育</code></td>
+          <td><code>general_search</code></td>
+          <td>+ 城市/开课/期数/导师 → <code>phase_query</code> 等</td>
+        </tr>
+        <tr>
+          <td>指代/续聊（无新实体）</td>
+          <td><code>还有吗</code>、<code>还有名额吗</code>、<code>这个</code>、<code>那个</code>、<code>换一个</code>、<code>继续</code></td>
+          <td>不视为新搜索</td>
+          <td>同 <code>sessionId</code> → <code>enroll_action</code> / 继承 slots</td>
+        </tr>
+        <tr>
+          <td>时间/范围模糊</td>
+          <td><code>最近</code>、<code>近期</code>、<code>什么时候</code>、<code>哪些</code>、<code>有没有</code>、<code>几点</code></td>
+          <td><code>general_search</code></td>
+          <td>+ 城市/开课 → <code>phase_query</code></td>
+        </tr>
+        <tr>
+          <td>礼貌/指令壳</td>
+          <td><code>帮我</code>、<code>查一下</code>、<code>搜索</code>、<code>看看</code>、<code>推荐</code></td>
+          <td>剥离后按剩余实体判</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>垂类内容词</td>
+          <td><code>音频</code>、<code>视频</code>、<code>文章</code>、<code>专栏</code>、<code>网课</code>、<code>试听</code></td>
+          <td>首次 → <code>general_search</code></td>
+          <td>AI 内 → <code>ai_unsupported</code></td>
+        </tr>
+        <tr>
+          <td>商城/实物</td>
+          <td><code>盲盒</code>、<code>公仔</code>、<code>潮玩</code>、<code>商城</code>、<code>买</code>、<code>¥</code>、<code>6Q潮玩</code></td>
+          <td><code>general_search</code></td>
+          <td>AI 内 → <code>ai_unsupported</code></td>
+        </tr>
+        <tr>
+          <td>泛主题</td>
+          <td><code>恋爱</code>、<code>咨询</code>、<code>亲子</code>、<code>沟通</code>、<code>情绪</code></td>
+          <td><code>general_search</code></td>
+          <td>精确课名命中 → <code>course_by_name</code></td>
+        </tr>
+        <tr>
+          <td>站点/地名（无课名）</td>
+          <td><code>广州</code>、<code>南宁</code>、<code>深圳</code>、<code>站</code>（单独）</td>
+          <td><code>general_search</code></td>
+          <td>history 有课 +「南宁站还有吗」→ <code>enroll_action</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <p><strong>硬规则：</strong>禁止用「词表命中顺序」覆盖 LLM（例如单独 <code>6Q</code> 不得直接进 AI）。BFF 可在 LLM 低置信时兜底，但须遵守上表。</p>
+
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TD
+  Q["提交 query<br/>sessionId 不变或新建"] --> NEW{"新关键词?<br/>≠ anchorQuery"}
+  NEW -->|是| SID["BFF 可轮换 sessionId<br/>APP 清空 AI 仅此时"]
+  NEW -->|否| KEEP["保留对话 + sessionId"]
+  Q --> SW{"AI智搜 开?"}
+  SW -->|关| LEG["general_search API"] --> T0["全部 Tab"]
+  SW -->|开| LLM["Dify 节点1 + history"]
+  LLM --> I{"intent"}
+  I -->|ai_course_*| AI["HTTP 期数/课程"] --> SSE --> T2["AI Tab"]
+  I -->|general_search| AGG["并行垂类"] --> T0
+  I -->|AI内非课程| REJ["ai_unsupported"] --> KEEP
+  TAB["手动切 Tab"] --> CAT["类目 API only"] --> TX["对应 Tab"]
+      </pre>
+    </div>
+
+    <p><strong>AI 智搜承接：</strong><code>phase_query</code>、<code>course_by_name</code>、<code>instructor_query</code>、<code>enroll_action</code>（合称 <code>ai_course_*</code>）。<strong>首次</strong>垂类/泛搜统一 <code>general_search</code> → 全部 Tab。</p>
+
+    <!-- 抽参 -->
+    <h2>3. LLM 如何设定「HTTP 请求用关键信息」（解决慢接口 + 防幻觉）</h2>
+
+    <h3>3.1 节点1：结构化抽参（强制 JSON Schema）</h3>
+    <p>在 Dify 用 <strong>LLM 节点 + JSON Schema 输出</strong>（或「参数提取」），<strong>禁止</strong>此节点调用 HTTP。Prompt 核心：</p>
+    <ul>
+      <li>输入必含：<code>session_id</code>（与 APP/BFF 一致）、<code>query</code>、<code>history[]</code>（role/content）、<code>anchor_query</code>（本轮搜索锚定词，用于判断是否新话题）。</li>
+      <li>续聊句（还有吗、这个站）<strong>必须</strong>读 history 继承 <code>course_id</code> / <code>city</code>，不得因单独命中「站」「吗」判成 general_search。</li>
+      <li>单独抽象词（§2.1）→ <code>general_search</code> 或低置信 + 要求用户补充。</li>
+      <li>城市标准名；课名可 raw 交 BFF 模糊匹配。</li>
+    </ul>
+    <pre>{
+  "session_id": "sess_8f3a…",
+  "intent": "enroll_action",
+  "is_new_topic": false,
+  "slots": {
+    "keyword": "南宁站还有吗",
+    "course_id": "c_10086",
+    "course_name": "智慧父母一阶",
+    "city": "南宁",
+    "instructor_name": null,
+    "phase_no": null,
+    "time_window_days": null,
+    "need_sessions": true
+  },
+  "confidence": 0.88
+}</pre>
+
+    <h3>3.2 会话与清空规则（APP + BFF）</h3>
+    <table>
+      <thead><tr><th>行为</th><th>sessionId</th><th>AI 对话 UI</th></tr></thead>
+      <tbody>
+        <tr><td>顶部搜索提交，keyword ≠ 上轮 anchor</td><td>新建（或 BFF 轮换）</td><td><strong>清空</strong>后重新出卡</td></tr>
+        <tr><td>AI 底部输入续聊</td><td><strong>不变</strong></td><td>追加 turn</td></tr>
+        <tr><td>手动切 Tab（含切回 AI）</td><td>不变</td><td><strong>不清空</strong></td></tr>
+        <tr><td>开场白/历史标签点击（同 keyword）</td><td>不变</td><td>不清空</td></tr>
+        <tr><td>收到 <code>route.tab=all</code></td><td>不变</td><td>对话保留在 AI Tab 栈内</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.3 BFF 拼 HTTP（示例）</h3>
+    <pre>GET /api/sessions?city=广州&start_within_days=30&status=open&page_size=10
+GET /api/courses/search?q=智慧父母一阶&city=南宁</pre>
+
+    <h3>3.4 接口慢时的编排（推荐）</h3>
+    <div class="diagram">
+      <pre class="mermaid">
+sequenceDiagram
+  participant APP
+  participant BFF
+  participant Dify
+  participant API as 期数API
+
+  APP->>BFF: POST /search SSE<br/>sessionId + query + history
+  BFF->>Dify: 节点1 抽参 JSON（快，&lt;1s）<br/>同一 sessionId
+  par 并行
+    BFF->>API: 期数查询（可能慢）
+    BFF->>Dify: 节点2 流式导语（仅 API 已返回的课名/城市，禁止列期号）
+  end
+  API-->>BFF: sessions[]
+  BFF-->>APP: event:cards JSON
+  BFF-->>APP: event:done
+      </pre>
+    </div>
+    <ul>
+      <li><strong>超时</strong>（如 3s）：先 SSE 推送「正在查询期数…」+ 骨架卡；API 返回后再 <code>event:cards</code> 替换。</li>
+      <li><strong>缓存</strong>：同 <code>city+course_id+日</code> 短缓存 1–5 分钟，减轻重复慢查询。</li>
+      <li><strong>节点2 Prompt</strong>：明确写「期数列表以 cards 为准，你只写概括语」。</li>
+    </ul>
+
+    <!-- 流式+卡片 -->
+    <h2>4. 流式 + 卡片：APP 协议草稿</h2>
+    <pre>POST /api/v1/search  Accept: text/event-stream
+Body: { "query", "sessionId", "anchorQuery", "history", "aiEnabled", "source": "submit"|"tab" }
+
+event: route
+data: {"tab":"ai_search","intent":"phase_query","sessionId":"sess_8f3a","clearChat":false}
+// 新关键词提交且进 AI：
+// data: {"tab":"ai_search","intent":"course_by_name","sessionId":"sess_new","clearChat":true}
+// 泛搜：
+// data: {"tab":"all","intent":"general_search","sessionId":"sess_8f3a","clearChat":false}
+
+event: text_delta
+data: {"delta":"已为你筛选广州市…"}
+
+event: text_delta
+data: {"delta":"…"}
+
+event: cards
+data: {"type":"sessions","items":[{...期数卡字段...}]}
+
+event: done
+data: {"sessionId":"..."}</pre>
+    <p>APP：仅当 <code>clearChat:true</code> 时清空对话；否则追加。<code>source=tab</code> 时不请求 Dify 意图，只刷类目 API。多轮续聊由 BFF 带同一 <code>sessionId</code> 调 Dify，LLM 读 <code>history</code> 解析指代与省略。</p>
+
+    <h2>4.1 全部 Tab 聚合（BFF 建议）</h2>
+    <div class="card">
+      <p><code>GET /api/v1/search/all?q=</code> 或 BFF 内并行：<code>sessions</code>（可选）、<code>online-courses</code>、<code>mall</code>、<code>articles</code>、<code>videos</code>、<code>audios</code>，每区返回 1–3 条 + 总数，与原型 <a href="ai-search-v1.html">ai-search-v1.html</a> 瀑布区块一致。</p>
+      <p>AI 智搜<strong>不</strong>在对话流内拼接商城/文章/视频/音频卡片（图 4–8 仅出现在全部或垂类 Tab）。</p>
+    </div>
+
+    <!-- 知识库 -->
+    <h2>5. 知识库策略（按你的结论）</h2>
+    <div class="card">
+      <p><strong>课程/期数/价格/名额 → 一律不进知识库</strong>，全部实时 HTTP。</p>
+      <p>若未来需要，仅可考虑<strong>极静态</strong>内容单独库：APP 使用说明、报读规则总则（且接受低频手工更新）。<strong>与课程 SKU 无关。</strong></p>
+      <p>课程「亮点介绍」：来自 <code>GET /courses/{id}</code> 的 <code>highlight</code> 字段注入节点2，而非 RAG。</p>
+    </div>
+
+    <!-- Dify 配置简表 -->
+    <h2>6. Dify 工作流配置清单（精简）</h2>
+    <table>
+      <thead><tr><th>节点</th><th>类型</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>输入</td><td>变量</td><td><code>session_id</code> <code>query</code> <code>anchor_query</code> <code>history[]</code> <code>user_id</code></td></tr>
+        <tr><td>意图+抽参</td><td>LLM + JSON Schema</td><td>含 §2.1 抽象词规则；输出 intent + slots + is_new_topic</td></tr>
+        <tr><td>（BFF 外置）</td><td>—</td><td>HTTP 查期数/课程；SSE 转发</td></tr>
+        <tr><td>导语生成</td><td>LLM 流式</td><td>输入：slots + API 摘要（课名、条数）；禁止编造期数</td></tr>
+        <tr><td>开场白</td><td>独立轻量流</td><td>仅 <code>keyword</code> → 5 条 suggestion，不调期数 API</td></tr>
+      </tbody>
+    </table>
+
+    <p class="footer">ai-search-dify-architecture-draft.html · v4 · 意图收敛 / 抽象词表 / sessionId 多轮 / 仅新词清空</p>
+  </div>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+  </script>
+</body>
+</html>

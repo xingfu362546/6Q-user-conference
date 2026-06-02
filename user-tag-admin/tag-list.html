@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>标签管理 · 用户标签平台</title>
+  <link rel="stylesheet" href="css/ut-tokens.css" />
+  <link rel="stylesheet" href="css/ut-shell.css" />
+  <link rel="stylesheet" href="css/ut-components.css" />
+  <style>
+    .ut-table .col-actions { width: 1%; white-space: nowrap; }
+    .ut-status-cell { display: flex; flex-direction: column; gap: 4px; }
+    .ut-status-cell time { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .ut-user-cell { display: flex; align-items: center; gap: 8px; }
+    .ut-user-cell .ut-avatar { width: 24px; height: 24px; font-size: 11px; }
+    .cell-num--stale {
+      cursor: help;
+      border-bottom: 1px dashed var(--text-muted);
+    }
+    .ut-status-cell__hint {
+      font-size: 11px;
+      color: var(--warning);
+    }
+  </style>
+</head>
+<body class="ut-body" data-ut-page="tag-list">
+  <div class="ut-app">
+    <header class="ut-topbar" id="ut-topbar-mount"></header>
+    <div class="ut-row">
+      <div id="ut-side-mount"></div>
+      <div class="ut-main">
+        <div class="ut-workpad">
+          <nav class="ut-breadcrumb" aria-label="面包屑">
+            <a href="index.html">首页</a> / <strong>标签管理</strong>
+          </nav>
+          <div class="ut-page-head">
+            <div class="ut-page-head__left">
+              <h1>标签管理</h1>
+              <p class="ut-page-head__desc">二级标签展示<strong>上次成功版本</strong>覆盖人数；计算失败时仍保留该人数并标注最新任务状态。一级分类仅作目录，可在此行「新增」二级标签。</p>
+            </div>
+            <a class="ut-btn ut-btn--primary" href="tag-create.html">＋ 新增二级标签</a>
+          </div>
+
+          <div class="ut-card" style="margin-bottom:var(--space-4)">
+            <form class="ut-filter" data-filter-form aria-label="筛选条件">
+              <div class="ut-field">
+                <label for="f-type">数据类型</label>
+                <select class="ut-select" id="f-type">
+                  <option value="">全部</option>
+                  <option>布尔</option>
+                  <option>数值</option>
+                  <option>字符串</option>
+                  <option>枚举</option>
+                </select>
+              </div>
+              <div class="ut-field">
+                <label for="f-name">标签名称</label>
+                <input class="ut-input" id="f-name" type="search" placeholder="搜索名称" />
+              </div>
+              <div class="ut-field">
+                <label for="f-status">标签状态</label>
+                <select class="ut-select" id="f-status">
+                  <option value="">全部</option>
+                  <option>正常</option>
+                  <option>停用</option>
+                  <option>计算中</option>
+                </select>
+              </div>
+              <div class="ut-field">
+                <label for="f-code">标签编码</label>
+                <input class="ut-input" id="f-code" type="search" placeholder="tag_xxx" />
+              </div>
+              <div class="ut-filter__actions">
+                <button type="button" class="ut-btn" data-filter-reset>重置</button>
+                <button type="button" class="ut-btn ut-btn--primary">查询</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="ut-card">
+            <div class="ut-table-wrap" style="max-height:calc(100vh - 320px)">
+              <table class="ut-table" data-tree-table>
+                <thead>
+                  <tr>
+                    <th>标签名称</th>
+                    <th>层级</th>
+                    <th>标签编码</th>
+                    <th>数据类型</th>
+                    <th>覆盖人数</th>
+                    <th>计算状态</th>
+                    <th>更新方式</th>
+                    <th>状态</th>
+                    <th>更新人</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
+                    <th class="col-actions">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-id="pref" data-level="0">
+                    <td>
+                      <button type="button" class="ut-tree-toggle" data-tree-toggle aria-expanded="true" aria-label="收起">−</button>
+                      <span class="ut-tree-name ut-tree-name--parent">用户偏好</span>
+                    </td>
+                    <td><span class="ut-badge ut-badge--neutral">一级</span></td>
+                    <td class="cell-mono">—</td>
+                    <td>—</td>
+                    <td class="cell-num">—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td class="cell-mono">2024-01-10 09:00</td>
+                    <td class="cell-mono">2025-04-01 12:00</td>
+                    <td class="col-actions">
+                      <a class="ut-link" href="tag-create.html?parent=pref">新增</a>
+                    </td>
+                  </tr>
+                  <tr data-id="pref-1" data-parent="pref">
+                    <td style="padding-left:42px">
+                      <button type="button" class="ut-tree-toggle is-leaf" data-tree-toggle aria-hidden="true">+</button>
+                      <span class="ut-tree-name">亲子偏好</span>
+                    </td>
+                    <td>二级</td>
+                    <td class="cell-mono">tag_1233</td>
+                    <td>布尔</td>
+                    <td class="cell-num">1,500</td>
+                    <td>
+                      <div class="ut-status-cell">
+                        <span class="ut-badge ut-badge--success ut-badge--dot">成功</span>
+                        <time>2025-04-04 19:55:43</time>
+                      </div>
+                    </td>
+                    <td>手动</td>
+                    <td><span class="ut-badge ut-badge--success">正常</span></td>
+                    <td>
+                      <div class="ut-user-cell">
+                        <span class="ut-avatar">张</span>
+                        <span>张三</span>
+                      </div>
+                    </td>
+                    <td class="cell-mono">2024-03-01 10:00</td>
+                    <td class="cell-mono">2025-04-04 19:55</td>
+                    <td class="col-actions">
+                      <div class="ut-dropdown">
+                        <button type="button" class="ut-btn ut-btn--sm ut-btn--ghost" data-dropdown-toggle>操作 ▾</button>
+                        <div class="ut-dropdown__menu" role="menu">
+                          <a href="tag-create.html" role="menuitem">编辑</a>
+                          <a href="tag-create.html?copy=tag_1233" role="menuitem">复制规则</a>
+                          <a href="tag-history.html" role="menuitem">执行历史</a>
+                          <button type="button" role="menuitem">立即计算</button>
+                          <button type="button" role="menuitem">停用</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="base" data-level="0">
+                    <td>
+                      <button type="button" class="ut-tree-toggle" data-tree-toggle aria-expanded="false" aria-label="展开">+</button>
+                      <span class="ut-tree-name ut-tree-name--parent">基础属性</span>
+                    </td>
+                    <td><span class="ut-badge ut-badge--neutral">一级</span></td>
+                    <td colspan="8" style="color:var(--text-muted)">展开查看 3 个二级标签</td>
+                    <td class="col-actions"><a class="ut-link" href="tag-create.html?parent=base">新增</a></td>
+                  </tr>
+                  <tr data-id="base-1" data-parent="base" hidden>
+                    <td style="padding-left:42px">
+                      <button type="button" class="ut-tree-toggle is-leaf" aria-hidden="true">+</button>
+                      <span class="ut-tree-name">注册渠道</span>
+                    </td>
+                    <td>二级</td>
+                    <td class="cell-mono">tag_2201</td>
+                    <td>枚举</td>
+                    <td class="cell-num">8,420</td>
+                    <td>
+                      <div class="ut-status-cell">
+                        <span class="ut-badge ut-badge--success ut-badge--dot">成功</span>
+                        <time>2025-04-05 02:10:00</time>
+                      </div>
+                    </td>
+                    <td>例行</td>
+                    <td><span class="ut-badge ut-badge--success">正常</span></td>
+                    <td><div class="ut-user-cell"><span class="ut-avatar">王</span><span>王芳</span></div></td>
+                    <td class="cell-mono">2023-11-20 14:22</td>
+                    <td class="cell-mono">2025-04-05 02:10</td>
+                    <td class="col-actions">
+                      <div class="ut-dropdown">
+                        <button type="button" class="ut-btn ut-btn--sm ut-btn--ghost" data-dropdown-toggle>操作 ▾</button>
+                        <div class="ut-dropdown__menu" role="menu">
+                          <a href="tag-create.html?id=tag_2201" role="menuitem">编辑</a>
+                          <a href="tag-create.html?copy=tag_2201" role="menuitem">复制规则</a>
+                          <a href="tag-history.html" role="menuitem">执行历史</a>
+                          <button type="button" role="menuitem">立即计算</button>
+                          <button type="button" role="menuitem">停用</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="seg" data-level="0">
+                    <td>
+                      <button type="button" class="ut-tree-toggle" data-tree-toggle aria-expanded="false">+</button>
+                      <span class="ut-tree-name ut-tree-name--parent">用户分层</span>
+                    </td>
+                    <td><span class="ut-badge ut-badge--neutral">一级</span></td>
+                    <td colspan="8" style="color:var(--text-muted)">高价值 / 沉默 / 流失预警 等</td>
+                    <td class="col-actions"><a class="ut-link" href="tag-create.html?parent=seg">新增</a></td>
+                  </tr>
+                  <tr data-id="fin" data-level="0">
+                    <td>
+                      <button type="button" class="ut-tree-toggle" data-tree-toggle aria-expanded="false">+</button>
+                      <span class="ut-tree-name ut-tree-name--parent">金融属性</span>
+                    </td>
+                    <td><span class="ut-badge ut-badge--neutral">一级</span></td>
+                    <td colspan="8" style="color:var(--text-muted)">—</td>
+                    <td class="col-actions"><a class="ut-link" href="tag-create.html?parent=fin">新增</a></td>
+                  </tr>
+                  <tr data-id="beh" data-level="0">
+                    <td>
+                      <button type="button" class="ut-tree-toggle" data-tree-toggle aria-expanded="false">+</button>
+                      <span class="ut-tree-name ut-tree-name--parent">用户行为</span>
+                    </td>
+                    <td><span class="ut-badge ut-badge--neutral">一级</span></td>
+                    <td colspan="8" style="color:var(--text-muted)">—</td>
+                    <td class="col-actions"><a class="ut-link" href="tag-create.html?parent=beh">新增</a></td>
+                  </tr>
+                  <tr data-id="calc-fail" data-parent="beh" hidden>
+                    <td style="padding-left:42px">
+                      <button type="button" class="ut-tree-toggle is-leaf" aria-hidden="true">+</button>
+                      <span class="ut-tree-name">近7日活跃</span>
+                    </td>
+                    <td>二级</td>
+                    <td class="cell-mono">tag_9012</td>
+                    <td>布尔</td>
+                    <td>
+                      <span class="cell-num cell-num--stale" title="上次成功版本（2025-04-05）覆盖人数；当前任务失败，人数未更新">1,380</span>
+                    </td>
+                    <td>
+                      <div class="ut-status-cell">
+                        <span class="ut-badge ut-badge--warning ut-badge--dot">失败</span>
+                        <time>2025-04-06 01:00:12</time>
+                        <span class="ut-status-cell__hint">仍展示上次成功覆盖</span>
+                      </div>
+                    </td>
+                    <td>例行</td>
+                    <td><span class="ut-badge ut-badge--warning">计算中</span></td>
+                    <td><div class="ut-user-cell"><span class="ut-avatar">系</span><span>系统</span></div></td>
+                    <td class="cell-mono">2024-08-01 00:00</td>
+                    <td class="cell-mono">2025-04-06 01:00</td>
+                    <td class="col-actions">
+                      <div class="ut-dropdown">
+                        <button type="button" class="ut-btn ut-btn--sm ut-btn--ghost" data-dropdown-toggle>操作 ▾</button>
+                        <div class="ut-dropdown__menu" role="menu">
+                          <a href="tag-create.html?id=tag_9012" role="menuitem">编辑</a>
+                          <a href="tag-create.html?copy=tag_9012" role="menuitem">复制规则</a>
+                          <a href="tag-history.html" role="menuitem">执行历史</a>
+                          <button type="button" class="ut-btn ut-btn--sm ut-btn--primary" style="width:100%;margin-top:4px">重试计算</button>
+                          <button type="button" role="menuitem">停用</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ut-pager">
+              <span>共 48 条 · 一级 6 · 二级 42</span>
+              <div style="display:flex;align-items:center;gap:var(--space-3)">
+                <select class="ut-select" style="width:auto;height:32px">
+                  <option>20 条/页</option>
+                  <option>50 条/页</option>
+                </select>
+                <div class="ut-pager__nav">
+                  <button type="button" aria-label="上一页">‹</button>
+                  <button type="button" class="is-active">1</button>
+                  <button type="button">2</button>
+                  <button type="button">3</button>
+                  <button type="button" aria-label="下一页">›</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/ut-shell.js"></script>
+  <script src="js/ut-admin.js"></script>
+</body>
+</html>

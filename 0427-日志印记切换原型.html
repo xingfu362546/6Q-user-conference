@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日志/印记统计切换原型</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #dcdcdc;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #1f2d3d;
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+    }
+    .phone {
+      width: 390px;
+      min-height: 820px;
+      background: #f6f7fb;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+    .header {
+      height: 88px;
+      background: linear-gradient(180deg, #4f86f7 0%, #4c7fe8 100%);
+      color: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 600;
+      padding-bottom: 16px;
+    }
+    .segment-wrap {
+      padding: 14px 16px 10px;
+      background: #fff;
+      border-bottom: 1px solid #edf0f5;
+    }
+    .segment {
+      background: #edf2ff;
+      border-radius: 999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .segment-btn {
+      flex: 1;
+      border: none;
+      border-radius: 999px;
+      height: 36px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #4d5f7a;
+      background: transparent;
+      cursor: pointer;
+    }
+    .segment-btn.active {
+      background: #4f86f7;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(79, 134, 247, 0.35);
+    }
+    .panel {
+      margin: 12px 12px 0;
+      background: #fff;
+      border-radius: 12px;
+      padding: 6px 14px 2px;
+      box-shadow: 0 1px 4px rgba(20, 28, 46, 0.06);
+    }
+    .row {
+      height: 48px;
+      border-bottom: 1px solid #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+    }
+    .row:last-child { border-bottom: none; }
+    .label { color: #2a2f3a; }
+    .value { color: #b1b6c2; }
+    .mode-only { display: none; }
+    .mode-only.show { display: flex; }
+    .toolbar {
+      margin: 12px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .sort-btn {
+      border: 1px solid #4f86f7;
+      color: #4f86f7;
+      border-radius: 18px;
+      height: 34px;
+      padding: 0 14px;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .list {
+      margin: 0 12px 14px;
+      background: #eff3f7;
+      border-radius: 10px;
+      padding: 10px 10px 14px;
+      min-height: 360px;
+    }
+    .item {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 2px;
+      border-bottom: 1px solid #dde6ee;
+    }
+    .item:last-child { border-bottom: none; }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #e4e8f0;
+      color: #72809a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .status {
+      font-size: 30px;
+      margin-bottom: 4px;
+      color: #6f7f96;
+    }
+    .status.ok { color: #79a34d; }
+    .sub {
+      font-size: 21px;
+      color: #97a2b3;
+    }
+    .day {
+      font-size: 32px;
+      color: #4f5d73;
+      padding-right: 4px;
+    }
+    .helper {
+      margin: 4px 16px 14px;
+      font-size: 21px;
+      color: #8391a9;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="header">日志/印记统计</div>
+
+    <div class="segment-wrap">
+      <div class="segment">
+        <button class="segment-btn active" data-mode="log">日志统计</button>
+        <button class="segment-btn" data-mode="mark">印记统计</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="row"><span class="label">所属小组</span><span class="value">去选择 ></span></div>
+      <div class="row mode-only log show"><span class="label">第几天</span><span class="value">选择发布日期 ></span></div>
+      <div class="row mode-only log show"><span class="label">反馈状态</span><span class="value">选择状态 ></span></div>
+
+      <div class="row mode-only mark"><span class="label">印记类型</span><span class="value">课堂 / 作业 / 活动 ></span></div>
+      <div class="row mode-only mark"><span class="label">印记状态</span><span class="value">已提交 / 待补交 ></span></div>
+      <div class="row mode-only mark"><span class="label">来源渠道</span><span class="value">老师点评 / 学员提交 ></span></div>
+    </div>
+
+    <div class="toolbar">
+      <button class="sort-btn" id="sortBtn">反馈天数排序 ↑↓</button>
+    </div>
+
+    <div class="list" id="listContainer">
+      <div class="item">
+        <div class="avatar">头像</div>
+        <div>
+          <div class="status ok">🐎 🐎 已反馈</div>
+          <div class="sub">EQ大班 1组</div>
+        </div>
+        <div class="day">5天</div>
+      </div>
+      <div class="item">
+        <div class="avatar">头像</div>
+        <div>
+          <div class="status">🐎 🐎 未反馈</div>
+          <div class="sub">EQ大班 1组</div>
+        </div>
+        <div class="day">4天</div>
+      </div>
+      <div class="item">
+        <div class="avatar">头像</div>
+        <div>
+          <div class="status">🐎 🐎 未反馈</div>
+          <div class="sub">EQ大班 1组</div>
+        </div>
+        <div class="day">3天</div>
+      </div>
+    </div>
+    <div class="helper" id="helperText">当前展示：日志的筛选条件（第几天、反馈状态）。</div>
+  </div>
+
+  <script>
+    const modeButtons = document.querySelectorAll(".segment-btn");
+    const logRows = document.querySelectorAll(".mode-only.log");
+    const markRows = document.querySelectorAll(".mode-only.mark");
+    const sortBtn = document.getElementById("sortBtn");
+    const helperText = document.getElementById("helperText");
+
+    function applyMode(mode) {
+      modeButtons.forEach((btn) => btn.classList.toggle("active", btn.dataset.mode === mode));
+      logRows.forEach((row) => row.classList.toggle("show", mode === "log"));
+      markRows.forEach((row) => row.classList.toggle("show", mode === "mark"));
+      if (mode === "log") {
+        sortBtn.textContent = "反馈天数排序 ↑↓";
+        helperText.textContent = "当前展示：日志的筛选条件（第几天、反馈状态）。";
+      } else {
+        sortBtn.textContent = "印记提交时间排序 ↑↓";
+        helperText.textContent = "当前展示：印记的筛选条件（印记类型、状态、来源渠道）。";
+      }
+    }
+
+    modeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => applyMode(btn.dataset.mode));
+    });
+  </script>
+</body>
+</html>

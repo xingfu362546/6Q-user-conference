@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用户标签后台 · 原型导航</title>
+  <link rel="stylesheet" href="css/ut-tokens.css" />
+  <link rel="stylesheet" href="css/ut-shell.css" />
+  <link rel="stylesheet" href="css/ut-components.css" />
+</head>
+<body class="ut-body" data-ut-page="hub">
+  <div class="ut-app">
+    <header class="ut-topbar" id="ut-topbar-mount"></header>
+    <div class="ut-row">
+      <div id="ut-side-mount"></div>
+      <main class="ut-main ut-hub" style="flex:1;overflow:auto">
+      <h1 style="margin:0 0 8px;font-size:28px;font-weight:700;letter-spacing:-0.03em">用户标签后台 · 重设计原型</h1>
+      <p style="margin:0 0 var(--space-6);color:var(--text-secondary);max-width:60ch">
+        基于原线框图重构的交互友好版后台：统一导航、状态徽章、树表展开、规则构建器、版本侧栏、一键复制接入地址等。
+      </p>
+      <div class="ut-hub-grid">
+        <a class="ut-card ut-hub-card" href="tag-list.html">
+          <h2>标签管理</h2>
+          <p>树形列表、多维筛选、计算状态与行内操作</p>
+        </a>
+        <a class="ut-card ut-hub-card" href="tag-create.html">
+          <h2>新增标签</h2>
+          <p>基础信息、可视化规则配置、更新方式切换</p>
+        </a>
+        <a class="ut-card ut-hub-card" href="tag-history.html">
+          <h2>执行历史</h2>
+          <p>按版本查看命中用户、筛选与导出</p>
+        </a>
+        <a class="ut-card ut-hub-card" href="data-access.html">
+          <h2>数据接入</h2>
+          <p>HTTPS 接收地址、复制与接入说明</p>
+        </a>
+        <a class="ut-card ut-hub-card" href="data-tables.html">
+          <h2>数据表管理</h2>
+          <p>物理表检索、类型筛选与表名跳转</p>
+        </a>
+      </div>
+      </main>
+    </div>
+  </div>
+  <script src="js/ut-shell.js"></script>
+</body>
+</html>

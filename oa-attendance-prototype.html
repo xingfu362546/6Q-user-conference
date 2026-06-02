@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OA 外勤考勤原型</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --line: #dfe3eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --blue: #1a73e8;
+      --green: #34a853;
+      --orange: #f59e0b;
+      --red: #ea4335;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 20px 14px;
+    }
+    .title {
+      margin: 0 0 16px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .sub {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .menu button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #d1d5db;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .menu button:hover { background: #1f2937; }
+    .menu button.active { background: #1a73e8; color: white; }
+    .content {
+      padding: 22px;
+    }
+    .page {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .page.active { display: block; }
+    .h1 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+    .hint {
+      background: #eef5ff;
+      border: 1px dashed #b7d2ff;
+      color: #244f8f;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fff;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+    .btn {
+      border: 1px solid #cfd7e6;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn.primary { background: var(--blue); color: white; border-color: var(--blue); }
+    .btn.success { background: var(--green); color: white; border-color: var(--green); }
+    .btn.warn { background: var(--orange); color: white; border-color: var(--orange); }
+    .btn.danger { background: var(--red); color: white; border-color: var(--red); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    .s-ok { background: #e6f7eb; color: #1f7a3f; }
+    .s-warn { background: #fff7e6; color: #9a6700; }
+    .s-err { background: #fde8e8; color: #9f2c2c; }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .small { font-size: 12px; color: var(--muted); }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+    .day {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 68px;
+      padding: 6px;
+      font-size: 12px;
+      background: #fff;
+    }
+    .day .dot {
+      margin-top: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-ok { background: var(--green); }
+    .dot-warn { background: var(--orange); }
+    .dot-err { background: var(--red); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+    }
+    th { background: #f8fafc; }
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    input, select, textarea {
+      border: 1px solid #cad3e0;
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 13px;
+      width: 100%;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      width: 520px;
+      max-width: calc(100vw - 24px);
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .modal h3 { margin: 0 0 10px; }
+    .field { margin-bottom: 10px; }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1 class="title">OA 外勤考勤原型</h1>
+      <div class="sub">低保真可点击 Demo</div>
+      <div class="menu">
+        <button class="nav active" data-page="punch">员工端 - 外勤打卡</button>
+        <button class="nav" data-page="monthly">员工端 - 月度考勤</button>
+        <button class="nav" data-page="abnormal-detail">员工端 - 异常详情</button>
+        <button class="nav" data-page="abnormal-list">HR端 - 异常列表</button>
+        <button class="nav" data-page="shift">HR端 - 班次管理</button>
+        <button class="nav" data-page="export">HR端 - 月报导出</button>
+        <button class="nav" data-page="leave-link">联动 - 请假审批规则</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="punch" class="page active">
+        <h2 class="h1">员工端：外勤打卡</h2>
+        <div class="hint">P0页面：优先解决“能打卡、能看到异常”。定位只保留打卡点，不做轨迹。</div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>今日打卡</h3>
+            <div class="row"><span>当前班次</span><strong>外勤日班（09:00-18:00）</strong></div>
+            <div class="row"><span>定位状态</span><span class="status s-ok">成功：上海市浦东新区XX路</span></div>
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <button id="btnCheckIn" class="btn primary">签到</button>
+              <button id="btnCheckOut" class="btn success">签退</button>
+            </div>
+            <p id="punchMsg" class="small" style="margin-top:10px;">点击按钮模拟打卡提交。</p>
+          </div>
+          <div class="card">
+            <h3>今日记录</h3>
+            <table>
+              <thead><tr><th>类型</th><th>时间</th><th>状态</th></tr></thead>
+              <tbody id="todayLogs">
+                <tr><td>签到</td><td>09:03</td><td><span class="status s-ok">正常</span></td></tr>
+                <tr><td>签退</td><td>--</td><td><span class="status s-warn">待完成</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="monthly" class="page">
+        <h2 class="h1">员工端：月度考勤</h2>
+        <div class="toolbar">
+          <select><option>2026-04</option><option>2026-03</option></select>
+          <select><option>全部状态</option><option>正常</option><option>异常</option></select>
+          <button class="btn">筛选</button>
+          <button class="btn primary">导出本月Excel</button>
+        </div>
+        <div class="calendar">
+          <div class="day">1<div class="dot dot-ok"></div></div>
+          <div class="day">2<div class="dot dot-ok"></div></div>
+          <div class="day">3<div class="dot dot-err"></div><div class="small">缺卡</div></div>
+          <div class="day">4<div class="dot dot-ok"></div></div>
+          <div class="day">5<div class="dot dot-warn"></div><div class="small">迟到</div></div>
+          <div class="day">6<div class="dot dot-ok"></div></div>
+          <div class="day">7<div class="dot dot-ok"></div></div>
+          <div class="day">8<div class="dot dot-ok"></div></div>
+          <div class="day">9<div class="dot dot-ok"></div></div>
+          <div class="day">10<div class="dot dot-ok"></div></div>
+          <div class="day">11<div class="dot dot-ok"></div></div>
+          <div class="day">12<div class="dot dot-ok"></div></div>
+          <div class="day">13<div class="dot dot-ok"></div></div>
+          <div class="day">14<div class="dot dot-ok"></div></div>
+        </div>
+      </section>
+
+      <section id="abnormal-detail" class="page">
+        <h2 class="h1">员工端：异常详情</h2>
+        <div class="card">
+          <div class="row"><strong>异常类型</strong><span class="status s-err">缺卡</span></div>
+          <div class="row"><span>日期</span><span>2026-04-03</span></div>
+          <div class="row"><span>班次</span><span>外勤日班（09:00-18:00）</span></div>
+          <div class="row"><span>打卡点</span><span>上海市浦东新区XX路</span></div>
+          <div class="row"><span>处理状态</span><span class="status s-warn">待处理</span></div>
+          <div class="field">
+            <label>补充说明</label>
+            <textarea rows="4" placeholder="如：当天客户现场网络异常，未完成签退。"></textarea>
+          </div>
+          <button class="btn primary">提交说明</button>
+        </div>
+      </section>
+
+      <section id="abnormal-list" class="page">
+        <h2 class="h1">HR端：异常管理列表</h2>
+        <div class="toolbar">
+          <input placeholder="员工/部门" style="max-width: 180px;" />
+          <select style="max-width: 140px;"><option>全部类型</option><option>缺卡</option><option>迟到</option></select>
+          <select style="max-width: 140px;"><option>全部状态</option><option>待处理</option><option>已修正</option></select>
+          <button class="btn">筛选</button>
+          <button class="btn primary">批量导出Excel</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>员工</th><th>日期</th><th>异常类型</th><th>打卡点</th><th>状态</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>张三</td><td>2026-04-03</td><td>缺卡</td><td>浦东新区XX路</td>
+              <td><span class="status s-warn">待处理</span></td>
+              <td><button id="openFix" class="btn warn">直接修正</button></td>
+            </tr>
+            <tr>
+              <td>李四</td><td>2026-04-05</td><td>迟到</td><td>徐汇区XX路</td>
+              <td><span class="status s-ok">已修正</span></td>
+              <td><button class="btn">查看</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="shift" class="page">
+        <h2 class="h1">HR端：班次管理</h2>
+        <div class="toolbar">
+          <button class="btn primary">新增班次</button>
+          <button class="btn">批量启停</button>
+        </div>
+        <table>
+          <thead><tr><th>班次名</th><th>上下班时间</th><th>容忍分钟</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>外勤日班</td><td>09:00 - 18:00</td><td>15</td><td>启用</td><td><button class="btn">编辑</button></td></tr>
+            <tr><td>外勤早班</td><td>08:00 - 17:00</td><td>10</td><td>停用</td><td><button class="btn">启用</button></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="export" class="page">
+        <h2 class="h1">HR端：月报导出</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>导出条件</h3>
+            <div class="field"><label>月份</label><input value="2026-04" /></div>
+            <div class="field"><label>部门</label><input placeholder="例如：华东大区" /></div>
+            <div class="field"><label>导出类型</label><select><option>汇总</option><option>明细</option></select></div>
+            <button class="btn primary">生成Excel</button>
+          </div>
+          <div class="card">
+            <h3>导出记录</h3>
+            <table>
+              <thead><tr><th>文件名</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr><td>考勤月报_2026-04.xlsx</td><td>已完成</td><td><button class="btn">下载</button></td></tr>
+                <tr><td>考勤明细_2026-03.xlsx</td><td>处理中</td><td><button class="btn" disabled>等待</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="leave-link" class="page">
+        <h2 class="h1">联动规则：请假审批</h2>
+        <div class="card">
+          <h3>规则配置（示意）</h3>
+          <table>
+            <thead><tr><th>审批结果</th><th>考勤联动</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>审批通过</td><td>标记为“请假”</td><td>自动覆盖对应日期/时段</td></tr>
+              <tr><td>审批驳回</td><td>保持原状态</td><td>如为缺卡继续留在异常池</td></tr>
+              <tr><td>系统超时</td><td>加入重试队列</td><td>通知HR人工关注</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="fixModal" class="modal">
+    <div class="modal-box">
+      <h3>HR直接修正异常</h3>
+      <div class="field">
+        <label>原始状态</label>
+        <input value="缺卡" readonly />
+      </div>
+      <div class="field">
+        <label>修正后状态</label>
+        <select id="newStatus">
+          <option value="">请选择</option>
+          <option>正常</option>
+          <option>请假</option>
+          <option>外勤有效</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>修正原因（必填）</label>
+        <textarea id="fixReason" rows="3" placeholder="请输入修正原因，至少5个字。"></textarea>
+      </div>
+      <div class="actions">
+        <button id="cancelFix" class="btn">取消</button>
+        <button id="submitFix" class="btn primary">提交修正</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const navs = document.querySelectorAll(".nav");
+    const pages = document.querySelectorAll(".page");
+    navs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        navs.forEach((n) => n.classList.remove("active"));
+        pages.forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.page).classList.add("active");
+      });
+    });
+
+    const punchMsg = document.getElementById("punchMsg");
+    document.getElementById("btnCheckIn").addEventListener("click", () => {
+      punchMsg.textContent = "签到成功：09:12，状态已更新。";
+    });
+    document.getElementById("btnCheckOut").addEventListener("click", () => {
+      punchMsg.textContent = "签退成功：18:06，今日考勤完成。";
+      const logs = document.getElementById("todayLogs");
+      logs.innerHTML = "<tr><td>签到</td><td>09:03</td><td><span class='status s-ok'>正常</span></td></tr><tr><td>签退</td><td>18:06</td><td><span class='status s-ok'>正常</span></td></tr>";
+    });
+
+    const modal = document.getElementById("fixModal");
+    document.getElementById("openFix").addEventListener("click", () => modal.classList.add("open"));
+    document.getElementById("cancelFix").addEventListener("click", () => modal.classList.remove("open"));
+    document.getElementById("submitFix").addEventListener("click", () => {
+      const status = document.getElementById("newStatus").value.trim();
+      const reason = document.getElementById("fixReason").value.trim();
+      if (!status) return alert("请选择修正后状态。");
+      if (reason.length < 5) return alert("修正原因至少5个字。");
+      alert("修正提交成功，已写入审计日志并同步员工端。");
+      modal.classList.remove("open");
+    });
+  </script>
+</body>
+</html>

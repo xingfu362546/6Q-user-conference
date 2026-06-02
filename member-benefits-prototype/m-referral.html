@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>权益裂变 · 体验卡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f3f4f8; --card:#fff; --text:#141826; --sub:#6b7289; --vip:#5b4bdb; --line:#e8eaf2; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Noto Sans SC",sans-serif;background:#c4c6d4;display:flex;justify-content:center;padding:20px 10px 40px;min-height:100vh}
+    .phone{width:100%;max-width:390px;background:var(--bg);border-radius:28px;box-shadow:0 24px 60px rgba(0,0,0,.2);min-height:720px;overflow:hidden;display:flex;flex-direction:column}
+    .nav{display:flex;align-items:center;padding:12px 8px;background:var(--card);border-bottom:1px solid var(--line)}
+    .nav a{color:var(--text);text-decoration:none;font-size:22px;padding:4px 10px}
+    .nav h1{flex:1;text-align:center;font-size:17px;font-weight:600}
+    .body{padding:14px;flex:1}
+    .tabs{display:flex;gap:8px;margin-bottom:14px}
+    .tabs button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;cursor:pointer;color:var(--sub)}
+    .tabs button.on{background:#eef2ff;color:var(--vip);border-color:#c7d2fe}
+    .panel{display:none;font-size:13px;color:var(--sub);line-height:1.6}
+    .panel.on{display:block}
+    label{display:block;margin:10px 0 4px;font-size:13px;color:var(--text);font-weight:500}
+    input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);font-size:14px;font-family:inherit}
+    textarea{min-height:72px;resize:vertical}
+    .btn{margin-top:14px;width:100%;padding:14px;border:none;border-radius:12px;font-weight:600;background:linear-gradient(90deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer}
+    .log{margin-top:12px;padding:10px;border-radius:10px;background:#ecfdf5;color:#047857;font-size:12px;display:none}
+    .nav-extra{display:flex;gap:10px;align-items:center;font-size:12px}
+    .nav-extra a{color:#ff7a45;text-decoration:none;font-weight:600}
+    .nav-extra a.dim{color:#888;font-weight:400}
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header class="nav">
+      <a href="m-home.html">‹</a>
+      <h1>赠送体验卡</h1>
+      <span class="nav-extra"><a href="m-home.html">汇总</a><a href="app-mine.html" class="dim">我的</a></span>
+    </header>
+    <div class="body">
+      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">清单：会员体验卡（a）、会长数字人提问体验卡（b）。</p>
+      <div class="tabs">
+        <button type="button" class="on" data-tab="a">会员体验卡</button>
+        <button type="button" data-tab="b">数字人提问卡</button>
+      </div>
+      <div class="panel on" id="p-a">
+        <label>对方手机号 / 用户 ID</label>
+        <input type="text" placeholder="输入接收方" id="recvA" />
+        <label>附言（可选）</label>
+        <textarea placeholder="欢迎体验 6Q 会员"></textarea>
+        <button type="button" class="btn" data-type="会员体验卡">确认赠送</button>
+      </div>
+      <div class="panel" id="p-b">
+        <label>对方手机号 / 用户 ID</label>
+        <input type="text" placeholder="输入接收方" id="recvB" />
+        <label>赠送次数</label>
+        <input type="number" min="1" max="10" value="3" />
+        <button type="button" class="btn" data-type="会长数字人提问体验卡">确认赠送</button>
+      </div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+  <script>
+    const tabs = document.querySelectorAll('.tabs button');
+    const panels = { a: document.getElementById('p-a'), b: document.getElementById('p-b') };
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('on'));
+      t.classList.add('on');
+      Object.values(panels).forEach(p => p.classList.remove('on'));
+      panels[t.dataset.tab].classList.add('on');
+    }));
+    document.querySelectorAll('.btn').forEach(b => b.addEventListener('click', () => {
+      const log = document.getElementById('log');
+      log.style.display = 'block';
+      log.textContent = '原型：已提交「' + b.dataset.type + '」赠送（未接后端）';
+    }));
+  </script>
+</body>
+</html>

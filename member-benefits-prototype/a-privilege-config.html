@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>后台 · 特权配置</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f1f5f9; --card:#fff; --text:#0f172a; --sub:#64748b; --pri:#4f46e5; --line:#e2e8f0; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Noto Sans SC",system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:var(--card);border-bottom:1px solid var(--line);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+    header h1{font-size:18px}
+    header a{color:var(--pri);text-decoration:none;font-size:14px}
+    main{max-width:1000px;margin:0 auto;padding:20px 24px 40px}
+    .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+    .tabs button{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-weight:500;color:var(--sub)}
+    .tabs button.on{background:#eef2ff;border-color:#c7d2fe;color:var(--pri)}
+    .panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+    .panel.on{display:block}
+    .panel h3{font-size:15px;margin-bottom:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    label{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+    input,select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-family:inherit;font-size:13px}
+    .field{margin-bottom:12px}
+    .save{margin-top:16px;padding:10px 20px;border:none;border-radius:8px;background:var(--pri);color:#fff;font-weight:600;cursor:pointer}
+    .note{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.6}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>特权配置</h1>
+    <a href="index.html">← 原型导航</a>
+  </header>
+  <main>
+    <p class="note" style="margin-bottom:14px">清单：核心特权（直播间、社区、AI）、裂变（体验卡、课程卡）、量化（课程资格、卡券）、信息（价格、名称、升级）。以下用 Tab 分区。</p>
+    <div class="tabs" id="tabs">
+      <button type="button" class="on" data-p="core">核心特权</button>
+      <button type="button" data-p="split">裂变配置</button>
+      <button type="button" data-p="qty">权益量化</button>
+      <button type="button" data-p="info">信息配置</button>
+    </div>
+    <div class="panel on" id="p-core">
+      <h3>直播间 / 社区 / AI</h3>
+      <div class="grid">
+        <div class="field"><label>直播间弹幕特权</label><select><option>关闭</option><option>高级及以上</option><option>全会员</option></select></div>
+        <div class="field"><label>社区标识等级</label><select><option>与会员档位同步</option><option>单独映射</option></select></div>
+        <div class="field"><label>AI 月度次数上限</label><input type="number" value="10" /></div>
+      </div>
+    </div>
+    <div class="panel" id="p-split">
+      <h3>体验卡与课程卡</h3>
+      <div class="grid">
+        <div class="field"><label>会员体验卡单日上限</label><input type="number" value="20" /></div>
+        <div class="field"><label>数字人提问体验卡</label><input type="text" value="每用户最多持有 3 张" /></div>
+        <div class="field"><label>课程卡默认面额</label><input type="number" value="50" /></div>
+      </div>
+    </div>
+    <div class="panel" id="p-qty">
+      <h3>课程资格 · 卡券</h3>
+      <div class="grid">
+        <div class="field"><label>免费课程价格上限（元）</label><input type="number" value="199" /></div>
+        <div class="field"><label>卡券叠加规则</label><select><option>同类型不可叠加</option><option>可叠加（上限控制）</option></select></div>
+      </div>
+    </div>
+    <div class="panel" id="p-info">
+      <h3>价格 · 名称 · 升级路径</h3>
+      <div class="grid">
+        <div class="field"><label>对外展示名称</label><input type="text" value="6Q 高级会员" /></div>
+        <div class="field"><label>升级差价策略</label><select><option>按剩余天数折算</option><option>固定补差</option></select></div>
+        <div class="field"><label>续费提醒（天）</label><input type="number" value="7" /></div>
+      </div>
+    </div>
+    <button type="button" class="save" id="save">保存当前 Tab（原型）</button>
+    <p class="note" id="msg"></p>
+  </main>
+  <script>
+    document.querySelectorAll('#tabs button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#tabs button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+        document.getElementById('p-' + b.dataset.p).classList.add('on');
+      });
+    });
+    document.getElementById('save').addEventListener('click', () => {
+      document.getElementById('msg').textContent = '已模拟保存：' + new Date().toLocaleString();
+    });
+  </script>
+</body>
+</html>

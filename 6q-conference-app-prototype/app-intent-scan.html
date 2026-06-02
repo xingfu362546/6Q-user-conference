@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>AI 分析中 · 会务 APP</title>
+  <link rel="stylesheet" href="css/app-conference.css" />
+  <link rel="stylesheet" href="css/app-intent-cyber.css" />
+  <link rel="stylesheet" href="css/ios-device.css" />
+</head>
+<body class="app-body">
+  <div class="phone-frame intent-theme">
+    <div class="scan-stage">
+      <div class="scan-grid" aria-hidden="true"></div>
+      <div class="scan-orb-wrap">
+        <div class="scan-ring"></div>
+        <div class="scan-ring scan-ring--inner"></div>
+        <div class="scan-orb"></div>
+        <div class="scan-sweep"></div>
+      </div>
+      <h1 class="scan-title" id="scanTitle">AI 意向分析中</h1>
+      <p class="scan-sub" id="scanSub">正在同步会务后台策略与标签命中数据…</p>
+      <div class="scan-steps" id="scanSteps"></div>
+      <div class="scan-progress">
+        <div class="scan-progress__bar" id="progressBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/app-intent-core.js"></script>
+  <script src="js/app-intent-scan.js"></script>
+  <script src="js/ios-wrap.js"></script>
+</body>
+</html>

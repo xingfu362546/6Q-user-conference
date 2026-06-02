@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>新增标签 · 用户标签平台</title>
+  <link rel="stylesheet" href="css/ut-tokens.css" />
+  <link rel="stylesheet" href="css/ut-shell.css" />
+  <link rel="stylesheet" href="css/ut-components.css" />
+  <style>
+    .ut-form-footer {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-default);
+      box-shadow: 0 -4px 16px rgba(15,23,42,0.04);
+      z-index: 5;
+    }
+    .ut-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  </style>
+</head>
+<body class="ut-body" data-ut-page="tag-create">
+  <div class="ut-app">
+    <header class="ut-topbar" id="ut-topbar-mount"></header>
+    <div class="ut-row">
+      <div id="ut-side-mount"></div>
+      <div class="ut-main">
+        <div class="ut-workpad" style="padding-bottom:0">
+          <nav class="ut-breadcrumb">
+            <a href="tag-list.html">标签管理</a> / <strong>新增标签</strong>
+          </nav>
+          <div class="ut-page-head">
+            <div class="ut-page-head__left">
+              <h1>新增标签</h1>
+              <p class="ut-page-head__desc">用户属性从<strong>数据表字段</strong>选取（技术字段名 + 类型），不按中文业务名写死；行为类仍用通用时间/比较组件。</p>
+            </div>
+          </div>
+
+          <p class="ut-banner" id="ut-copy-banner" hidden role="status">
+            复制规则模式：已带入源标签规则与数据源，请填写<strong>新标签名称</strong>后保存。
+          </p>
+
+          <form class="ut-card" style="margin-bottom:72px" onsubmit="return false">
+            <section class="ut-section" aria-labelledby="sec-basic">
+              <h2 class="ut-section__title" id="sec-basic"><span aria-hidden="true"></span>基础信息</h2>
+              <div class="ut-form-grid">
+                <div class="ut-field">
+                  <label class="ut-required" for="tag-name">标签名称</label>
+                  <input class="ut-input" id="tag-name" type="text" placeholder="例如：亲子偏好" required />
+                </div>
+                <div class="ut-field">
+                  <label class="ut-required" for="parent-tag">父级标签</label>
+                  <select class="ut-select" id="parent-tag" required>
+                    <option value="">请选择一级分类</option>
+                    <option selected>用户偏好</option>
+                    <option>基础属性</option>
+                    <option>用户分层</option>
+                    <option>金融属性</option>
+                    <option>用户行为</option>
+                  </select>
+                </div>
+                <div class="ut-field ut-form-grid--1" style="grid-column:1/-1">
+                  <label for="tag-remark">备注说明</label>
+                  <textarea class="ut-input ut-textarea" id="tag-remark" data-char-max="150" placeholder="描述标签业务含义与使用场景"></textarea>
+                  <div class="ut-char-count" data-char-count>0 / 150</div>
+                </div>
+                <div class="ut-field ut-form-grid--1" style="grid-column:1/-1">
+                  <label class="ut-required">数据源</label>
+                  <div class="ut-source-locked" aria-readonly="true">
+                    <span class="ut-chip">362524</span>
+                    <span class="ut-chip">horizon_events</span>
+                    <span class="ut-badge ut-badge--neutral">已锁定 · 联系研发变更</span>
+                  </div>
+                  <p class="ut-hint">决定属性字段、事件、页面字典范围；运营不可修改。</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="ut-section" aria-labelledby="sec-rules">
+              <h2 class="ut-section__title" id="sec-rules"><span aria-hidden="true"></span>标签规则</h2>
+
+              <div class="ut-rule-toolbar">
+                <div class="ut-rule-insight" aria-live="polite">
+                  <strong>规则解读</strong>
+                  <span data-rule-summary>请添加条件</span>
+                </div>
+                <div class="ut-rule-estimate">
+                  <div>
+                    <div style="font-size:11px;color:var(--text-muted);font-weight:600">预估覆盖（试算）</div>
+                    <span class="ut-rule-estimate__num" data-estimate-count>—</span>
+                  </div>
+                  <button type="button" class="ut-btn ut-btn--primary" data-estimate-run>预估人数</button>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--space-3);gap:var(--space-3);flex-wrap:wrap">
+                <p class="ut-hint" style="margin:0;max-width:52ch">顶层可添加条件或<strong>条件组</strong>；组内用「添加组内条件」继续嵌套多条子规则，组头可切换且/或。</p>
+                <div class="ut-rule-list-toolbar">
+                  <button type="button" class="ut-btn ut-btn--sm" data-add-rule>＋ 添加条件</button>
+                  <button type="button" class="ut-btn ut-btn--sm ut-btn--primary" data-add-rule-group>＋ 添加条件组</button>
+                </div>
+              </div>
+
+              <div class="ut-rule-panel">
+                <div class="ut-rule-logic">
+                  <div class="ut-rule-logic__op">
+                    <div class="ut-logic-switch" data-logic-switch role="group" aria-label="顶层逻辑">
+                      <button type="button" class="is-active" data-logic="and" aria-pressed="true">且</button>
+                      <button type="button" data-logic="or" aria-pressed="false">或</button>
+                    </div>
+                    <span class="ut-rule-logic__op-label" data-logic-label>且</span>
+                  </div>
+                  <div class="ut-rule-logic__body" data-rule-list>
+                    <!-- 由 ut-rule-builder.js 自动生成示例行 -->
+                    <!-- 示例条件组由 ut-rule-builder.js 初始化（含组内添加条件） -->
+                    <div data-rule-group-placeholder></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="ut-section" aria-labelledby="sec-update">
+              <h2 class="ut-section__title" id="sec-update"><span aria-hidden="true"></span>更新方式</h2>
+              <div class="ut-seg" data-seg role="group" aria-label="更新方式">
+                <button type="button" class="is-active" data-seg-value="manual" aria-pressed="true">手动更新</button>
+                <button type="button" data-seg-value="cron" aria-pressed="false">例行更新</button>
+              </div>
+              <p class="ut-hint" style="margin-top:var(--space-3)">保存并计算将立即触发计算任务。</p>
+            </section>
+          </form>
+
+          <div class="ut-form-footer">
+            <a class="ut-btn" href="tag-list.html">取消</a>
+            <button type="button" class="ut-btn">保存草稿</button>
+            <button type="button" class="ut-btn ut-btn--primary">保存并计算</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/ut-shell.js"></script>
+  <script src="js/ut-table-catalog.js"></script>
+  <script src="js/ut-rule-options.js"></script>
+  <script src="js/ut-rule-builder.js"></script>
+  <script src="js/ut-admin.js"></script>
+  <script src="js/ut-tag-create.js"></script>
+</body>
+</html>

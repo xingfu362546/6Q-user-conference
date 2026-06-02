@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>本期分析策略 · 课程会务详情 · 6Q 原型</title>
+  <link rel="stylesheet" href="css/6q-conference.css" />
+  <link rel="stylesheet" href="css/6q-intent-premium.css" />
+</head>
+<body class="q-app intent-theme" data-cf-page="intent-strategy">
+  <header id="q-topbar-mount"></header>
+  <div class="q-body">
+    <aside id="q-sidenav-mount" class="q-sidenav"></aside>
+    <div class="q-main">
+      <nav id="q-doc-tabs-mount" class="q-doc-tabs"></nav>
+      <div class="q-breadcrumb">线下课程会务 / 课程会务 / <strong>本期分析策略</strong></div>
+      <div class="q-content-wrap">
+        <nav id="q-subnav-mount" class="q-subnav" aria-label="会务子菜单"></nav>
+        <main class="q-page">
+          <section class="intent-hero intent-hero--compact">
+            <div class="intent-hero__inner">
+              <div>
+                <p class="intent-hero__eyebrow">Conference Strategy · Per Period</p>
+                <h1 class="intent-hero__title">第12551期 · 本期分析策略</h1>
+                <p class="intent-hero__sub">
+                  从会务工具选用模板或复制上期，保存后立即重算意向列表；需<strong>会务统筹配置</strong>角色。
+                </p>
+              </div>
+              <div class="intent-hero__actions">
+                <a class="q-btn" href="tools-intent-strategy-template.html">管理分析策略模板</a>
+              </div>
+            </div>
+          </section>
+
+          <div class="intent-strategy-apply">
+            <div class="intent-panel">
+              <div class="intent-panel__head">
+                <h2 class="intent-panel__title">选用模板并保存</h2>
+              </div>
+              <div class="intent-panel__body">
+                <div class="intent-field">
+                  <label class="intent-field__label" for="tpl-select">分析策略模板</label>
+                  <select class="q-select" id="tpl-select" style="width:100%;max-width:420px"></select>
+                  <p class="intent-field__hint">模板在「会务工具 → 分析策略模板」统一维护</p>
+                </div>
+                <div class="intent-strategy-apply__actions">
+                  <button type="button" class="q-btn q-btn--primary" id="btn-save-period">保存本期策略并重算</button>
+                  <button type="button" class="q-btn" id="btn-copy-prev">复制上期策略</button>
+                  <a class="q-btn" href="conference-student-intent.html">查看学员意向分析</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="intent-panel">
+              <div class="intent-panel__head">
+                <h2 class="intent-panel__title">所选模板规则（预览）</h2>
+              </div>
+              <div class="intent-panel__body" id="tpl-draft-preview">
+                <p class="intent-field__hint">选择模板后可预览关注标签与意向度规则；保存后才会写入本期策略。</p>
+              </div>
+            </div>
+
+            <div class="intent-panel">
+              <div class="intent-panel__head">
+                <h2 class="intent-panel__title">当前已保存策略（预览）</h2>
+              </div>
+              <div class="intent-panel__body" id="period-preview">
+                <p class="intent-empty">尚未保存本期策略</p>
+              </div>
+            </div>
+
+            <div class="intent-panel">
+              <div class="intent-panel__head">
+                <h2 class="intent-panel__title">保存后预估分布</h2>
+              </div>
+              <div class="intent-panel__body" id="period-impact">
+                <p class="intent-field__hint">保存并重算后刷新（原型演示）</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-toast" id="toast" role="status"></div>
+
+  <script src="js/6q-shell.js"></script>
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/intent-strategy-core.js"></script>
+  <script src="js/conference-intent-strategy.js"></script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>我的家庭</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --page-bg: #ededed;
+      --card-bg: #ffffff;
+      --text-primary: #111111;
+      --text-secondary: #888888;
+      --tag-border: #d9d9d9;
+      --tag-text: #666666;
+      --accent: #ff7a45;
+      --accent-soft: rgba(255, 122, 69, 0.12);
+      --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --radius-card: 12px;
+      --radius-pill: 999px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #c8c8c8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 12px 40px;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      min-height: 720px;
+      background: var(--page-bg);
+      border-radius: 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-spacer {
+      height: 12px;
+      background: var(--page-bg);
+    }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 10px;
+      background: var(--page-bg);
+      position: relative;
+    }
+
+    .nav-back {
+      width: 44px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: var(--text-primary);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .nav-cap {
+      width: 88px;
+      height: 32px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      gap: 6px;
+    }
+
+    .nav-cap-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #333;
+      opacity: 0.75;
+    }
+
+    .nav-cap-line {
+      width: 14px;
+      height: 2px;
+      background: #333;
+      border-radius: 1px;
+      opacity: 0.75;
+    }
+
+    .nav-cap-ring {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #333;
+      border-radius: 50%;
+      opacity: 0.75;
+    }
+
+    .content {
+      flex: 1;
+      padding: 8px 14px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .member-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: 14px 14px 14px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: cover;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.35);
+    }
+
+    .member-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .member-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 11px;
+      color: var(--tag-text);
+      padding: 2px 7px;
+      border: 1px solid var(--tag-border);
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+
+    .member-id {
+      font-size: 12px;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-enrollment {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-pill);
+      background: #fff;
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s ease, transform 0.12s ease;
+      text-decoration: none;
+    }
+
+    .btn-enrollment:active {
+      background: var(--accent-soft);
+      transform: scale(0.97);
+    }
+
+    .member-card.is-child .btn-enrollment {
+      display: inline-flex;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: #9a9a9a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    .icon-btn:active {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .footer-bar {
+      margin-top: auto;
+      padding: 10px 14px calc(12px + var(--safe-bottom));
+      background: var(--page-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-menu {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: #666;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .btn-add-child {
+      flex: 1;
+      max-width: 220px;
+      margin-left: auto;
+      padding: 11px 18px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius-pill);
+      background: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 122, 69, 0.12);
+    }
+
+    .btn-add-child:active {
+      opacity: 0.92;
+      transform: scale(0.99);
+    }
+
+    .note {
+      max-width: 390px;
+      margin: 12px auto 0;
+      padding: 0 8px;
+      font-size: 12px;
+      color: #555;
+      line-height: 1.5;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="phone" aria-label="我的家庭页面原型">
+      <div class="status-spacer" aria-hidden="true"></div>
+      <header class="nav-bar">
+        <button type="button" class="nav-back" aria-label="返回">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <h1 class="nav-title">我的家庭</h1>
+        <div class="nav-cap" aria-hidden="true">
+          <span class="nav-cap-dot"></span>
+          <span class="nav-cap-dot"></span>
+          <span class="nav-cap-dot"></span>
+          <span class="nav-cap-line"></span>
+          <span class="nav-cap-ring"></span>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- 父亲：无操作区 -->
+        <article class="member-card" data-relation="父亲">
+          <div class="avatar" style="background: linear-gradient(135deg, #c4e0ff, #e8d4ff)" title="头像">余</div>
+          <div class="member-body">
+            <div class="member-name">余炜烽</div>
+            <div class="tags">
+              <span class="tag">26岁</span>
+              <span class="tag">父亲</span>
+              <span class="tag">已认证</span>
+            </div>
+            <div class="member-id">12312125125125</div>
+          </div>
+          <div class="card-actions"></div>
+        </article>
+
+        <!-- 母亲：仅删除 -->
+        <article class="member-card" data-relation="母亲">
+          <div class="avatar" style="background: linear-gradient(135deg, #d8eef5, #b8dce8)" title="头像">马</div>
+          <div class="member-body">
+            <div class="member-name">马艺文</div>
+            <div class="tags">
+              <span class="tag">25岁</span>
+              <span class="tag">母亲</span>
+              <span class="tag">已认证</span>
+            </div>
+            <div class="member-id">12312125125125</div>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="icon-btn" aria-label="删除">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M3 6h18M8 6V4h8v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M10 11v6M14 11v6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 儿子：报读档案 + 编辑 + 删除（设计增量） -->
+        <article class="member-card is-child" data-relation="儿子">
+          <div class="avatar" style="background: linear-gradient(135deg, #ffd4a8, #ffb86c); color: rgba(120, 60, 0, 0.55)" title="头像">鱼</div>
+          <div class="member-body">
+            <div class="member-name">小鱼</div>
+            <div class="tags">
+              <span class="tag">11岁</span>
+              <span class="tag">儿子</span>
+              <span class="tag">已认证</span>
+            </div>
+            <div class="member-id">12312125125125</div>
+          </div>
+          <div class="card-actions">
+            <a href="enrollment-profile-page.html?relation=儿子&amp;name=小鱼" class="btn-enrollment">报读档案</a>
+            <button type="button" class="icon-btn" aria-label="编辑">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button type="button" class="icon-btn" aria-label="删除">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M3 6h18M8 6V4h8v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M10 11v6M14 11v6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 演示：女儿同样展示「报读档案」（默认注释，需要时去掉注释） -->
+        <!--
+        <article class="member-card is-child" data-relation="女儿">
+          <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=girl&backgroundColor=e8d4ff" alt="" width="52" height="52" />
+          <div class="member-body">
+            <div class="member-name">小朵</div>
+            <div class="tags">
+              <span class="tag">9岁</span>
+              <span class="tag">女儿</span>
+              <span class="tag">已认证</span>
+            </div>
+            <div class="member-id">98765432109876</div>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn-enrollment">报读档案</button>
+            <button type="button" class="icon-btn" aria-label="编辑">...</button>
+            <button type="button" class="icon-btn" aria-label="删除">...</button>
+          </div>
+        </article>
+        -->
+      </main>
+
+      <footer class="footer-bar">
+        <button type="button" class="footer-menu" aria-label="更多">⋯</button>
+        <button type="button" class="btn-add-child">添加儿女</button>
+      </footer>
+    </div>
+    <p class="note">
+      儿子 / 女儿卡片右侧在编辑、删除左侧增加「报读档案」橙色描边按钮，与底部「添加儿女」视觉一致。接入小程序时：根据成员关系字段为 <code>儿子</code> 或 <code>女儿</code> 渲染 <code>is-child</code> 与按钮即可。
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var CHILD_RELATIONS = ["儿子", "女儿"];
+      document.querySelectorAll(".member-card").forEach(function (card) {
+        var rel = card.getAttribute("data-relation");
+        if (rel && CHILD_RELATIONS.indexOf(rel) !== -1) {
+          card.classList.add("is-child");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* Ax9 Community - 基于 Axure 原型提取 */
+:root {
+  --background: #F0F2F5;
+  --foreground: #333333;
+  --card: #ffffff;
+  --card-foreground: #333333;
+  --popover: #ffffff;
+  --popover-foreground: #333333;
+  --primary: #169BD5;
+  --primary-foreground: #ffffff;
+  --secondary: #F2F2F2;
+  --secondary-foreground: #333333;
+  --muted: #F2F2F2;
+  --muted-foreground: #7F7F7F;
+  --accent: #F59A23;
+  --accent-foreground: #333333;
+  --accent-secondary: #5F51FB;
+  --subtle: rgba(51, 51, 51, 0.6);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #E0E0E0;
+  --border-subtle: #F2F2F2;
+  --input: rgba(0, 0, 0, 0.08);
+  --ring: #169BD5;
+
+  --radius-sm: 2px;
+  --radius-md: 5px;
+  --radius-lg: 10px;
+  --radius-xl: 20px;
+  --radius-full: 40px;
+
+  --spacing-1: 2px;
+  --spacing-2: 8px;
+  --spacing-3: 10px;
+  --spacing-4: 20px;
+  --spacing-5: 35px;
+
+  --shadow-sm: 0 0 8px rgba(0, 0, 0, 0.098);
+  --shadow-md: 5px 5px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+@theme inline {
+  --font-sans: "PingFang SC", "苹方 常规", 苹方, "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-ring: var(--ring);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分析策略模板 · 会务工具 · 6Q 原型</title>
+  <link rel="stylesheet" href="css/6q-conference.css" />
+  <link rel="stylesheet" href="css/6q-intent-premium.css" />
+</head>
+<body class="q-app intent-theme" data-cf-page="tools" data-tool-page="intent-template">
+  <header id="q-topbar-mount"></header>
+  <div class="q-body">
+    <aside id="q-sidenav-mount" class="q-sidenav"></aside>
+    <div class="q-main">
+      <nav id="q-doc-tabs-mount" class="q-doc-tabs"></nav>
+      <div class="q-breadcrumb">会务工具 / <strong>分析策略模板</strong></div>
+      <div class="q-content-wrap q-content-wrap--no-sub">
+        <main class="q-page">
+          <section class="intent-tools-head">
+            <div>
+              <h1 class="intent-tools-head__title">分析策略模板</h1>
+              <p class="intent-tools-head__sub">
+                统一配置关注标签与意向度规则；各期会务在「本期分析策略」选用模板。需<strong>会务统筹配置</strong>角色。
+              </p>
+              <p class="intent-field__hint" style="margin-top:10px">
+                本页为模板列表。完整配置（系统标签树选择、意向度规则）请点击<strong>编辑</strong>或<strong>新建模板</strong>进入配置页。
+              </p>
+            </div>
+            <a class="q-btn q-btn--primary" href="tools-intent-strategy-template-edit.html">新建模板</a>
+          </section>
+
+          <div class="intent-table-wrap">
+            <table class="intent-table intent-table--tools">
+              <thead>
+                <tr>
+                  <th>模板名称</th>
+                  <th>说明</th>
+                  <th>关注标签</th>
+                  <th>意向度方式</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="template-tbody"></tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-toast" id="toast" role="status"></div>
+
+  <script src="js/6q-shell.js"></script>
+  <script src="js/intent-strategy-core.js"></script>
+  <script src="js/tools-intent-strategy-template.js"></script>
+</body>
+</html>

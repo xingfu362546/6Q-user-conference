@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>执行历史 · 用户标签平台</title>
+  <link rel="stylesheet" href="css/ut-tokens.css" />
+  <link rel="stylesheet" href="css/ut-shell.css" />
+  <link rel="stylesheet" href="css/ut-components.css" />
+  <style>
+    .ut-member {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .ut-member strong { font-weight: 600; }
+    .ut-member span { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+    .ut-split__head {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    .ut-tag-pill {
+      display: inline-flex;
+      padding: 4px 10px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ut-version-list button .ut-ver-status {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .ut-version-list button[data-status="fail"] .ut-ver-status {
+      color: var(--danger);
+    }
+    .ut-version-list button[data-status="success"] .ut-ver-status {
+      color: var(--success);
+    }
+    .ut-version-error {
+      margin: var(--space-5);
+      padding: var(--space-4) var(--space-5);
+      border: 1px solid rgba(220, 38, 38, 0.25);
+      border-radius: var(--radius-md);
+      background: var(--danger-bg);
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .ut-version-error strong { display: block; margin-bottom: var(--space-2); }
+  </style>
+</head>
+<body class="ut-body" data-ut-page="tag-history">
+  <div class="ut-app">
+    <header class="ut-topbar" id="ut-topbar-mount"></header>
+    <div class="ut-row">
+      <div id="ut-side-mount"></div>
+      <div class="ut-main">
+        <div class="ut-workpad">
+          <nav class="ut-breadcrumb">
+            <a href="tag-list.html">标签管理</a> / <a href="tag-list.html">亲子偏好</a> / <strong>执行历史</strong>
+          </nav>
+          <div class="ut-page-head">
+            <div class="ut-page-head__left">
+              <h1>执行历史</h1>
+              <p class="ut-page-head__desc">仅<strong>二级标签</strong>可进入。左侧版本号为<strong>计算执行日期</strong>（YYYYMMDD）；失败版本可选，右侧为空表并展示错误原因。</p>
+            </div>
+            <span class="ut-tag-pill">二级标签：亲子偏好 · tag_1233</span>
+          </div>
+
+          <div class="ut-split">
+            <aside class="ut-split__side">
+              <div class="ut-split__side-head">
+                <label class="ut-field" style="min-width:0;width:100%">
+                  <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">执行版本</span>
+                  <input class="ut-input" type="search" placeholder="搜索版本号" style="width:100%" />
+                </label>
+              </div>
+              <ul class="ut-version-list" data-version-list role="listbox" aria-label="版本列表">
+                <li><button type="button" data-version="20251201" data-status="success" class="is-active" aria-selected="true"><span>20251201</span> <span class="ut-ver-status">成功 · 1,500人</span></button></li>
+                <li><button type="button" data-version="20251202" data-status="fail" aria-selected="false"><span>20251202</span> <span class="ut-ver-status">失败</span></button></li>
+                <li><button type="button" data-version="20251130" data-status="success" aria-selected="false"><span>20251130</span> <span class="ut-ver-status">成功 · 1,482人</span></button></li>
+                <li><button type="button" data-version="20251129" data-status="success" aria-selected="false"><span>20251129</span> <span class="ut-ver-status">成功 · 1,476人</span></button></li>
+              </ul>
+              <div class="ut-pager" style="border-top:1px solid var(--border-default);padding:var(--space-3)">
+                <div class="ut-pager__nav" style="width:100%;justify-content:center">
+                  <button type="button">‹</button>
+                  <button type="button" class="is-active">1</button>
+                  <button type="button">2</button>
+                  <button type="button">›</button>
+                </div>
+              </div>
+            </aside>
+            <div class="ut-split__main">
+              <div class="ut-split__head">
+                <div>
+                  <strong style="font-size:15px">执行日期 <span data-version-label>20251201</span></strong>
+                  <span data-version-meta style="margin-left:var(--space-3);font-size:13px;color:var(--text-secondary)">执行日期 2025-12-01 · 2025-12-01 01:00:00 · 手动更新</span>
+                </div>
+                <button type="button" class="ut-btn ut-btn--primary" data-version-export>导出 CSV</button>
+              </div>
+
+              <div data-version-panel="fail" hidden>
+                <div class="ut-version-error" data-version-error role="alert">
+                  <strong>本版本计算失败，无命中用户数据</strong>
+                  <span>SQL 超时：events_community_forward 分区扫描超过 300s，任务已终止。</span>
+                </div>
+                <div class="ut-empty">
+                  <p class="ut-empty__title">0 条命中记录</p>
+                  <p>请查看上方错误信息，修复后可在标签管理中「重试计算」。</p>
+                </div>
+              </div>
+
+              <div data-version-panel="success">
+              <form class="ut-filter" data-filter-form style="border-bottom:1px solid var(--border-default)">
+                <div class="ut-field">
+                  <label for="m-id">会员 ID</label>
+                  <input class="ut-input" id="m-id" type="search" placeholder="精确或模糊" />
+                </div>
+                <div class="ut-field">
+                  <label for="m-name">姓名</label>
+                  <input class="ut-input" id="m-name" type="search" placeholder="请输入" />
+                </div>
+                <div class="ut-field">
+                  <label for="m-phone">手机号</label>
+                  <input class="ut-input" id="m-phone" type="search" placeholder="后四位亦可" />
+                </div>
+                <div class="ut-field">
+                  <label for="m-time">执行时间</label>
+                  <input class="ut-input" id="m-time" type="text" placeholder="开始 — 结束" />
+                </div>
+                <div class="ut-filter__actions">
+                  <button type="button" class="ut-btn" data-filter-reset>重置</button>
+                  <button type="button" class="ut-btn ut-btn--primary">查询</button>
+                </div>
+              </form>
+              <div class="ut-table-wrap">
+                <table class="ut-table">
+                  <thead>
+                    <tr>
+                      <th style="width:40px"><input type="checkbox" aria-label="全选" /></th>
+                      <th style="width:48px">#</th>
+                      <th>会员信息</th>
+                      <th>标签名称</th>
+                      <th>更新方式</th>
+                      <th>执行时间</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="checkbox" /></td>
+                      <td>1</td>
+                      <td><div class="ut-member"><strong>张三</strong><span>M-6Q10086</span></div></td>
+                      <td>亲子偏好</td>
+                      <td><span class="ut-badge ut-badge--neutral">手动更新</span></td>
+                      <td class="cell-mono">2025-12-01 01:00:00</td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" /></td>
+                      <td>2</td>
+                      <td><div class="ut-member"><strong>李四</strong><span>M-6Q10087</span></div></td>
+                      <td>亲子偏好</td>
+                      <td><span class="ut-badge ut-badge--neutral">手动更新</span></td>
+                      <td class="cell-mono">2025-12-01 01:00:01</td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" /></td>
+                      <td>3</td>
+                      <td><div class="ut-member"><strong>王五</strong><span>M-6Q10088</span></div></td>
+                      <td>亲子偏好</td>
+                      <td><span class="ut-badge ut-badge--neutral">手动更新</span></td>
+                      <td class="cell-mono">2025-12-01 01:00:01</td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" /></td>
+                      <td>4</td>
+                      <td><div class="ut-member"><strong>赵六</strong><span>M-6Q10089</span></div></td>
+                      <td>亲子偏好</td>
+                      <td><span class="ut-badge ut-badge--neutral">手动更新</span></td>
+                      <td class="cell-mono">2025-12-01 01:00:02</td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" /></td>
+                      <td>5</td>
+                      <td><div class="ut-member"><strong>钱七</strong><span>M-6Q10090</span></div></td>
+                      <td>亲子偏好</td>
+                      <td><span class="ut-badge ut-badge--neutral">手动更新</span></td>
+                      <td class="cell-mono">2025-12-01 01:00:02</td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" /></td>
+                      <td>6</td>
+                      <td><div class="ut-member"><strong>孙八</strong><span>M-6Q10091</span></div></td>
+                      <td>亲子偏好</td>
+                      <td><span class="ut-badge ut-badge--neutral">手动更新</span></td>
+                      <td class="cell-mono">2025-12-01 01:00:03</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="ut-pager">
+                <span>共 200 条</span>
+                <div style="display:flex;align-items:center;gap:var(--space-3)">
+                  <select class="ut-select" style="width:auto;height:32px"><option>10 条/页</option><option>20 条/页</option></select>
+                  <div class="ut-pager__nav">
+                    <button type="button">‹</button>
+                    <button type="button" class="is-active">1</button>
+                    <button type="button">2</button>
+                    <button type="button">3</button>
+                    <button type="button">4</button>
+                    <button type="button">5</button>
+                    <button type="button">›</button>
+                  </div>
+                  <span>前往</span>
+                  <input class="ut-input" type="number" min="1" value="1" style="width:48px;height:32px" />
+                  <span>页</span>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/ut-shell.js"></script>
+  <script src="js/ut-admin.js"></script>
+  <script src="js/ut-tag-history.js"></script>
+</body>
+</html>
