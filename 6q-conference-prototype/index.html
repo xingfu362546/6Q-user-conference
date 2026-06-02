@@ -5,22 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>6Q 课程会务原型 · 导航</title>
   <link rel="stylesheet" href="css/6q-conference.css" />
+  <link rel="stylesheet" href="css/6q-intent-premium.css" />
   <style>
-    .nav-page { max-width: 640px; margin: 48px auto; padding: 24px; background: #fff; border-radius: 4px; border: 1px solid #f0f0f0; }
-    .nav-page h1 { margin: 0 0 8px; font-size: 20px; }
-    .nav-page ul { line-height: 2; }
+    body { background: #f8fafc; }
+    .nav-page {
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 28px 32px 32px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .nav-page h1 { margin: 0 0 8px; font-size: 22px; color: #0f172a; }
+    .nav-page .sub { color: #64748b; font-size: 13px; line-height: 1.6; margin-bottom: 24px; }
+    .nav-section { margin-bottom: 22px; }
+    .nav-section h2 {
+      font-size: 13px;
+      color: #475569;
+      margin: 0 0 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    }
+    .nav-section ul { list-style: none; line-height: 2; font-size: 14px; }
+    .nav-section a { color: #4f46e5; text-decoration: none; font-weight: 500; }
+    .nav-section a:hover { text-decoration: underline; }
+    .nav-section .hint { color: #94a3b8; font-size: 12px; margin-left: 6px; font-weight: 400; }
+    .nav-back { display: inline-block; margin-bottom: 16px; font-size: 13px; color: #64748b; text-decoration: none; }
+    .nav-back:hover { color: #4f46e5; }
   </style>
 </head>
-<body>
+<body class="intent-theme">
   <div class="nav-page">
-    <h1>6Q 课程会务 · 原型导航</h1>
-    <p style="color:rgba(0,0,0,.45);font-size:13px">基于会务详情截图，新增「学员意向分析」承载页</p>
-    <ul>
-      <li><a href="conference-detail-basic.html">课程会务详情 · 基础信息</a></li>
-      <li><a href="conference-student-intent.html"><strong>学员意向分析</strong>（Premium 承载页）</a></li>
-      <li><a href="../docs/course-student-intent/DESIGN.md">设计方案 DESIGN.md</a></li>
-      <li><a href="../user-tag-admin/tag-list.html">用户标签平台原型</a></li>
-    </ul>
+    <a class="nav-back" href="../index.html">← 返回总入口</a>
+    <h1>6Q 课程会务 · 后台原型导航</h1>
+    <p class="sub">会务详情、本期分析策略、学员意向分析与会务工具策略模板</p>
+
+    <section class="nav-section">
+      <h2>会务详情（第12551期）</h2>
+      <ul>
+        <li><a href="conference-detail-basic.html">基础信息</a></li>
+        <li>
+          <a href="conference-intent-strategy.html">本期分析策略</a>
+          <span class="hint">选用模板 / 复制上期 / 保存并重算</span>
+        </li>
+        <li>
+          <a href="conference-student-intent.html">学员意向分析</a>
+          <span class="hint">只读策略 + 学员列表 + 明细抽屉</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="nav-section">
+      <h2>会务工具</h2>
+      <ul>
+        <li>
+          <a href="tools-intent-strategy-template.html">分析策略模板</a>
+          <span class="hint">列表 / 新建 / 编辑 / 删除</span>
+        </li>
+        <li>
+          <a href="tools-intent-strategy-template-edit.html">新建模板</a>
+          <span class="hint">关注标签树 + 意向度配置</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="nav-section">
+      <h2>关联原型</h2>
+      <ul>
+        <li><a href="../6q-conference-app-prototype/">会务 APP 原型</a></li>
+        <li><a href="../user-tag-admin/tag-list.html">用户标签平台</a></li>
+      </ul>
+    </section>
   </div>
 </body>
 </html>

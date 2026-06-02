@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6Q 会务 · 学员意向分析原型</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --orange: #f39800;
+      --line: rgba(15, 23, 42, 0.08);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 40px 20px 64px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    .hero {
+      padding: 32px 28px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+      color: #fff;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.18);
+    }
+    .hero__eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+    .hero h1 { font-size: 28px; margin-bottom: 10px; }
+    .hero p { font-size: 14px; line-height: 1.7; opacity: 0.92; max-width: 620px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px 22px 20px;
+      color: inherit;
+      text-decoration: none;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(79, 70, 229, 0.35);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+    }
+    .card__tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .card__tag--pc { background: var(--accent-soft); color: var(--accent); }
+    .card__tag--app { background: #fff8f0; color: var(--orange); }
+    .card__tag--tag { background: #ecfdf5; color: #059669; }
+    .card h2 { font-size: 18px; margin-bottom: 8px; }
+    .card p { font-size: 13px; line-height: 1.65; color: var(--muted); margin-bottom: 14px; }
+    .card ul {
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+    .card a.inline { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .card a.inline:hover { text-decoration: underline; }
+    .foot {
+      margin-top: 28px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      padding: 16px 18px;
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="hero__eyebrow">6Q Prototype Portal</p>
+      <h1>课程会务 · 学员意向分析</h1>
+      <p>
+        统一入口：后台 PC 原型、会务 APP 原型、分析策略模板与用户标签平台。
+        部署到 Cloudflare Pages 后，访问站点根路径即可进入本页。
+      </p>
+    </header>
+
+    <div class="grid">
+      <a class="card" href="6q-conference-prototype/">
+        <span class="card__tag card__tag--pc">后台 PC</span>
+        <h2>会务后台原型</h2>
+        <p>会务详情、本期分析策略、学员意向分析、会务工具策略模板。</p>
+        <ul>
+          <li><span class="inline">→ 进入后台导航</span></li>
+        </ul>
+      </a>
+
+      <a class="card" href="6q-conference-app-prototype/">
+        <span class="card__tag card__tag--app">会务 APP</span>
+        <h2>会务 APP 原型</h2>
+        <p>学员列表 → AI 分析 → 意向中控 → 详情与课程推荐（iPhone 外框）。</p>
+        <ul>
+          <li><a class="inline" href="6q-conference-app-prototype/app-students.html">→ 直达学员列表</a></li>
+        </ul>
+      </a>
+
+      <a class="card" href="user-tag-admin/tag-list.html">
+        <span class="card__tag card__tag--tag">标签平台</span>
+        <h2>用户标签平台</h2>
+        <p>标签管理、规则构建、数据接入等，为意向分析提供系统标签来源。</p>
+        <ul>
+          <li><span class="inline">→ 标签列表</span></li>
+        </ul>
+      </a>
+    </div>
+
+    <p class="foot">
+      推荐 Cloudflare 配置：Production branch 选 <strong>feature/conference-intent</strong>（或 main），
+      Framework preset 选 <strong>None</strong>，Build output directory 填 <strong>/</strong>，
+      则本页为站点首页。文档见仓库 <code>docs/course-student-intent/</code>。
+    </p>
+  </div>
+</body>
+</html>
