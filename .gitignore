@@ -1,29 +1,25 @@
+# 依赖
 node_modules/
 **/node_modules/
 
-# 本地 IDE / Agent 配置
+# 本地 IDE / Agent（不进入本仓库）
 .cursor/
 .agents/
 
-# 密钥与本地配置
+# 密钥
 .env
 .env.*
 *.pem
 
-# 绩效 / 人事等敏感表格
-*绩效*.xlsx
-6Q-信息部*.xlsx
-perf_may*.xlsx
+# 系统文件
+Thumbs.db
+.DS_Store
 
-# 临时产物与解压目录
-_check_doc*
-_scope_*
-_fl.zip
-_fl_unzip/
-_fl_preview.json
-test-results/
-output/
-*.log
-
-# 嵌套 Git 仓库
-信息部项目仓库/
+# 本仓库外的本地原型/临时文件（留在 testProject 工作区即可）
+oa-training-prototype/
+member-benefits-prototype/
+axhub-make/
+scripts/
+tools/
+*.rar
+*.zip
