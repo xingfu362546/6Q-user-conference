@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OA 绩效信息化 · 原型导航</title>
+  <link rel="stylesheet" href="assets/6q-theme.css" />
+  <link rel="stylesheet" href="assets/common.css" />
+  <link rel="stylesheet" href="assets/proto-notes.css" />
+</head>
+<body>
+  <div class="hub-grid">
+    <h1>OA 绩效信息化 · 交互原型</h1>
+    <p style="color:var(--muted);margin:0">样式与菜单层级已对齐你提供的截图：<strong>6Q教育</strong> 小程序首页 + <strong>6Q-测试环境</strong> OA 顶栏/侧栏。<strong>版本 1.0.0</strong> · 详见 <code>docs/HANDOFF-v1.0.0.md</code></p>
+
+    <h2 style="margin-top:28px;font-size:17px">📱 小程序</h2>
+    <div class="cards">
+      <a class="card hub-card" href="miniapp/home.html" style="border:2px solid var(--primary)">
+        <h3>⭐ 6Q教育 · 首页</h3>
+        <p>绿色顶栏 · 自助服务宫格 · 首页/我的底栏 → 点「绩效」</p>
+      </a>
+      <a class="card hub-card" href="miniapp/task-list.html"><h3>绩效 · 当前待办</h3><p>分段导航 → 逾期 / 过往提交 独立页</p></a>
+      <a class="card hub-card" href="miniapp/task-overdue.html"><h3>绩效 · 逾期</h3><p>逾期列表 + 解锁说明</p></a>
+      <a class="card hub-card" href="miniapp/task-past.html"><h3>绩效 · 过往提交</h3><p>只读回看 · 保密提示</p></a>
+      <a class="card hub-card" href="miniapp/leader-score-monthly.html"><h3>领导 · 月度评分</h3><p>简版折叠打分 · R1/R2 校验</p></a>
+      <a class="card hub-card" href="miniapp/monthly-wizard.html"><h3>月度填表</h3><p>折叠指标 · 8 步向导</p></a>
+    </div>
+
+    <h2 style="margin-top:28px;font-size:17px">💻 OA · 员工端（个人中心）</h2>
+    <div class="cards">
+      <a class="card hub-card" href="oa-pc/personal-perf.html" style="border:2px solid var(--primary)">
+        <h3>⭐ 个人中心 → 我的绩效</h3>
+        <p>顶栏选「个人中心」· 侧栏「我的绩效 → 绩效待办」</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/personal-perf-overdue.html"><h3>绩效 · 逾期</h3><p>独立页 · 待 HR 解锁</p></a>
+      <a class="card hub-card" href="oa-pc/personal-perf-past.html"><h3>绩效 · 过往提交</h3><p>独立页 · 只读回看</p></a>
+      <a class="card hub-card" href="oa-pc/monthly-wizard.html"><h3>月度填表</h3><p>Ant Design 风格表格/按钮</p></a>
+    </div>
+
+    <h2 style="margin-top:28px;font-size:17px">💻 OA · 领导端（个人中心 · 待我审核）</h2>
+    <div class="cards">
+      <a class="card hub-card" href="oa-pc/supervisor-review-list.html" style="border:2px solid var(--primary)">
+        <h3>⭐ 领导 · 待我审核列表</h3>
+        <p>下属待评 · 待评/评分中/已评</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/supervisor-score-monthly.html?id=r-wf-202605">
+        <h3>月度评分页</h3>
+        <p>折叠打分 · 加减分核定 · 下月目标确认 · 超限变红</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/supervisor-score-quarterly.html">
+        <h3>季度评分页</h3>
+        <p>占位 · 含分管/6Q3J/面谈规格</p>
+      </a>
+    </div>
+
+    <h2 style="margin-top:28px;font-size:17px">💻 OA · HR 端（人力资源）</h2>
+    <div class="cards">
+      <a class="card hub-card" href="oa-pc/hr-plan-list.html" style="border:2px solid var(--primary)">
+        <h3>⭐ 计划列表</h3>
+        <p>人力资源 → 绩效管理 → 计划管理</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/hr-plan-create.html">
+        <h3>新建计划向导</h3>
+        <p>5 步：类型 · 范围 · 时间 · 模板预览 · 发放</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/hr-plan-detail.html?plan=2026-05">
+        <h3>计划明细</h3>
+        <p>范围包 · 奖金试算 · 催办/解锁</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/hr-bonus-rules-list.html">
+        <h3>奖金规则配置</h3>
+        <p>并列排名 · 末1/末2扣减 · 固定/比例</p>
+      </a>
+      <a class="card hub-card" href="oa-pc/hr-bonus-settlement.html?plan=2026-05">
+        <h3>薪酬 · 奖金结算</h3>
+        <p>上级+分管领导评完后实时结算 · 仅HR/薪酬可见</p>
+      </a>
+    </div>
+  </div>
+  <script src="assets/proto-notes-data.js"></script>
+  <script src="assets/proto-notes.js"></script>
+</body>
+</html>

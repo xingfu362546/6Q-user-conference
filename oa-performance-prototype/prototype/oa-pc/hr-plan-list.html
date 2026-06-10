@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>计划管理 · 绩效管理</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">人力资源 &gt; 绩效管理 &gt; <strong>计划管理</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="q-toolbar">
+            <input class="q-search" placeholder="请输入计划名称" />
+            <a class="q-btn q-btn-primary" href="hr-plan-create.html">+ 新建计划</a>
+            <button class="q-btn" type="button">导出</button>
+          </div>
+          <div class="q-table-wrap">
+            <table class="q-table">
+              <thead>
+                <tr>
+                  <th>计划名称</th>
+                  <th>考核类型</th>
+                  <th>周期</th>
+                  <th>参与范围</th>
+                  <th>状态</th>
+                  <th>进度</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026年5月月度考核</td>
+                  <td>月度</td>
+                  <td>2026-05</td>
+                  <td>2 个范围包 · 12 人</td>
+                  <td><span class="q-tag q-tag-blue">进行中</span></td>
+                  <td>7/12</td>
+                  <td>
+                    <a href="hr-plan-detail.html?plan=2026-05">明细</a> ·
+                    <a href="#" onclick="alert('催办（原型）');return false">催办</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2026 Q2 季度考核</td>
+                  <td>季度</td>
+                  <td>2026-Q2</td>
+                  <td>草稿 · 未分配</td>
+                  <td><span class="q-tag">草稿</span></td>
+                  <td>—</td>
+                  <td>
+                    <a href="hr-plan-create.html">编辑</a> ·
+                    <a href="#" onclick="alert('发放（原型）');return false">发放</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2026年4月月度考核</td>
+                  <td>月度</td>
+                  <td>2026-04</td>
+                  <td>3 个范围包 · 198 人</td>
+                  <td><span class="q-tag q-tag-green">已截止</span></td>
+                  <td>198/200</td>
+                  <td>
+                    <a href="hr-plan-detail.html?plan=2026-04">明细</a> ·
+                    <a href="#">统计</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:12px;color:var(--q-text-muted);margin-top:12px">
+            旧菜单「员工月度/季度绩效」已下线；MVP 统一从计划管理进入。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'hr',
+      sideActive: 'plan',
+      pageTabs: [
+        { key: 'home', label: '首页', href: 'index.html' },
+        { key: 'plan', label: '计划管理', href: 'hr-plan-list.html', closable: true },
+      ],
+      activeTab: 'plan',
+    });
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

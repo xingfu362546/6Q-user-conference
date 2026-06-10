@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>月度填表 · 个人中心</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <strong>2026年5月 · 月度填表</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="oa-wizard-grid">
+            <div class="q-card-panel" style="padding:0;overflow:hidden">
+              <div class="stepper-wrap" id="stepper"></div>
+              <div style="padding:16px">
+                <div class="header-readonly" id="form-header"></div>
+                <div id="wizard-content"></div>
+                <div style="display:flex;gap:12px;margin-top:16px">
+                  <button type="button" class="q-btn" id="btn-prev">上一步</button>
+                  <button type="button" class="q-btn q-btn-primary" id="btn-next">下一步</button>
+                </div>
+              </div>
+            </div>
+            <div class="oa-wizard-side">
+              <div class="q-card-panel side-panel">
+                <h3 style="margin:0 0 12px;font-size:15px">填写进度</h3>
+                <ul id="side-steps" style="margin:0;padding:0;list-style:none;font-size:13px"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/employee-past-copy.js"></script>
+  <script src="../assets/wizard.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'personal',
+      sideActive: 'perf-list',
+      pageTabs: [
+        { key: 'home', label: '首页', href: 'index.html' },
+        { key: 'perf', label: '绩效待办', href: 'personal-perf.html', closable: true },
+        { key: 'monthly', label: '月度填表', href: 'monthly-wizard.html', closable: true },
+      ],
+      activeTab: 'monthly',
+    });
+    initMonthlyWizard({
+      storageKey: 'perf-monthly-oa-pc',
+      onSubmit: function() { location.href = 'personal-perf.html'; },
+    });
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

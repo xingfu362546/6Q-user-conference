@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人中心</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心</nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="q-card-panel" style="display:flex;align-items:center;gap:16px">
+            <span class="q-oa-avatar" style="width:48px;height:48px;font-size:18px">张</span>
+            <div>
+              <h2 style="margin:0 0 4px;font-size:18px">张明</h2>
+              <p style="margin:0;font-size:13px;color:var(--q-text-secondary)">信息部 · 产品经理 · 全职员工</p>
+            </div>
+          </div>
+          <div class="q-card-panel">
+            <p style="margin:0;color:var(--q-text-secondary);font-size:13px">请从左侧菜单「我的绩效」进入待办与填表页面。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'personal',
+      sideActive: 'info',
+      pageTabs: [{ key: 'personal', label: '个人中心', href: 'personal.html' }],
+      activeTab: 'personal',
+    });
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

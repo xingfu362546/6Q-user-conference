@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>季度评分 · 上级（占位）</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; <a href="supervisor-review-list.html">待我审核</a> &gt; <strong>季度评分</strong></nav>
+        <div class="q-oa-page">
+          <div class="q-card-panel">
+            <div class="perf-tip perf-tip-orange">季度评分页 v1.0.0 占位：含上级分列、6Q3J 只读、面谈、下季目标确认。同人合并（上级=分管）规则见 HANDOFF。</div>
+            <p style="font-size:14px;color:#666;line-height:1.7">
+              规格已锁定（Grill #5/#7），原型迭代待做：<br/>
+              · 工作 KR 上级分 + 分管分列（分管仅 OA）<br/>
+              · 6Q3J 10 分只读 · 加减分 · 绩效面谈 · 下季目标确认<br/>
+              · 上级=分管时 1 条待办、填一次两列同值
+            </p>
+            <a class="q-btn" href="supervisor-review-list.html">← 返回列表</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script>
+    initOaShell({ topModule: 'personal', sideActive: 'perf-list' });
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

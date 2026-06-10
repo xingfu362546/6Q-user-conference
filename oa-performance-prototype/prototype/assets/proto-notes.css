@@ -1,0 +1,356 @@
+/* 原型注释 · 红点序号 + 右侧抽屉（Axure 标注风格） */
+
+.proto-note-marker {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.proto-note-marker:hover {
+  transform: scale(1.12);
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.45);
+}
+
+.proto-note-host {
+  position: relative !important;
+}
+
+.proto-notes-legend {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.proto-notes-legend .proto-note-marker {
+  position: static;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  box-shadow: none;
+}
+
+.proto-drawer-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.proto-drawer-mask.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.proto-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 2001;
+  width: min(420px, 92vw);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.proto-drawer-mask.is-open .proto-drawer {
+  transform: translateX(0);
+}
+
+.proto-drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.proto-drawer__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.proto-drawer__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.proto-drawer__close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #8c8c8c;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.proto-drawer__close:hover {
+  background: #f5f5f5;
+  color: #262626;
+}
+
+.proto-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px 24px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #434343;
+}
+
+.proto-drawer__body p {
+  margin: 0 0 10px;
+}
+
+.proto-drawer__body ul,
+.proto-drawer__body ol {
+  margin: 0 0 12px;
+  padding-left: 1.25em;
+}
+
+.proto-drawer__body li {
+  margin-bottom: 6px;
+}
+
+.proto-drawer__body strong {
+  color: #262626;
+}
+
+.proto-drawer__body .proto-sec {
+  margin: 0 0 4px;
+  padding-left: 8px;
+  border-left: 3px solid #ff4d4f;
+  font-size: 12px;
+  font-weight: 600;
+  color: #262626;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.proto-drawer__body .proto-sec:not(:first-child) {
+  margin-top: 14px;
+}
+
+.proto-drawer__body .proto-flow {
+  margin: 6px 0 10px;
+  padding: 8px 10px;
+  background: #fafafa;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #595959;
+}
+
+.proto-drawer__body .proto-kv {
+  margin: 4px 0 8px;
+  font-size: 12px;
+}
+
+.proto-drawer__body .proto-kv dt {
+  font-weight: 600;
+  color: #434343;
+  margin-top: 6px;
+}
+
+.proto-drawer__body .proto-kv dd {
+  margin: 2px 0 0;
+  color: #595959;
+}
+
+/* 注释内 · 纵向流程图 */
+.proto-flowchart {
+  margin: 8px 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.proto-fc-node {
+  position: relative;
+  padding: 8px 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #434343;
+}
+.proto-fc-node strong {
+  display: block;
+  font-size: 12px;
+  color: #262626;
+  margin-bottom: 2px;
+}
+.proto-fc-node--start {
+  background: #e6f7ff;
+  border-color: #91d5ff;
+  text-align: center;
+  font-weight: 600;
+  color: #0958d9;
+}
+.proto-fc-node--end {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+  text-align: center;
+  font-weight: 600;
+  color: #389e0d;
+}
+.proto-fc-node--decision {
+  background: #fffbe6;
+  border-color: #ffe58f;
+  text-align: center;
+  font-weight: 600;
+  color: #ad6800;
+}
+.proto-fc-node--warn {
+  background: #fff2f0;
+  border-color: #ffccc7;
+}
+.proto-fc-desc {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-top: 2px;
+}
+.proto-fc-badge {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--primary, #1890ff);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+}
+.proto-fc-arrow {
+  text-align: center;
+  color: #bfbfbf;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 0;
+}
+.proto-fc-branch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 4px 0;
+}
+.proto-fc-branch-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.proto-fc-label {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #595959;
+  margin-bottom: 4px;
+}
+.proto-fc-group {
+  margin: 6px 0;
+  padding: 8px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  background: #fafafa;
+}
+.proto-fc-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.proto-drawer__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.proto-drawer__nav-btn {
+  padding: 4px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.proto-drawer__nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.proto-drawer__index {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+@media (max-width: 480px) {
+  .proto-drawer {
+    width: 100%;
+  }
+
+  .proto-notes-legend {
+    bottom: 10px;
+    right: 10px;
+    font-size: 11px;
+  }
+}

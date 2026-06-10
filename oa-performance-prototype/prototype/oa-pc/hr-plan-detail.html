@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>计划明细 · 考核计划</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">
+          人力资源 &gt; 绩效管理 &gt;
+          <a href="hr-plan-list.html">计划管理</a> &gt;
+          <strong id="plan-title">计划明细</strong>
+        </nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="hr-stat-row">
+            <div class="hr-stat"><div class="num" id="stat-total">0</div><div class="lbl">参与人数</div></div>
+            <div class="hr-stat"><div class="num" id="stat-submitted" style="color:#52c41a">0</div><div class="lbl">已提交</div></div>
+            <div class="hr-stat"><div class="num" id="stat-doing">0</div><div class="lbl">填写中</div></div>
+            <div class="hr-stat"><div class="num" id="stat-overdue" style="color:#faad14">0</div><div class="lbl">已逾期</div></div>
+          </div>
+
+          <div class="q-toolbar" style="margin-bottom:12px">
+            <span class="q-tag q-tag-blue">进行中</span>
+            <span style="font-size:13px;color:var(--q-text-secondary)">员工截止：2026-06-05 18:00 · 上级评分截止：2026-06-10</span>
+            <span style="margin-left:auto">
+              <button type="button" class="q-btn" id="btn-export">导出</button>
+              <button type="button" class="q-btn q-btn-primary" id="btn-batch-remind">批量催办</button>
+            </span>
+          </div>
+
+          <div id="hr-detail-scopes"></div>
+
+          <div class="q-card-panel" style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+              <h3 style="margin:0;font-size:15px;flex:1">奖金实时结算</h3>
+              <a class="q-btn" href="hr-bonus-rules-list.html">规则配置</a>
+              <a class="q-btn q-btn-primary" href="hr-bonus-settlement.html?plan=2026-05&rule=br-standard-month">薪酬视图</a>
+            </div>
+            <p class="hr-hint" style="margin:0 0 12px">上级评分 + 分管领导评分均完成后自动纳入排名；未完成的显示待结算原因。员工端不可见。</p>
+            <div id="hr-plan-bonus-preview"></div>
+          </div>
+
+          <p class="hr-section-label" style="margin:16px 0 8px">员工任务列表</p>
+
+          <div class="hr-filter-bar">
+            <label>主要组织
+              <select id="filter-org"></select>
+            </label>
+            <label>职级
+              <select id="filter-level"></select>
+            </label>
+            <label>任务状态
+              <select id="filter-status"></select>
+            </label>
+            <input id="filter-kw" type="search" placeholder="姓名 / 工号" style="width:160px" />
+            <span class="hr-filter-count" id="filter-count">共 0 人</span>
+          </div>
+
+          <div class="q-table-wrap">
+            <table class="q-table">
+              <thead>
+                <tr>
+                  <th style="width:40px"><input type="checkbox" /></th>
+                  <th>员工姓名</th>
+                  <th>工号</th>
+                  <th>主要组织</th>
+                  <th>岗位</th>
+                  <th>职级</th>
+                  <th>人群</th>
+                  <th>所属范围包</th>
+                  <th>匹配模板</th>
+                  <th>任务状态</th>
+                  <th>提交时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="detail-tbody"></tbody>
+            </table>
+          </div>
+
+          <p style="font-size:12px;color:var(--q-text-muted);margin-top:12px">
+            明细按「计划 × 员工」展示；范围包见上方列表，补发请「+ 新增范围」。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/hr-bonus.js"></script>
+  <script src="../assets/hr-plan.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'hr',
+      sideActive: 'plan',
+      pageTabs: [
+        { key: 'home', label: '首页', href: 'index.html' },
+        { key: 'plan', label: '计划管理', href: 'hr-plan-list.html', closable: true },
+        { key: 'detail', label: '计划明细', href: 'hr-plan-detail.html?plan=2026-05', closable: true },
+      ],
+      activeTab: 'detail',
+    });
+    initHrPlanDetail();
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

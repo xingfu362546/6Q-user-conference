@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>过往提交 · 查看自填内容</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <style>
+    .readonly-banner {
+      padding: 12px 16px; margin-bottom: 16px;
+      background: #fffbe6; border: 1px solid #ffe58f; border-radius: 2px;
+      font-size: 13px; color: #ad6800;
+    }
+    .readonly-block { margin-bottom: 16px; }
+    .readonly-block h3 {
+      margin: 0 0 12px; padding-bottom: 8px;
+      font-size: 14px; font-weight: 600;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .readonly-field { margin-bottom: 12px; }
+    .readonly-field label { display: block; font-size: 12px; color: #999; margin-bottom: 4px; }
+    .readonly-field p { margin: 0; font-size: 14px; color: #333; line-height: 1.6; }
+  </style>
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <a href="personal-perf-past.html">过往提交</a> &gt; <strong>2026年3月</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="q-card-panel">
+            <div class="readonly-banner">🔒 只读模式：仅展示您提交的自填内容，上级评分与综合核定结果不可见。</div>
+
+            <div class="readonly-block">
+              <h3>表头信息</h3>
+              <div class="readonly-field"><label>姓名 / 部门</label><p>张明 · 信息部</p></div>
+              <div class="readonly-field"><label>考核期</label><p>2026年3月 月度绩效考核</p></div>
+              <div class="readonly-field"><label>提交时间</label><p>2026-03-28 17:32</p></div>
+            </div>
+
+            <div class="readonly-block">
+              <h3>核心绩效 V · 指标 1</h3>
+              <div class="readonly-field"><label>关键目标 O</label><p>推动绩效系统需求评审落地</p></div>
+              <div class="readonly-field"><label>关键成果 M</label><p>完成 PRD v1.0 并通过部门评审</p></div>
+              <div class="readonly-field"><label>自评分</label><p>4.2</p></div>
+            </div>
+
+            <div class="readonly-block">
+              <h3>自评总结</h3>
+              <div class="readonly-field"><p>本月重点完成绩效模块方案设计，协同 HR 完成两轮需求对齐。</p></div>
+            </div>
+
+            <div class="readonly-block">
+              <h3>下月核心目标（提交时填写）</h3>
+              <div class="readonly-field"><label>目标 1</label><p>输出绩效原型并完成一轮用户走查</p></div>
+            </div>
+
+            <div style="margin-top:20px">
+              <a class="q-btn" href="personal-perf-past.html">← 返回列表</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'personal',
+      sideActive: 'perf-list',
+      pageTabs: [
+        { key: 'home', label: '首页', href: 'index.html' },
+        { key: 'past', label: '过往提交', href: 'personal-perf-past.html', closable: true },
+        { key: 'view', label: '2026年3月', href: 'personal-perf-past-view.html', closable: true },
+      ],
+      activeTab: 'view',
+    });
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>
