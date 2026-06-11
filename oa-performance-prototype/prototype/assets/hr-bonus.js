@@ -12,15 +12,97 @@
 
 
 
+  var BONUS_LEVELS = ['总监', '经理', '主管', '职员'];
+
+
+
   var MOCK_RULES = [
 
     {
 
-      id: 'br-standard-month',
+      id: 'br-month-director',
 
-      name: '2026 · 月度标准排名奖扣',
+      name: '2026 · 月度·总监排名奖扣',
 
       type: 'month',
+
+      level: '总监',
+
+      status: 'enabled',
+
+      minGroupSize: 3,
+
+      tieBreak: 'same_rank',
+
+      bonusTiers: [
+
+        { rank: 1, mode: 'fixed', amount: 1200 },
+
+        { rank: 2, mode: 'fixed', amount: 800 },
+
+      ],
+
+      penaltyTiers: [
+
+        { rankFromEnd: 1, mode: 'fixed', amount: 400 },
+
+      ],
+
+      updatedAt: '2026-05-20',
+
+      usedByPlans: 2,
+
+    },
+
+    {
+
+      id: 'br-month-manager',
+
+      name: '2026 · 月度·经理排名奖扣',
+
+      type: 'month',
+
+      level: '经理',
+
+      status: 'enabled',
+
+      minGroupSize: 3,
+
+      tieBreak: 'same_rank',
+
+      bonusTiers: [
+
+        { rank: 1, mode: 'fixed', amount: 1000 },
+
+        { rank: 2, mode: 'fixed', amount: 600 },
+
+        { rank: 3, mode: 'fixed', amount: 400 },
+
+      ],
+
+      penaltyTiers: [
+
+        { rankFromEnd: 1, mode: 'fixed', amount: 350 },
+
+        { rankFromEnd: 2, mode: 'fixed', amount: 150 },
+
+      ],
+
+      updatedAt: '2026-05-20',
+
+      usedByPlans: 2,
+
+    },
+
+    {
+
+      id: 'br-month-supervisor',
+
+      name: '2026 · 月度·主管排名奖扣',
+
+      type: 'month',
+
+      level: '主管',
 
       status: 'enabled',
 
@@ -54,11 +136,77 @@
 
     {
 
-      id: 'br-quarter-mgr',
+      id: 'br-month-staff',
 
-      name: '2026 Q2 · 季度经理加强版',
+      name: '2026 · 月度·职员排名奖扣',
+
+      type: 'month',
+
+      level: '职员',
+
+      status: 'enabled',
+
+      minGroupSize: 4,
+
+      tieBreak: 'same_rank',
+
+      bonusTiers: [
+
+        { rank: 1, mode: 'fixed', amount: 500 },
+
+        { rank: 2, mode: 'fixed', amount: 300 },
+
+      ],
+
+      penaltyTiers: [],
+
+      updatedAt: '2026-05-18',
+
+      usedByPlans: 2,
+
+    },
+
+    {
+
+      id: 'br-staff-lite',
+
+      name: '职员轻量奖扣（无扣减）· 旧版',
+
+      type: 'month',
+
+      level: '职员',
+
+      status: 'disabled',
+
+      minGroupSize: 4,
+
+      tieBreak: 'same_rank',
+
+      bonusTiers: [
+
+        { rank: 1, mode: 'fixed', amount: 500 },
+
+        { rank: 2, mode: 'fixed', amount: 300 },
+
+      ],
+
+      penaltyTiers: [],
+
+      updatedAt: '2026-04-10',
+
+      usedByPlans: 1,
+
+    },
+
+    {
+
+      id: 'br-quarter-manager',
+
+      name: '2026 Q2 · 季度·经理加强版',
 
       type: 'quarter',
+
+      level: '经理',
 
       status: 'enabled',
 
@@ -90,36 +238,6 @@
 
     },
 
-    {
-
-      id: 'br-staff-lite',
-
-      name: '职员轻量奖扣（无扣减）',
-
-      type: 'month',
-
-      status: 'disabled',
-
-      minGroupSize: 4,
-
-      tieBreak: 'same_rank',
-
-      bonusTiers: [
-
-        { rank: 1, mode: 'fixed', amount: 500 },
-
-        { rank: 2, mode: 'fixed', amount: 300 },
-
-      ],
-
-      penaltyTiers: [],
-
-      updatedAt: '2026-04-10',
-
-      usedByPlans: 1,
-
-    },
-
   ];
 
 
@@ -142,13 +260,13 @@
 
   var PLAN_SETTLEMENT_ROWS = [
 
-    { name: '张明', no: 'E10021', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '主管', totalScore: 92.5, supervisorDone: true, divisionDone: true, submitted: true },
+    { name: '张明', no: 'E10021', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '主管', totalScore: 92.5, supervisorDone: true, divisionDone: true, submitted: true, employeeConfirmed: true, supervisorConfirmed: false },
 
-    { name: '王芳', no: 'E10035', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '职员', totalScore: 86.0, supervisorDone: true, divisionDone: true, submitted: true },
+    { name: '王芳', no: 'E10035', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '职员', totalScore: 86.0, supervisorDone: true, divisionDone: true, submitted: true, employeeConfirmed: false, supervisorConfirmed: false },
 
-    { name: '李强', no: 'E10008', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '总监', totalScore: 94.0, supervisorDone: true, divisionDone: true, submitted: true },
+    { name: '李强', no: 'E10008', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '总监', totalScore: 94.0, supervisorDone: true, divisionDone: true, submitted: true, employeeConfirmed: true, supervisorConfirmed: true, mergedReview: true },
 
-    { name: '韩梅', no: 'E10077', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '经理', totalScore: 89.5, supervisorDone: true, divisionDone: true, submitted: true, mergedReview: true },
+    { name: '韩梅', no: 'E10077', org: '信息部', scopeId: 'sp1', scopeName: '信息部-核心岗', level: '经理', totalScore: 89.5, supervisorDone: true, divisionDone: true, submitted: true, employeeConfirmed: true, supervisorConfirmed: true, mergedReview: true },
 
     { name: '赵敏', no: 'E20011', org: '广州办事处', scopeId: 'sp2', scopeName: '办事处+职能', level: '经理', totalScore: 88.0, supervisorDone: true, divisionDone: false, submitted: true },
 
@@ -172,6 +290,16 @@
 
 
 
+  function typesOverlap(a, b) {
+
+    if (a === 'both' || b === 'both') return true;
+
+    return a === b;
+
+  }
+
+
+
   function getEnabledRules(type) {
 
     return MOCK_RULES.filter(function (r) {
@@ -179,6 +307,68 @@
       return r.status === 'enabled' && (!type || r.type === type || r.type === 'both');
 
     });
+
+  }
+
+
+
+  function getEnabledRuleForPlanLevel(planType, level) {
+
+    return MOCK_RULES.filter(function (r) {
+
+      return r.status === 'enabled' && r.level === level && typesOverlap(r.type, planType);
+
+    })[0] || null;
+
+  }
+
+
+
+  function getEnabledRulesByLevel(planType) {
+
+    return BONUS_LEVELS.map(function (lv) {
+
+      return { level: lv, rule: getEnabledRuleForPlanLevel(planType, lv) };
+
+    });
+
+  }
+
+
+
+  /** 同职级 + 适用类型重叠时，启用态互斥（Q5） */
+
+  function findEnabledLevelConflict(type, level, excludeId) {
+
+    return MOCK_RULES.filter(function (r) {
+
+      return r.status === 'enabled' && r.level === level && r.id !== excludeId && typesOverlap(r.type, type);
+
+    })[0] || null;
+
+  }
+
+
+
+  function validateUniqueEnabledLevel(type, level, status, excludeId) {
+
+    if (status !== 'enabled') return { ok: true };
+
+    if (!level) return { ok: false, message: '请选择适用职级。' };
+
+    var conflict = findEnabledLevelConflict(type, level, excludeId);
+
+    if (!conflict) return { ok: true };
+
+    return {
+
+      ok: false,
+
+      message: '职级「' + level + '」在' + typeLabel(type) + '（及月/季通用重叠范围）下已有启用规则「' + conflict.name + '」。请先停用旧规则，或将本条设为停用。',
+
+      conflict: conflict,
+
+    };
 
   }
 
@@ -230,7 +420,8 @@
 
   function isSettled(row) {
 
-    return row.submitted && row.supervisorDone && divisionReady(row) && row.totalScore != null;
+    return row.submitted && row.supervisorDone && divisionReady(row) && row.totalScore != null &&
+      row.employeeConfirmed && row.supervisorConfirmed;
 
   }
 
@@ -245,6 +436,8 @@
     if (!divisionReady(row)) return '待分管领导评分';
 
     if (row.totalScore == null) return '待出总分';
+
+    if (!row.employeeConfirmed || !row.supervisorConfirmed) return '待双方确认评分';
 
     return '';
 
@@ -362,13 +555,13 @@
 
 
 
-  function settlePlanBonus(rows, rule) {
+  function settlePlanBonus(rows, planType) {
 
-    if (!rule) {
+    if (!planType) {
 
       return rows.map(function (r) {
 
-        return Object.assign({}, r, { rank: '—', bonusAdjust: null, bonusNote: '未绑定规则', settleStatus: 'pending' });
+        return Object.assign({}, r, { rank: '—', bonusAdjust: null, bonusNote: '未指定计划类型', settleStatus: 'pending' });
 
       });
 
@@ -384,9 +577,9 @@
 
       var gk = r.scopeId + '::' + r.level;
 
-      if (!groups[gk]) groups[gk] = [];
+      if (!groups[gk]) groups[gk] = { level: r.level, people: [] };
 
-      groups[gk].push({ name: r.name, no: r.no, scope: r.scopeName, level: r.level, totalScore: r.totalScore });
+      groups[gk].people.push({ name: r.name, no: r.no, scope: r.scopeName, level: r.level, totalScore: r.totalScore });
 
     });
 
@@ -396,7 +589,23 @@
 
     Object.keys(groups).forEach(function (gk) {
 
-      calculateGroupBonus(groups[gk], rule).forEach(function (p) { bonusByNo[p.no] = p; });
+      var group = groups[gk];
+
+      var rule = getEnabledRuleForPlanLevel(planType, group.level);
+
+      if (!rule) {
+
+        group.people.forEach(function (p) {
+
+          bonusByNo[p.no] = Object.assign({}, p, { rank: '—', bonusAdjust: 0, bonusNote: '职级「' + group.level + '」无启用规则' });
+
+        });
+
+        return;
+
+      }
+
+      calculateGroupBonus(group.people, rule).forEach(function (p) { bonusByNo[p.no] = p; });
 
     });
 
@@ -470,11 +679,11 @@
 
 
 
-  function renderSettlementTable(rows, rule, opts) {
+  function renderSettlementTable(rows, planType, opts) {
 
     opts = opts || {};
 
-    var settled = settlePlanBonus(rows, rule);
+    var settled = settlePlanBonus(rows, planType);
 
     var stats = { done: 0, waitSup: 0, waitDivision: 0 };
 
@@ -508,11 +717,19 @@
 
 
 
-    if (rule) {
+    if (planType) {
 
-      html += '<p style="font-size:13px;margin:8px 0"><b>' + rule.name + '</b> · ' + formatTiersSummary(rule) +
+      var levelRules = getEnabledRulesByLevel(planType).filter(function (x) { return x.rule; });
 
-        ' · 同分<strong>并列</strong>同名次</p>';
+      html += '<p style="font-size:13px;margin:8px 0"><b>按职级匹配 ' + levelRules.length + ' 条启用规则</b> · 同分<strong>并列</strong>同名次</p>' +
+
+        '<div class="hr-bonus-level-map">' + levelRules.map(function (x) {
+
+          return '<span class="q-tag q-tag-blue" style="margin:0 6px 6px 0">' + x.level + ' → ' + x.rule.name +
+
+            ' <span class="muted">(' + formatTiersSummary(x.rule) + ')</span></span>';
+
+        }).join('') + '</div>';
 
     }
 
@@ -576,7 +793,7 @@
 
       return '<tr><td><a href="hr-bonus-rule-edit.html?id=' + r.id + '"><b>' + r.name + '</b></a></td>' +
 
-        '<td>' + typeLabel(r.type) + '</td><td>范围包 · 同职级 · 并列</td>' +
+        '<td>' + typeLabel(r.type) + '</td><td><span class="q-tag">' + r.level + '</span></td><td>范围包 · 并列</td>' +
 
         '<td style="font-size:12px">' + formatTiersSummary(r) + '</td><td>' + r.minGroupSize + ' 人</td>' +
 
@@ -646,7 +863,7 @@
 
     var rule = isNew ? {
 
-      name: '', type: 'month', status: 'enabled', minGroupSize: 3,
+      name: '', type: 'month', level: '主管', status: 'enabled', minGroupSize: 3,
 
       bonusTiers: [
 
@@ -698,11 +915,23 @@
 
       }).join('') + '</select></div>' +
 
+      '<div class="hr-field"><label>适用职级</label><select id="f-level">' +
+
+      BONUS_LEVELS.map(function (lv) {
+
+        return '<option value="' + lv + '"' + ((rule.level || '主管') === lv ? ' selected' : '') + '>' + lv + '</option>';
+
+      }).join('') + '</select>' +
+
+      '<span class="field-hint">每条规则对应一个职级；同职级不可重复启用</span></div>' +
+
       '<div class="hr-field"><label>状态</label><select id="f-status">' +
 
       '<option value="enabled"' + (rule.status === 'enabled' ? ' selected' : '') + '>启用</option>' +
 
-      '<option value="disabled"' + (rule.status !== 'enabled' ? ' selected' : '') + '>停用</option></select></div>' +
+      '<option value="disabled"' + (rule.status !== 'enabled' ? ' selected' : '') + '>停用</option></select>' +
+
+      '<span class="field-hint">同职级 + 适用类型重叠时仅允许一条启用（见 GRILL_BONUS_RULES §4.3）</span></div>' +
 
       '<div class="hr-field"><label>最低成团人数</label><input type="number" id="f-min" min="2" value="' + rule.minGroupSize + '" />' +
 
@@ -734,7 +963,7 @@
 
       '<p class="hr-section-label" style="margin-top:24px">试算预览（含并列）</p>' +
 
-      '<p class="hr-hint" style="margin-top:0">孙丽、吴磊 88.0 并列第2 → 陈刚为第4</p>' +
+      '<p class="hr-hint" style="margin-top:0">预览仅展示职级「' + (rule.level || '主管') + '」样例 · 孙丽、吴磊 88.0 并列第2 → 陈刚为第4</p>' +
 
       '<div id="bonus-preview" class="q-table-wrap"></div>';
 
@@ -758,7 +987,13 @@
 
     function refreshPreview() {
 
-      document.getElementById('bonus-preview').innerHTML = renderPreviewTable(Object.assign({}, rule, readRuleFromForm()));
+      var lv = document.getElementById('f-level').value;
+
+      var sample = PREVIEW_SAMPLE.filter(function (p) { return p.level === lv; });
+
+      if (!sample.length) sample = PREVIEW_SAMPLE;
+
+      document.getElementById('bonus-preview').innerHTML = renderPreviewTable(Object.assign({}, rule, readRuleFromForm()), sample);
 
     }
 
@@ -789,6 +1024,8 @@
     refreshPreview();
 
     document.getElementById('f-min').addEventListener('input', refreshPreview);
+
+    document.getElementById('f-level').addEventListener('change', refreshPreview);
 
 
 
@@ -828,6 +1065,24 @@
 
     document.getElementById('btn-save-rule').addEventListener('click', function () {
 
+      var type = document.getElementById('f-type').value;
+
+      var level = document.getElementById('f-level').value;
+
+      var status = document.getElementById('f-status').value;
+
+      var excludeId = isNew ? null : rule.id;
+
+      var check = validateUniqueEnabledLevel(type, level, status, excludeId);
+
+      if (!check.ok) {
+
+        alert(check.message);
+
+        return;
+
+      }
+
       alert('规则已保存（原型）');
 
       location.href = 'hr-bonus-rules-list.html';
@@ -838,17 +1093,57 @@
 
 
 
+  function renderPlanBonusLevelPanel(containerId, planType) {
+
+    var el = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+
+    if (!el) return;
+
+    var rows = getEnabledRulesByLevel(planType || 'month');
+
+    var missing = rows.filter(function (x) { return !x.rule; }).map(function (x) { return x.level; });
+
+    el.innerHTML =
+
+      '<p class="hr-hint" style="margin-top:0">计划运行时按员工<strong>职级</strong>自动匹配下方启用规则（无需单选一条）。' +
+
+      (missing.length ? ' <span style="color:#cf1322">缺：' + missing.join('、') + '</span>' : '') + '</p>' +
+
+      '<div class="q-table-wrap"><table class="q-table"><thead><tr><th>职级</th><th>启用规则</th><th>奖扣摘要</th><th>最低人数</th></tr></thead><tbody>' +
+
+      rows.map(function (x) {
+
+        if (!x.rule) {
+
+          return '<tr class="perf-row--locked"><td><b>' + x.level + '</b></td><td colspan="3" class="muted">未配置启用规则 · <a href="hr-bonus-rule-edit.html?id=new">去新建</a></td></tr>';
+
+        }
+
+        return '<tr><td><b>' + x.level + '</b></td><td>' + x.rule.name + '</td><td style="font-size:12px">' + formatTiersSummary(x.rule) +
+
+          '</td><td>' + x.rule.minGroupSize + ' 人</td></tr>';
+
+      }).join('') + '</tbody></table></div>';
+
+  }
+
+
+
+  /** @deprecated 保留兼容；计划向导请用 renderPlanBonusLevelPanel */
+
   function renderPlanBonusOptions(selectId, selectedId, planType) {
 
     var sel = document.getElementById(selectId);
 
     if (!sel) return;
 
+    var rules = getEnabledRules(planType);
+
     sel.innerHTML = '<option value="">不启用排名奖扣</option>' +
 
-      getEnabledRules(planType).map(function (r) {
+      rules.map(function (r) {
 
-        return '<option value="' + r.id + '"' + (r.id === selectedId ? ' selected' : '') + '>' + r.name + '</option>';
+        return '<option value="' + r.id + '"' + (r.id === selectedId ? ' selected' : '') + '>' + r.level + ' · ' + r.name + '</option>';
 
       }).join('');
 
@@ -856,13 +1151,13 @@
 
 
 
-  function renderPlanBonusSettlement(containerId, ruleId, opts) {
+  function renderPlanBonusSettlement(containerId, planType, opts) {
 
     var el = document.getElementById(containerId);
 
     if (!el) return;
 
-    el.innerHTML = renderSettlementTable(PLAN_SETTLEMENT_ROWS, ruleId ? getRule(ruleId) : null, opts || {});
+    el.innerHTML = renderSettlementTable(PLAN_SETTLEMENT_ROWS, planType, opts || {});
 
   }
 
@@ -874,7 +1169,7 @@
 
     var plan = params.get('plan') || '2026-05';
 
-    var ruleId = params.get('rule') || 'br-standard-month';
+    var planType = plan.indexOf('Q') >= 0 || plan.indexOf('q') >= 0 ? 'quarter' : 'month';
 
     var title = document.getElementById('settle-plan-title');
 
@@ -884,7 +1179,7 @@
 
     }
 
-    renderPlanBonusSettlement('hr-settlement-body', ruleId, {});
+    renderPlanBonusSettlement('hr-settlement-body', planType, {});
 
   }
 
@@ -898,11 +1193,15 @@
 
   window.getHrBonusRule = getRule;
 
+  window.getHrBonusRulesByLevel = getEnabledRulesByLevel;
+
+  window.renderPlanBonusLevelPanel = renderPlanBonusLevelPanel;
+
   window.renderPlanBonusOptions = renderPlanBonusOptions;
 
   window.renderPlanBonusSettlement = renderPlanBonusSettlement;
 
-  window.renderPlanBonusPreview = function (cid, rid) { renderPlanBonusSettlement(cid, rid, {}); };
+  window.renderPlanBonusPreview = function (cid, planType) { renderPlanBonusSettlement(cid, planType || 'month', {}); };
 
   window.formatHrBonusSummary = formatTiersSummary;
 

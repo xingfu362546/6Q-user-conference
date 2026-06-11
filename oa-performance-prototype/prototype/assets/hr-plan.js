@@ -189,6 +189,10 @@
 
 
 
+  var detailPlanId = '2026-05';
+
+
+
   var DETAIL_SCOPE_PACKS = [
 
     { id: 'sp1', name: '信息部-核心岗', templateId: 't-m-staff', memberIds: ['p-zm', 'p-wf', 'p-lq', 'p-xy'], status: 'issued' },
@@ -978,7 +982,7 @@
       searchKw: '',
 
       issueSelected: {},
-      bonusRuleId: 'br-standard-month',
+      bonusRankingEnabled: true,
 
     };
 
@@ -1058,21 +1062,19 @@
 
           '<div class="hr-field"><label>上级评分截止</label><input type="datetime-local" value="2026-06-10T18:00" /></div>' +
 
-          '<div class="hr-field"><label>奖金规则</label>' +
+          '<div class="hr-field"><label>确认评分截止</label><input type="datetime-local" id="f-confirm-deadline" value="2026-06-15T18:00" /></div>' +
 
-          '<select id="f-bonus-rule"></select>' +
+          '<p class="hr-hint" style="margin-top:0">员工与直接上级共用同一确认截止；超时仅催办，未双方确认则阻塞奖金结算。</p>' +
 
-          '<span class="field-hint"><a href="hr-bonus-rules-list.html" target="_blank">管理奖金规则</a> · 范围包内同职级排名奖扣</span></div></div>';
+          '<div class="hr-field hr-field-full"><label>奖金规则（按职级自动匹配）</label>' +
 
-        if (typeof renderPlanBonusOptions === 'function') {
+          '<div id="f-bonus-level-panel"></div>' +
 
-          renderPlanBonusOptions('f-bonus-rule', wizardState.bonusRuleId || 'br-standard-month', 'month');
+          '<span class="field-hint"><a href="hr-bonus-rules-list.html" target="_blank">管理奖金规则</a> · 各职级独立配置；同职级不可重复启用</span></div></div>';
 
-          document.getElementById('f-bonus-rule').addEventListener('change', function (e) {
+        if (typeof renderPlanBonusLevelPanel === 'function') {
 
-            wizardState.bonusRuleId = e.target.value || null;
-
-          });
+          renderPlanBonusLevelPanel('f-bonus-level-panel', 'month');
 
         }
 
@@ -1152,11 +1154,17 @@
 
           '<div class="hr-summary-row"><span>范围包</span><b>' + wizardState.scopePacks.length + ' 个 · 共 ' + totalAssigned(wizardState.scopePacks) + ' 人</b></div>' +
 
-          '<div class="hr-summary-row"><span>奖金规则</span><b>' +
-          (wizardState.bonusRuleId && typeof getHrBonusRule === 'function' && getHrBonusRule(wizardState.bonusRuleId)
-            ? getHrBonusRule(wizardState.bonusRuleId).name : '不启用') + '</b></div>' +
+          '<div class="hr-summary-row"><span>奖金规则</span><b>按职级自动匹配（' +
 
-          '<div class="hr-summary-row"><span>开放时间</span><b>05-01 08:00 ~ 06-05 18:00</b></div></div>' +
+          (typeof getHrBonusRulesByLevel === 'function'
+
+            ? getHrBonusRulesByLevel('month').filter(function (x) { return x.rule; }).length
+
+            : 4) + ' 个职级已配置）</b></div>' +
+
+          '<div class="hr-summary-row"><span>开放时间</span><b>05-01 08:00 ~ 06-05 18:00</b></div>' +
+
+          '<div class="hr-summary-row"><span>确认评分截止</span><b>06-15 18:00</b>（员工+上级共用）</div></div>' +
 
           '<p class="hr-section-label" style="margin-top:16px">勾选要发放的范围包</p>' +
 
@@ -1392,7 +1400,9 @@
 
     document.getElementById('detail-tbody').innerHTML = rows.map(function (e) {
 
-      return '<tr><td><input type="checkbox" /></td><td>' + e.name + '</td><td>' + e.no + '</td><td>' + e.org + '</td>' +
+      var taskHref = 'hr-task-detail.html?plan=' + encodeURIComponent(detailPlanId) + '&no=' + encodeURIComponent(e.no) + '&from=plan';
+
+      return '<tr><td><input type="checkbox" /></td><td><a href="' + taskHref + '"><b>' + e.name + '</b></a></td><td>' + e.no + '</td><td>' + e.org + '</td>' +
 
         '<td>' + e.role + '</td><td>' + e.level + '</td><td>' + e.audience + '</td>' +
 
@@ -1400,7 +1410,7 @@
 
         '<td>' + statusTag(e.status) + '</td><td>' + e.submit + '</td>' +
 
-        '<td><a href="#">催办</a> · <a href="#">解锁</a></td></tr>';
+        '<td><a href="' + taskHref + '">查看详情</a> · <a href="#">催办</a> · <a href="#">解锁</a> · <a href="#" class="link-return-emp" data-name="' + e.name + '">退回至员工</a></td></tr>';
 
     }).join('') || '<tr><td colspan="12" style="text-align:center;color:#999;padding:24px">无匹配数据</td></tr>';
 
@@ -1416,7 +1426,9 @@
 
     var params = new URLSearchParams(location.search);
 
-    var plan = params.get('plan') || '2026-05';
+    detailPlanId = params.get('plan') || '2026-05';
+
+    var plan = detailPlanId;
 
     document.getElementById('plan-title').textContent = plan.indexOf('Q') >= 0
 
@@ -1443,7 +1455,7 @@
     refreshAll();
 
     if (typeof renderPlanBonusSettlement === 'function') {
-      renderPlanBonusSettlement('hr-plan-bonus-preview', 'br-standard-month');
+      renderPlanBonusSettlement('hr-plan-bonus-preview', 'month');
     }
 
     ['filter-org', 'filter-level', 'filter-status', 'filter-kw'].forEach(function (id) {
@@ -1457,6 +1469,22 @@
     document.getElementById('btn-batch-remind').addEventListener('click', function () { alert('已向筛选结果批量催办（原型）'); });
 
     document.getElementById('btn-export').addEventListener('click', function () { alert('导出明细（原型）'); });
+
+    document.getElementById('filter-reset').addEventListener('click', function () {
+      document.getElementById('filter-org').value = '全部';
+      document.getElementById('filter-level').value = '全部';
+      document.getElementById('filter-status').value = '全部';
+      document.getElementById('filter-kw').value = '';
+      renderDetailTable();
+    });
+
+    document.getElementById('detail-tbody').addEventListener('click', function (e) {
+      var link = e.target.closest('.link-return-emp');
+      if (!link) return;
+      e.preventDefault();
+      var reason = prompt('退回至员工 · ' + link.dataset.name + '：请输入原因（必填）');
+      if (reason && reason.trim()) alert('已退回至「' + link.dataset.name + '」，员工可在断点续改、数据保留（原型）');
+    });
 
   }
 

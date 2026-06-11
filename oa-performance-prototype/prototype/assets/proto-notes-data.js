@@ -779,8 +779,8 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-fc-desc">新建包 → 组织树勾选 + 职级/岗位筛选 → 预览人员 → 一人仅属一包</div></div>' +
           '<div class="proto-fc-arrow">↓ 写 scopePack[] · memberIds[] · status=draft</div>' +
           '<div class="proto-fc-node"><span class="proto-fc-badge">Step 3</span><strong>开放时间 & 奖金规则</strong>' +
-          '<div class="proto-fc-desc">启动时间 · 员工填写截止 · 上级评分截止 · 绑定 bonusRuleId</div></div>' +
-          '<div class="proto-fc-arrow">↓ 写 plan.deadlines · plan.bonusRuleId</div>' +
+          '<div class="proto-fc-desc">启动时间 · 截止 · 预览各职级奖金规则匹配（非单选 bonusRuleId）</div></div>' +
+          '<div class="proto-fc-arrow">↓ 写 plan.deadlines · plan.bonusRankingEnabled</div>' +
           '<div class="proto-fc-node"><span class="proto-fc-badge">Step 4</span><strong>模板匹配</strong>' +
           '<div class="proto-fc-desc">每个范围包手动选 1 张模板（月表/季表）；系统不自动人群×职级匹配</div></div>' +
           '<div class="proto-fc-arrow">↓ 写 scopePack.templateId</div>' +
@@ -866,7 +866,7 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-fc-arrow">↓ 必须早于</div>' +
           '<div class="proto-fc-node"><strong>上级评分截止</strong><div class="proto-fc-desc">领导待办截止；逾期仍可 HR 解锁后补评</div></div>' +
           '<div class="proto-fc-arrow">↓</div>' +
-          '<div class="proto-fc-node"><strong>奖金规则下拉</strong><div class="proto-fc-desc">引用规则库 bonusRuleId；停用规则不可选</div></div>' +
+          '<div class="proto-fc-node"><strong>奖金规则 · 职级矩阵</strong><div class="proto-fc-desc">按职级展示已启用规则；缺职级标红</div></div>' +
           '</div>' +
           '<p class="proto-sec">Step 4 · 模板匹配</p>' +
           '<div class="proto-flowchart">' +
@@ -896,7 +896,7 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-fc-node proto-fc-node--end">location → hr-plan-detail?plan=…</div>' +
           '</div>' +
           '<p class="proto-sec">员工侧后续（跨页面）</p>' +
-          '<div class="proto-flow">待办进入填表向导(8步) → 提交 snapshot → 推上级待办 → 领导评分 → 双节点完成后奖金引擎按 bonusRuleId 结算</div>' +
+          '<div class="proto-flow">…领导评分 → 双节点完成后奖金引擎按 planType+员工职级 匹配规则结算</div>' +
           '<p class="proto-sec">规则说明</p>' +
           '<ul><li>员工截止 &lt; 上级评分截止；截止后未交转逾期</li>' +
           '<li>未勾选包仅保存 draft，明细页可「发放待办」或补建新包</li>' +
@@ -959,7 +959,7 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-fc-group"><div class="proto-fc-group-title">HR · 计划明细 / 薪酬结算</div>' +
           '<div class="proto-fc-node">进度统计刷新（已提交/已评/逾期）</div>' +
           '<div class="proto-fc-arrow">↓</div>' +
-          '<div class="proto-fc-node">奖金引擎按 plan.bonusRuleId 重算<br><span class="proto-fc-desc">单元=同计划·同范围包·同职级 · 排名奖扣</span></div>' +
+          '<div class="proto-fc-node">奖金引擎按 planType+level 匹配规则重算<br><span class="proto-fc-desc">单元=同计划·同范围包·同职级 · 排名奖扣</span></div>' +
           '<div class="proto-fc-arrow">↓</div>' +
           '<div class="proto-fc-node proto-fc-node--end">HR 导出结算 · 员工仅只读回看自填内容</div>' +
           '</div></div>' +
@@ -1010,8 +1010,8 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">业务流程</p>' +
           '<div class="proto-flow">评分完成事件 → 引擎重算 → 本区预览排名/奖扣 → 薪酬页看全量</div>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>输入：planId + bonusRuleId + tasks(得分,评分状态)</li>' +
-          '<li>按 scopePackId+level 分组 → 降序排名 → 套加奖/扣减档</li>' +
+          '<ul><li>输入：planId + planType + tasks(职级,得分,评分状态)</li>' +
+          '<li>按 scopePackId+level 分组 → 匹配该职级启用规则 → 降序排名 → 套加奖/扣减档</li>' +
           '<li>输出：rank, bonusAdjust, bonusNote；未就绪写 pending 原因</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
           '<ul><li>纳入须：已提交 + 上级完 + 分管完 + 有 totalScore</li>' +
@@ -1060,10 +1060,12 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">业务流程</p>' +
           '<div class="proto-flow">维护规则 → 启用 → 新建计划时绑定 → 计划运行期引擎引用 → 停用后不可新绑</div>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>bonusRule 表：tiers[], minGroupSize, type, status</li>' +
+          '<ul><li>bonusRule 表：level, tiers[], minGroupSize, type, status</li>' +
           '<li>usedByPlans = 引用计数，防误删</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>规则与计划 N:1；改规则不 retro 已结束计划（版本快照为二期）。</p>',
+          '<p>规则与计划 N:1；改规则不 retro 已结束计划（版本快照为二期）。</p>' +
+          '<p><strong>按职级配置</strong>：每条规则绑定一个 level；计划按 planType+职级自动匹配，不绑单条 bonusRuleId。</p>' +
+          '<p><strong>同职级启用唯一</strong>：适用类型重叠时同 level 仅 1 条 enabled；冲突阻止保存。</p>',
       },
       {
         n: 2,
@@ -1073,11 +1075,12 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">数据流转</p>' +
           '<dl class="proto-kv">' +
           '<dt>规则名称</dt><dd>HR 识别</dd>' +
-          '<dt>适用类型</dt><dd>month/quarter/both，过滤计划可选列表</dd>' +
+          '<dt>适用职级</dt><dd>总监/经理/主管/职员；一条规则一个职级</dd>' +
+          '<dt>适用类型</dt><dd>month/quarter/both，过滤计划结算匹配</dd>' +
           '<dt>排名单元</dt><dd>同计划·同范围包·同职级；同分并列</dd>' +
           '<dt>奖扣摘要</dt><dd>bonusTiers + penaltyTiers 格式化预览</dd>' +
           '<dt>最低人数</dt><dd>&lt;N 人不排名（默认3）</dd>' +
-          '<dt>状态</dt><dd>enabled | disabled</dd>' +
+          '<dt>状态</dt><dd>enabled | disabled；<strong>同 level+类型重叠仅 1 条 enabled</strong></dd>' +
           '<dt>引用计划</dt><dd>被绑计划数</dd></dl>' +
           '<p class="proto-sec">规则说明</p>' +
           '<p>并列规则：两人同分同名次，下一名次跳过（1,1,3…）。</p>',
@@ -1115,7 +1118,8 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">数据流转</p>' +
           '<p>样例数据 PREVIEW_SAMPLE 含并列分；保存写规则库，不直接影响在跑计划直至 rebind。</p>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>最低成团人数 minGroupSize：单元内有效人数不足时不产生排名与奖扣。</p>',
+          '<p>最低成团人数 minGroupSize：单元内有效人数不足时不产生排名与奖扣。</p>' +
+          '<p>保存时校验 <code>validateUniqueEnabledLevel</code>：同职级+类型重叠已有启用规则则 alert 拦截。</p>',
       },
     ],
   },
@@ -1131,7 +1135,7 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">业务流程</p>' +
           '<div class="proto-flow">选计划 → 看实时结算全表 → 导出薪酬（二期对接 payroll）</div>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>读 plan + bonusRule + PLAN_SETTLEMENT_ROWS（正式=task 聚合）</li>' +
+          '<ul><li>读 plan + planType + 各职级 bonusRule + PLAN_SETTLEMENT_ROWS（正式=task 聚合）</li>' +
           '<li>导出 CSV/Excel 含 rank, bonusAdjust, employeeNo</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
           '<dl class="proto-kv">' +

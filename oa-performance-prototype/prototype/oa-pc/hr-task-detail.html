@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>待办详情 · 考核计划</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <link rel="stylesheet" href="../assets/supervisor-score.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb" id="task-detail-breadcrumb">
+          人力资源 &gt; 绩效管理 &gt;
+          <a href="hr-plan-list.html">计划管理</a> &gt;
+          <a href="hr-plan-detail.html?plan=2026-05" id="task-detail-plan-link">计划明细</a> &gt;
+          <strong>待办详情</strong>
+        </nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="q-card-panel">
+            <div id="task-detail-header"></div>
+            <div id="task-detail-banner"></div>
+            <div id="task-detail-body"></div>
+            <div class="task-detail-actions" id="task-detail-actions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/supervisor-score.js"></script>
+  <script src="../assets/perf-task-detail.js"></script>
+  <script>
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var plan = p.get('plan') || '2026-05';
+      var from = p.get('from') || 'plan';
+      var link = document.getElementById('task-detail-plan-link');
+      var crumb = document.getElementById('task-detail-breadcrumb');
+      if (from === 'results') {
+        if (crumb) crumb.innerHTML = '人力资源 &gt; 绩效管理 &gt; <a href="hr-perf-results-list.html">人员绩效结果</a> &gt; <strong>待办详情</strong>';
+      } else if (link) {
+        link.href = 'hr-plan-detail.html?plan=' + plan;
+      }
+      initOaShell({
+        topModule: 'hr',
+        sideActive: from === 'results' ? 'perf-results' : 'plan',
+        pageTabs: from === 'results' ? [
+          { key: 'home', label: '首页', href: '../index.html' },
+          { key: 'results', label: '结果明细', href: 'hr-perf-results-list.html', closable: true },
+          { key: 'task', label: '待办详情', href: location.href, closable: true },
+        ] : [
+          { key: 'home', label: '首页', href: '../index.html' },
+          { key: 'plan', label: '计划管理', href: 'hr-plan-list.html', closable: true },
+          { key: 'detail', label: '计划明细', href: 'hr-plan-detail.html?plan=' + plan, closable: true },
+          { key: 'task', label: '待办详情', href: location.href, closable: true },
+        ],
+        activeTab: 'task',
+      });
+      initPerfTaskDetail();
+    })();
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

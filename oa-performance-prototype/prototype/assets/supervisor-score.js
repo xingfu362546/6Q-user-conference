@@ -18,7 +18,7 @@
 
   var SUBMISSIONS = {
     'r-wf-202605': {
-      header: { employee: '王芳', dept: '信息部', role: '产品专员', period: '2026年5月', submittedAt: '2026-05-28 16:20' },
+      header: { employee: '王芳', dept: '信息部', role: '产品专员', period: '2026年5月', submittedAt: '2026-05-28 16:20', mergedReview: false },
       coreKrs: [
         {
           id: 'v1', block: 'V', weight: 25,
@@ -146,7 +146,7 @@
       ],
     },
     'r-lm-202605': {
-      header: { employee: '李明', dept: '信息部', role: '开发工程师', period: '2026年5月', submittedAt: '2026-05-27 18:05' },
+      header: { employee: '李明', dept: '信息部', role: '开发工程师', period: '2026年5月', submittedAt: '2026-05-27 18:05', mergedReview: true },
       coreKrs: [
         {
           id: 'v1', block: 'V', weight: 30,
@@ -402,14 +402,15 @@
 
   function defaultSupervisorState(sub) {
     var scores = {};
-    sub.coreKrs.concat(sub.regularKrs).forEach(function (kr) { scores[kr.id] = ''; });
-    sub.behavior.forEach(function (b) { scores[b.id] = ''; });
+    var divisionScores = {};
+    sub.coreKrs.concat(sub.regularKrs).forEach(function (kr) { scores[kr.id] = ''; divisionScores[kr.id] = ''; });
+    sub.behavior.forEach(function (b) { scores[b.id] = ''; divisionScores[b.id] = ''; });
     return {
       scores: scores,
+      divisionScores: divisionScores,
       adjustPlus: sub.adjust.plus.map(function (r) { return r.approved != null ? r.approved : r.selfScore; }),
       adjustMinus: sub.adjust.minus.map(function (r) { return r.approved != null ? r.approved : r.selfScore; }),
       comment: '',
-      nextMonthConfirmed: false,
       dirty: false,
     };
   }
@@ -506,11 +507,12 @@
       '</div>';
   }
 
-  function renderSummaryHtml(totals) {
+  function renderSummaryHtml(totals, roleLabel) {
+    roleLabel = roleLabel || '上级';
     var e = totals.errors;
-    return blockCapHtml('核心绩效上级分', totals.coreSum, BLOCK_LIMITS.V, 'coreOver', e) +
-      blockCapHtml('常规绩效上级分', totals.regularSum, BLOCK_LIMITS.X, 'regularOver', e) +
-      blockCapHtml('行为态度上级分', totals.behaviorSum, BLOCK_LIMITS.B, 'behaviorOver', e) +
+    return blockCapHtml('核心绩效' + roleLabel + '分', totals.coreSum, BLOCK_LIMITS.V, 'coreOver', e) +
+      blockCapHtml('常规绩效' + roleLabel + '分', totals.regularSum, BLOCK_LIMITS.X, 'regularOver', e) +
+      blockCapHtml('行为态度' + roleLabel + '分', totals.behaviorSum, BLOCK_LIMITS.B, 'behaviorOver', e) +
       '<div class="score-block-cap' + (e.vxOver ? ' is-error' : '') + '">核心+常规：<b>' + totals.vxSum + '</b> / ' + (BLOCK_LIMITS.V + BLOCK_LIMITS.X) +
       (e.vxOver ? '<span class="score-cap-warn">核心与常规合计超过 100 分</span>' : '') + '</div>' +
       '<div class="score-block-cap' + (e.workOver ? ' is-error' : '') + '">工作块合计：<b>' + totals.workSum + '</b> / ' + BLOCK_LIMITS.WORK +
@@ -543,8 +545,18 @@
     if (!sub) { document.body.innerHTML = '<p style="padding:24px">任务不存在</p>'; return; }
 
     var state = getSupervisorState(taskId);
+    if (!state.divisionScores) {
+      state.divisionScores = {};
+      sub.coreKrs.concat(sub.regularKrs).forEach(function (kr) { state.divisionScores[kr.id] = state.divisionScores[kr.id] || ''; });
+      sub.behavior.forEach(function (b) { state.divisionScores[b.id] = state.divisionScores[b.id] || ''; });
+    }
+    var mergedReview = !!(sub.header && sub.header.mergedReview);
     var listEl = document.getElementById('score-kr-list');
     var summaryEl = document.getElementById('score-summary');
+    var divListEl = document.getElementById('score-division-list');
+    var divSummaryEl = document.getElementById('score-division-summary');
+    var mergeHint = document.getElementById('division-merge-hint');
+    if (mergeHint) mergeHint.style.display = mergedReview ? '' : 'none';
     var refTabs = document.getElementById('score-ref-tabs');
     var refPanels = document.getElementById('score-ref-panels');
     var formDirty = false;
@@ -599,6 +611,47 @@
       bindLongTextToggles(listEl);
     }
 
+    function buildDivisionCards() {
+      if (!divListEl) return;
+      var allItems = sub.coreKrs.map(function (k) { return Object.assign({}, k, { block: 'V' }); })
+        .concat(sub.regularKrs.map(function (k) { return Object.assign({}, k, { block: 'X' }); }))
+        .concat(sub.behavior.map(function (b) {
+          return { id: b.id, block: 'B', o: b.name, weight: b.weight, selfScore: b.selfScore, standard: b.standard, event: b.event, m: b.event };
+        }));
+      divListEl.innerHTML = allItems.map(function (kr) {
+        var isBehavior = kr.block === 'B';
+        var titleShort = (kr.o || kr.name || '').length > 24 ? (kr.o || kr.name).slice(0, 24) + '…' : (kr.o || kr.name);
+        return '<div class="score-kr-card score-kr-card--division" data-id="' + kr.id + '">' +
+          '<div class="score-kr-head" style="cursor:default">' +
+          '<span class="block-tag ' + blockClass(kr.block) + '">' + blockLabel(kr.block) + '</span>' +
+          '<span class="title">' + titleShort + ' · 权重' + kr.weight + '%</span></div>' +
+          '<div class="score-kr-body" style="display:block;padding-top:8px">' +
+          '<div class="score-row">' +
+          '<div><label>员工自评</label><div class="readonly">' + kr.selfScore + ' 分</div></div>' +
+          '<div><label>分管分 ★</label><input type="number" step="0.1" min="0" data-division-id="' + kr.id + '" data-max="' + kr.weight + '" value="' + (state.divisionScores[kr.id] || '') + '" placeholder="0~' + kr.weight + '" ' + (mergedReview ? 'disabled title="同人合并，随上级分同步"' : '') + ' />' +
+          '<div class="max-hint">单项上限 ' + kr.weight + ' 分</div></div></div></div></div>';
+      }).join('');
+      divListEl.querySelectorAll('input[data-division-id]').forEach(function (inp) {
+        inp.addEventListener('input', function () { markDirty(); refresh(); });
+      });
+    }
+
+    function syncDivisionFromSupervisor() {
+      if (!mergedReview) return;
+      Object.keys(state.scores).forEach(function (k) { state.divisionScores[k] = state.scores[k]; });
+      if (!divListEl) return;
+      divListEl.querySelectorAll('input[data-division-id]').forEach(function (inp) {
+        inp.value = state.divisionScores[inp.dataset.divisionId] || '';
+      });
+    }
+
+    function updateSubmitButton(supTotals, divTotals) {
+      var btn = document.getElementById('btn-submit');
+      if (!btn) return;
+      var divOk = mergedReview ? supTotals.valid : (divTotals && divTotals.valid);
+      btn.disabled = !(supTotals.valid && divOk);
+    }
+
     function updateBlockCapLines(totals) {
       var e = totals.errors;
       var map = { V: { sum: totals.coreSum, limit: BLOCK_LIMITS.V, over: e.coreOver }, X: { sum: totals.regularSum, limit: BLOCK_LIMITS.X, over: e.regularOver }, B: { sum: totals.behaviorSum, limit: BLOCK_LIMITS.B, over: e.behaviorOver } };
@@ -621,7 +674,14 @@
       listEl.querySelectorAll('input[data-score-id]').forEach(function (inp) {
         state.scores[inp.dataset.scoreId] = inp.value;
       });
+      if (divListEl) {
+        divListEl.querySelectorAll('input[data-division-id]').forEach(function (inp) {
+          state.divisionScores[inp.dataset.divisionId] = inp.value;
+        });
+      }
+      syncDivisionFromSupervisor();
       var totals = calcTotals(sub, state);
+      var divTotals = calcTotals(sub, { scores: state.divisionScores, adjustPlus: state.adjustPlus, adjustMinus: state.adjustMinus });
       listEl.querySelectorAll('input[data-score-id]').forEach(function (inp) {
         var id = inp.dataset.scoreId;
         var v = parseFloat(inp.value);
@@ -639,11 +699,19 @@
       updateBlockCapLines(totals);
       var hasBlockErr = totals.errors.coreOver || totals.errors.regularOver || totals.errors.behaviorOver || totals.errors.vxOver || totals.errors.workOver;
       summaryEl.classList.toggle('is-error', hasBlockErr);
-      summaryEl.innerHTML = renderSummaryHtml(totals);
-      document.getElementById('btn-submit').disabled = !totals.valid;
+      summaryEl.innerHTML = renderSummaryHtml(totals, '上级');
+      if (divSummaryEl) {
+        var divErr = divTotals.errors.coreOver || divTotals.errors.regularOver || divTotals.errors.behaviorOver || divTotals.errors.vxOver || divTotals.errors.workOver;
+        divSummaryEl.classList.toggle('is-error', divErr && !mergedReview);
+        divSummaryEl.innerHTML = mergedReview
+          ? '<div class="hr-hint" style="margin:0">同人合并评：分管列已随上级分自动同步。</div>'
+          : renderSummaryHtml(divTotals, '分管');
+      }
+      updateSubmitButton(totals, divTotals);
     }
 
     buildKrCards();
+    buildDivisionCards();
 
     var adjPlusEl = document.getElementById('adjust-plus-body');
     var adjMinusEl = document.getElementById('adjust-minus-body');
@@ -664,15 +732,14 @@
       });
     });
 
-    document.getElementById('score-comment').value = state.comment || '';
-    document.getElementById('score-comment').addEventListener('input', function (e) {
-      state.comment = e.target.value;
-      markDirty();
-    });
-
-    var goalsEl = document.getElementById('next-month-goals');
-    goalsEl.innerHTML = renderNextMonthGoalsHtml(sub.nextMonthKrs);
-    bindLongTextToggles(goalsEl);
+    var commentEl = document.getElementById('score-comment');
+    if (commentEl) {
+      commentEl.value = state.comment || '';
+      commentEl.addEventListener('input', function (e) {
+        state.comment = e.target.value;
+        markDirty();
+      });
+    }
 
     refTabs.innerHTML =
       '<button type="button" class="is-active" data-ref="summary">自评总结</button>' +
@@ -727,10 +794,12 @@
 
     document.getElementById('btn-submit').addEventListener('click', function () {
       var totals = calcTotals(sub, state);
-      if (!totals.valid) { alert('请修正标红项后再提交'); return; }
+      var divTotals = calcTotals(sub, { scores: state.divisionScores, adjustPlus: state.adjustPlus, adjustMinus: state.adjustMinus });
+      if (!totals.valid) { alert('请修正上级评分明细标红项后再提交'); return; }
+      if (!mergedReview && !divTotals.valid) { alert('请完成分管评分并修正标红项'); return; }
       clearDraft(taskId);
       REVIEW_LIST.forEach(function (t) { if (t.id === taskId) t.status = 'done'; });
-      alert('评分已提交，返回列表');
+      alert('上级与分管评分已提交。员工与直接上级将进入「待确认」阶段，双方确认后方可结算奖金。');
       location.href = 'supervisor-review-list.html';
     });
   }

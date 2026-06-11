@@ -39,17 +39,19 @@
               <tbody id="adjust-minus-body"></tbody>
             </table>
 
-            <div class="score-section-title">员工原文 · 对照</div>
-            <div class="score-ref-tabs" id="score-ref-tabs"></div>
-            <div id="score-ref-panels"></div>
-
             <div class="score-section-title">领导评语（选填）</div>
             <div class="score-comment">
               <textarea id="score-comment" placeholder="填写本期综合评价…"></textarea>
             </div>
 
-            <div class="score-section-title">下月目标 · 只读查看（不打分、无需确认）</div>
-            <div class="score-next-goals score-next-goals--readonly" id="next-month-goals"></div>
+            <div class="score-section-title">下月目标 · 对照查看（不打分）</div>
+            <div class="score-ref-tabs" id="score-ref-tabs"></div>
+            <div id="score-ref-panels"></div>
+
+            <div class="score-section-title" id="division-section-title">分管领导评分</div>
+            <p class="hr-hint" id="division-merge-hint" style="margin-top:0;display:none">上级与分管为同一人：提交上级分时自动同步至分管列。</p>
+            <div class="score-kr-list score-kr-list--division" id="score-division-list"></div>
+            <div class="score-summary" id="score-division-summary"></div>
 
             <div class="score-actions">
               <button class="q-btn" type="button" id="btn-return-all">退回整表至员工</button>

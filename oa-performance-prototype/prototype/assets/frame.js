@@ -26,12 +26,13 @@
     { id: 'recruit', label: '招聘管理', open: false, items: [] },
     { id: 'perf', label: '绩效管理', open: true, items: [
       { label: '计划管理', href: 'hr-plan-list.html', key: 'plan' },
+      { label: '人员绩效结果', href: 'hr-perf-results-list.html', key: 'perf-results' },
       { label: '奖金规则', href: 'hr-bonus-rules-list.html', key: 'bonus' },
       { label: '员工月度绩效', href: '#', key: 'legacy-month', legacy: true },
       { label: '员工季度绩效', href: '#', key: 'legacy-quarter', legacy: true },
     ]},
     { id: 'pay', label: '薪酬管理', open: true, items: [
-      { label: '绩效奖金结算', href: 'hr-bonus-settlement.html?plan=2026-05&rule=br-standard-month', key: 'bonus-settle' },
+      { label: '绩效奖金结算', href: 'hr-bonus-settlement.html?plan=2026-05', key: 'bonus-settle' },
     ]},
   ];
 
@@ -108,9 +109,16 @@
   function initOaShell(cfg) {
     cfg = cfg || {};
     renderOaTopbar(cfg.topModule || 'personal');
-    var groups = cfg.topModule === 'hr' ? HR_SIDEBAR : PERSONAL_SIDEBAR;
+    var groups = cfg.topModule === 'hr' ? JSON.parse(JSON.stringify(HR_SIDEBAR)) : PERSONAL_SIDEBAR;
+    if (cfg.topModule === 'hr' && window.PerfPermissions) {
+      groups.forEach(function (g) {
+        if (g.id === 'perf') g.items = PerfPermissions.filterHrSidebarItems(g.items);
+        if (g.id === 'pay') g.items = PerfPermissions.filterHrSidebarItems(g.items);
+      });
+    }
     renderOaSidebar(groups, cfg.sideActive || 'perf-list');
     if (cfg.pageTabs) renderOaPageTabs(cfg.pageTabs, cfg.activeTab);
+    if (cfg.topModule === 'hr' && window.PerfPermissions) PerfPermissions.renderPermBanner();
   }
 
   function mpIcon(name, color, badge) {

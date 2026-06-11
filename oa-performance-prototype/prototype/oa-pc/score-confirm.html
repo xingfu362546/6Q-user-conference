@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>确认评分 · 个人中心</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <strong>确认评分</strong></nav>
+        <div class="q-oa-page">
+          <div class="q-card-panel" id="confirm-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/score-confirm.js"></script>
+  <script>
+    initOaShell({ topModule: 'personal', sideActive: 'perf-list' });
+    ScoreConfirm.initPage({ role: 'employee', platform: 'oa' });
+  </script>
+</body>
+</html>

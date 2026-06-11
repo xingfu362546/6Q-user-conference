@@ -6,6 +6,7 @@
   <title>计划明细 · 考核计划</title>
   <link rel="stylesheet" href="../assets/6q-theme.css" />
   <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
   <link rel="stylesheet" href="../assets/proto-notes.css" />
 </head>
 <body>
@@ -43,7 +44,7 @@
             <div style="display:flex;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
               <h3 style="margin:0;font-size:15px;flex:1">奖金实时结算</h3>
               <a class="q-btn" href="hr-bonus-rules-list.html">规则配置</a>
-              <a class="q-btn q-btn-primary" href="hr-bonus-settlement.html?plan=2026-05&rule=br-standard-month">薪酬视图</a>
+              <a class="q-btn q-btn-primary" href="hr-bonus-settlement.html?plan=2026-05">薪酬视图</a>
             </div>
             <p class="hr-hint" style="margin:0 0 12px">上级评分 + 分管领导评分均完成后自动纳入排名；未完成的显示待结算原因。员工端不可见。</p>
             <div id="hr-plan-bonus-preview"></div>
@@ -51,18 +52,33 @@
 
           <p class="hr-section-label" style="margin:16px 0 8px">员工任务列表</p>
 
-          <div class="hr-filter-bar">
-            <label>主要组织
-              <select id="filter-org"></select>
-            </label>
-            <label>职级
-              <select id="filter-level"></select>
-            </label>
-            <label>任务状态
-              <select id="filter-status"></select>
-            </label>
-            <input id="filter-kw" type="search" placeholder="姓名 / 工号" style="width:160px" />
-            <span class="hr-filter-count" id="filter-count">共 0 人</span>
+          <div class="perf-filter-panel">
+            <div class="perf-filter-panel__head">
+              <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+              筛选条件
+            </div>
+            <div class="perf-filter-grid">
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">主要组织</span>
+                <select id="filter-org"></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">职级</span>
+                <select id="filter-level"></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">任务状态</span>
+                <select id="filter-status"></select>
+              </div>
+              <div class="perf-filter-field perf-filter-field--search">
+                <span class="perf-filter-label">姓名 / 工号</span>
+                <input id="filter-kw" type="search" placeholder="输入关键字搜索…" />
+              </div>
+            </div>
+            <div class="perf-filter-footer">
+              <button type="button" class="perf-filter-reset" id="filter-reset">重置筛选</button>
+              <span id="filter-count">共 0 人</span>
+            </div>
           </div>
 
           <div class="q-table-wrap">
