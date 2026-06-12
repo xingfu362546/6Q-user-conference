@@ -581,6 +581,190 @@
   gap: var(--space-2);
 }
 
+/* 页面路径序列条件 */
+.ut-rule-row[data-active-panel="path_seq"] {
+  align-items: flex-start;
+}
+.ut-rule-row[data-active-panel="path_seq"] .ut-rule-row__body {
+  flex: 1 1 100%;
+  min-width: 280px;
+}
+.ut-rule-row[data-active-panel="path_seq"] .ut-rule-row__type {
+  max-width: 140px;
+}
+.ut-path-seq-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+.ut-path-seq__hint {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+}
+.ut-path-seq__hint code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.ut-path-seq__mode-hint {
+  margin: -4px 0 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.ut-path-seq__steps-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.ut-path-seq__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.ut-path-seq__step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+.ut-path-seq__badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.ut-path-seq__step .ut-select[data-seq-match] {
+  min-width: 88px;
+  max-width: 100px;
+}
+.ut-path-seq__path {
+  flex: 1;
+  min-width: 180px !important;
+  width: auto !important;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.ut-path-seq__del {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+.ut-path-seq-panel [data-seq-mode] {
+  max-width: 320px;
+}
+.ut-path-seq__flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 10px 12px;
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+.ut-path-seq__flow-node {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  max-width: 100%;
+  word-break: break-all;
+}
+.ut-path-seq__flow-arrow {
+  color: var(--accent);
+  font-weight: 700;
+}
+.ut-path-seq__flow-empty {
+  color: var(--text-muted);
+}
+
+/* 例行更新调度 */
+.ut-cron-schedule {
+  margin-top: var(--space-2);
+}
+.ut-cron-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.ut-cron-summary {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.ut-cron-summary strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #047857;
+  letter-spacing: 0.02em;
+}
+.ut-cron-summary p {
+  margin: 0 0 6px;
+}
+.ut-cron-summary__next {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 0 !important;
+}
+.ut-cron-summary__next span {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.ut-cron-notes {
+  margin: var(--space-3) 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.ut-cron-notes li {
+  margin-bottom: 4px;
+}
+.ut-update-manual[hidden],
+.ut-cron-schedule[hidden] {
+  display: none !important;
+}
+.ut-cell-schedule {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.ut-cell-schedule small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
 /* Split layout (history) */
 .ut-split {
   display: grid;

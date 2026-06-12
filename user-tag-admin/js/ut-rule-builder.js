@@ -297,6 +297,140 @@
     return panel;
   }
 
+  function createPathSeqStep(stepIndex, defaults) {
+    defaults = defaults || {};
+    var step = el("div", "ut-path-seq__step", { "data-path-step": "" });
+    var badge = el("span", "ut-path-seq__badge", { text: String(stepIndex) });
+
+    var match = el("select", "ut-select", { "data-seq-match": "" });
+    fillSelect(match, O.pathSeqMatch, defaults.match || "eq");
+
+    var path = el("input", "ut-input ut-path-seq__path", {
+      type: "text",
+      "data-seq-path": "",
+      placeholder: "如 /pages/course/detail",
+      list: "ut-path-seq-presets",
+    });
+    if (defaults.path) path.value = defaults.path;
+
+    var del = el("button", "ut-btn ut-btn--sm ut-btn--ghost ut-path-seq__del", {
+      type: "button",
+      "data-seq-step-delete": "",
+      text: "删",
+      title: "删除此步骤",
+    });
+    if (stepIndex <= 2) del.hidden = true;
+
+    step.appendChild(badge);
+    step.appendChild(match);
+    step.appendChild(path);
+    step.appendChild(del);
+    return step;
+  }
+
+  function createPathSeqPanel() {
+    var panel = el("div", "ut-rule-body ut-path-seq-panel", { "data-panel": "path_seq" });
+
+    var hint = el("div", "ut-path-seq__hint", {
+      html:
+        "<strong>数据要求</strong>：依赖埋点上报<strong>带先后顺序</strong>的路由序列（非无序集合）。" +
+        "定时批次内按 <code>enter_time</code> 排序后做路径匹配。",
+    });
+
+    var modeLbl = el("span", "ut-cmp__label", { text: "匹配模式" });
+    var mode = el("select", "ut-select", { "data-seq-mode": "" });
+    fillSelect(mode, O.pathSeqModes, "subsequence");
+
+    var modeHint = el("p", "ut-path-seq__mode-hint", {
+      "data-seq-mode-hint": "",
+      text: O.pathSeqModes[0].hint,
+    });
+
+    mode.addEventListener("change", function () {
+      var m = O.pathSeqModes.find(function (x) {
+        return x.value === mode.value;
+      });
+      if (modeHint) modeHint.textContent = (m && m.hint) || "";
+      panel.dispatchEvent(new CustomEvent("rule-change", { bubbles: true }));
+    });
+
+    var stepsHead = el("div", "ut-path-seq__steps-head");
+    stepsHead.appendChild(el("span", "ut-cmp__label", { text: "路径步骤（至少 2 步）" }));
+    stepsHead.appendChild(
+      el("button", "ut-btn ut-btn--sm", {
+        type: "button",
+        "data-seq-add-step": "",
+        text: "＋ 添加步骤",
+      })
+    );
+
+    var steps = el("div", "ut-path-seq__steps", { "data-seq-steps": "" });
+    steps.appendChild(createPathSeqStep(1, { path: "/pages/course/list", match: "eq" }));
+    steps.appendChild(createPathSeqStep(2, { path: "/pages/course/detail", match: "eq" }));
+    steps.appendChild(createPathSeqStep(3, { path: "/pages/order/confirm", match: "prefix" }));
+
+    steps.addEventListener("click", function (e) {
+      if (e.target.closest("[data-seq-step-delete]")) {
+        var all = steps.querySelectorAll("[data-path-step]");
+        if (all.length <= 2) return;
+        e.target.closest("[data-path-step]").remove();
+        steps.querySelectorAll("[data-path-step]").forEach(function (node, i) {
+          var b = node.querySelector(".ut-path-seq__badge");
+          if (b) b.textContent = String(i + 1);
+          var d = node.querySelector("[data-seq-step-delete]");
+          if (d) d.hidden = i < 2;
+        });
+        panel.dispatchEvent(new CustomEvent("rule-change", { bubbles: true }));
+      }
+    });
+
+    panel.addEventListener("click", function (e) {
+      if (!e.target.closest("[data-seq-add-step]")) return;
+      var n = steps.querySelectorAll("[data-path-step]").length + 1;
+      if (n > 8) return;
+      steps.appendChild(createPathSeqStep(n, { match: "contains" }));
+      panel.dispatchEvent(new CustomEvent("rule-change", { bubbles: true }));
+    });
+
+    panel.addEventListener("input", function (e) {
+      if (e.target.closest("[data-seq-path], [data-seq-match]")) {
+        panel.dispatchEvent(new CustomEvent("rule-change", { bubbles: true }));
+      }
+    });
+
+    var flow = el("div", "ut-path-seq__flow", { "data-seq-flow-preview": "", "aria-hidden": "true" });
+
+    function refreshFlow() {
+      var paths = [];
+      steps.querySelectorAll("[data-path-step]").forEach(function (node) {
+        var p = node.querySelector("[data-seq-path]")?.value.trim();
+        if (p) paths.push(p);
+      });
+      flow.innerHTML = paths.length
+        ? paths
+            .map(function (p, i) {
+              var chip = "<span class=\"ut-path-seq__flow-node\">" + p + "</span>";
+              return i < paths.length - 1 ? chip + "<span class=\"ut-path-seq__flow-arrow\">→</span>" : chip;
+            })
+            .join("")
+        : "<span class=\"ut-path-seq__flow-empty\">请填写路径步骤</span>";
+    }
+
+    steps.addEventListener("input", refreshFlow);
+    mode.addEventListener("change", refreshFlow);
+    refreshFlow();
+
+    panel.appendChild(hint);
+    panel.appendChild(modeLbl);
+    panel.appendChild(mode);
+    panel.appendChild(modeHint);
+    panel.appendChild(createTimeRange(30));
+    panel.appendChild(stepsHead);
+    panel.appendChild(steps);
+    panel.appendChild(flow);
+    return panel;
+  }
+
   function createRuleGroup(rowTypes) {
     var types = rowTypes && rowTypes.length ? rowTypes : ["attr"];
     var group = el("div", "ut-rule-nested", { "data-rule-group": "" });
@@ -367,6 +501,7 @@
       attr: createAttrPanel(),
       event: createEventPanel(),
       page: createPagePanel(),
+      path_seq: createPathSeqPanel(),
     };
     Object.keys(panels).forEach(function (k) {
       bodyWrap.appendChild(panels[k]);
@@ -422,7 +557,7 @@
     });
     if (topLevelRows.length === 0) {
       var group = list.querySelector("[data-rule-group]");
-      ["attr", "event", "page"].forEach(function (t) {
+      ["attr", "path_seq"].forEach(function (t) {
         var row = createRuleRow(t);
         if (group) list.insertBefore(row, group);
         else list.appendChild(row);
@@ -513,6 +648,19 @@
       }
       if (op.value === "empty" || op.value === "not_empty") return opLabel;
       return opLabel + " " + (v1?.value || "…");
+    },
+    getPathSeqText: function (panel) {
+      if (!panel) return "";
+      var mode =
+        panel.querySelector("[data-seq-mode]")?.selectedOptions[0]?.textContent || "子序列";
+      var time = window.UT_RULE_BUILDER.getTimeText(panel);
+      var steps = [];
+      panel.querySelectorAll("[data-path-step]").forEach(function (node, i) {
+        var match = node.querySelector("[data-seq-match]")?.selectedOptions[0]?.textContent || "";
+        var path = node.querySelector("[data-seq-path]")?.value.trim() || "…";
+        steps.push(String.fromCharCode(65 + i) + "「" + match + " " + path + "」");
+      });
+      return time + " " + mode + "：" + steps.join(" → ");
     },
   };
 

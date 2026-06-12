@@ -6,6 +6,7 @@ window.UT_RULE_OPTIONS = {
     { value: "attr", label: "用户属性" },
     { value: "event", label: "行为事件" },
     { value: "page", label: "页面行为" },
+    { value: "path_seq", label: "页面路径序列" },
   ],
 
   /* 通用：时间范围（行为事件 / 页面行为） */
@@ -82,5 +83,31 @@ window.UT_RULE_OPTIONS = {
   pageMetrics: [
     { value: "visit_count", label: "访问次数", unit: "次", valueType: "number" },
     { value: "stay_seconds", label: "停留时长", unit: "秒", valueType: "number" },
+  ],
+
+  /* 页面路径序列（A→B→C） */
+  pathSeqModes: [
+    {
+      value: "subsequence",
+      label: "子序列（允许中间经过其他页）",
+      hint: "在时间窗口内按访问先后，依次出现 A、B、C 即可",
+    },
+    {
+      value: "strict_adjacent",
+      label: "严格相邻（一步接一步）",
+      hint: "B 必须紧接在 A 之后进入，C 紧接在 B 之后",
+    },
+  ],
+  pathSeqMatch: [
+    { value: "eq", label: "等于" },
+    { value: "contains", label: "包含" },
+    { value: "prefix", label: "前缀匹配" },
+  ],
+  pathSeqPresets: [
+    { value: "/pages/index/index", label: "首页" },
+    { value: "/pages/course/list", label: "课程列表" },
+    { value: "/pages/course/detail", label: "课程详情" },
+    { value: "/pages/order/confirm", label: "下单确认" },
+    { value: "/pages/user/profile", label: "个人中心" },
   ],
 };

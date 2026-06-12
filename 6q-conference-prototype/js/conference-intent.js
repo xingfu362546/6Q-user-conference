@@ -495,7 +495,9 @@
           lv.label +
           "</span></td>" +
           "<td>" +
-          (chips || "—") +
+          (chips
+            ? '<div class="intent-hit-tags">' + chips + "</div>"
+            : "—") +
           "</td>" +
           "<td>" +
           tipCell(followShort, s.follow.content) +
@@ -611,6 +613,75 @@
     }
   }
 
+  function renderFollowBlock(s) {
+    if (s.follow.time === "—") {
+      return (
+        '<p class="intent-empty">跟进内容由会务人员在「跟进记录」中填写。</p>' +
+        '<a href="conference-detail-basic.html">去跟进记录</a>'
+      );
+    }
+    return (
+      '<div class="intent-follow-record">' +
+      '<div class="intent-follow-record__head"><span class="intent-summary__tag">' +
+      escapeHtml(s.follow.tag) +
+      "</span><time>" +
+      escapeHtml(s.follow.time) +
+      "</time></div>" +
+      '<p class="intent-follow-record__body">' +
+      escapeHtml(s.follow.content) +
+      "</p></div>"
+    );
+  }
+
+  function renderAiBlock(s) {
+    if (!s.ai || s.ai.summary === "—") {
+      return (
+        '<p class="intent-empty">保存跟进或触发分析后，将基于标签与跟进内容生成提炼（AI 权重最高 ' +
+        AI_SCORE_MAX +
+        " 分）。</p>"
+      );
+    }
+    return (
+      '<div class="intent-ai-card">' +
+      '<div class="intent-ai-card__score">AI 权重分 <strong>' +
+      s.ai.score +
+      "</strong> / " +
+      AI_SCORE_MAX +
+      "</div>" +
+      '<p class="intent-ai-card__summary">' +
+      escapeHtml(s.ai.summary) +
+      "</p>" +
+      '<p class="intent-ai-card__full">' +
+      escapeHtml(s.ai.full) +
+      '</p><button type="button" class="q-btn q-btn--sm" id="btn-reanalyze">重新分析</button></div>'
+    );
+  }
+
+  function renderRecommendBlock(s) {
+    if (!window.CourseRecommend) {
+      return '<p class="intent-empty">课程推荐模块未加载</p>';
+    }
+    return window.CourseRecommend.renderDrawerPanel(s);
+  }
+
+  function renderInsightPanel(s) {
+    return (
+      '<div class="intent-drawer-stack">' +
+      '<section class="intent-drawer-section">' +
+      '<h3 class="intent-drawer-section__title">会务跟进</h3>' +
+      renderFollowBlock(s) +
+      "</section>" +
+      '<section class="intent-drawer-section">' +
+      '<h3 class="intent-drawer-section__title">AI 提炼分析</h3>' +
+      renderAiBlock(s) +
+      "</section>" +
+      '<section class="intent-drawer-section intent-drawer-section--recommend">' +
+      renderRecommendBlock(s) +
+      "</section>" +
+      "</div>"
+    );
+  }
+
   function openDrawer(memberId) {
     var s = STUDENTS.find(function (x) {
       return x.id === memberId;
@@ -644,46 +715,10 @@
         })
         .join("");
 
-    document.getElementById("panel-follow").innerHTML =
-      s.follow.time === "—"
-        ? '<p class="intent-empty">跟进内容由会务人员在「跟进记录」中填写。</p><a href="#">去跟进记录</a>'
-        : '<div class="intent-follow-record">' +
-          '<div class="intent-follow-record__head"><span class="intent-summary__tag">' +
-          escapeHtml(s.follow.tag) +
-          "</span><time>" +
-          escapeHtml(s.follow.time) +
-          "</time></div>" +
-          '<p class="intent-follow-record__body">' +
-          escapeHtml(s.follow.content) +
-          "</p></div>";
-
-    document.getElementById("panel-ai").innerHTML =
-      !s.ai || s.ai.summary === "—"
-        ? '<p class="intent-empty">保存跟进或触发分析后，将基于标签与跟进内容生成提炼（AI 权重最高 ' +
-          AI_SCORE_MAX +
-          " 分）。</p>"
-        : '<div class="intent-ai-card">' +
-          '<div class="intent-ai-card__score">AI 权重分 <strong>' +
-          s.ai.score +
-          "</strong> / " +
-          AI_SCORE_MAX +
-          "</div>" +
-          "<p class=\"intent-ai-card__summary\">" +
-          escapeHtml(s.ai.summary) +
-          "</p>" +
-          '<p class="intent-ai-card__full">' +
-          escapeHtml(s.ai.full) +
-          '</p><button type="button" class="q-btn q-btn--sm" id="btn-reanalyze">重新分析</button></div>';
-
+    var insightEl = document.getElementById("panel-insight");
+    insightEl.innerHTML = renderInsightPanel(s);
     if (window.CourseRecommend) {
-      document.getElementById("panel-course").innerHTML =
-        window.CourseRecommend.renderDrawerPanel(s);
-      window.CourseRecommend.bindCopyButtons(
-        document.getElementById("panel-course")
-      );
-    } else {
-      document.getElementById("panel-course").innerHTML =
-        '<p class="intent-empty">课程推荐模块未加载</p>';
+      window.CourseRecommend.bindCopyButtons(insightEl);
     }
 
     document.getElementById("panel-community").innerHTML =

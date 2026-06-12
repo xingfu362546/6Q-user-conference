@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>页面路径序列规则 · 原型</title>
+  <link rel="stylesheet" href="css/ut-tokens.css" />
+  <link rel="stylesheet" href="css/ut-shell.css" />
+  <link rel="stylesheet" href="css/ut-components.css" />
+  <style>
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--space-4);
+      align-items: start;
+    }
+    @media (max-width: 1100px) { .demo-grid { grid-template-columns: 1fr; } }
+    .demo-side {
+      position: sticky;
+      top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .demo-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .demo-card h2 { margin: 0 0 10px; font-size: 14px; }
+    .demo-card pre {
+      margin: 0;
+      padding: 10px;
+      background: var(--bg-muted);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      line-height: 1.5;
+      overflow: auto;
+    }
+    .demo-mermaid {
+      padding: 8px;
+      background: var(--bg-muted);
+      border-radius: var(--radius-sm);
+      overflow: auto;
+    }
+    .demo-q {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .demo-q strong { color: #b45309; }
+  </style>
+</head>
+<body class="ut-body">
+  <div class="ut-app">
+    <header class="ut-topbar" id="ut-topbar-mount"></header>
+    <div class="ut-row">
+      <div id="ut-side-mount"></div>
+      <div class="ut-main">
+        <div class="ut-workpad">
+          <nav class="ut-breadcrumb">
+            <a href="index.html">首页</a> /
+            <a href="tag-create.html">新增标签</a> /
+            <strong>路径序列原型</strong>
+          </nav>
+          <div class="ut-page-head">
+            <div class="ut-page-head__left">
+              <h1>页面路径序列 · A→B→C</h1>
+              <p class="ut-page-head__desc">第四类规则条件：在时间窗口内按访问先后匹配路径链。完整配置入口见 <a href="tag-create.html">新增标签</a>。</p>
+            </div>
+            <a class="ut-btn ut-btn--primary" href="tag-create.html">打开新增标签</a>
+          </div>
+
+          <div class="demo-q" role="note">
+            <strong>Grill #1（待你确认）</strong>：定时上报的「路由路径集合」是否<strong>带 enter_time 且服务端按时间排序</strong>？
+            推荐答：<strong>是</strong>——集合只是传输形态，计算时必须还原为有序序列；否则 A→B→C 无法判定。
+          </div>
+
+          <div class="demo-grid" style="margin-top:var(--space-4)">
+            <div class="ut-card">
+              <div class="ut-rule-toolbar" style="margin-bottom:var(--space-3)">
+                <div class="ut-rule-insight">
+                  <strong>规则解读</strong>
+                  <span data-rule-summary>—</span>
+                </div>
+              </div>
+              <div class="ut-rule-panel">
+                <div class="ut-rule-logic">
+                  <div class="ut-rule-logic__op">
+                    <div class="ut-logic-switch" data-logic-switch role="group">
+                      <button type="button" class="is-active" data-logic="and">且</button>
+                      <button type="button" data-logic="or">或</button>
+                    </div>
+                    <span class="ut-rule-logic__op-label" data-logic-label>且</span>
+                  </div>
+                  <div class="ut-rule-logic__body" data-rule-list></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-side">
+              <div class="demo-card">
+                <h2>匹配流程（子序列模式）</h2>
+                <div class="demo-mermaid mermaid">
+flowchart TD
+  B[定时批次 route_logs] --> S[按 enter_time 排序]
+  S --> W[截取时间窗口]
+  W --> M{子序列匹配 A→B→C?}
+  M -->|是| H[命中标签]
+  M -->|否| N[未命中]
+                </div>
+              </div>
+              <div class="demo-card">
+                <h2>上报 payload 示例（推荐）</h2>
+                <pre>{
+  "member_id": "m10001",
+  "batch_time": "2025-04-06T10:00:00Z",
+  "routes": [
+    { "path": "/pages/course/list", "enter_time": "…09:12:01" },
+    { "path": "/pages/course/detail", "enter_time": "…09:12:45" },
+    { "path": "/pages/user/profile", "enter_time": "…09:13:02" },
+    { "path": "/pages/order/confirm", "enter_time": "…09:14:10" }
+  ]
+}</pre>
+                <p class="ut-hint" style="margin-top:8px">上例在子序列模式下命中 A=list → B=detail → C=confirm（中间可插 profile）。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="ut-path-seq-presets">
+    <option value="/pages/index/index"></option>
+    <option value="/pages/course/list"></option>
+    <option value="/pages/course/detail"></option>
+    <option value="/pages/order/confirm"></option>
+  </datalist>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: "neutral" });</script>
+  <script src="js/ut-shell.js"></script>
+  <script src="js/ut-table-catalog.js"></script>
+  <script src="js/ut-rule-options.js"></script>
+  <script src="js/ut-rule-builder.js"></script>
+  <script src="js/ut-tag-create.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var list = document.querySelector("[data-rule-list]");
+      if (list && window.UT_RULE_BUILDER) {
+        list.innerHTML = "";
+        list.appendChild(window.UT_RULE_BUILDER.createRuleRow("path_seq"));
+      }
+    });
+  </script>
+</body>
+</html>

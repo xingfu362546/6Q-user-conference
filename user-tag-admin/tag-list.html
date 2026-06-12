@@ -22,6 +22,7 @@
       color: var(--warning);
     }
   </style>
+  <link rel="stylesheet" href="../shared/intent-proto-notes.css" />
 </head>
 <body class="ut-body" data-ut-page="tag-list">
   <div class="ut-app">
@@ -178,7 +179,10 @@
                         <time>2025-04-05 02:10:00</time>
                       </div>
                     </td>
-                    <td>例行</td>
+                    <td class="ut-cell-schedule">
+                      例行 · 每日 02:10
+                      <small>下次 04-07 02:10</small>
+                    </td>
                     <td><span class="ut-badge ut-badge--success">正常</span></td>
                     <td><div class="ut-user-cell"><span class="ut-avatar">王</span><span>王芳</span></div></td>
                     <td class="cell-mono">2023-11-20 14:22</td>
@@ -241,7 +245,10 @@
                         <span class="ut-status-cell__hint">仍展示上次成功覆盖</span>
                       </div>
                     </td>
-                    <td>例行</td>
+                    <td class="ut-cell-schedule">
+                      例行 · 每日 01:00
+                      <small>下次 04-07 01:00</small>
+                    </td>
                     <td><span class="ut-badge ut-badge--warning">计算中</span></td>
                     <td><div class="ut-user-cell"><span class="ut-avatar">系</span><span>系统</span></div></td>
                     <td class="cell-mono">2024-08-01 00:00</td>
@@ -285,5 +292,11 @@
   </div>
   <script src="js/ut-shell.js"></script>
   <script src="js/ut-admin.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="../index-features.js"></script>
+  <script src="../shared/intent-proto-enrich.js"></script>
+  <script src="../shared/intent-proto-pages.js"></script>
+  <script src="../shared/intent-proto-architecture.js"></script>
+  <script src="../shared/intent-proto-notes.js"></script>
 </body>
 </html>

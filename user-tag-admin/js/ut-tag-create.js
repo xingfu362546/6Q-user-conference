@@ -125,6 +125,10 @@
         cmpP
       );
     }
+
+    if (type === "path_seq") {
+      return index + " 路径序列 " + (B ? B.getPathSeqText(panel) : "");
+    }
     return index + " …";
   }
 
@@ -193,4 +197,99 @@
       }, 600);
     });
   }
+
+  /* —— 例行更新调度（每日固定时刻） —— */
+  var manualPanel = document.querySelector("[data-update-manual-panel]");
+  var cronPanel = document.querySelector("[data-cron-schedule-panel]");
+  var timeEl = document.querySelector("[data-cron-time]");
+  var summaryText = document.querySelector("[data-cron-summary-text]");
+  var nextRunEl = document.querySelector("[data-cron-next-run]");
+
+  function pad(n) {
+    return n < 10 ? "0" + n : String(n);
+  }
+
+  function formatDateTime(d) {
+    return (
+      d.getFullYear() +
+      "-" +
+      pad(d.getMonth() + 1) +
+      "-" +
+      pad(d.getDate()) +
+      " " +
+      pad(d.getHours()) +
+      ":" +
+      pad(d.getMinutes())
+    );
+  }
+
+  function parseTime() {
+    var raw = (timeEl && timeEl.value) || "02:00";
+    var parts = raw.split(":");
+    return { h: parseInt(parts[0], 10) || 0, m: parseInt(parts[1], 10) || 0 };
+  }
+
+  function buildCronSummary() {
+    if (!summaryText) return;
+    var t = parseTime();
+    var timeStr = pad(t.h) + ":" + pad(t.m);
+    summaryText.textContent =
+      "将在每个自然日 " + timeStr + "（北京时间）自动计算本标签。";
+  }
+
+  function computeNextRun() {
+    if (!nextRunEl) return;
+    var t = parseTime();
+    var now = new Date();
+    var next = new Date(now);
+    next.setSeconds(0, 0);
+    next.setHours(t.h, t.m, 0, 0);
+    if (next <= now) next.setDate(next.getDate() + 1);
+    nextRunEl.textContent = formatDateTime(next) + "（演示估算）";
+  }
+
+  function syncCronSchedule() {
+    buildCronSummary();
+    computeNextRun();
+  }
+
+  function getUpdateMode() {
+    var active = document.querySelector("[data-update-mode-seg] button.is-active");
+    return active ? active.getAttribute("data-seg-value") : "manual";
+  }
+
+  function syncUpdateModePanels() {
+    var cron = getUpdateMode() === "cron";
+    if (cronPanel) cronPanel.hidden = !cron;
+    if (manualPanel) manualPanel.hidden = cron;
+    if (cron) syncCronSchedule();
+  }
+
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("[data-update-mode-seg] button[data-seg-value]")) return;
+    setTimeout(syncUpdateModePanels, 0);
+  });
+
+  if (timeEl) {
+    timeEl.addEventListener("change", syncCronSchedule);
+    timeEl.addEventListener("input", syncCronSchedule);
+  }
+
+  syncUpdateModePanels();
+
+  window.UT_TAG_SCHEDULE = {
+    getConfig: function () {
+      return {
+        mode: getUpdateMode(),
+        frequency: "daily",
+        time: timeEl ? timeEl.value : "02:00",
+        timezone: "Asia/Shanghai",
+        summary: summaryText ? summaryText.textContent : "",
+      };
+    },
+    formatListLabel: function (cfg) {
+      if (!cfg || cfg.mode !== "cron") return "手动";
+      return "例行 · 每日 " + (cfg.time || "02:00");
+    },
+  };
 })();
