@@ -191,6 +191,8 @@
 
   var detailPlanId = '2026-05';
 
+  var detailSelected = {};
+
 
 
   var DETAIL_SCOPE_PACKS = [
@@ -659,7 +661,7 @@
 
       (!readonly ? '<button type="button" class="q-btn hr-scope-add" id="btn-add-scope">+ 新增范围</button>' : '') +
 
-      '<p class="hr-scope-tip">一人仅属一个范围包；已在其他包的人不可选。</p>' +
+      '<p class="hr-scope-tip">选中范围包后点击名称可自定义；一人仅属一个范围包，已在其他包的人不可选。</p>' +
 
       '</div>' +
 
@@ -772,6 +774,10 @@
       renameTarget.setAttribute('contenteditable', 'true');
 
       renameTarget.setAttribute('title', '点击可修改范围包名称');
+
+      renameTarget.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+
+      renameTarget.addEventListener('click', function (e) { e.stopPropagation(); });
 
       renameTarget.addEventListener('blur', function () {
 
@@ -1258,7 +1264,7 @@
 
     var rows = packs.map(function (sp) {
 
-      return '<tr><td><b>' + sp.name + '</b></td><td>' + sp.memberIds.length + '</td>' +
+      return '<tr data-scope-id="' + sp.id + '"><td><span class="hr-scope-pack-name" contenteditable="true" title="点击修改范围包名称">' + sp.name + '</span></td><td>' + sp.memberIds.length + '</td>' +
 
         '<td>' + (sp.templateId ? templateName(sp.templateId) : '—') + '</td><td>' + scopeStatusTag(sp.status) + '</td><td>' +
 
@@ -1308,6 +1314,38 @@
 
 
 
+    el.querySelectorAll('.hr-scope-pack-name').forEach(function (nameEl) {
+
+      var tr = nameEl.closest('tr');
+
+      var scopeId = tr && tr.dataset.scopeId;
+
+      nameEl.addEventListener('blur', function () {
+
+        var sp = packs.filter(function (x) { return x.id === scopeId; })[0];
+
+        if (!sp) return;
+
+        var next = nameEl.textContent.trim();
+
+        if (next) sp.name = next;
+
+        nameEl.textContent = sp.name;
+
+        onRefresh();
+
+      });
+
+      nameEl.addEventListener('keydown', function (e) {
+
+        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+
+      });
+
+    });
+
+
+
     el.querySelector('#btn-detail-add-scope').addEventListener('click', function () {
 
       var editor = el.querySelector('#hr-detail-scope-editor');
@@ -1340,6 +1378,202 @@
 
     });
 
+  }
+
+
+
+  function renderTransferOrgTree(node, depth, searchKw, selectedId) {
+    if (!node) return '';
+    var kw = (searchKw || '').trim().toLowerCase();
+    var pad = (depth || 0) * 14;
+    var html = '';
+
+    if (node.type === 'dept' || node.type === 'org') {
+      var childHtml = '';
+      (node.children || []).forEach(function (ch) {
+        childHtml += renderTransferOrgTree(ch, depth + 1, searchKw, selectedId);
+      });
+      if (node.type === 'org' || childHtml) {
+        html += '<div class="hr-tree-dept" style="padding-left:' + pad + 'px"><b>' + node.name + '</b><div class="hr-tree-children">' + childHtml + '</div></div>';
+      }
+      return html;
+    }
+
+    if (node.type === 'person') {
+      var person = ROSTER[node.id];
+      if (!person) return '';
+      if (kw && person.name.toLowerCase().indexOf(kw) === -1 && person.no.toLowerCase().indexOf(kw) === -1) return '';
+      html += '<label class="hr-tree-person hr-transfer-person" style="padding-left:' + (pad + 22) + 'px">' +
+        '<input type="radio" name="transfer-target" value="' + person.id + '" ' + (selectedId === person.id ? 'checked' : '') + ' />' +
+        '<span>' + person.name + '</span>' +
+        '<span class="muted">' + person.level + ' · ' + person.role + ' · ' + (deptNameMap[person.deptId] || '') + '</span>' +
+        '</label>';
+    }
+    return html;
+  }
+
+  function ensureTransferModal() {
+    var mask = document.getElementById('hr-transfer-modal-mask');
+    if (mask) return mask;
+    mask = document.createElement('div');
+    mask.id = 'hr-transfer-modal-mask';
+    mask.className = 'hr-transfer-modal-mask';
+    mask.innerHTML =
+      '<div class="hr-transfer-modal" role="dialog">' +
+      '<div class="hr-transfer-modal__head"><h3>批量转办</h3><button type="button" class="hr-transfer-modal__close" aria-label="关闭">×</button></div>' +
+      '<p class="hr-transfer-modal__hint" id="hr-transfer-hint"></p>' +
+      '<div class="hr-scope-search"><input type="search" id="hr-transfer-search" placeholder="搜索姓名 / 工号…" /></div>' +
+      '<div class="hr-transfer-modal__body"><div class="hr-scope-col hr-scope-col-tree" id="hr-transfer-tree"></div></div>' +
+      '<div class="hr-transfer-modal__foot">' +
+      '<button type="button" class="q-btn" id="hr-transfer-cancel">取消</button>' +
+      '<button type="button" class="q-btn q-btn-primary" id="hr-transfer-confirm">确认转办</button></div></div>';
+    document.body.appendChild(mask);
+    mask.addEventListener('click', function (e) { if (e.target === mask) closeTransferModal(); });
+    mask.querySelector('.hr-transfer-modal__close').addEventListener('click', closeTransferModal);
+    mask.querySelector('#hr-transfer-cancel').addEventListener('click', closeTransferModal);
+    return mask;
+  }
+
+  var transferModalState = { employees: [], selectedId: null };
+
+  function closeTransferModal() {
+    var mask = document.getElementById('hr-transfer-modal-mask');
+    if (mask) mask.classList.remove('is-open');
+    transferModalState = { employees: [], selectedId: null };
+  }
+
+  function refreshTransferTree() {
+    var treeEl = document.getElementById('hr-transfer-tree');
+    var searchEl = document.getElementById('hr-transfer-search');
+    if (!treeEl) return;
+    var kw = searchEl ? searchEl.value : '';
+    treeEl.innerHTML = renderTransferOrgTree(ORG_TREE, 0, kw, transferModalState.selectedId);
+    treeEl.querySelectorAll('input[name="transfer-target"]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        transferModalState.selectedId = radio.value;
+      });
+    });
+  }
+
+  function openBatchTransferModal(employees) {
+    if (!employees.length) return;
+    var mask = ensureTransferModal();
+    transferModalState = { employees: employees, selectedId: null };
+    document.getElementById('hr-transfer-hint').textContent =
+      '已选 ' + employees.length + ' 条待办：' + employees.map(function (e) { return e.name; }).join('、') + '。请从组织架构选择转办接收人。';
+    var searchEl = document.getElementById('hr-transfer-search');
+    if (searchEl) {
+      searchEl.value = '';
+      searchEl.oninput = refreshTransferTree;
+    }
+    document.getElementById('hr-transfer-confirm').onclick = function () {
+      var targetId = transferModalState.selectedId || (mask.querySelector('input[name="transfer-target"]:checked') || {}).value;
+      if (!targetId) { alert('请选择转办接收人'); return; }
+      var target = ROSTER[targetId];
+      if (!target) return;
+      transferModalState.employees.forEach(function (emp) {
+        var row = MOCK_EMPLOYEES.filter(function (e) { return e.no === emp.no; })[0];
+        if (row) row.handlerName = target.name;
+      });
+      detailSelected = {};
+      closeTransferModal();
+      renderDetailTable();
+      alert('已将 ' + employees.length + ' 条待办转办给「' + target.name + '」（原型）');
+    };
+    refreshTransferTree();
+    mask.classList.add('is-open');
+  }
+
+  function isQuarterPlanId(planId) {
+    return /Q/i.test(planId || detailPlanId || '');
+  }
+
+  function closeSixQ3jModal() {
+    var mask = document.getElementById('hr-sixq3j-modal-mask');
+    if (mask) mask.classList.remove('is-open');
+  }
+
+  function ensureSixQ3jModal() {
+    var id = 'hr-sixq3j-modal-mask';
+    if (document.getElementById(id)) return document.getElementById(id);
+    var mask = document.createElement('div');
+    mask.id = id;
+    mask.className = 'hr-transfer-modal-mask';
+    mask.innerHTML =
+      '<div class="hr-transfer-modal" role="dialog" style="max-width:560px;width:92vw">' +
+      '<div class="hr-transfer-modal__head"><h3>导入 6Q3J 客观分</h3>' +
+      '<button type="button" class="hr-transfer-modal__close" aria-label="关闭">×</button></div>' +
+      '<p class="hr-transfer-modal__hint">CSV 列：工号, 1368认证, 文化经句, AI提效 · 空列不更新（可分批导入）</p>' +
+      '<div class="hr-transfer-modal__body" style="max-height:none">' +
+      '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">' +
+      '<button type="button" class="q-btn" id="sixq3j-dl-template">下载模板</button>' +
+      '<label class="q-btn" style="cursor:pointer">选择文件<input type="file" id="sixq3j-file" accept=".csv,.txt" hidden /></label>' +
+      '</div>' +
+      '<textarea id="sixq3j-paste" rows="8" style="width:100%;font-family:monospace;font-size:12px;box-sizing:border-box"></textarea>' +
+      '<p id="sixq3j-import-result" class="hr-transfer-modal__hint" style="margin-top:8px"></p>' +
+      '</div>' +
+      '<div class="hr-transfer-modal__foot">' +
+      '<button type="button" class="q-btn" id="sixq3j-cancel">取消</button>' +
+      '<button type="button" class="q-btn q-btn-primary" id="sixq3j-confirm">确认导入</button>' +
+      '</div></div>';
+    document.body.appendChild(mask);
+    mask.querySelector('.hr-transfer-modal__close').onclick = closeSixQ3jModal;
+    mask.querySelector('#sixq3j-cancel').onclick = closeSixQ3jModal;
+    mask.addEventListener('click', function (e) { if (e.target === mask) closeSixQ3jModal(); });
+    return mask;
+  }
+
+  function openSixQ3jImportModal() {
+    if (!window.PerfSixQ3J) { alert('6Q3J 模块未加载'); return; }
+    var mask = ensureSixQ3jModal();
+    var paste = document.getElementById('sixq3j-paste');
+    var resultEl = document.getElementById('sixq3j-import-result');
+    if (paste) paste.value = PerfSixQ3J.templateCsv();
+    if (resultEl) resultEl.textContent = '';
+    document.getElementById('sixq3j-dl-template').onclick = function () {
+      var blob = new Blob(['\ufeff' + PerfSixQ3J.templateCsv()], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '6Q3J导入模板_' + detailPlanId + '.csv';
+      a.click();
+    };
+    document.getElementById('sixq3j-file').onchange = function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () { if (paste) paste.value = reader.result; };
+      reader.readAsText(file, 'UTF-8');
+    };
+    document.getElementById('sixq3j-confirm').onclick = function () {
+      var text = paste ? paste.value : '';
+      var parsed = PerfSixQ3J.parseImportText(text);
+      var knownNos = MOCK_EMPLOYEES.map(function (e) { return e.no; });
+      var result = PerfSixQ3J.importRows(detailPlanId, parsed.rows, knownNos);
+      var msg = '已更新 ' + result.updated + ' 人';
+      if (result.skipped.length) msg += ' · 跳过：' + result.skipped.join('、');
+      if (resultEl) resultEl.textContent = msg;
+      if (result.updated > 0) {
+        alert(msg + '\n\n员工季表 Step3 / 上级季度评分页将同步显示。');
+        closeSixQ3jModal();
+      } else {
+        alert(msg || '无有效数据');
+      }
+    };
+    mask.classList.add('is-open');
+  }
+
+  function updateDetailSelectionUI() {
+    var count = Object.keys(detailSelected).filter(function (k) { return detailSelected[k]; }).length;
+    var hint = document.getElementById('detail-selected-hint');
+    var btn = document.getElementById('btn-batch-transfer');
+    if (hint) hint.textContent = '已选 ' + count + ' 条';
+    if (btn) btn.disabled = count === 0;
+    var allCb = document.getElementById('detail-select-all');
+    var rowCbs = document.querySelectorAll('#detail-tbody .detail-row-cb');
+    if (allCb && rowCbs.length) {
+      allCb.checked = count > 0 && count === rowCbs.length;
+      allCb.indeterminate = count > 0 && count < rowCbs.length;
+    }
   }
 
 
@@ -1402,13 +1636,13 @@
 
       var taskHref = 'hr-task-detail.html?plan=' + encodeURIComponent(detailPlanId) + '&no=' + encodeURIComponent(e.no) + '&from=plan';
 
-      return '<tr><td><input type="checkbox" /></td><td><a href="' + taskHref + '"><b>' + e.name + '</b></a></td><td>' + e.no + '</td><td>' + e.org + '</td>' +
+      return '<tr><td><input type="checkbox" class="detail-row-cb" data-no="' + e.no + '" ' + (detailSelected[e.no] ? 'checked' : '') + ' /></td><td><a href="' + taskHref + '"><b>' + e.name + '</b></a></td><td>' + e.no + '</td><td>' + e.org + '</td>' +
 
-        '<td>' + e.role + '</td><td>' + e.level + '</td><td>' + e.audience + '</td>' +
+        '<td>' + e.role + '</td><td>' + e.level + '</td>' +
 
         '<td>' + (scopeNameMap[e.scopeId] || '—') + '</td><td>' + e.template + '</td>' +
 
-        '<td>' + statusTag(e.status) + '</td><td>' + e.submit + '</td>' +
+        '<td>' + statusTag(e.status) + '</td><td>' + (e.handlerName ? '<span class="q-tag q-tag-blue">' + e.handlerName + '</span>' : '<span class="muted">默认上级</span>') + '</td><td>' + e.submit + '</td>' +
 
         '<td><a href="' + taskHref + '">查看详情</a> · <a href="#">催办</a> · <a href="#">解锁</a> · <a href="#" class="link-return-emp" data-name="' + e.name + '">退回至员工</a></td></tr>';
 
@@ -1417,6 +1651,8 @@
 
 
     document.getElementById('filter-count').textContent = '共 ' + rows.length + ' 人';
+
+    updateDetailSelectionUI();
 
   }
 
@@ -1430,9 +1666,9 @@
 
     var plan = detailPlanId;
 
-    document.getElementById('plan-title').textContent = plan.indexOf('Q') >= 0
+    document.getElementById('plan-title').textContent = isQuarterPlanId(plan)
 
-      ? '2026 ' + plan + ' · 季度绩效考核'
+      ? plan.toUpperCase().replace('-', ' ') + ' · 季度绩效考核'
 
       : '2026年' + parseInt(plan.split('-')[1], 10) + '月 · 月度绩效考核';
 
@@ -1455,7 +1691,16 @@
     refreshAll();
 
     if (typeof renderPlanBonusSettlement === 'function') {
-      renderPlanBonusSettlement('hr-plan-bonus-preview', 'month');
+      renderPlanBonusSettlement('hr-plan-bonus-preview', isQuarterPlanId(plan) ? 'quarter' : 'month');
+    }
+
+    var btnSixQ = document.getElementById('btn-import-sixq3j');
+    if (btnSixQ) {
+      btnSixQ.style.display = isQuarterPlanId(plan) ? '' : 'none';
+      btnSixQ.onclick = openSixQ3jImportModal;
+    }
+    if (isQuarterPlanId(plan) && location.hash === '#import-sixq3j') {
+      openSixQ3jImportModal();
     }
 
     ['filter-org', 'filter-level', 'filter-status', 'filter-kw'].forEach(function (id) {
@@ -1467,6 +1712,30 @@
     });
 
     document.getElementById('btn-batch-remind').addEventListener('click', function () { alert('已向筛选结果批量催办（原型）'); });
+
+    document.getElementById('btn-batch-transfer').addEventListener('click', function () {
+      var selected = MOCK_EMPLOYEES.filter(function (e) { return detailSelected[e.no]; });
+      if (!selected.length) { alert('请先勾选待办'); return; }
+      openBatchTransferModal(selected);
+    });
+
+    document.getElementById('detail-select-all').addEventListener('change', function (e) {
+      var checked = e.target.checked;
+      document.querySelectorAll('#detail-tbody .detail-row-cb').forEach(function (cb) {
+        cb.checked = checked;
+        if (checked) detailSelected[cb.dataset.no] = true;
+        else delete detailSelected[cb.dataset.no];
+      });
+      updateDetailSelectionUI();
+    });
+
+    document.getElementById('detail-tbody').addEventListener('change', function (e) {
+      var cb = e.target.closest('.detail-row-cb');
+      if (!cb) return;
+      if (cb.checked) detailSelected[cb.dataset.no] = true;
+      else delete detailSelected[cb.dataset.no];
+      updateDetailSelectionUI();
+    });
 
     document.getElementById('btn-export').addEventListener('click', function () { alert('导出明细（原型）'); });
 

@@ -1,5 +1,5 @@
 /**
- * 小程序 · 绩效任务列表共享（v1.1.0）
+ * 小程序 · 绩效任务列表共享（v1.4.0）
  */
 (function () {
   'use strict';
@@ -7,17 +7,24 @@
   var TASK_DATA = {
     current: [
       {
+        id: 'm202606', title: '2026年6月 · 月度绩效考核', type: 'month',
+        phase: 'not_started', progress: '计划已发放 · 尚未开始填写',
+        deadline: '填写截止 07-05', tag: '待填写', tagCls: 'mp-tag-gray',
+        href: 'task-progress.html?id=m202606',
+      },
+      {
         id: 'm202605', title: '2026年5月 · 月度绩效考核', type: 'month',
         phase: 'pending_confirm', progress: '待确认评分',
         deadline: '确认截止 06-15', tag: '待确认', tagCls: 'mp-tag-orange',
         href: 'score-confirm.html?role=employee',
         employeeConfirmed: false, supervisorConfirmed: false,
+        divisionAdjusted: true,
       },
       {
         id: 'm202605-q', title: '2026 Q2 · 季度绩效考核', type: 'quarter',
-        phase: 'pending_supervisor', progress: '待上级评',
+        phase: 'pending_division', progress: '待分管评',
         deadline: '2026-07-10', tag: '评分中', tagCls: 'mp-tag-blue',
-        href: 'task-progress.html?id=m202605-q',
+        href: 'task-progress.html?id=m202605-q', mergedReview: false,
       },
     ],
     overdue: [
@@ -35,25 +42,25 @@
       },
     ],
     past: [
-      { id: 'm202603', title: '2026年3月 · 月度绩效考核', type: 'month', phase: 'completed', progress: '已于 03-28 提交并完成确认', deadline: '—', tag: '已完成', tagCls: 'mp-tag-green', href: 'task-past-view.html?id=m202603' },
+      { id: 'm202603', title: '2026年3月 · 月度绩效考核', type: 'month', phase: 'confirmed', progress: '已于 03-28 提交并完成确认', deadline: '—', tag: '已确认', tagCls: 'mp-tag-green', href: 'task-past-view.html?id=m202603' },
     ],
   };
 
   var SEGMENT = [
     { key: 'current', label: '当前待办', href: 'task-list.html' },
     { key: 'overdue', label: '逾期', href: 'task-overdue.html' },
-    { key: 'past', label: '过往提交', href: 'task-past.html' },
+    { key: 'past', label: '已提交', href: 'task-past.html' },
   ];
 
   var BANNERS = {
     current: { cls: 'mp-banner-blue', icon: '📊', text: 'v1 小程序：查看任务进度与评分确认；填表请使用 OA-PC。' },
-    overdue: { cls: 'mp-banner-orange', icon: '⏰', text: '已过截止未提交的任务仍留本 Tab。「待解锁」不可点。' },
-    past: { cls: 'mp-banner-green', icon: '🔒', text: '已完成确认的历史任务；可回看本人填写内容。' },
+    overdue: { cls: 'mp-banner-orange', icon: '⏰', text: '过填表截止且未提交（含填写中半稿）留本 Tab。「待解锁」不可点。' },
+    past: { cls: 'mp-banner-green', icon: '🔒', text: '已确认归档的历史任务；可回看本人填写内容。' },
     leader: { cls: 'mp-banner-orange', icon: '📋', text: '待评与待确认在同一 Tab：评完后双方进入「待确认」，只读+确认按钮。' },
   };
 
   var LEADER_REVIEW_DATA = [
-    { id: 'r-wf-202605', employee: '王芳', dept: '信息部', period: '2026年5月', type: 'month', status: 'pending_confirm', submittedAt: '2026-05-28 16:20', phase: 'pending_confirm' },
+    { id: 'r-wf-202605', employee: '王芳', dept: '信息部', period: '2026年5月', type: 'month', status: 'pending_confirm', submittedAt: '2026-05-28 16:20', phase: 'pending_confirm', employeeConfirmed: false, supervisorConfirmed: false, divisionAdjusted: true },
     { id: 'r-lm-202605', employee: '李明', dept: '信息部', period: '2026年5月', type: 'month', status: 'pending', submittedAt: '2026-05-27 18:05', phase: 'pending_supervisor' },
     { id: 'r-zs-2026q2', employee: '赵强', dept: '信息部', period: '2026 Q2', type: 'quarter', status: 'pending', submittedAt: '2026-06-01 10:00', mpDisabled: true },
   ];
@@ -94,6 +101,10 @@
     el.style.display = '';
   }
 
+  function phaseOpts(t) {
+    return { compact: true, task: { type: t.type, mergedReview: t.mergedReview } };
+  }
+
   function renderTaskList(key) {
     var el = document.getElementById('mp-task-list');
     if (!el) return;
@@ -111,7 +122,7 @@
           (t.hint ? '<span class="mp-task-hint">' + t.hint + '</span>' : '') + '</div>' +
           '<span class="mp-tag ' + t.tagCls + '">' + t.tag + '</span></div></div>';
       }
-      var steps = t.phase && window.PerfWorkflow ? PerfWorkflow.renderPhaseSteps(t.phase, { compact: true }) : '';
+      var steps = t.phase && window.PerfWorkflow ? PerfWorkflow.renderPhaseSteps(t.phase, phaseOpts(t)) : '';
       return '<div class="mp-task-card-row"><a class="mp-task-card" href="' + taskHref(t) + '">' +
         '<div class="mp-task-icon mp-task-icon--' + t.type + '">' + typeIcon(t.type) + '</div>' +
         '<div class="mp-task-body"><h4>' + t.title + '</h4><p class="mp-task-meta">' + t.progress + '</p>' +
@@ -146,7 +157,7 @@
       var hint = t.status === 'pending_confirm' ? '待您确认评分' : (t.status === 'scoring' ? '有草稿' : '待您评分');
       return '<a class="mp-task-card" href="' + href + '"><div class="mp-task-icon mp-task-icon--month">月</div>' +
         '<div class="mp-task-body"><h4>' + t.employee + ' · ' + t.period + '</h4><p class="mp-task-meta">' + t.dept + ' · ' + hint + '</p>' +
-        (t.phase && window.PerfWorkflow ? PerfWorkflow.renderPhaseSteps(t.phase, { compact: true }) : '') +
+        (t.phase && window.PerfWorkflow ? PerfWorkflow.renderPhaseSteps(t.phase, phaseOpts(t)) : '') +
         '</div><span class="mp-tag ' + st.cls + '">' + st.label + '</span><span class="mp-task-arrow">›</span></a>';
     }).join('');
     el.querySelectorAll('.mp-task-card--disabled').forEach(function (card) {
@@ -164,7 +175,7 @@
     if (!task) task = { title: '考核任务', phase: 'filling', progress: '—', hint: 'v1 填表请使用 OA-PC' };
     document.getElementById('progress-title').textContent = task.title;
     document.getElementById('progress-steps').innerHTML = window.PerfWorkflow
-      ? PerfWorkflow.renderPhaseSteps(task.phase || 'filling') : '';
+      ? PerfWorkflow.renderPhaseSteps(task.phase || 'filling', { task: { type: task.type, mergedReview: task.mergedReview } }) : '';
     document.getElementById('progress-detail').innerHTML =
       '<p class="mp-task-meta">' + (task.progress || '') + '</p>' +
       (task.hint ? '<p class="hr-hint">' + task.hint + '</p>' : '') +

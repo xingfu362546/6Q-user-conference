@@ -42,6 +42,8 @@
   </div>
   <script src="../assets/frame.js"></script>
   <script src="../assets/employee-past-copy.js"></script>
+  <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/perf-kr-hierarchy.js"></script>
   <script src="../assets/wizard.js"></script>
   <script>
     initOaShell({
@@ -56,6 +58,7 @@
     });
     initMonthlyWizard({
       storageKey: 'perf-monthly-oa-pc',
+      currentPeriodId: 'm202604',
       onSubmit: function() { location.href = 'personal-perf.html'; },
     });
   </script>

@@ -343,6 +343,14 @@
   color: #8c8c8c;
 }
 
+/* 版本差异注释 · v1.3 */
+.proto-ver { margin: 0 0 8px; padding: 6px 8px; border-radius: 4px; font-size: 12px; line-height: 1.55; }
+.proto-ver--old { color: #8c8c8c; text-decoration: line-through; background: #fafafa; border-left: 3px solid #d9d9d9; }
+.proto-ver--new { color: #389e0d; background: #f6ffed; border-left: 3px solid #95de64; text-decoration: none; }
+.proto-ver-tag { display: inline-block; margin-right: 6px; padding: 0 5px; border-radius: 3px; font-size: 10px; font-weight: 700; vertical-align: middle; }
+.proto-ver--old .proto-ver-tag { background: #f0f0f0; color: #595959; text-decoration: none; }
+.proto-ver--new .proto-ver-tag { background: #389e0d; color: #fff; }
+
 @media (max-width: 480px) {
   .proto-drawer {
     width: 100%;

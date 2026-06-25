@@ -279,6 +279,18 @@ body {
   background: var(--q-primary-bg);
 }
 .hr-scope-item-name { font-weight: 600; font-size: 13px; }
+.hr-scope-item-name[contenteditable="true"],
+.hr-scope-pack-name[contenteditable="true"] {
+  cursor: text;
+  border-bottom: 1px dashed var(--q-border);
+  outline: none;
+}
+.hr-scope-item-name[contenteditable="true"]:focus,
+.hr-scope-pack-name[contenteditable="true"]:focus {
+  border-bottom-color: var(--q-primary, #1677ff);
+  background: rgba(22, 119, 255, 0.06);
+}
+.hr-scope-pack-name { font-weight: 600; }
 .hr-scope-item-meta { font-size: 12px; color: var(--q-text-muted); margin-top: 4px; }
 .hr-scope-del {
   position: absolute;
@@ -510,3 +522,16 @@ body {
   background: #eef9f0;
   border-bottom-color: #b7e0bc;
 }
+/* 小程序 · 三级结构层级色 */
+.mp-device .ko-card--l2 { border-color: #b7e0bc; background: #f6fdf7; }
+.mp-device .ko-card--l2.open { border-color: var(--mp-green-3); box-shadow: 0 2px 8px rgba(92, 184, 110, 0.12); }
+.mp-device .ko-card-rail { background: linear-gradient(180deg, #5cb86e 0%, #7dcea0 100%); }
+.mp-device .ko-card--l2.open .ko-head-row .collapse-head { background: #eef9f0; }
+.mp-device .perf-level-badge--l2 { background: #eef9f0; color: #389e0d; border-color: #b7e0bc; }
+.mp-device .perf-level-badge--l3 { background: #e6f4ff; color: #0958d9; border-color: #91caff; }
+.mp-device .kr-target-card { border-color: #c8e6ca; }
+.mp-device .kr-target-toolbar { background: linear-gradient(90deg, #eef9f0 0%, #f6fdf7 100%); border-bottom-color: #c8e6ca; }
+.mp-device .kr-target-title { color: #389e0d; }
+.mp-device .kr-target-weight-chip { color: #389e0d; border-color: #b7e0bc; }
+.mp-device .btn-add-target { color: #389e0d; border-color: #b7e0bc; background: #f6fdf7; }
+.mp-device #add-ko.btn-block { color: #389e0d; border-color: #b7e0bc; background: #f6fdf7; }

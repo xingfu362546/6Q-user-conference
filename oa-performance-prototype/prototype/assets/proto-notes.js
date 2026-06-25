@@ -6,7 +6,6 @@
   'use strict';
 
   var PAGE_MAP = {
-    'index.html': 'hub',
     'home.html': 'mp-home',
     'task-list.html': 'mp-task-list',
     'task-overdue.html': 'mp-task-overdue',
@@ -15,11 +14,13 @@
     'monthly-wizard.html': 'mp-monthly-wizard',
     'quarterly-wizard.html': 'mp-quarterly-wizard',
     'leader-score-monthly.html': 'mp-leader-score',
+    'task-progress.html': 'mp-task-progress',
     'personal.html': 'oa-personal',
     'personal-perf.html': 'oa-personal-perf',
     'personal-perf-overdue.html': 'oa-personal-overdue',
     'personal-perf-past.html': 'oa-personal-past',
     'personal-perf-past-view.html': 'oa-personal-past-view',
+    'employee-task-progress.html': 'oa-employee-progress',
     'supervisor-review-list.html': 'oa-supervisor-list',
     'supervisor-score-monthly.html': 'oa-supervisor-score-monthly',
     'supervisor-score-quarterly.html': 'oa-supervisor-score-quarterly',
@@ -29,6 +30,9 @@
     'hr-bonus-rules-list.html': 'hr-bonus-rules-list',
     'hr-bonus-rule-edit.html': 'hr-bonus-rule-edit',
     'hr-bonus-settlement.html': 'hr-bonus-settlement',
+    'hr-perf-results-list.html': 'hr-perf-results-list',
+    'hr-task-detail.html': 'hr-task-detail',
+    'division-dept-list.html': 'oa-division-dept-list',
   };
 
   var drawerEl = null;
@@ -39,11 +43,18 @@
 
   function detectPageKey() {
     var path = (location.pathname || '').replace(/\\/g, '/');
-    if (path.indexOf('/oa-pc/') !== -1 && /index\.html$/.test(path)) return 'oa-index';
+    var isOa = path.indexOf('/oa-pc/') !== -1;
+    var isMini = path.indexOf('/miniapp/') !== -1;
+    if (isOa && /index\.html$/.test(path)) return 'oa-index';
     var file = path.split('/').pop() || 'index.html';
-    if (file === 'index.html' && path.indexOf('/oa-pc/') === -1) return 'hub';
-    if (path.indexOf('/oa-pc/') !== -1 && file === 'monthly-wizard.html') return 'oa-monthly-wizard';
-    if (path.indexOf('/oa-pc/') !== -1 && file === 'quarterly-wizard.html') return 'oa-quarterly-wizard';
+    if (file === 'index.html' && !isOa) return null;
+    if (file === 'score-confirm.html') {
+      if (isOa) return 'oa-score-confirm';
+      if (isMini) return 'mp-score-confirm';
+      return null;
+    }
+    if (isOa && file === 'monthly-wizard.html') return 'oa-monthly-wizard';
+    if (isOa && file === 'quarterly-wizard.html') return 'oa-quarterly-wizard';
     return PAGE_MAP[file] || null;
   }
 

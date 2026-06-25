@@ -6,7 +6,6 @@
   <title>OA 绩效信息化 · 原型导航</title>
   <link rel="stylesheet" href="assets/6q-theme.css" />
   <link rel="stylesheet" href="assets/common.css" />
-  <link rel="stylesheet" href="assets/proto-notes.css" />
   <style>
     .hub-meta { color: var(--muted); margin: 0 0 20px; line-height: 1.6; }
     .hub-version-badge { display: inline-block; padding: 2px 10px; background: #e6f7ff; color: #0958d9; border-radius: 2px; font-weight: 600; font-size: 13px; }
@@ -17,163 +16,224 @@
     .hub-table th, .hub-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
     .hub-table th { background: #fafafa; font-weight: 600; white-space: nowrap; }
     .hub-table tr:last-child td { border-bottom: none; }
-    .hub-tag { display: inline-block; padding: 0 6px; border-radius: 2px; font-size: 11px; }
-    .hub-tag--done { background: #f6ffed; color: #389e0d; }
-    .hub-tag--partial { background: #fff7e6; color: #ad6800; }
-    .hub-tag--new { background: #e6f7ff; color: #0958d9; }
-    .hub-changelog { margin: 0; padding-left: 20px; line-height: 1.75; color: var(--q-text-secondary); font-size: 14px; }
-    .hub-changelog li { margin-bottom: 4px; }
-    .hub-perm-links code { background: #f5f5f5; padding: 1px 4px; border-radius: 2px; font-size: 12px; }
+    .hub-table a { color: var(--primary); text-decoration: none; }
+    .hub-table a:hover { text-decoration: underline; }
+
+    /* 流程总览 */
+    .flow-board {
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      border-radius: 6px;
+      padding: 20px 16px 16px;
+      overflow-x: auto;
+    }
+    .flow-main {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      min-width: 720px;
+      padding-bottom: 8px;
+    }
+    .flow-step {
+      flex: 1;
+      min-width: 88px;
+      text-align: center;
+      position: relative;
+    }
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -8px;
+      top: 28px;
+      color: #bfbfbf;
+      font-size: 16px;
+      z-index: 1;
+    }
+    .flow-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 0 4px;
+    }
+    .flow-role {
+      font-size: 11px;
+      color: #8c8c8c;
+      line-height: 1.2;
+    }
+    .flow-box {
+      width: 100%;
+      padding: 10px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.35;
+      border: 1px solid transparent;
+    }
+    .flow-box--hr { background: #f9f0ff; color: #531dab; border-color: #d3adf7; }
+    .flow-box--emp { background: #e6f7ff; color: #0958d9; border-color: #91d5ff; }
+    .flow-box--sup { background: #fff7e6; color: #ad6800; border-color: #ffd591; }
+    .flow-box--div { background: #f9f0ff; color: #722ed1; border-color: #d3adf7; }
+    .flow-box--confirm { background: #fffbe6; color: #d48806; border-color: #ffe58f; }
+    .flow-box--done { background: #f6ffed; color: #389e0d; border-color: #b7eb8f; }
+    .flow-box--pay { background: #f0f5ff; color: #1d39c4; border-color: #adc6ff; }
   </style>
 </head>
 <body>
   <div class="hub-grid">
     <h1>OA 绩效信息化 · 交互原型</h1>
     <p class="hub-meta">
-      样式与菜单层级已对齐 <strong>6Q教育</strong> 小程序 + <strong>6Q-测试环境</strong> OA 顶栏/侧栏。
-      当前版本 <span class="hub-version-badge">v1.1.0</span>
-      · 决策来源 <code>docs/GRILL_V1_ITERATION.md</code>
-      · 详述 <code>docs/HANDOFF-v1.1.0.md</code>
+      6Q教育小程序 + 6Q-测试环境 OA · 当前 <span class="hub-version-badge">v1.3.0</span>
     </p>
 
     <section class="hub-section">
-      <h2>📋 版本记录</h2>
-      <div class="hub-table-wrap">
-        <table class="hub-table">
-          <thead><tr><th>版本</th><th>日期</th><th>说明</th><th>文档</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>1.1.0</strong></td>
-              <td>2026-06-03</td>
-              <td>评分确认 · 小程序 v1 收窄 · 退回 · 结果明细 · 权限菜单</td>
-              <td><code>docs/VERSIONS.md</code> · <code>HANDOFF-v1.1.0.md</code></td>
-            </tr>
-            <tr>
-              <td>1.0.0</td>
-              <td>2026-06-03</td>
-              <td>MVP 主链路：填表 · 评分 · 计划 · 奖金 · 逾期双态</td>
-              <td><code>HANDOFF-v1.0.0.md</code></td>
-            </tr>
-          </tbody>
-        </table>
+      <h2>🔄 流程总览</h2>
+      <div class="flow-board">
+        <div class="flow-main">
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">HR</span>
+              <div class="flow-box flow-box--hr">新建计划<br>发放范围包</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">员工</span>
+              <div class="flow-box flow-box--emp">填写<br>月度考核</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">直接上级</span>
+              <div class="flow-box flow-box--sup">上级<br>评分</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">分管领导</span>
+              <div class="flow-box flow-box--div">分管<br>核定总分</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">员工 + 上级</span>
+              <div class="flow-box flow-box--confirm">待确认<br>双方确认</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">—</span>
+              <div class="flow-box flow-box--done">已完成<br>归档</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-node">
+              <span class="flow-role">HR / 薪酬</span>
+              <div class="flow-box flow-box--pay">奖金<br>结算</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
-
-    <section class="hub-section">
-      <h2>📝 v1.1.0 变更明细</h2>
-      <ul class="hub-changelog">
-        <li><strong>评分确认</strong>：上级+分管评完后进入「待确认」；计划增加「确认评分截止」；双方确认前阻塞奖金结算</li>
-        <li><strong>分管评分列</strong>：OA 领导评分页增加分管录入；同人合并时上级分自动同步至分管列</li>
-        <li><strong>下月目标去重</strong>：领导评分页仅保留对照 Tab，去掉重复下月目标区块</li>
-        <li><strong>小程序 v1</strong>：员工不看填表入口，只看进度+确认；领导 Tab 可评+可确认</li>
-        <li><strong>退回至员工</strong>：确认完成前 HR/上级可退，断点续改、数据保留</li>
-        <li><strong>人员绩效结果明细</strong>：去掉范围包列/筛选；筛选区 UI 升级；点击姓名进详情</li>
-        <li><strong>待办详情页</strong>：后台均可只读查看；计划明细进入可修改上级评分</li>
-        <li><strong>奖金规则</strong>（v1.0.1 补丁）：按职级配置，同职级不可重复启用</li>
-      </ul>
-      <p class="hub-perm-links" style="margin-top:12px;font-size:13px;color:var(--muted)">
-        权限演示：HR 侧栏加 <code>?perm=hr</code> · 部门负责人 <code>?perm=dept</code> · 薪酬 <code>?perm=payroll</code> · 普通员工 <code>?perm=employee</code>
-      </p>
-    </section>
-
-    <section class="hub-section">
-      <h2>✅ 功能清单（原型覆盖）</h2>
-      <div class="hub-table-wrap">
-        <table class="hub-table">
-          <thead><tr><th>模块</th><th>功能</th><th>版本</th><th>原型入口</th></tr></thead>
-          <tbody>
-            <tr><td>员工端</td><td>月度填表 8 步向导 · 断点续填 · 复制往期</td><td>1.0</td><td><a href="oa-pc/monthly-wizard.html">OA 填表</a> · <a href="miniapp/monthly-wizard.html">小程序</a></td></tr>
-            <tr><td>员工端</td><td>待办五态 · 逾期双态（待解锁/已解锁）</td><td>1.0+1.1</td><td><a href="oa-pc/personal-perf.html">OA 待办</a> · <a href="miniapp/task-list.html">小程序</a></td></tr>
-            <tr><td>员工端</td><td>评分结果确认（可见上级+分管分）</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><a href="oa-pc/score-confirm.html">OA 确认</a> · <a href="miniapp/score-confirm.html">小程序</a></td></tr>
-            <tr><td>员工端</td><td>小程序 v1：进度查看，不进填表</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><a href="miniapp/task-progress.html">进度页</a></td></tr>
-            <tr><td>领导端</td><td>待我审核 · 月度评分 · R1/R2 区块校验</td><td>1.0</td><td><a href="oa-pc/supervisor-review-list.html">审核列表</a> · <a href="oa-pc/supervisor-score-monthly.html?id=r-wf-202605">评分页</a></td></tr>
-            <tr><td>领导端</td><td>分管评分列 · 同人合并 · 下月目标对照去重</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><a href="oa-pc/supervisor-score-monthly.html?id=r-lm-202605">合并评示例</a></td></tr>
-            <tr><td>领导端</td><td>退回至员工 · 原因必填</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td>评分页 / 计划明细</td></tr>
-            <tr><td>HR</td><td>计划管理 · 5 步向导 · 范围包 · 模板绑定</td><td>1.0</td><td><a href="oa-pc/hr-plan-list.html">计划列表</a> · <a href="oa-pc/hr-plan-create.html">新建</a></td></tr>
-            <tr><td>HR</td><td>确认评分截止 · 计划明细退回</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><a href="oa-pc/hr-plan-create.html">新建 Step3</a> · <a href="oa-pc/hr-plan-detail.html?plan=2026-05">明细</a></td></tr>
-            <tr><td>HR</td><td>人员绩效结果明细（无范围包/无排名；筛选美化）</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><a href="oa-pc/hr-perf-results-list.html?perm=hr">结果列表</a></td></tr>
-            <tr><td>HR</td><td>待办详情 · 只读查看 / 计划内改上级分</td><td><span class="hub-tag hub-tag--new">1.1.1</span></td><td><a href="oa-pc/hr-task-detail.html?no=E10035&from=plan">HR 编辑</a> · <a href="oa-pc/hr-task-detail.html?no=E10035&from=results&mode=view">只读</a></td></tr>
-            <tr><td>HR</td><td>奖金规则 · 按职级 · 同职级启用唯一</td><td>1.0.1</td><td><a href="oa-pc/hr-bonus-rules-list.html">规则配置</a></td></tr>
-            <tr><td>薪酬</td><td>奖金结算 · 双方确认门槛</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><a href="oa-pc/hr-bonus-settlement.html?plan=2026-05">结算页</a></td></tr>
-            <tr><td>权限</td><td>菜单按系统权限可见（原型 URL 切换）</td><td><span class="hub-tag hub-tag--new">1.1</span></td><td><code>perf-permissions.js</code></td></tr>
-            <tr><td>—</td><td>季度评分 · 批量评 · OGSM · 报表看板</td><td><span class="hub-tag hub-tag--partial">占位</span></td><td>见 <code>FEATURE_LIST.md</code> 完整 52 项</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p style="margin-top:8px;font-size:12px;color:var(--muted)">完整产品功能清单见仓库根目录 <code>FEATURE_LIST.md</code>（52 项）；上表仅列本原型已演示或 v1.1 新增项。</p>
     </section>
 
     <h2 style="margin-top:28px;font-size:17px">📱 小程序</h2>
     <div class="cards">
       <a class="card hub-card" href="miniapp/home.html" style="border:2px solid var(--primary)">
         <h3>⭐ 6Q教育 · 首页</h3>
-        <p>绿色顶栏 · 自助服务宫格 · 首页/我的底栏 → 点「绩效」</p>
+        <p>自助服务宫格 → 绩效</p>
       </a>
-      <a class="card hub-card" href="miniapp/task-list.html"><h3>绩效 · 当前待办</h3><p>五态 · 逾期 / 过往 独立页 · 领导 Tab 评+确认</p></a>
-      <a class="card hub-card" href="miniapp/task-progress.html"><h3>绩效 · 进度（v1.1）</h3><p>员工只看进度，不进填表 wizard</p></a>
-      <a class="card hub-card" href="miniapp/score-confirm.html"><h3>评分确认（v1.1）</h3><p>可见上级+分管分 · 一键确认</p></a>
-      <a class="card hub-card" href="miniapp/task-overdue.html"><h3>绩效 · 逾期</h3><p>待解锁 / 已解锁 双态</p></a>
-      <a class="card hub-card" href="miniapp/task-past.html"><h3>绩效 · 过往提交</h3><p>只读回看</p></a>
-      <a class="card hub-card" href="miniapp/leader-score-monthly.html"><h3>领导 · 月度评分</h3><p>简版折叠打分 · R1/R2 校验</p></a>
+      <a class="card hub-card" href="miniapp/task-list.html"><h3>绩效 · 当前待办</h3><p>五态 · 逾期 / 过往</p></a>
+      <a class="card hub-card" href="miniapp/task-progress.html"><h3>绩效 · 进度</h3><p>员工进度查看</p></a>
+      <a class="card hub-card" href="miniapp/score-confirm.html"><h3>评分确认</h3><p>确认评分结果</p></a>
+      <a class="card hub-card" href="miniapp/task-overdue.html"><h3>绩效 · 逾期</h3><p>待解锁 / 已解锁</p></a>
+      <a class="card hub-card" href="miniapp/task-past.html"><h3>绩效 · 已提交</h3><p>只读回看</p></a>
+      <a class="card hub-card" href="miniapp/leader-score-monthly.html"><h3>领导 · 月度评分</h3><p>折叠打分</p></a>
     </div>
 
-    <h2 style="margin-top:28px;font-size:17px">💻 OA · 员工端（个人中心）</h2>
+    <h2 style="margin-top:28px;font-size:17px">💻 OA · 员工端</h2>
     <div class="cards">
       <a class="card hub-card" href="oa-pc/personal-perf.html" style="border:2px solid var(--primary)">
-        <h3>⭐ 个人中心 → 我的绩效</h3>
-        <p>五态待办 · 待确认入口 · 侧栏仅「绩效待办」</p>
+        <h3>⭐ 我的绩效 · 待办</h3>
+        <p>当前 / 逾期 / 过往</p>
       </a>
-      <a class="card hub-card" href="oa-pc/score-confirm.html?role=employee"><h3>评分确认（v1.1）</h3><p>员工确认 · 可见上级+分管分</p></a>
-      <a class="card hub-card" href="oa-pc/personal-perf-overdue.html"><h3>绩效 · 逾期</h3><p>独立页 · 待 HR 解锁</p></a>
-      <a class="card hub-card" href="oa-pc/personal-perf-past.html"><h3>绩效 · 过往提交</h3><p>独立页 · 只读回看</p></a>
-      <a class="card hub-card" href="oa-pc/monthly-wizard.html"><h3>月度填表</h3><p>Ant Design 风格表格/按钮</p></a>
+      <a class="card hub-card" href="oa-pc/score-confirm.html?role=employee"><h3>评分确认</h3><p>员工确认页</p></a>
+      <a class="card hub-card" href="oa-pc/personal-perf-overdue.html"><h3>绩效 · 逾期</h3></a>
+      <a class="card hub-card" href="oa-pc/personal-perf-past.html"><h3>绩效 · 已提交</h3></a>
+      <a class="card hub-card" href="oa-pc/monthly-wizard.html"><h3>月度填表</h3><p>6 步向导</p></a>
     </div>
 
-    <h2 style="margin-top:28px;font-size:17px">💻 OA · 领导端（个人中心 · 待我审核）</h2>
+    <h2 style="margin-top:28px;font-size:17px">💻 OA · 领导端</h2>
     <div class="cards">
       <a class="card hub-card" href="oa-pc/supervisor-review-list.html" style="border:2px solid var(--primary)">
-        <h3>⭐ 领导 · 待我审核列表</h3>
-        <p>下属待评 · 待确认</p>
+        <h3>⭐ 待我审核</h3>
+        <p>本部门全员 · 去评分 / 改总分</p>
       </a>
-      <a class="card hub-card" href="oa-pc/supervisor-score-monthly.html?id=r-wf-202605">
-        <h3>月度评分页</h3>
-        <p>上级+分管分列 · 下月目标对照 Tab · 超限变红</p>
+      <a class="card hub-card" href="oa-pc/supervisor-score-monthly.html?id=r-lm-202605">
+        <h3>月度评分</h3>
+        <p>上级逐项评分</p>
       </a>
-      <a class="card hub-card" href="oa-pc/supervisor-score-quarterly.html">
-        <h3>季度评分页</h3>
-        <p>占位 · 含分管/6Q3J/面谈规格</p>
+      <a class="card hub-card" href="oa-pc/supervisor-score-quarterly.html?id=r-zs-2026q2&plan=2026-Q2&no=E10021">
+        <h3>季度评分</h3>
+        <p>6Q3J 只读 · v1.2</p>
       </a>
     </div>
 
-    <h2 style="margin-top:28px;font-size:17px">💻 OA · HR 端（人力资源）</h2>
+    <h2 style="margin-top:28px;font-size:17px">💻 OA · HR / 薪酬</h2>
     <div class="cards">
       <a class="card hub-card" href="oa-pc/hr-plan-list.html" style="border:2px solid var(--primary)">
-        <h3>⭐ 计划列表</h3>
-        <p>人力资源 → 绩效管理 → 计划管理</p>
+        <h3>⭐ 计划管理</h3>
       </a>
-      <a class="card hub-card" href="oa-pc/hr-plan-create.html">
-        <h3>新建计划向导</h3>
-        <p>含确认评分截止 · 5 步发放</p>
-      </a>
-      <a class="card hub-card" href="oa-pc/hr-plan-detail.html?plan=2026-05">
-        <h3>计划明细</h3>
-        <p>催办/解锁/退回至员工</p>
-      </a>
-      <a class="card hub-card" href="oa-pc/hr-perf-results-list.html?perm=hr">
-        <h3>人员绩效结果（v1.1）</h3>
-        <p>仅总得分 · 权限控制菜单</p>
-      </a>
-      <a class="card hub-card" href="oa-pc/hr-bonus-rules-list.html">
-        <h3>奖金规则配置</h3>
-        <p>按职级 · 同职级不可重复启用</p>
-      </a>
-      <a class="card hub-card" href="oa-pc/hr-bonus-settlement.html?plan=2026-05">
-        <h3>薪酬 · 奖金结算</h3>
-        <p>双方确认后可结算 · 仅 HR/薪酬可见</p>
-      </a>
+      <a class="card hub-card" href="oa-pc/hr-plan-create.html"><h3>新建计划</h3></a>
+      <a class="card hub-card" href="oa-pc/hr-plan-detail.html?plan=2026-Q2" style="border:2px solid #52c41a"><h3>⭐ Q2 计划明细</h3><p>6Q3J 导入演示</p></a>
+      <a class="card hub-card" href="oa-pc/hr-plan-detail.html?plan=2026-05"><h3>5月计划明细</h3></a>
+      <a class="card hub-card" href="oa-pc/hr-task-detail.html?no=E10035&from=plan"><h3>待办详情</h3></a>
+      <a class="card hub-card" href="oa-pc/hr-perf-results-list.html?perm=hr"><h3>绩效结果</h3></a>
+      <a class="card hub-card" href="oa-pc/hr-bonus-rules-list.html"><h3>奖金规则</h3></a>
+      <a class="card hub-card" href="oa-pc/hr-bonus-settlement.html?plan=2026-05"><h3>奖金结算</h3></a>
     </div>
+
+    <section class="hub-section">
+      <h2>✅ 功能清单</h2>
+      <div class="hub-table-wrap">
+        <table class="hub-table">
+          <thead><tr><th>模块</th><th>功能</th><th>入口</th></tr></thead>
+          <tbody>
+            <tr><td>员工</td><td>月度填表 · 6 步 · 多考核目标 · 同页自评</td><td><a href="oa-pc/monthly-wizard.html">OA</a> · <a href="miniapp/monthly-wizard.html">小程序</a></td></tr>
+            <tr><td>领导</td><td>待我审核 · 本部门全员 · 改核定总分</td><td><a href="oa-pc/supervisor-review-list.html">列表</a></td></tr>
+            <tr><td>员工</td><td>评分确认 · 模块表 + 折算汇总</td><td><a href="oa-pc/score-confirm.html">OA</a> · <a href="miniapp/score-confirm.html">小程序</a></td></tr>
+            <tr><td>HR</td><td>季度计划 · 6Q3J Excel 导入</td><td><a href="oa-pc/hr-plan-detail.html?plan=2026-Q2">Q2 计划明细</a></td></tr>
+            <tr><td>员工/领导</td><td>6Q3J 三项只读 · 与 HR 导入同步</td><td><a href="oa-pc/quarterly-wizard.html">季表 Step3</a> · <a href="oa-pc/supervisor-score-quarterly.html?id=r-zs-2026q2">上级评</a></td></tr>
+            <tr><td>员工</td><td>季度填表 · 7 步 · 同页自评 · 6Q3J 待导入</td><td><a href="oa-pc/quarterly-wizard.html">OA</a> · <a href="miniapp/quarterly-wizard.html">小程序</a></td></tr>
+            <tr><td>全链路</td><td>评分配两位小数（录入最多 2 位 · 整数展示 x.00）</td><td><code>perf-score-format.js</code></td></tr>
+            <tr><td>员工</td><td>待办五态 · 逾期双态</td><td><a href="oa-pc/personal-perf.html">OA</a> · <a href="miniapp/task-list.html">小程序</a></td></tr>
+            <tr><td>员工</td><td>进度查看（小程序 v1）</td><td><a href="miniapp/task-progress.html">进度页</a></td></tr>
+            <tr><td>领导</td><td>待我审核 · 自评总分排序</td><td><a href="oa-pc/supervisor-review-list.html">列表</a></td></tr>
+            <tr><td>领导</td><td>待我审核 · 去评分 + 分管改总分</td><td><a href="oa-pc/supervisor-review-list.html">列表</a></td></tr>
+            <tr><td>HR</td><td>绩效结果明细 · 导出占位</td><td><a href="oa-pc/hr-perf-results-list.html?perm=hr">HR</a></td></tr>
+            <tr><td>HR</td><td>待办详情 · 折算汇总</td><td><a href="oa-pc/hr-task-detail.html?no=E10035&from=plan">详情</a></td></tr>
+            <tr><td>HR</td><td>奖金规则 · 按职级</td><td><a href="oa-pc/hr-bonus-rules-list.html">规则</a></td></tr>
+            <tr><td>薪酬</td><td>奖金结算</td><td><a href="oa-pc/hr-bonus-settlement.html?plan=2026-05">结算</a></td></tr>
+            <tr><td>权限</td><td>菜单按角色可见</td><td><a href="oa-pc/hr-perf-results-list.html?perm=hr">?perm=hr/dept/payroll/employee</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="hub-section">
+      <h2>📋 版本</h2>
+      <div class="hub-table-wrap">
+        <table class="hub-table">
+          <thead><tr><th>版本</th><th>日期</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1.3.0</strong></td><td>2026-06-03</td><td>分管改总分 · 确认页模块表 · 多考核目标 · 导出占位 · 版本注释</td></tr>
+            <tr><td>1.2.0</td><td>2026-06-03</td><td>6Q3J 计划导入演示</td></tr>
+            <tr><td>1.1.1</td><td>2026-06-03</td><td>填表 6/7 步精简 · 同页自评 · 自评总分列 · 批量转办 · 两位小数 · HR 改分</td></tr>
+            <tr><td>1.1.0</td><td>2026-06-03</td><td>评分确认 · 五态待办 · 结果明细 · 待办详情 · 奖金按职级</td></tr>
+            <tr><td>1.0.0</td><td>2026-06-03</td><td>填表 · 评分 · 计划 · 奖金 · 逾期双态</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
-  <script src="assets/proto-notes-data.js"></script>
-  <script src="assets/proto-notes.js"></script>
 </body>
 </html>

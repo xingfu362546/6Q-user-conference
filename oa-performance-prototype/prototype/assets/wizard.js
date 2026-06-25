@@ -1,31 +1,31 @@
 /** 月度填表向导 · 共享逻辑（原型：无校验，便于测试） */
 
+function sf() { return window.PerfScoreFormat; }
+function sIn(v) { return sf() ? sf().inputVal(v) : (v == null || v === '' ? '' : String(v)); }
+function sOut(v) { return sf() ? sf().format(v) : v; }
+
 const MONTHLY_STEPS = [
 
-  { id: 1, phase: 0, title: '核心绩效 V%', subtitle: '【A】本月考评 · 1/8' },
+  { id: 1, phase: 0, title: '核心绩效 V%', subtitle: '【A】本月考评 · 1/6' },
 
-  { id: 2, phase: 0, title: '常规绩效 X%', subtitle: '【A】本月考评 · 2/8' },
+  { id: 2, phase: 0, title: '常规绩效 X%', subtitle: '【A】本月考评 · 2/6' },
 
-  { id: 3, phase: 0, title: '行为态度 15%', subtitle: '【A】本月考评 · 3/8' },
+  { id: 3, phase: 0, title: '行为态度 · 加减分', subtitle: '【A】本月考评 · 3/6' },
 
-  { id: 4, phase: 0, title: '加减分', subtitle: '【A】本月考评 · 4/8' },
+  { id: 4, phase: 0, title: '自评总结', subtitle: '【A】本月考评 · 4/6' },
 
-  { id: 5, phase: 0, title: '自评打分', subtitle: '【A】本月考评 · 5/8' },
+  { id: 5, phase: 1, title: '下月核心目标', subtitle: '【B】下月目标 · 5/6' },
 
-  { id: 6, phase: 0, title: '自评总结', subtitle: '【A】本月考评 · 6/8' },
-
-  { id: 7, phase: 1, title: '下月核心目标', subtitle: '【B】下月目标 · 7/8' },
-
-  { id: 8, phase: 2, title: '确认提交', subtitle: '确认提交 · 8/8' },
+  { id: 6, phase: 2, title: '确认提交', subtitle: '确认提交 · 6/6' },
 
 ];
 
 
 
 const PHASE_BLOCKS = [
-  { id: 0, name: '【A】本月考评', desc: '核心 · 常规 · 行为 · 加减分 · 自评', steps: [1, 2, 3, 4, 5, 6] },
-  { id: 1, name: '【B】下月目标', desc: '下月核心 KR 3–4 项', steps: [7] },
-  { id: 2, name: '确认提交', desc: '校验并提交', steps: [8] },
+  { id: 0, name: '【A】本月考评', desc: '核心 · 常规 · 行为 · 加减分 · 总结', steps: [1, 2, 3, 4] },
+  { id: 1, name: '【B】下月目标', desc: '下月核心 KR 3–4 项', steps: [5] },
+  { id: 2, name: '确认提交', desc: '校验并提交', steps: [6] },
 ];
 
 
@@ -154,6 +154,20 @@ function renderStandardTiersHtml(kr, editable) {
     '<label>考核标准 ' + hint + '</label>' +
     '<ul class="std-tier-list">' + rows + '</ul>' +
     addBtn +
+    renderAttachRulesBlock(kr, editable) +
+    '</div>';
+}
+
+/** 考核标准下方 · 附加规则（纯文本，无校验） */
+function renderAttachRulesBlock(kr, editable) {
+  var text = (kr.attachRules || '').trim();
+  if (!editable && !text) return '';
+  var input = editable
+    ? '<input type="text" class="attach-rules-input" data-k="attachRules" data-attach-rules value="' + escapeAttr(kr.attachRules || '') + '" placeholder="如：每失误一次 -1分" />'
+    : '<span class="attach-rules-read">' + escapeAttr(kr.attachRules || '') + '</span>';
+  return '<div class="attach-rules-block">' +
+    '<label class="attach-rules-label">附加规则</label>' +
+    input +
     '</div>';
 }
 
@@ -194,6 +208,13 @@ function bindStandardTiers(card, kr, onChange) {
     onChange(true);
   });
 
+  field.querySelectorAll('[data-attach-rules]').forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      kr.attachRules = inp.value;
+      onChange(false);
+    });
+  });
+
   var weightInp = card.querySelector('[data-k="weight"]');
   if (weightInp && !weightInp.dataset.tierBound) {
     weightInp.dataset.tierBound = '1';
@@ -206,9 +227,11 @@ function bindStandardTiers(card, kr, onChange) {
 }
 
 function normalizeState(state) {
-  (state.coreKrs || []).forEach(ensureStandardTiers);
-  (state.regularKrs || []).forEach(ensureStandardTiers);
-  (state.nextMonthKrs || []).forEach(ensureStandardTiers);
+  if (window.PerfKrHierarchy) PerfKrHierarchy.ensureState(state);
+  var flat = window.PerfKrHierarchy ? PerfKrHierarchy.legacyFlat(state) : { coreKrs: state.coreKrs, regularKrs: state.regularKrs, nextMonthKrs: state.nextMonthKrs };
+  (flat.coreKrs || []).forEach(ensureStandardTiers);
+  (flat.regularKrs || []).forEach(ensureStandardTiers);
+  (flat.nextMonthKrs || []).forEach(ensureStandardTiers);
   if (!state.behaviorSelfScores || state.behaviorSelfScores.length !== BEHAVIOR_ITEMS.length) {
     state.behaviorSelfScores = BEHAVIOR_ITEMS.map(function (_, i) {
       return (state.behaviorSelfScores && state.behaviorSelfScores[i]) || '';
@@ -218,6 +241,13 @@ function normalizeState(state) {
 }
 
 function seedDemoGoals(state) {
+  if (window.PerfKrHierarchy) {
+    PerfKrHierarchy.ensureState(state);
+    if ((state.coreKeyObjectives[0].o || '').trim()) return;
+    state.coreKeyObjectives = [PerfKrHierarchy.emptyKeyObjective('V', true)];
+    state.regularKeyObjectives = [PerfKrHierarchy.emptyKeyObjective('X', true)];
+    return;
+  }
   if ((state.coreKrs[0].o || '').trim()) return;
   state.coreKrs[0].o = '推动绩效系统 MVP 需求评审与方案落地';
   state.coreKrs[0].smart = '6/30 前完成 PRD 评审，覆盖月/季模板与双端填表主链路';
@@ -227,7 +257,7 @@ function seedDemoGoals(state) {
 
 function emptyKr(block) {
 
-  return { block, o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(25), m: '', selfScore: '' };
+  return { block, o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(25), attachRules: '', m: '', selfScore: '' };
 
 }
 
@@ -239,11 +269,17 @@ function defaultState() {
 
     step: 1,
 
-    maxStep: 8,
+    maxStep: 6,
 
-    coreKrs: [emptyKr('V'), emptyKr('V')],
+    coreKrs: [],
 
-    regularKrs: [emptyKr('X')],
+    regularKrs: [],
+
+    coreKeyObjectives: null,
+
+    regularKeyObjectives: null,
+
+    nextMonthKeyObjectives: null,
 
     behaviorEvents: BEHAVIOR_ITEMS.map(() => ''),
 
@@ -279,7 +315,17 @@ function loadState(key) {
 
     const s = raw ? JSON.parse(raw) : defaultState();
 
-    s.maxStep = 8;
+    if (window.PerfKrHierarchy) PerfKrHierarchy.ensureState(s);
+
+    var oldStep = s.step;
+
+    var migrate = { 4: 3, 5: 3, 6: 4, 7: 5, 8: 6 };
+
+    if (migrate[oldStep]) s.step = migrate[oldStep];
+
+    else if (oldStep > 6) s.step = 6;
+
+    s.maxStep = 6;
 
     if (!s.openKr) s.openKr = {};
 
@@ -335,7 +381,7 @@ function renderHeader(el) {
 
 
 
-function renderPhaseStepper(container, steps, phaseBlocks, currentStep, onJump) {
+function renderPhaseStepper(container, steps, phaseBlocks, currentStep, onJump, weightHook) {
   const cur = steps[currentStep - 1];
   const total = steps.length;
   const compact = phaseBlocks.length >= 4;
@@ -377,17 +423,20 @@ function renderPhaseStepper(container, steps, phaseBlocks, currentStep, onJump) 
   container.querySelectorAll('.step-dot').forEach(function (dot) {
     dot.addEventListener('click', function () { onJump(+dot.dataset.step); });
   });
+  if (typeof weightHook === 'function') weightHook(container);
 }
 
 function renderStepper(container, state, onJump) {
-  renderPhaseStepper(container, MONTHLY_STEPS, PHASE_BLOCKS, state.step, onJump);
+  renderPhaseStepper(container, MONTHLY_STEPS, PHASE_BLOCKS, state.step, onJump, function (el) {
+    if (window.PerfKrHierarchy) PerfKrHierarchy.markStepperWeightErrors(el, state, 'month', [1, 2], 5);
+  });
 }
 
 
 
-function krFields(kr, idx, blockLabel, showScore, openKey, isOpen) {
+function krFields(kr, idx, blockLabel, showScore, openKey, isOpen, inlineScore) {
 
-  const preview = typeof krPreview === 'function' ? krPreview(kr, showScore) : blockLabel;
+  const preview = typeof krPreview === 'function' ? krPreview(kr, showScore || inlineScore) : blockLabel;
 
   const scoreFields = showScore ? `
 
@@ -395,7 +444,21 @@ function krFields(kr, idx, blockLabel, showScore, openKey, isOpen) {
 
     <div class="field"><label>关键成果 M</label><textarea rows="2" data-k="m">${kr.m}</textarea></div>
 
-    <div class="field"><label>自评分（1-5）</label><input type="number" min="1" max="5" step="0.1" data-k="selfScore" value="${kr.selfScore}" /></div>
+    <div class="field"><label>自评分（1-5）</label><input type="number" min="1" max="5" step="0.01" class="perf-score-input" data-perf-score data-k="selfScore" value="${sIn(kr.selfScore)}" /></div>
+
+  ` : inlineScore ? `
+
+    <div class="field"><label>关键目标 O</label><textarea rows="2" data-k="o" placeholder="简要描述目标">${kr.o}</textarea></div>
+
+    <div class="field"><label>考核目标 SMART</label><textarea rows="2" data-k="smart" placeholder="具体、可衡量…">${kr.smart}</textarea></div>
+
+    <div class="field"><label>KR 权重 %</label><input type="number" min="0" max="100" data-k="weight" value="${kr.weight}" placeholder="0" /></div>
+
+    ${renderStandardTiersHtml(kr, true)}
+
+    <div class="field"><label>关键成果 M</label><textarea rows="2" data-k="m" placeholder="填写本月关键成果">${kr.m}</textarea></div>
+
+    <div class="field"><label>自评分</label><input type="number" min="0" step="0.01" class="perf-score-input" data-perf-score data-k="selfScore" value="${sIn(kr.selfScore)}" placeholder="对照考核标准打分" /></div>
 
   ` : `
 
@@ -415,7 +478,7 @@ function krFields(kr, idx, blockLabel, showScore, openKey, isOpen) {
 
       <button type="button" class="collapse-head">
 
-        <span class="collapse-title">${blockLabel} ${idx + 1}</span>
+        <span class="collapse-title">考核目标 ${idx + 1}${blockLabel ? ' · ' + blockLabel : ''}</span>
 
         <span class="collapse-preview" data-preview>${preview}</span>
 
@@ -507,7 +570,7 @@ function updateKrPreview(card, kr, showScore) {
 
 
 
-function bindKrCards(root, listKey, state, onChange, showScore) {
+function bindKrCards(root, listKey, state, onChange, showScore, inlineScore) {
 
   const openKey = listKey;
 
@@ -521,7 +584,7 @@ function bindKrCards(root, listKey, state, onChange, showScore) {
 
         state[listKey][idx][inp.dataset.k] = inp.value;
 
-        updateKrPreview(card, state[listKey][idx], showScore);
+        updateKrPreview(card, state[listKey][idx], showScore || inlineScore);
 
         onChange(false);
 
@@ -529,7 +592,8 @@ function bindKrCards(root, listKey, state, onChange, showScore) {
 
     });
 
-    if (!showScore) bindStandardTiers(card, state[listKey][idx], onChange);
+    if (!showScore && !inlineScore) bindStandardTiers(card, state[listKey][idx], onChange);
+    if (inlineScore) bindStandardTiers(card, state[listKey][idx], onChange);
 
     const rm = card.querySelector('.remove-btn');
 
@@ -647,13 +711,29 @@ function renderStepContent(state) {
 
   const s = state.step;
 
+  if (s === 1 && window.PerfKrHierarchy) {
+    return PerfKrHierarchy.renderWorkStep(state, 'coreKeyObjectives', 'V', {
+      openKey: 'core', periodType: 'month', globalBar: true,
+      desc: '一级 · 核心绩效 V%：可<strong>增加多个关键目标</strong>（各填 O）；其下<strong>考核目标</strong>填 SMART / 权重 / 标准 / M / 自评；顶部为全区权重合计',
+    });
+  }
+
+  if (s === 2 && window.PerfKrHierarchy) {
+    var ws = PerfKrHierarchy.weightStatus(state, 'month');
+    return PerfKrHierarchy.renderWorkStep(state, 'regularKeyObjectives', 'X', {
+      openKey: 'regular', periodType: 'month', globalBar: true,
+      desc: '一级 · 常规绩效 X%：可<strong>增加多个关键目标</strong>；各关键目标下展示<strong>考核目标权重小计</strong>。' +
+        '核心 <b>' + ws.core.toFixed(1) + '%</b> + 常规 <b>' + ws.regular.toFixed(1) + '%</b> 须 = <b>85%</b>',
+    });
+  }
+
   if (s === 1) {
 
-    const cards = state.coreKrs.map((k, i) => krFields(k, i, '核心 V', false, 'core', isKrOpen(state, 'core', i))).join('');
+    const cards = state.coreKrs.map((k, i) => krFields(k, i, '核心 V', false, 'core', isKrOpen(state, 'core', i), true)).join('');
 
     return `
 
-      <p class="section-desc">填写本月核心绩效，建议 4–6 项。</p>
+      <p class="section-desc">填写本月核心绩效；支持<strong>多个考核目标</strong>。每项填完关键成果 M 后可直接自评。</p>
 
       ${renderWeightBar(sumWeight(state.coreKrs), sumWeight(state.regularKrs), 85)}
 
@@ -661,7 +741,7 @@ function renderStepContent(state) {
 
       <div id="kr-list">${cards}</div>
 
-      <button type="button" class="btn btn-block" id="add-kr" style="margin-top:8px">+ 添加核心指标</button>
+      <button type="button" class="btn btn-block" id="add-kr" style="margin-top:8px">+ 增加考核目标</button>
 
     `;
 
@@ -669,11 +749,11 @@ function renderStepContent(state) {
 
   if (s === 2) {
 
-    const cards = state.regularKrs.map((k, i) => krFields(k, i, '常规 X', false, 'regular', isKrOpen(state, 'regular', i))).join('');
+    const cards = state.regularKrs.map((k, i) => krFields(k, i, '常规 X', false, 'regular', isKrOpen(state, 'regular', i), true)).join('');
 
     return `
 
-      <p class="section-desc">填写常规绩效指标。</p>
+      <p class="section-desc">填写常规绩效；支持<strong>多个考核目标</strong>。关键成果与自评分在同页完成。</p>
 
       ${renderWeightBar(sumWeight(state.coreKrs), sumWeight(state.regularKrs), 85)}
 
@@ -681,7 +761,7 @@ function renderStepContent(state) {
 
       <div id="kr-list">${cards}</div>
 
-      <button type="button" class="btn btn-block" id="add-kr" style="margin-top:8px">+ 添加常规指标</button>
+      <button type="button" class="btn btn-block" id="add-kr" style="margin-top:8px">+ 增加考核目标</button>
 
     `;
 
@@ -697,7 +777,7 @@ function renderStepContent(state) {
 
           <span class="collapse-title">${b.name}</span>
 
-          <span class="collapse-preview">${b.weight}% · ${state.behaviorEvents[i] ? '已填关键事件' : '选填关键事件'}</span>
+          <span class="collapse-preview">${b.weight}% · ${state.behaviorEvents[i] ? '已填关键事件' : '选填关键事件'}${state.behaviorSelfScores[i] ? ' · 自评 ' + sOut(state.behaviorSelfScores[i]) : ''}</span>
 
           <span class="collapse-chevron">▼</span>
 
@@ -709,25 +789,13 @@ function renderStepContent(state) {
 
           <div class="field"><label>关键事件（选填）</label><textarea rows="2" data-bi="${i}">${state.behaviorEvents[i]}</textarea></div>
 
+          <div class="field"><label>自评分</label><input type="number" min="0" step="0.01" class="perf-score-input" data-perf-score data-bsi="${i}" value="${sIn(state.behaviorSelfScores[i])}" placeholder="对照标准打分" /></div>
+
         </div>
 
       </div>
 
     `).join('');
-
-    return `
-
-      <p class="section-desc">行为态度固定 4 项，不可增删。</p>
-
-      ${collapseToolbar('behavior-list')}
-
-      <div id="behavior-list">${items}</div>
-
-    `;
-
-  }
-
-  if (s === 4) {
 
     const plus = state.plusRows.map((r, i) => `
 
@@ -747,7 +815,7 @@ function renderStepContent(state) {
 
           <div class="field"><label>说明</label><textarea rows="2" data-k="desc" placeholder="加分说明">${r.desc}</textarea></div>
 
-          <div class="field"><label>分值</label><input type="number" data-k="score" value="${r.score}" placeholder="0" /></div>
+          <div class="field"><label>分值</label><input type="number" step="0.01" class="perf-score-input" data-perf-score data-k="score" value="${sIn(r.score)}" placeholder="0" /></div>
 
         </div>
 
@@ -773,7 +841,7 @@ function renderStepContent(state) {
 
           <div class="field"><label>说明</label><textarea rows="2" data-k="desc" placeholder="减分说明">${r.desc}</textarea></div>
 
-          <div class="field"><label>分值</label><input type="number" data-k="score" value="${r.score}" placeholder="0" /></div>
+          <div class="field"><label>分值</label><input type="number" step="0.01" class="perf-score-input" data-perf-score data-k="score" value="${sIn(r.score)}" placeholder="0" /></div>
 
         </div>
 
@@ -783,15 +851,19 @@ function renderStepContent(state) {
 
     return `
 
-      <p class="section-desc">申报本月加减分；上级核定后生效。</p>
+      <p class="section-desc">行为态度固定 4 项；填完关键事件后直接自评。加减分在本步一并申报。</p>
 
-      <p class="section-desc" style="margin-top:-8px;font-weight:600;color:var(--text)">加分项</p>
+      ${collapseToolbar('behavior-list')}
+
+      <div id="behavior-list">${items}</div>
+
+      <p class="section-desc" style="margin-top:20px;font-weight:600;color:var(--text)">加减分申报</p>
+
+      <p class="section-desc" style="margin-top:-8px">选填；上级核定后生效。</p>
 
       <div id="plus-list">${plus}</div>
 
       <button type="button" class="btn" id="add-plus" style="margin-bottom:16px">+ 加分项</button>
-
-      <p class="section-desc" style="font-weight:600;color:var(--text)">减分项</p>
 
       <div id="minus-list">${minus}</div>
 
@@ -801,38 +873,7 @@ function renderStepContent(state) {
 
   }
 
-  if (s === 5) {
-
-    const all = [...state.coreKrs.map((k,i)=>({...k, label:`核心 V`, key:'core'})), ...state.regularKrs.map((k,i)=>({...k, label:`常规 X`, key:'regular', off:i}))];
-
-    const behaviorScoreCards = BEHAVIOR_ITEMS.map(function (b, i) {
-      return '<div class="collapse-card ' + (isKrOpen(state, 'behaviorScore', i) ? 'open' : '') + '" data-behavior-score="' + i + '">' +
-        '<button type="button" class="collapse-head">' +
-        '<span class="collapse-title">行为 · ' + b.name + '</span>' +
-        '<span class="collapse-preview">' + b.weight + '% · ' + (state.behaviorSelfScores[i] ? '自评 ' + state.behaviorSelfScores[i] : '待评分') + '</span>' +
-        '<span class="collapse-chevron">▼</span></button>' +
-        '<div class="collapse-body">' + renderBehaviorStandardHtml(b.standard) +
-        '<div class="field"><label>自评分（1-5）</label><input type="number" min="1" max="5" step="0.1" data-bsi="' + i + '" value="' + (state.behaviorSelfScores[i] || '') + '" /></div>' +
-        '</div></div>';
-    }).join('');
-
-    return `
-
-      <p class="section-desc">【A】工作 KR：填写关键成果 M 与自评分；行为态度在下方单独自评。</p>
-
-      ${collapseToolbar('score-list')}
-
-      <div id="score-list">${all.map((k, i) => krFields(k, i, k.label, true, `score-${i}`, isKrOpen(state, 'score', i))).join('')}</div>
-
-      <p class="section-desc" style="margin-top:16px;font-weight:600;color:var(--text)">行为态度 15%</p>
-
-      <div id="behavior-score-list">${behaviorScoreCards}</div>
-
-    `;
-
-  }
-
-  if (s === 6) {
+  if (s === 4) {
 
     return `
 
@@ -844,7 +885,13 @@ function renderStepContent(state) {
 
   }
 
-  if (s === 7) {
+  if (s === 5 && window.PerfKrHierarchy) {
+    return PerfKrHierarchy.renderNextPeriodStep(state, 'nextMonthKeyObjectives', {
+      desc: '下月规划：可<strong>增加多个关键目标</strong>；各关键目标下考核目标权重小计 + 全区合计须 = 100%',
+    });
+  }
+
+  if (s === 5) {
 
     const cards = state.nextMonthKrs.map((k, i) => nextMonthFields(k, i, isKrOpen(state, 'next', i))).join('');
 
@@ -862,11 +909,17 @@ function renderStepContent(state) {
 
   }
 
-  if (s === 8) {
+  if (s === 6) {
 
-    const vw = sumWeight(state.coreKrs);
-
-    const xw = sumWeight(state.regularKrs);
+    const vw = window.PerfKrHierarchy ? PerfKrHierarchy.weightStatus(state, 'month').core : sumWeight(state.coreKrs);
+    const xw = window.PerfKrHierarchy ? PerfKrHierarchy.weightStatus(state, 'month').regular : sumWeight(state.regularKrs);
+    const koCore = window.PerfKrHierarchy ? (state.coreKeyObjectives || []).length : (state.coreKrs || []).length;
+    const koReg = window.PerfKrHierarchy ? (state.regularKeyObjectives || []).length : (state.regularKrs || []).length;
+    const targetCore = window.PerfKrHierarchy ? PerfKrHierarchy.countTargets(state.coreKeyObjectives) : (state.coreKrs || []).length;
+    const targetReg = window.PerfKrHierarchy ? PerfKrHierarchy.countTargets(state.regularKeyObjectives) : (state.regularKrs || []).length;
+    const nextKo = window.PerfKrHierarchy ? (state.nextMonthKeyObjectives || []).length : (state.nextMonthKrs || []).length;
+    const nextTargets = window.PerfKrHierarchy ? PerfKrHierarchy.countTargets(state.nextMonthKeyObjectives) : (state.nextMonthKrs || []).length;
+    const nextWs = window.PerfKrHierarchy ? PerfKrHierarchy.weightStatus(state, 'next') : { total: sumWeight(state.nextMonthKrs || []), ok: true };
 
     return `
 
@@ -876,15 +929,17 @@ function renderStepContent(state) {
 
         <tr><th>区块</th><th>指标数</th><th>权重</th></tr>
 
-        <tr><td>核心绩效 V</td><td>${state.coreKrs.length}</td><td>${vw.toFixed(1)}%</td></tr>
+        <tr><td>核心绩效 V</td><td>${koCore} 个关键目标 · ${targetCore} 个考核目标</td><td>${vw.toFixed(1)}%</td></tr>
 
-        <tr><td>常规绩效 X</td><td>${state.regularKrs.length}</td><td>${xw.toFixed(1)}%</td></tr>
+        <tr><td>常规绩效 X</td><td>${koReg} 个关键目标 · ${targetReg} 个考核目标</td><td>${xw.toFixed(1)}%</td></tr>
+
+        <tr><td>核心+常规合计</td><td>—</td><td>${(vw + xw).toFixed(1)}% ${Math.abs(vw + xw - 85) < 0.05 ? '✓' : '<span style="color:#ff4d4f">须=85%</span>'}</td></tr>
 
         <tr><td>行为态度</td><td>4（固定）</td><td>15%</td></tr>
 
         <tr><td>加减分</td><td>${state.plusRows.length + state.minusRows.length}</td><td>—</td></tr>
 
-        <tr><td>下月核心目标</td><td>${state.nextMonthKrs.length}</td><td>${sumWeight(state.nextMonthKrs.map(k=>({weight:k.weight}))).toFixed(1)}%</td></tr>
+        <tr><td>下月目标</td><td>${nextKo} 个关键目标 · ${nextTargets} 个考核目标</td><td>${nextWs.total.toFixed(1)}% ${nextWs.ok ? '✓' : '<span style="color:#ff4d4f">须=100%</span>'}</td></tr>
 
       </table>
 
@@ -900,21 +955,18 @@ function renderStepContent(state) {
 
 function bindStepEvents(root, state, rerender) {
 
-  if ([1, 2].includes(state.step)) bindListToolbar(root, 'kr-list');
+  if ([1, 2, 5].includes(state.step)) bindListToolbar(root, 'ko-list');
 
   if (state.step === 3) bindListToolbar(root, 'behavior-list');
 
-  if (state.step === 5) bindListToolbar(root, 'score-list');
-
-  if (state.step === 5) bindListToolbar(root, 'behavior-score-list');
-
-  if (state.step === 7) bindListToolbar(root, 'next-list');
-
-
-
   if (state.step === 1 || state.step === 2) {
-
-    bindKrCards(root, state.step === 1 ? 'coreKrs' : 'regularKrs', state, rerender, false);
+    if (window.PerfKrHierarchy) {
+      var lk = state.step === 1 ? 'coreKeyObjectives' : 'regularKeyObjectives';
+      var ok = state.step === 1 ? 'core' : 'regular';
+      var bl = state.step === 1 ? 'V' : 'X';
+      PerfKrHierarchy.bindKeyObjectiveList(root, state, lk, ok, bl, rerender, 'month');
+    } else {
+    bindKrCards(root, state.step === 1 ? 'coreKrs' : 'regularKrs', state, rerender, false, true);
 
     root.querySelector('#add-kr')?.addEventListener('click', () => {
 
@@ -929,7 +981,7 @@ function bindStepEvents(root, state, rerender) {
       rerender(true);
 
     });
-
+    }
   }
 
   if (state.step === 3) {
@@ -946,17 +998,35 @@ function bindStepEvents(root, state, rerender) {
 
         const prev = card?.querySelector('.collapse-preview');
 
-        if (prev) prev.textContent = `${BEHAVIOR_ITEMS[+ta.dataset.bi].weight}% · ${ta.value ? '已填关键事件' : '选填关键事件'}`;
+        const b = BEHAVIOR_ITEMS[+ta.dataset.bi];
+
+        const sc = state.behaviorSelfScores[+ta.dataset.bi];
+
+        if (prev && b) prev.textContent = `${b.weight}% · ${ta.value ? '已填关键事件' : '选填关键事件'}${sc ? ' · 自评 ' + sOut(sc) : ''}`;
 
       });
 
     });
 
-  }
+    root.querySelectorAll('[data-bsi]').forEach(inp => {
 
-  if (state.step === 4) {
+      inp.addEventListener('input', () => {
 
-    bindCollapseCards(root);
+        state.behaviorSelfScores[+inp.dataset.bsi] = inp.value;
+
+        const card = inp.closest('.collapse-card');
+
+        const prev = card?.querySelector('.collapse-preview');
+
+        const b = BEHAVIOR_ITEMS[+inp.dataset.bsi];
+
+        const ev = state.behaviorEvents[+inp.dataset.bsi];
+
+        if (prev && b) prev.textContent = `${b.weight}% · ${ev ? '已填关键事件' : '选填关键事件'}${inp.value ? ' · 自评 ' + sOut(inp.value) : ''}`;
+
+      });
+
+    });
 
     root.querySelectorAll('[data-pm]').forEach(row => {
 
@@ -988,137 +1058,48 @@ function bindStepEvents(root, state, rerender) {
 
   }
 
-  if (state.step === 5) {
-
-    const all = [...state.coreKrs, ...state.regularKrs];
-
-    root.querySelectorAll('#score-list .collapse-card').forEach((card, idx) => {
-
-      card.querySelectorAll('[data-k]').forEach(inp => {
-
-        inp.addEventListener('input', () => {
-
-          all[idx][inp.dataset.k] = inp.value;
-
-          updateKrPreview(card, all[idx], true);
-
-        });
-
-      });
-
-      card.querySelector('.collapse-head')?.addEventListener('click', e => {
-
-        const opening = !card.classList.contains('open');
-
-        if (opening) {
-
-          root.querySelectorAll('#score-list .collapse-card.open').forEach(c => c.classList.remove('open'));
-
-          card.classList.add('open');
-
-          state.openKr.score = idx;
-
-        } else card.classList.remove('open');
-
-      });
-
-    });
-
-    bindCollapseCards(root.querySelector('#behavior-score-list'));
-
-    root.querySelectorAll('#behavior-score-list [data-bsi]').forEach(function (inp) {
-      inp.addEventListener('input', function () {
-        state.behaviorSelfScores[+inp.dataset.bsi] = inp.value;
-        var card = inp.closest('.collapse-card');
-        var prev = card && card.querySelector('.collapse-preview');
-        var b = BEHAVIOR_ITEMS[+inp.dataset.bsi];
-        if (prev && b) prev.textContent = b.weight + '% · ' + (inp.value ? '自评 ' + inp.value : '待评分');
-      });
-    });
-
-    root.querySelectorAll('#behavior-score-list .collapse-card').forEach(function (card) {
-      card.querySelector('.collapse-head')?.addEventListener('click', function () {
-        var opening = !card.classList.contains('open');
-        if (opening) {
-          root.querySelectorAll('#behavior-score-list .collapse-card.open').forEach(function (c) { c.classList.remove('open'); });
-          card.classList.add('open');
-          state.openKr.behaviorScore = +card.dataset.behaviorScore;
-        } else card.classList.remove('open');
-      });
-    });
-
-  }
-
-  if (state.step === 6) {
+  if (state.step === 4) {
 
     root.querySelector('#self-summary')?.addEventListener('input', e => { state.selfSummary = e.target.value; });
 
   }
 
-  if (state.step === 7) {
-
-    root.querySelectorAll('#next-list .collapse-card').forEach(card => {
-
-      const idx = +card.dataset.idx;
-
-      card.querySelectorAll('[data-k]').forEach(inp => {
-
-        inp.addEventListener('input', () => {
-
-          state.nextMonthKrs[idx][inp.dataset.k] = inp.value;
-
-          updateKrPreview(card, state.nextMonthKrs[idx], false);
-
+  if (state.step === 5) {
+    if (window.PerfKrHierarchy) {
+      PerfKrHierarchy.bindKeyObjectiveList(root, state, 'nextMonthKeyObjectives', 'next', 'next', rerender, 'next');
+    } else {
+      root.querySelectorAll('#next-list .collapse-card').forEach(card => {
+        const idx = +card.dataset.idx;
+        card.querySelectorAll('[data-k]').forEach(inp => {
+          inp.addEventListener('input', () => {
+            state.nextMonthKrs[idx][inp.dataset.k] = inp.value;
+            updateKrPreview(card, state.nextMonthKrs[idx], false);
+          });
         });
-
+        bindStandardTiers(card, state.nextMonthKrs[idx], rerender);
+        card.querySelector('.remove-btn')?.addEventListener('click', e => {
+          e.stopPropagation();
+          state.nextMonthKrs.splice(idx, 1);
+          state.openKr.next = 0;
+          rerender(true);
+        });
+        card.querySelector('.collapse-head')?.addEventListener('click', e => {
+          if (e.target.closest('.remove-btn')) return;
+          const opening = !card.classList.contains('open');
+          if (opening) {
+            root.querySelectorAll('#next-list .collapse-card.open').forEach(c => c.classList.remove('open'));
+            card.classList.add('open');
+            state.openKr.next = idx;
+          } else card.classList.remove('open');
+        });
       });
-
-      bindStandardTiers(card, state.nextMonthKrs[idx], rerender);
-
-      card.querySelector('.remove-btn')?.addEventListener('click', e => {
-
-        e.stopPropagation();
-
-        state.nextMonthKrs.splice(idx, 1);
-
-        state.openKr.next = 0;
-
+      bindCollapseCards(root.querySelector('#next-list') || root, { single: false });
+      root.querySelector('#add-next')?.addEventListener('click', () => {
+        state.nextMonthKrs.push({ o:'', smart:'', weight:'', standardTiers: defaultStandardTiers(25), challenge:'' });
+        state.openKr.next = state.nextMonthKrs.length - 1;
         rerender(true);
-
       });
-
-      card.querySelector('.collapse-head')?.addEventListener('click', e => {
-
-        if (e.target.closest('.remove-btn')) return;
-
-        const opening = !card.classList.contains('open');
-
-        if (opening) {
-
-          root.querySelectorAll('#next-list .collapse-card.open').forEach(c => c.classList.remove('open'));
-
-          card.classList.add('open');
-
-          state.openKr.next = idx;
-
-        } else card.classList.remove('open');
-
-      });
-
-    });
-
-    bindCollapseCards(root.querySelector('#next-list') || root, { single: false });
-
-    root.querySelector('#add-next')?.addEventListener('click', () => {
-
-      state.nextMonthKrs.push({ o:'', smart:'', weight:'', standardTiers: defaultStandardTiers(25), challenge:'' });
-
-      state.openKr.next = state.nextMonthKrs.length - 1;
-
-      rerender(true);
-
-    });
-
+    }
   }
 
 }
@@ -1166,20 +1147,25 @@ function initMonthlyWizard(opts) {
       bodyEl.parentElement.insertBefore(bar, bodyEl);
     }
     const copiedTag = state.copiedFrom
-      ? '<span class="wizard-copy-bar__tag">已复制自 ' + state.copiedFrom.periodLabel + '</span>'
+      ? '<span class="wizard-copy-bar__tag">' +
+        (state.copiedFrom.mode === 'prevNextGoals'
+          ? '已从「' + state.copiedFrom.periodLabel + '」下月目标带入'
+          : '已复制自 ' + state.copiedFrom.periodLabel) +
+        '</span>'
       : '';
     const isMp = !!document.querySelector('.mp-device');
     bar.innerHTML =
       (isMp ? '' : '<span class="wizard-copy-bar__text">减少重复填写</span>') +
       '<button type="button" class="btn-copy-past" id="btn-copy-from-past">' +
-      (isMp ? '从往期复制 KR' : '📋 从往期提交复制 KR') +
+      (isMp ? '快速带入' : '📋 快速带入') +
       '</button>' +
       copiedTag;
     bar.querySelector('#btn-copy-from-past')?.addEventListener('click', function () {
       if (!window.EmployeePastCopy) return;
-      window.EmployeePastCopy.openModal({
+      window.EmployeePastCopy.openQuickImportModal({
         formType: 'month',
         storageKey: storageKey,
+        currentPeriodId: opts.currentPeriodId || 'm202604',
         onApplied: function () {
           state = loadState(storageKey);
           rerender(true);
@@ -1190,21 +1176,48 @@ function initMonthlyWizard(opts) {
 
 
 
+  function patchKoStepUi() {
+    if (!window.PerfKrHierarchy || ![1, 2, 5].includes(state.step)) return;
+    var listKey = state.step === 1 ? 'coreKeyObjectives' : state.step === 2 ? 'regularKeyObjectives' : 'nextMonthKeyObjectives';
+    PerfKrHierarchy.patchFillStepUi(bodyEl, state, {
+      listKey: listKey,
+      periodType: state.step === 5 ? 'next' : 'month',
+      globalBar: state.step <= 2,
+      stepperEl: stepperEl,
+      workSteps: state.step === 5 ? [] : [1, 2],
+      nextStep: state.step === 5 ? 5 : 6,
+    });
+  }
+
+  var saveDraftTimer = null;
+  function scheduleSaveDraft() {
+    if (saveDraftTimer) clearTimeout(saveDraftTimer);
+    saveDraftTimer = setTimeout(function () {
+      saveState(storageKey, state);
+      saveDraftTimer = null;
+    }, 400);
+  }
+
   function rerender(full) {
 
     renderStepper(stepperEl, state, n => { state.step = n; saveState(storageKey, state); rerender(true); });
 
-    bodyEl.innerHTML = renderStepContent(state);
-
-    mountCopyBar();
-
-    bindStepEvents(bodyEl, state, rerender);
+    if (full) {
+      bodyEl.innerHTML = renderStepContent(state);
+      mountCopyBar();
+      bindStepEvents(bodyEl, state, rerender);
+      if (sf()) sf().bindAll(bodyEl);
+      saveState(storageKey, state);
+    } else {
+      patchKoStepUi();
+      scheduleSaveDraft();
+    }
 
     btnPrev.disabled = state.step === 1;
 
-    btnNext.textContent = state.step === 8 ? '确认提交' : '下一步';
+    btnNext.textContent = state.step === 6 ? '确认提交' : '下一步';
 
-    if (sideList) {
+    if (full && sideList) {
 
       sideList.innerHTML = MONTHLY_STEPS.map(s => {
 
@@ -1230,8 +1243,6 @@ function initMonthlyWizard(opts) {
 
     }
 
-    if (full) saveState(storageKey, state);
-
   }
 
 
@@ -1246,8 +1257,8 @@ function initMonthlyWizard(opts) {
 
   btnNext.addEventListener('click', () => {
 
-    if (state.step === 8) {
-
+    if (state.step === 6) {
+      if (window.PerfKrHierarchy && !PerfKrHierarchy.validateSubmit(state, 'month', 'nextMonthKeyObjectives')) return;
       alert('已提交（原型演示）');
 
       localStorage.removeItem(storageKey);
@@ -1276,36 +1287,33 @@ function initMonthlyWizard(opts) {
 
 const QUARTERLY_STEPS = [
 
-  { id: 1, title: '核心绩效 V%', phase: 0, subtitle: '【A】本季考评 · 1/9' },
+  { id: 1, title: '核心绩效 V%', phase: 0, subtitle: '【A】本季考评 · 1/7' },
 
-  { id: 2, title: '常规绩效 X%', phase: 0, subtitle: '【A】本季考评 · 2/9' },
+  { id: 2, title: '常规绩效 X%', phase: 0, subtitle: '【A】本季考评 · 2/7' },
 
-  { id: 3, title: '6Q3J 人才评价', phase: 0, subtitle: '【A】本季考评 · 3/9' },
+  { id: 3, title: '6Q3J 人才评价', phase: 0, subtitle: '【A】本季考评 · 3/7' },
 
-  { id: 4, title: '加减分', phase: 0, subtitle: '【A】本季考评 · 4/9' },
+  { id: 4, title: '绩效面谈', phase: 0, subtitle: '【A】本季考评 · 4/7' },
 
-  { id: 5, title: '绩效面谈', phase: 0, subtitle: '【A】本季考评 · 5/9' },
+  { id: 5, title: '自评总结', phase: 0, subtitle: '【A】本季考评 · 5/7' },
 
-  { id: 6, title: '自评打分', phase: 0, subtitle: '【A】本季考评 · 6/9' },
+  { id: 6, title: '下季核心目标', phase: 1, subtitle: '【B】下季目标 · 6/7' },
 
-  { id: 7, title: '自评总结', phase: 0, subtitle: '【A】本季考评 · 7/9' },
-
-  { id: 8, title: '下季核心目标', phase: 1, subtitle: '【B】下季目标 · 8/9' },
-
-  { id: 9, title: '确认提交', phase: 2, subtitle: '确认提交 · 9/9' },
+  { id: 7, title: '确认提交', phase: 2, subtitle: '确认提交 · 7/7' },
 
 ];
 
 const Q_PHASE_BLOCKS = [
-  { id: 0, name: '【A】本季考评', desc: '工作 KR · 6Q3J · 加减分 · 面谈 · 自评', steps: [1, 2, 3, 4, 5, 6, 7] },
-  { id: 1, name: '【B】下季目标', desc: '下季核心 KR 2–3 项', steps: [8] },
-  { id: 2, name: '确认提交', desc: '校验并提交', steps: [9] },
+  { id: 0, name: '【A】本季考评', desc: '工作 KR · 6Q3J · 面谈 · 总结', steps: [1, 2, 3, 4, 5] },
+  { id: 1, name: '【B】下季目标', desc: '下季核心 KR 2–3 项', steps: [6] },
+  { id: 2, name: '确认提交', desc: '校验并提交', steps: [7] },
 ];
 
 const QUARTER_MOCK_HEADER = {
   name: '张明',
   dept: '信息部',
   role: '产品经理',
+  empNo: 'E10021',
   reviewer: '李总监',
   period: '2026 Q2',
   fillDate: '2026-06-01',
@@ -1316,23 +1324,36 @@ const QUARTER_MOCK_HEADER = {
 
 function initQuarterlyWizard(opts) {
 
+  opts = opts || {};
+
   let step = 1;
 
-  const sixQ = { cert: 4, culture: 2.5, ai: 2.5 };
+  const qPlanId = opts.planId || (window.PerfSixQ3J && PerfSixQ3J.DEFAULT_PLAN) || '2026-Q2';
+  const qEmpNo = opts.empNo || (opts.header && opts.header.empNo) || 'E10021';
 
   const interview = { highlight: '', improve: '', plan: '', support: '' };
 
   let selfSummary = '';
 
   const qState = {
-    coreKrs: [emptyKr('V')],
-    regularKrs: [emptyKr('X')],
-    nextSeasonKrs: [
-      { o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(30), challenge: '' },
-      { o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(30), challenge: '' },
-    ],
+    coreKeyObjectives: null,
+    regularKeyObjectives: null,
+    nextSeasonKeyObjectives: null,
     openKr: {},
   };
+  if (window.PerfKrHierarchy) {
+    PerfKrHierarchy.ensureState(qState);
+    qState.coreKeyObjectives = [PerfKrHierarchy.emptyKeyObjective('V', true)];
+    qState.regularKeyObjectives = [PerfKrHierarchy.emptyKeyObjective('X', true)];
+    qState.nextSeasonKeyObjectives = [PerfKrHierarchy.emptyKeyObjective('next', false)];
+  } else {
+    qState.coreKrs = [emptyKr('V')];
+    qState.regularKrs = [emptyKr('X'), emptyKr('X')];
+    qState.nextSeasonKrs = [
+      { o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(30), challenge: '' },
+      { o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(30), challenge: '' },
+    ];
+  }
 
   const stepperEl = document.getElementById('stepper');
 
@@ -1355,6 +1376,8 @@ function initQuarterlyWizard(opts) {
     renderPhaseStepper(stepperEl, QUARTERLY_STEPS, Q_PHASE_BLOCKS, step, function (n) {
       step = n;
       refresh();
+    }, function (el) {
+      if (window.PerfKrHierarchy) PerfKrHierarchy.markStepperWeightErrors(el, qState, 'quarter', [1, 2], 6);
     });
 
   }
@@ -1364,45 +1387,58 @@ function initQuarterlyWizard(opts) {
   function renderQBody() {
 
     if (step === 1 || step === 2) {
-
+      if (window.PerfKrHierarchy) {
+        var lk = step === 1 ? 'coreKeyObjectives' : 'regularKeyObjectives';
+        var ok = step === 1 ? 'core' : 'regular';
+        var bl = step === 1 ? 'V' : 'X';
+        var ws = PerfKrHierarchy.weightStatus(qState, 'quarter');
+        bodyEl.innerHTML = PerfKrHierarchy.renderWorkStep(qState, lk, bl, {
+          openKey: ok, periodType: 'quarter',
+          desc: '【A】' + (step === 1 ? '核心绩效 V%' : '常规绩效 X%') +
+            ' · 三级结构。核心+常规 KR 权重须 = <b>90%</b>（当前 ' + ws.total.toFixed(1) + '%）',
+        });
+        PerfKrHierarchy.bindKeyObjectiveList(bodyEl, qState, lk, ok, bl, function (full) {
+          if (full) renderQBody();
+          else if (window.PerfKrHierarchy) {
+            PerfKrHierarchy.patchFillStepUi(bodyEl, qState, {
+              listKey: lk, periodType: 'quarter', globalBar: false,
+            });
+          }
+        }, 'quarter');
+        if (sf()) sf().bindAll(bodyEl);
+        return;
+      }
       const listKey = step === 1 ? 'coreKrs' : 'regularKrs';
       const openKey = step === 1 ? 'core' : 'regular';
       const label = step === 1 ? '核心 V' : '常规 X';
       const krs = qState[listKey];
 
       bodyEl.innerHTML =
-        '<p class="section-desc">【A】' + (step === 1 ? '核心绩效 V%' : '常规绩效 X%') + ' · 填写 O / SMART / 权重 / 考核标准分档。</p>' +
+        '<p class="section-desc">【A】' + (step === 1 ? '核心绩效 V%' : '常规绩效 X%') + ' · 填写 O / SMART / 权重 / 考核标准 / 关键成果 M / 自评分。</p>' +
         collapseToolbar('kr-list') +
         '<div id="kr-list">' + krs.map(function (k, i) {
-          return krFields(k, i, label, false, openKey + '-' + i, isKrOpen(qState, openKey, i));
+          return krFields(k, i, label, false, openKey + '-' + i, isKrOpen(qState, openKey, i), true);
         }).join('') + '</div>' +
         '<button type="button" class="btn btn-block" id="add-kr" style="margin-top:8px">+ 添加指标</button>';
 
       bindListToolbar(bodyEl, 'kr-list');
-      bindKrCards(bodyEl, listKey, qState, function (full) { if (full) renderQBody(); }, false);
+      bindKrCards(bodyEl, listKey, qState, function (full) { if (full) renderQBody(); }, false, true);
       bodyEl.querySelector('#add-kr')?.addEventListener('click', function () {
         qState[listKey].push(emptyKr(step === 1 ? 'V' : 'X'));
         qState.openKr[openKey] = qState[listKey].length - 1;
         renderQBody();
       });
+      if (sf()) sf().bindAll(bodyEl);
 
     } else if (step === 3) {
 
-      bodyEl.innerHTML = `
-
-        <p class="section-desc">6Q3J 客观分只读。</p>
-
-        <div class="collapse-card open"><button type="button" class="collapse-head"><span class="collapse-title">1368 认证</span><span class="collapse-preview">${sixQ.cert} 分</span><span class="collapse-chevron">▼</span></button><div class="collapse-body"><div class="field-readonly">${sixQ.cert} / 4 分 · 系统导入</div></div></div>
-
-        <div class="collapse-card"><button type="button" class="collapse-head"><span class="collapse-title">文化经句践行</span><span class="collapse-preview">${sixQ.culture} 分</span><span class="collapse-chevron">▼</span></button><div class="collapse-body"><div class="field-readonly">${sixQ.culture} / 3 分</div></div></div>
-
-        <div class="collapse-card"><button type="button" class="collapse-head"><span class="collapse-title">AI 提效应用</span><span class="collapse-preview">${sixQ.ai} 分</span><span class="collapse-chevron">▼</span></button><div class="collapse-body"><div class="field-readonly">${sixQ.ai} / 3 分</div></div></div>
-
-      `;
+      bodyEl.innerHTML = window.PerfSixQ3J
+        ? PerfSixQ3J.renderStepHtml(qPlanId, qEmpNo)
+        : '<p class="section-desc">6Q3J 客观分只读（未加载 perf-sixq3j.js）</p>';
 
       bindCollapseCards(bodyEl);
 
-    } else if (step === 5) {
+    } else if (step === 4) {
 
       bodyEl.innerHTML = `
 
@@ -1436,81 +1472,49 @@ function initQuarterlyWizard(opts) {
 
       });
 
-    } else if (step === 6) {
-
-      const demoKr = qState.coreKrs[0];
-      ensureStandardTiers(demoKr);
-
-      bodyEl.innerHTML =
-        '<p class="section-desc">【A】自评打分 · 对照考核标准分档填写 M 与自评分。</p>' +
-        '<div class="collapse-card open">' +
-        '<button type="button" class="collapse-head"><span class="collapse-title">核心 V 1</span><span class="collapse-preview">' + (typeof krPreview === 'function' ? krPreview(demoKr, true) : '指标 1') + '</span><span class="collapse-chevron">▼</span></button>' +
-        '<div class="collapse-body">' +
-        '<div class="kr-card">' +
-        renderStandardTiersHtml(demoKr, false) +
-        '<div class="field"><label>关键成果 M</label><textarea rows="2" data-qm>' + (demoKr.m || '') + '</textarea></div>' +
-        '<div class="field"><label>自评分（1-5）</label><input type="number" min="1" max="5" step="0.1" data-qscore value="' + (demoKr.selfScore || '') + '" /></div>' +
-        '</div></div></div>';
-
-      bindCollapseCards(bodyEl);
-      bodyEl.querySelector('[data-qm]')?.addEventListener('input', function (e) { demoKr.m = e.target.value; });
-      bodyEl.querySelector('[data-qscore]')?.addEventListener('input', function (e) { demoKr.selfScore = e.target.value; });
-
-    } else if (step === 7) {
+    } else if (step === 5) {
 
       bodyEl.innerHTML = `<div class="field"><label>自评总结</label><textarea rows="6" id="q-summary">${selfSummary}</textarea></div>`;
 
       bodyEl.querySelector('#q-summary').addEventListener('input', e => { selfSummary = e.target.value; });
 
-    } else if (step === 8) {
-
+    } else if (step === 6) {
+      if (window.PerfKrHierarchy) {
+        bodyEl.innerHTML = PerfKrHierarchy.renderNextPeriodStep(qState, 'nextSeasonKeyObjectives', {
+          desc: '【B】下季核心目标 · 关键目标 → 考核目标；KR 权重合计 = 100%',
+        });
+        PerfKrHierarchy.bindKeyObjectiveList(bodyEl, qState, 'nextSeasonKeyObjectives', 'next', 'next', function (full) {
+          if (full) renderQBody();
+          else if (window.PerfKrHierarchy) {
+            PerfKrHierarchy.patchFillStepUi(bodyEl, qState, {
+              listKey: 'nextSeasonKeyObjectives', periodType: 'next', globalBar: false,
+            });
+          }
+        }, 'next');
+        return;
+      }
       bodyEl.innerHTML =
         '<p class="section-desc">【B】下季核心目标 2–3 项 · 含考核标准分档。</p>' +
         collapseToolbar('next-list') +
-        '<div id="next-list">' + qState.nextSeasonKrs.map(function (k, i) {
+        '<div id="next-list">' + (qState.nextSeasonKrs || []).map(function (k, i) {
           return nextMonthFields(k, i, isKrOpen(qState, 'next', i));
         }).join('') + '</div>' +
         '<button type="button" class="btn btn-block" id="add-next" style="margin-top:8px">+ 添加目标</button>';
-
       bindListToolbar(bodyEl, 'next-list');
-      bodyEl.querySelectorAll('#next-list .collapse-card').forEach(function (card) {
-        var idx = +card.dataset.idx;
-        card.querySelectorAll('[data-k]').forEach(function (inp) {
-          inp.addEventListener('input', function () {
-            qState.nextSeasonKrs[idx][inp.dataset.k] = inp.value;
-            updateKrPreview(card, qState.nextSeasonKrs[idx], false);
-          });
-        });
-        bindStandardTiers(card, qState.nextSeasonKrs[idx], function () { renderQBody(); });
-        card.querySelector('.remove-btn')?.addEventListener('click', function (e) {
-          e.stopPropagation();
-          qState.nextSeasonKrs.splice(idx, 1);
-          qState.openKr.next = 0;
-          renderQBody();
-        });
-        card.querySelector('.collapse-head')?.addEventListener('click', function (e) {
-          if (e.target.closest('.remove-btn')) return;
-          var opening = !card.classList.contains('open');
-          if (opening) {
-            bodyEl.querySelectorAll('#next-list .collapse-card.open').forEach(function (c) { c.classList.remove('open'); });
-            card.classList.add('open');
-            qState.openKr.next = idx;
-          } else card.classList.remove('open');
-        });
-      });
-      bodyEl.querySelector('#add-next')?.addEventListener('click', function () {
-        qState.nextSeasonKrs.push({ o: '', smart: '', weight: '', standardTiers: defaultStandardTiers(25), challenge: '' });
-        qState.openKr.next = qState.nextSeasonKrs.length - 1;
-        renderQBody();
-      });
-
-    } else if (step === 4) {
-
-      bodyEl.innerHTML = `<p class="section-desc">季度加减分申报</p><button class="btn">+ 添加加减分项</button>`;
+      if (sf()) sf().bindAll(bodyEl);
 
     } else {
 
-      bodyEl.innerHTML = `<table class="confirm-table"><tr><th>区块</th><th>状态</th></tr><tr><td>工作 KR</td><td>—</td></tr><tr><td>6Q3J</td><td>只读</td></tr></table>`;
+      var sixqStatus = '只读';
+      if (window.PerfSixQ3J) {
+        var s = PerfSixQ3J.summarize(PerfSixQ3J.get(qPlanId, qEmpNo));
+        sixqStatus = s.imported === 0 ? '待导入（可提交）' : (s.pending.length ? '部分已导入 · ' + s.pending.length + ' 项待导入' : '三项均已导入');
+      }
+      var qws = window.PerfKrHierarchy ? PerfKrHierarchy.weightStatus(qState, 'quarter') : null;
+      bodyEl.innerHTML = '<table class="confirm-table"><tr><th>区块</th><th>状态</th></tr>' +
+        '<tr><td>工作 KR（三级结构）</td><td>已填 M + 自评' +
+        (qws ? ' · 权重 ' + qws.total.toFixed(1) + '/90%' : '') + '</td></tr>' +
+        '<tr><td>6Q3J</td><td>' + sixqStatus + '</td></tr></table>';
 
     }
 
@@ -1549,10 +1553,25 @@ function initQuarterlyWizard(opts) {
 
   btnNext.addEventListener('click', () => {
 
-    if (step === QUARTERLY_STEPS.length) { alert('季度表已提交（原型）'); if (opts.onSubmit) opts.onSubmit(); return; }
+    if (step === QUARTERLY_STEPS.length) {
+      if (window.PerfKrHierarchy) {
+        qState.nextMonthKeyObjectives = qState.nextSeasonKeyObjectives;
+        if (!PerfKrHierarchy.validateSubmit(qState, 'quarter', 'nextSeasonKeyObjectives')) return;
+      }
+      alert('季度表已提交（原型）'); if (opts.onSubmit) opts.onSubmit(); return;
+    }
 
     step++; refresh();
 
+  });
+
+  function onSixQ3jUpdated(e) {
+    if (e && e.detail && e.detail.planId && e.detail.planId !== qPlanId) return;
+    if (step === 3) renderQBody();
+  }
+  window.addEventListener('perf-sixq3j-updated', onSixQ3jUpdated);
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'perf-sixq3j-' + qPlanId && step === 3) renderQBody();
   });
 
   refresh();

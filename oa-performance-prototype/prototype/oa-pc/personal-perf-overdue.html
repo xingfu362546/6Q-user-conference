@@ -1,93 +1,69 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>绩效待办 · 逾期</title>
-  <link rel="stylesheet" href="../assets/6q-theme.css" />
-  <link rel="stylesheet" href="../assets/common.css" />
-  <link rel="stylesheet" href="../assets/oa-perf.css" />
-  <link rel="stylesheet" href="../assets/proto-notes.css" />
-</head>
-<body>
-  <div class="q-oa-app">
-    <header id="q-oa-topbar"></header>
-    <div class="q-oa-body">
-      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
-      <div class="q-oa-main">
-        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <strong>逾期</strong></nav>
-        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
-        <div class="q-oa-page">
-          <div class="q-card-panel">
-            <nav class="perf-segment">
-              <a href="personal-perf.html">当前待办</a>
-              <a href="personal-perf-overdue.html" class="is-active">逾期<span class="badge">2</span></a>
-              <a href="personal-perf-past.html">过往提交</a>
-            </nav>
-            <div class="perf-tip perf-tip-orange">⏰ 已过截止未提交的任务仍在本 Tab 展示。<strong>待解锁</strong>不可进入填表；<strong>已解锁</strong>可断点续填（两条对照演示）。</div>
-            <div class="q-table-wrap">
-              <table class="q-table">
-                <thead>
-                  <tr><th>考核任务</th><th>类型</th><th>原截止</th><th>状态</th><th>操作</th></tr>
-                </thead>
-                <tbody>
-                  <tr class="perf-row--locked">
-                    <td>
-                      <div class="perf-task-cell perf-task-cell--muted">
-                        <span class="perf-task-icon perf-task-icon--month perf-task-icon--muted">月</span>
-                        <div><b>2026年4月 月度绩效考核</b><small>已逾期 · 未提交 · 2/8 步</small></div>
-                      </div>
-                    </td>
-                    <td>月度</td>
-                    <td>2026-05-05</td>
-                    <td><span class="q-tag">待 HR 解锁</span></td>
-                    <td><span class="perf-action-muted">不可填写</span></td>
-                  </tr>
-                  <tr class="perf-row--unlocked">
-                    <td>
-                      <div class="perf-task-cell">
-                        <span class="perf-task-icon perf-task-icon--month">月</span>
-                        <div><b>2026年3月 月度绩效考核</b><small>已解锁 · 填写中 5/8 步</small></div>
-                      </div>
-                    </td>
-                    <td>月度</td>
-                    <td>2026-04-05</td>
-                    <td><span class="q-tag q-tag-blue">已解锁 · 可填</span></td>
-                    <td>
-                      <a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px;margin-right:6px" href="monthly-wizard.html">继续填写</a>
-                      <button type="button" class="q-btn btn-copy-past-secondary" style="padding:2px 10px;font-size:12px" data-copy-past="month" data-storage-key="perf-monthly-oa-pc" data-wizard-href="monthly-wizard.html">从往期复制</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="../assets/frame.js"></script>
-  <script src="../assets/employee-past-copy.js"></script>
-  <script>
-    initOaShell({
-      topModule: 'personal',
-      sideActive: 'perf-list',
-      pageTabs: [
-        { key: 'home', label: '首页', href: 'index.html' },
-        { key: 'perf', label: '绩效待办', href: 'personal-perf.html', closable: true },
-        { key: 'overdue', label: '逾期', href: 'personal-perf-overdue.html', closable: true },
-      ],
-      activeTab: 'overdue',
-    });
-    if (window.EmployeePastCopy) {
-      EmployeePastCopy.bindCopyButtons(document.body, {
-        storageKey: 'perf-monthly-oa-pc',
-        wizardHref: 'monthly-wizard.html',
-        onApplied: function () { location.href = 'monthly-wizard.html'; },
-      });
-    }
-  </script>
-  <script src="../assets/proto-notes-data.js"></script>
-  <script src="../assets/proto-notes.js"></script>
-</body>
-</html>
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>绩效待办 · 逾期</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <strong>逾期</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="q-card-panel">
+            <nav class="perf-segment">
+              <a href="personal-perf.html">当前待办</a>
+              <a href="personal-perf-overdue.html" class="is-active">逾期<span class="badge">2</span></a>
+              <a href="personal-perf-past.html">已提交</a>
+            </nav>
+            <div class="perf-tip perf-tip-orange">⏰ 已过<strong>填表截止</strong>且<strong>尚未提交</strong>的任务在此展示（含只填了一半、有草稿未交的任务）。待 HR 解锁前不可填；解锁后可续填。</div>
+            <div class="q-table-wrap">
+              <table class="q-table">
+                <thead>
+                  <tr><th>考核任务</th><th>类型</th><th>原截止</th><th>状态</th><th>操作</th></tr>
+                </thead>
+                <tbody id="emp-overdue-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/employee-tasks.js"></script>
+  <script src="../assets/employee-past-copy.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'personal',
+      sideActive: 'perf-list',
+      pageTabs: [
+        { key: 'home', label: '首页', href: 'index.html' },
+        { key: 'perf', label: '绩效待办', href: 'personal-perf.html', closable: true },
+        { key: 'overdue', label: '逾期', href: 'personal-perf-overdue.html', closable: true },
+      ],
+      activeTab: 'overdue',
+    });
+    EmployeeTasks.renderOverdueTable('emp-overdue-tbody');
+    EmployeeTasks.updateSegmentBadges();
+    if (window.EmployeePastCopy) {
+      EmployeePastCopy.bindCopyButtons(document.body, {
+        storageKey: 'perf-monthly-oa-pc',
+        wizardHref: 'monthly-wizard.html',
+        onApplied: function () { location.href = 'monthly-wizard.html'; },
+      });
+    }
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

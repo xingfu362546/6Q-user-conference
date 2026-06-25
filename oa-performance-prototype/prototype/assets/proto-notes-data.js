@@ -1,67 +1,8 @@
 /**
- * v1.0.0 原型注释 · 业务流程 + 数据流转 + 规则说明
+ * v1.1.1 原型注释 · 业务流程 + 数据流转 + 规则说明
  * 呈现：红点序号，点击展开右侧抽屉
  */
 window.PROTO_NOTE_PAGES = {
-
-  /* ───────────── 导航入口 ───────────── */
-  hub: {
-    title: '原型导航',
-    notes: [
-      {
-        n: 1,
-        attach: '.hub-grid h1',
-        title: 'v1.0.0 端到端主链路',
-        body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">HR 建计划 → 配范围包+模板 → 分批发放 → 员工填表提交 → 上级/分管评分 → HR 统计 & 奖金实时结算 → 员工只读回看</div>' +
-          '<p class="proto-sec">数据流转</p>' +
-          '<ol><li><strong>计划</strong>（周期唯一）→ 生成多条 <strong>员工任务</strong>（计划×人）</li>' +
-          '<li>任务绑定 <strong>范围包 ID + 模板 ID</strong>，写入待办推送小程序/OA</li>' +
-          '<li>员工提交 → 任务状态「已提交」→ 触发上级待办</li>' +
-          '<li>评分完成 → 汇总总得分 → 奖金引擎按「计划·范围包·职级」单元排名</li></ol>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>全公司同周期仅一条计划；一人仅属一个范围包</li>' +
-          '<li>员工不可见上级分、评语、奖金；上级不可见奖金排名</li>' +
-          '<li>详见 <code>docs/HANDOFF-v1.0.0.md</code></li></ul>',
-      },
-      {
-        n: 2,
-        attach: '.hub-grid h2:nth-of-type(1)',
-        title: '小程序端 · 流程与分工',
-        body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">首页宫格「绩效」→ 当前待办选任务 → 8步/季度向导填表 → Step8 提交 → 等上级评 → 过往提交只读回看</div>' +
-          '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>待办列表读 <strong>任务表</strong>：过滤「未截止 + 未提交/填写中」</li>' +
-          '<li>填表进度写 <strong>草稿</strong>（原型 localStorage；正式 taskId + 服务端）</li>' +
-          '<li>提交后任务状态回写，同步消减待办角标</li></ul>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>领导 Tab：仅<strong>直接上级</strong>月度简版评分</li>' +
-          '<li><strong>分管评分不做小程序</strong>，仅在 OA</li>' +
-          '<li>逾期 / 过往提交为独立 URL 页面（v1.0 分段改造）</li></ul>',
-      },
-      {
-        n: 3,
-        attach: '.hub-grid h2:nth-of-type(4)',
-        title: 'HR 端 · v1.0 新增能力',
-        body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<ol><li><strong>计划管理</strong>：新建向导 → 范围包选人 → 绑模板 → 绑奖金规则 → 勾选发放</li>' +
-          '<li><strong>计划明细</strong>：盯进度、催办、补发范围包、看奖金试算</li>' +
-          '<li><strong>奖金规则</strong>：维护排名奖扣档 → 计划引用</li>' +
-          '<li><strong>薪酬结算</strong>：评完即纳入排名，导出对接薪酬（二期）</li></ol>' +
-          '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>范围包发放 → 批量创建员工任务 + 推送待办</li>' +
-          '<li>评分事件 → 更新任务评分状态 → 触发奖金引擎重算</li>' +
-          '<li>结算结果仅写入 HR/薪酬视图，不下发员工端</li></ul>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>范围包已发放 <strong>锁定</strong>人选+模板；补人只能新建包</li>' +
-          '<li>奖金排名单元 = 同计划 · 同范围包 · 同职级；同分并列</li>' +
-          '<li>纳入结算须：已提交 + 上级评完 + 分管评完（同人合并例外）</li></ul>',
-      },
-    ],
-  },
 
   /* ───────────── 小程序 ───────────── */
   'mp-home': {
@@ -106,13 +47,14 @@ window.PROTO_NOTE_PAGES = {
         title: '分段导航 · 任务生命周期',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">当前待办（可填）→ 提交 → 过往提交（只读）｜过截止未交 → 逾期（锁定，待 HR 解锁）</div>' +
+          '<div class="proto-flow">当前待办 → 提交 → 月/季分轨流转 → 已确认归档｜过截止未交 → 逾期</div>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>月度 5 步（无待分管）；季度 6 步（同人合并 5 步）。终态 <code>confirmed</code>（兼容旧 completed）。</p>' +
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>三段对应任务表不同 <strong>status + deadline</strong> 组合过滤</li>' +
           '<li>分段为独立 HTML 页，切换即路由跳转（非 SPA Tab）</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
           '<ul><li><strong>当前</strong>：deadline ≥ now 且 status ∈ {未开始, 填写中}</li>' +
-          '<li><strong>逾期</strong>：deadline &lt; now 且未 Step8 提交</li>' +
+          '<li><strong>逾期</strong>：deadline &lt; now 且未 Step6 提交</li>' +
           '<li><strong>过往</strong>：已提交或流程已结束</li></ul>',
       },
       {
@@ -144,7 +86,94 @@ window.PROTO_NOTE_PAGES = {
           '<dt>截止</dt><dd>计划.employeeDeadline</dd>' +
           '<dt>操作</dt><dd>进入 wizard；月度任务另有「复制往期」按钮</dd></dl>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>进度 step 由草稿 stepIndex 计算。「复制往期」带入历史 KR 结构后跳转填表（<code>employee-past-copy.js</code>）。</p>',
+          '<p>进度 step 由草稿 stepIndex 计算。「复制往期」带入历史 KR 结构后跳转填表（<code>employee-past-copy.js</code>）。</p>' +
+          '<p>v1.1：已提交任务显示流程态标签；<strong>待确认</strong>可进 score-confirm；填表入口在 OA，小程序 v1 仅进度+确认。</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>列表仅 phase 单标签「待确认」；步骤条在任务名列；确认 badge 在 score-confirm 页</p>',
+      },
+      {
+        n: 4,
+        attach: '#mp-task-list',
+        title: 'v1.1 · 五态与确认入口',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<div class="proto-flow">填写中 → 待上级评 → 待分管评 → 待确认 → 已完成</div>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<ul><li>phase 字段驱动卡片标签与操作按钮</li>' +
+          '<li>pending_confirm → 跳转 score-confirm.html</li>' +
+          '<li>填写中 → task-progress.html 看进度（不开放填表）</li></ul>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>员工+直接上级<strong>双方确认</strong>后才归档；确认前可见上级分与分管分。</p>',
+      },
+    ],
+  },
+
+  'mp-task-progress': {
+    title: '小程序 · 任务进度',
+    notes: [
+      {
+        n: 1,
+        attach: '#progress-steps',
+        title: '月/季分轨进度条 · v1.4',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<div class="proto-flow">月：待填写→填写中→待上级评→待确认→已确认</div>' +
+          '<div class="proto-flow">季：…→待分管评*→待确认→已确认（*mergedReview 跳过）</div>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>读任务 phase + type → <code>PerfWorkflow.renderPhaseSteps(phase, { task })</code> 高亮当前节点。</p>' +
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>统一五态，月度含「待分管评」</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>月/季分轨；新增 <code>not_started</code> 待填写</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>小程序 v1 员工<strong>不看填表</strong>，仅在此页跟踪流程；填表走 OA。</p>',
+      },
+      {
+        n: 2,
+        attach: '#progress-detail',
+        title: '进度详情 · 字段',
+        body:
+          '<p class="proto-sec">数据流转</p>' +
+          '<dl class="proto-kv">' +
+          '<dt>考核期</dt><dd>计划名 + 周期</dd>' +
+          '<dt>当前状态</dt><dd>phase 中文标签</dd>' +
+          '<dt>确认截止</dt><dd>plan.confirmDeadline（待确认态展示）</dd>' +
+          '<dt>分数</dt><dd>待确认/已完成可见自评、上级、分管、总分</dd></dl>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>填写中仅展示截止与提示，不展示评分。</p>',
+      },
+      {
+        n: 3,
+        attach: '#progress-actions',
+        title: '操作按钮',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<p>pending_confirm →「去确认」跳转 score-confirm；其他态仅返回列表。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>无「继续填写」入口（与 OA 员工待办区分）。</p>',
+      },
+    ],
+  },
+
+  'mp-score-confirm': {
+    title: '小程序 · 确认评分',
+    notes: [
+      {
+        n: 1,
+        attach: '#confirm-body',
+        title: '双方确认 · 分数可见',
+        body:
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>四行分数摘要</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>与 OA 同构：模块表 + 折算汇总</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>URL <code>?role=leader</code> 为上级确认视角；确认前不计入归档与奖金结算。</p>',
+      },
+      {
+        n: 2,
+        attach: '.mp-subnav',
+        title: '确认截止 · 流程条',
+        body:
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>confirmDeadline 来自计划；超时标记在 HR 结果明细「确认超时」筛选项。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>顶部五步条与 OA 确认页一致，当前高亮「待确认」。</p>',
       },
     ],
   },
@@ -165,7 +194,7 @@ window.PROTO_NOTE_PAGES = {
           '<li>锁定态禁止进入 wizard；解锁态可 href 填表</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
           '<ul><li>原型逾期 Tab 展示<strong>两条对照</strong>：4月待解锁 / 3月已解锁</li>' +
-          '<li>解锁需 HR 权限；逾期期间 Step8 提交仍受截止校验</li></ul>',
+          '<li>解锁需 HR 权限；逾期期间 Step6 提交仍受截止校验</li></ul>',
       },
       {
         n: 2,
@@ -254,19 +283,16 @@ window.PROTO_NOTE_PAGES = {
       {
         n: 1,
         attach: '#stepper',
-        title: '8 步向导 · 贴表 Phase（方案 A）',
+        title: '6 步向导 · 贴表 Phase（v1.1 精简）',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">【A】本月考评（步1–6）→ 【B】下月目标（步7）→ 确认提交（步8）</div>' +
-          '<ol><li>核心 V · 2) 常规 X · 3) 行为态度 · 4) 加减分 · 5) 自评打分 · 6) 自评总结</li>' +
-          '<li>下月核心目标 · 8) 预览确认提交</li></ol>' +
-          '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>每步 next → 写 draft.stepIndex + draft.formData</li>' +
-          '<li>Step8 提交 → 校验 → 写 submitSnapshot + status=submitted → 推上级待办</li></ul>' +
+          '<div class="proto-flow">【A】本月考评（步1–4）→ 【B】下月目标（步5）→ 确认提交（步6）</div>' +
+          '<ol><li>核心 V（含 M+自评）· 2) 常规 X（含 M+自评）· 3) 行为+加减分 · 4) 自评总结</li>' +
+          '<li>下月核心目标 · 6) 预览确认提交</li></ol>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>Phase 条贴月度表结构，8 步子步仍对应 Excel 字段组</li>' +
-          '<li>与 OA 同源 <code>wizard.js</code>；断点续填 localStorage / 正式 taskId 草稿</li>' +
-          '<li><strong>复制往期</strong>：待办或填表顶栏可带入历史 KR，不含自评与成果</li></ul>',
+          '<ul><li>v1.1 取消独立「自评打分」「加减分」步；填完关键事件/成果后<strong>同页自评</strong></li>' +
+          '<li>v1.1.1 自评输入最多 2 位小数，整数展示 <code>x.00</code>（<code>perf-score-format.js</code>）</li>' +
+          '<li>与 OA 同源 <code>wizard.js</code></li></ul>',
       },
       {
         n: 3,
@@ -284,14 +310,13 @@ window.PROTO_NOTE_PAGES = {
       {
         n: 2,
         attach: '#wizard-content',
-        title: '考核标准 · 分档格式（方案 A）',
+        title: '考核标准 · 同页自评（方案 A）',
         body:
           '<p class="proto-sec">规则说明</p>' +
           '<p>O / SMART 不变；<strong>考核标准</strong>为 ①–⑤ 业绩达成率分档，满分档 = KR 权重（如 25%→25 分）。</p>' +
+          '<p>核心/常规步：每条 KR 填完关键成果 M 后，<strong>同页</strong>录入自评分（对照分档只读）；行为步底部含加减分申报 + 行为态度自评。</p>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<p>存 <code>standardTiers[]</code>；改权重自动按比例刷新各档分，可手动微调。</p>' +
-          '<p class="proto-sec">业务流程</p>' +
-          '<p>Step5 工作 KR 自评只读展示分档；行为态度在下方卡片单独自评（模板固定标准 + 1–5 分）。</p>',
+          '<p>存 <code>standardTiers[]</code>；改权重自动按比例刷新各档分，可手动微调。自评分经 <code>PerfScoreFormat</code> 规范化后写入 draft。</p>',
       },
     ],
   },
@@ -302,27 +327,28 @@ window.PROTO_NOTE_PAGES = {
       {
         n: 1,
         attach: '#stepper',
-        title: '季度步骤 · 贴表 Phase（方案 A）',
+        title: '季度 7 步 · 贴表 Phase（v1.1 精简）',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">【A】本季考评（步1–7）→ 【B】下季目标（步8）→ 确认提交（步9）</div>' +
+          '<div class="proto-flow">【A】本季考评（步1–5）→ 【B】下季目标（步6）→ 确认提交（步7）</div>' +
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>步骤条与 OA 统一 <code>renderPhaseStepper()</code>（块状 phase）</li>' +
-          '<li>步1–2、步8 考核标准同月度分档 <code>standardTiers</code></li>' +
+          '<li>步1–2、步6 考核标准同月度分档 <code>standardTiers</code></li>' +
           '<li>季度表字段更多，快照体积大于月度</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>6Q3J、面谈等内容员工填自评部分；上级/分管分列在 OA 评分页填写。</p>',
+          '<p>v1.1 取消独立加减分/自评步；KR 在步1–2 同页填 M+自评。6Q3J、面谈等内容员工填自评部分；上级/分管分列在 OA 评分页填写。</p>',
       },
       {
-        n: 2,
+        n: 3,
         attach: '#wizard-content',
-        title: '季度专属区块',
+        title: 'Step3 · 6Q3J 只读 · v1.2',
         body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<p>员工完成本季 KR 自评与面谈记录 → 制定下季目标 → 提交进入双节点评分流。</p>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>读 <code>PerfSixQ3J.get(planId, empNo)</code>；HR 在季度计划明细 CSV 导入后本页自动刷新。</p>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>季度审批含<strong>上级 + 分管领导</strong>（OA）</li>' +
-          '<li>同人合并时一次评分填两列（见奖金规则 §7）</li></ul>',
+          '<ul><li>1368 / 文化经句 / AI 分项独立；未导入 → <strong>待导入</strong></li>' +
+          '<li>6Q3J 总分 = 已导入求和 + 标注缺项；未齐仍可提交季表</li>' +
+          '<li>详见 <code>docs/GRILL_6Q3J.md</code></li></ul>',
       },
     ],
   },
@@ -368,6 +394,16 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>草稿写 supervisorDraft，不影响员工可见快照</li>' +
           '<li>正式环境草稿需 TTL 与 taskId 绑定</li></ul>',
+      },
+      {
+        n: 4,
+        attach: '#mp-score-list',
+        title: '评分配 · 两位小数 · v1.1.1',
+        body:
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>上级打分输入框最多 2 位小数；失焦/提交时经 <code>PerfScoreFormat.format()</code> 规范化，整数展示如 <code>85.00</code>。</p>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>与 OA 评分页同源 <code>perf-score-format.js</code>；合计分同步格式化展示。</p>',
       },
     ],
   },
@@ -431,7 +467,7 @@ window.PROTO_NOTE_PAGES = {
         title: '分段 · 三态路由',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">当前待办 ↔ 逾期 ↔ 过往提交（三个 HTML，segment 高亮当前）</div>' +
+          '<div class="proto-flow">当前待办 ↔ 逾期 ↔ 已提交（三个 HTML，segment 高亮当前）</div>' +
           '<p class="proto-sec">规则说明</p>' +
           '<p>独立 URL 便于分享评审链接、浏览器后退不丢状态。</p>',
       },
@@ -444,11 +480,51 @@ window.PROTO_NOTE_PAGES = {
           '<dl class="proto-kv">' +
           '<dt>考核任务</dt><dd>计划名；副标题 step 来自 draft.stepIndex/总步数</dd>' +
           '<dt>类型</dt><dd>month | quarter → 决定 wizard 路由</dd>' +
-          '<dt>进度</dt><dd>任务.status + 标签色</dd>' +
-          '<dt>截止</dt><dd>计划.employeeDeadline（日期）</dd>' +
-          '<dt>操作</dt><dd>继续填写 / <strong>复制往期</strong>（带入 KR 结构）→ monthly-wizard</dd></dl>' +
+          '<dt>进度</dt><dd><code>phase</code> 标签 + 行内 <code>renderPhaseSteps</code>（月5/季6步）</dd>' +
+          '<dt>操作</dt><dd>按 phase：开始/继续填写 · 查看进度 · 确认评分</dd></dl>' +
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>静态 HTML 三行；「未开始」未区分 not_started</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>状态列仅 <code>phaseLabel</code> 单标签；确认细分 badge 只在确认页</p>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>已提交任务不出现于此表。「复制往期」读历史 submitSnapshot，减轻重复填写（与小程序同源 <code>employee-past-copy.js</code>）。</p>',
+          '<p><strong>当前待办</strong>：未 confirmed 的任务（含已提交待评、待确认）。<strong>已提交 Tab</strong>：仅 confirmed 归档。数据源 <code>EmployeeTasks.TASK_DATA</code>。</p>',
+      },
+      {
+        n: 4,
+        attach: '#emp-current-tbody',
+        title: '研发 · phase → 操作映射',
+        body:
+          '<p class="proto-sec">状态机（后端）</p>' +
+          '<table class="proto-table" style="font-size:12px;width:100%">' +
+          '<tr><th>phase</th><th>员工操作</th><th>原型 href</th></tr>' +
+          '<tr><td>not_started</td><td>开始填写</td><td>monthly/quarterly-wizard</td></tr>' +
+          '<tr><td>filling</td><td>继续填写 + 快速带入(月)</td><td>wizard + employee-past-copy</td></tr>' +
+          '<tr><td>pending_supervisor</td><td>查看进度（<strong>不可看分</strong>）</td><td>employee-task-progress.html</td></tr>' +
+          '<tr><td>pending_division</td><td>查看进度（季·不可看分）</td><td>employee-task-progress.html</td></tr>' +
+          '<tr><td>pending_confirm</td><td>确认评分</td><td>score-confirm.html?role=employee</td></tr>' +
+          '</table>' +
+          '<p class="proto-sec">API 字段</p>' +
+          '<dl class="proto-kv">' +
+          '<dt>phase</dt><dd>枚举见 perf-workflow.js PHASE_DEFS</dd>' +
+          '<dt>type</dt><dd>month | quarter → 决定步骤链长度（5 vs 6）</dd>' +
+          '<dt>mergedReview</dt><dd>true 时季度跳过 pending_division 步骤</dd>' +
+          '<dt>stepIndex / totalSteps</dt><dd>filling 副标题「3/6 步」</dd>' +
+          '<dt>employeeConfirmed 等</dt><dd>仅确认页使用；<strong>列表不展示 badge</strong></dd></dl>' +
+          '<p class="proto-sec">Mock 行 ID</p>' +
+          '<ul style="font-size:12px;margin:4px 0 0 1.2em">' +
+          '<li>m202605 · pending_confirm</li><li>m202604 · filling</li><li>m202606 · not_started</li>' +
+          '<li>m202503-wait · pending_supervisor</li><li>q2026q2 · pending_division</li></ul>',
+      },
+      {
+        n: 5,
+        attach: '.perf-tip',
+        title: '研发 · 三分段筛选逻辑',
+        body:
+          '<p class="proto-sec">分段 API 设计</p>' +
+          '<pre style="font-size:11px;background:#f5f5f5;padding:8px;border-radius:4px">current: phase != confirmed\noverdue: deadline&lt;now AND phase IN (not_started,filling)\npast: phase == confirmed</pre>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<ul><li>员工提交后（pending_supervisor 起）<strong>留 current</strong>，不进 past</li>' +
+          '<li>逾期不含 pending_confirm；确认超时走 HR 侧</li>' +
+          '<li>实现：<code>EmployeeTasks.belongsInOverdue(task)</code></li></ul>' +
+          '<p>详见 docs/DEV-GUIDE-v1.4.0.md §4</p>',
       },
     ],
   },
@@ -462,53 +538,109 @@ window.PROTO_NOTE_PAGES = {
         title: '逾期 · HR 解锁闭环',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">截止未交 → 逾期 Tab · 待解锁行置灰 · HR 解锁 → 已解锁行可填（仍留本 Tab）</div>' +
+          '<div class="proto-flow">过填表截止 + 未提交（not_started / filling 含半稿）→ 逾期 Tab</div>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>已提交向导的任务（pending_*）<strong>不进逾期</strong>；确认超时不在此 Tab</p>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<p>与小程序同源 <code>overdueState</code>；解锁写 audit log（二期）。</p>' +
+          '<p>与小程序同源 <code>overdueState</code>：locked | unlocked。判定 <code>EmployeeTasks.belongsInOverdue(task)</code>。</p>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>对照演示：4月「不可填写」vs 3月「继续填写」；锁定行无 wizard / 复制往期入口。</p>',
+          '<p>对照演示：4月「不可填写」vs 3月「继续填写」；锁定行无 wizard / 复制往期入口。解锁后仍留逾期 Tab 直至提交。</p>',
       },
       {
         n: 2,
         attach: '.q-table-wrap',
-        title: '逾期表字段',
+        title: '逾期表 · 字段',
         body:
           '<p class="proto-sec">数据流转</p>' +
           '<dl class="proto-kv">' +
-          '<dt>考核任务</dt><dd>计划+周期</dd>' +
-          '<dt>逾期</dt><dd>天数或文案</dd>' +
-          '<dt>状态</dt><dd>待 HR 解锁 / 已解锁·可填</dd>' +
-          '<dt>操作</dt><dd>locked→「不可填写」；unlocked→继续填写+复制往期</dd></dl>',
+          '<dt>考核任务</dt><dd>计划+周期；副标题含 step 进度</dd>' +
+          '<dt>原截止</dt><dd>plan.employeeDeadline</dd>' +
+          '<dt>状态</dt><dd>待 HR 解锁 / 已解锁·可填 + 逾期天数</dd>' +
+          '<dt>操作</dt><dd>locked→不可填写；unlocked→继续填写+快速带入</dd></dl>' +
+          '<p class="proto-sec">后端 Task</p>' +
+          '<p>字段 <code>overdueUnlocked: boolean</code>；HR 解锁接口写 audit log（二期）。</p>',
       },
     ],
   },
 
   'oa-personal-past': {
-    title: 'OA · 过往提交',
+    title: 'OA · 已提交（归档）',
     notes: [
       {
         n: 1,
         attach: '.perf-tip',
-        title: '保密策略',
+        title: '归档语义 · v1.4',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<p>查历史自填 → 只读详情；不可在此查上级评价或奖金。</p>' +
+          '<p>Tab 名暂叫「已提交」，实际仅 <code>phase=confirmed</code> 任务。员工<strong>不可见</strong>上级分、核定分、奖金。</p>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<p>API 角色=employee 时 strip 评分/奖金字段；与小程序 past 一致。</p>' +
+          '<p>API <code>segment=past</code>；返回 submitSnapshot 只读。与 current 互斥。角色=employee 时 strip 评分字段。</p>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>综合分数公式（自评20%+上级80%）结果对员工不可见。</p>',
+          '<p>Grill Q1：向导提交后不进此 Tab，直到全部确认完成。综合分数对员工不可见。</p>',
       },
       {
         n: 2,
-        attach: '.q-table-wrap',
-        title: '过往表字段',
+        attach: '#emp-past-tbody',
+        title: '归档表 · 字段',
+        body:
+          '<dl class="proto-kv">' +
+          '<dt>状态</dt><dd>固定「已确认」phaseLabel</dd>' +
+          '<dt>提交时间</dt><dd>submittedAt</dd>' +
+          '<dt>操作</dt><dd>personal-perf-past-view.html?id= 只看自填 KR</dd></dl>' +
+          '<p>渲染：<code>EmployeeTasks.renderPastTable</code></p>',
+      },
+    ],
+  },
+
+  'oa-employee-progress': {
+    title: 'OA · 员工任务进度',
+    notes: [
+      {
+        n: 1,
+        attach: '#emp-progress-steps',
+        title: '只读进度 · 不可看分',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<p>pending_supervisor / pending_division 阶段员工跟踪用；<strong>不展示</strong>上级/分管分数。</p>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>query <code>?id=</code> → EmployeeTasks.findTask → renderPhaseSteps。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>Grill Q2 已定 A。分数仅在 pending_confirm 进入 score-confirm 后可见。pending_confirm 时本页仅「去确认」按钮。</p>',
+      },
+    ],
+  },
+
+  'oa-score-confirm': {
+    title: 'OA · 确认评分',
+    notes: [
+      {
+        n: 1,
+        attach: '#confirm-body',
+        title: '员工/上级确认页',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<div class="proto-flow">月：上级提交 → 待确认（不等分管）→ 员工+上级确认 → confirmed</div>' +
+          '<div class="proto-flow">季：上级→待分管评→分管提交→待确认→员工+上级+分管确认→confirmed</div>' +
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>上级评完 → 分管核定 → 双方确认 → completed</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>模块<strong>表格</strong>（自评|上级评）+ 底部<strong>折算汇总</strong></p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>三分确认 badge；季度 <code>?type=quarter&role=division</code> 分管可确认；改总分仅清零已 ✓ 方</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>URL <code>?role=employee|leader|division</code>；<code>PerfScoreSummary.renderConfirmPage()</code> 与 HR 详情共用。</p>' +
+          '<p class="proto-sec">研发 · 列表 vs 确认页</p>' +
+          '<p>待办<strong>列表</strong>仅 phase 单标签「待确认」；本页才展示 renderConfirmBadges + 模块明细 + 折算汇总。见 DEV-GUIDE-v1.4.0.md。</p>',
+      },
+      {
+        n: 2,
+        attach: '.q-oa-breadcrumb',
+        title: '确认截止 · 分轨步骤条',
         body:
           '<p class="proto-sec">数据流转</p>' +
-          '<dl class="proto-kv">' +
-          '<dt>考核期</dt><dd>计划周期</dd>' +
-          '<dt>提交时间</dt><dd>submittedAt</dd>' +
-          '<dt>状态</dt><dd>员工可见粗粒度状态</dd>' +
-          '<dt>操作</dt><dd>personal-perf-past-view 只读</dd></dl>',
+          '<p>confirmDeadline 来自计划配置；<code>PerfWorkflow.renderPhaseSteps(\'pending_confirm\', { task })</code> + <code>renderConfirmBadges</code>。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>月度：员工+上级确认即终态；分管无确认按钮。季度：三方均 ✓ 才 confirmed。有核定分显示「已调整」。</p>' +
+          '<p class="proto-sec">后端 Task</p>' +
+          '<ul><li>POST confirm：body role=employee|supervisor|division</li>' +
+          '<li>全部 isFullyConfirmed → UPDATE phase=confirmed</li>' +
+          '<li>改总分后 applyTotalAdjustClearConfirm 清零已确认方</li></ul>',
       },
     ],
   },
@@ -552,12 +684,17 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">入口</p>' +
           '<p>无侧栏菜单项；从绩效待办 / 逾期 Tab「继续填写」进入。提交 onSubmit → 跳回 personal-perf。</p>' +
           '<p class="proto-sec">业务流程</p>' +
-          '<p>Phase 条：【A】本月考评（1–6）→ 【B】下月目标（7）→ 确认提交（8）；左栏 8 步，右栏进度同步。</p>' +
+          '<p>Phase 条：【A】本月考评（1–4）→ 【B】下月目标（5）→ 确认提交（6）；左栏 6 步，右栏进度同步。</p>' +
+          '<p class="proto-sec">v1.3 · 考核目标</p>' +
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>核心/常规各填「指标 KR」，Step1/2 各 1 项为主</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>统一称<strong>考核目标</strong>，V/X/下月·下季均可<strong>多个目标</strong>；每目标含 O+SMART+权重+标准+M+自评</p>' +
+          '<p class="proto-sec">v1.1 调整</p>' +
+          '<p>核心/常规 KR 在同页填 M+自评；行为步含加减分申报；无独立自评步。</p>' +
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>storageKey=<code>perf-monthly-oa-pc</code> 区分端</li>' +
           '<li>提交 onSubmit → 跳 personal-perf</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>Ant Design 风格组件；字段校验正式环境 Step8 启用（权重/必填/下月目标）。</p>',
+          '<p>Ant Design 风格组件；字段校验正式环境 Step6 启用（权重/必填/下月目标）。</p>',
       },
       {
         n: 2,
@@ -565,9 +702,11 @@ window.PROTO_NOTE_PAGES = {
         title: '考核标准 · 分档格式（方案 A）',
         body:
           '<p class="proto-sec">规则说明</p>' +
-          '<p>与小程序同源：考核标准为 5 档达成率阶梯，各档分值随 KR 权重联动。</p>' +
+          '<p>与小程序同源：考核标准为 5 档达成率阶梯，各档分值随 KR 权重联动；KR 填 M 后同页自评。</p>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<p>字段 <code>standardTiers</code> 替代原 textarea；OA storageKey 独立不影响小程序草稿。</p>',
+          '<p>字段 <code>standardTiers</code> 替代原 textarea；OA storageKey 独立不影响小程序草稿。</p>' +
+          '<p class="proto-sec">v1.1.1 · 两位小数</p>' +
+          '<p>自评输入经 <code>PerfScoreFormat.bindAll()</code>：最多 2 位小数，整数展示 <code>x.00</code>。</p>',
       },
       {
         n: 3,
@@ -591,7 +730,8 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">入口</p>' +
           '<p>无侧栏菜单项；从绩效待办点季度任务「开始填写」进入。</p>' +
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">【A】本季考评（1–7）→ 【B】下季目标（8）→ 确认提交（9）</div>' +
+          '<div class="proto-flow">【A】本季考评（1–5）→ 【B】下季目标（6）→ 确认提交（7）</div>' +
+          '<p class="proto-sec">v1.1</p><p>取消独立加减分/自评步；KR 在步1–2 同页填 M+自评。</p>' +
           '<p class="proto-sec">数据流转</p>' +
           '<p>v1.0 月/季统一 <code>renderPhaseStepper()</code>，替代旧 stepper-phases 样式。</p>' +
           '<p class="proto-sec">规则说明</p>' +
@@ -600,12 +740,22 @@ window.PROTO_NOTE_PAGES = {
       {
         n: 2,
         attach: '#wizard-content',
+        title: 'Step3 · 6Q3J · v1.2',
+        body:
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>与小程序同源 <code>perf-sixq3j.js</code>；planId=2026-Q2 · empNo 来自表头 mock。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>只读；分项「待导入」或分值；不与奖金结算联动（本版演示）。</p>',
+      },
+      {
+        n: 3,
+        attach: '#wizard-content',
         title: '提交后流转',
         body:
           '<p class="proto-sec">数据流转</p>' +
           '<ol><li>status → submitted</li><li>推 directSupervisor 待办</li><li>推 divisionLeader 待办（非同人时）</li><li>同人合并仅一条待办</li></ol>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>总得分在两端评分都完成后计算，供奖金排名使用。</p>',
+          '<p>6Q3J 未齐仍可提交；分后补导入并重算（正式环境）。</p>',
       },
     ],
   },
@@ -620,13 +770,15 @@ window.PROTO_NOTE_PAGES = {
         title: '待评触发链路',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">下属 Step8 提交 → 生成上级待办 → 本列表 → 进评分页 → 提交 → 回列表</div>' +
+          '<div class="proto-flow">下属 Step6 提交 → 生成上级待办 → 本列表 → 进评分页 → 提交 → 回列表</div>' +
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>filter：supervisorId=me AND status=submitted|scoring</li>' +
           '<li>提交后 status→scored，列表移除或标已评</li>' +
           '<li>若需分管且非同人：并行另一条 division 待办（不在本列表）</li></ul>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p><strong>同人合并</strong>：上级=分管时仅 1 条待办，一次提交写两节点分数（mergedReview）。</p>',
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>跨部门分管走季度占位列表</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>兼<strong>分管领导</strong>时：本列表展示<strong>本部门全员</strong>进度；上级评完后可<strong>改总分</strong></p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>月度上级提交后员工<strong>立即待确认</strong>；分管在待确认态仍可改总分（全 ✓ 后禁用）</p>' +
+          '<p><strong>同人合并</strong>：上级=分管时仅「去评分」一次，自动同步分管节点，无需改总分。</p>',
       },
       {
         n: 2,
@@ -635,13 +787,24 @@ window.PROTO_NOTE_PAGES = {
         body:
           '<p class="proto-sec">数据流转</p>' +
           '<dl class="proto-kv">' +
-          '<dt>下属</dt><dd>任务.assigneeName</dd>' +
-          '<dt>考核期</dt><dd>计划.periodLabel</dd>' +
-          '<dt>提交时间</dt><dd>submittedAt</dd>' +
-          '<dt>状态</dt><dd>待评 / 评分中（有草稿）/ 已评</dd>' +
-          '<dt>操作</dt><dd>supervisor-score-monthly?id=taskId</dd></dl>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>仅直接上级可见自己的下属；跨部门分管走分管待办列表（季度占位）。</p>',
+          '<dt>自评总分</dt><dd>Σ(KR自评+行为+加减分)；点击表头排序</dd>' +
+          '<dt>操作</dt><dd>去评分 / 改总分（分管·待确认亦可）/ 查看确认 / 详情</dd></dl>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>phase 标签走 <code>PerfWorkflow.phaseLabel</code>；终态「已确认」</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>默认按自评总分<strong>降序</strong>；分管视角含核定总分列</p>',
+      },
+    ],
+  },
+
+  'oa-division-dept-list': {
+    title: '分管 · 部门绩效（已合并）',
+    notes: [
+      {
+        n: 1,
+        attach: '.perf-tip',
+        title: '入口合并',
+        body:
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3+</span>原独立「部门待办」已合并至 <code>supervisor-review-list.html</code>。</p>' +
+          '<p>判定为分管领导时，在<strong>领导·待我审核</strong>同一列表查看本部门全员；待分管核定行显示「改总分」。</p>',
       },
     ],
   },
@@ -655,7 +818,7 @@ window.PROTO_NOTE_PAGES = {
         title: '完整评分 · 动作集',
         body:
           '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">KR/行为填分 → 加减分核定 → 对照员工原文 → 评语(选填) → 看下月目标 → 提交或整表退回</div>' +
+          '<div class="proto-flow">KR/行为填分 → 加减分核定 → 对照员工原文 → 评语(选填) → 看下月目标 → 提交或整表退回 → 待确认</div>' +
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>读 submitSnapshot；写 supervisorScores、adjustments、comment</li>' +
           '<li>提交：算 totalScore → 更新任务 → 通知 HR 统计/奖金引擎</li>' +
@@ -665,13 +828,13 @@ window.PROTO_NOTE_PAGES = {
       },
       {
         n: 2,
-        attach: '#score-ref-tabs',
-        title: '员工原文对照',
+        attach: '#score-next-month-ref',
+        title: '下月目标 · 对照查看',
         body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<p>Tab 切换自评总结 / O·SMART·M 长文本；工作 KR 与下月目标<strong>考核标准</strong>以 ①–⑤ 分档只读展示，行为态度以模板条目列表展示（无分值列）。</p>' +
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>Tab 切换自评总结 / 行为态度 / 加减分 / 下月目标</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>月度页<strong>仅展示下月目标</strong>（上方打分区已含自评/行为/加减分，不再重复 Tab）</p>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<p>只读引用 snapshot 字段，修改不影响员工侧已提交内容。</p>',
+          '<p>只读引用 snapshot 下月目标；考核标准以 ①–⑤ 分档展示，含附加规则（若有）。</p>',
       },
       {
         n: 3,
@@ -699,26 +862,70 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">规则说明</p>' +
           '<p>整表退回后员工修改重交，上级需重新评（历史评分版本二期存档）。</p>',
       },
+      {
+        n: 5,
+        attach: '#score-summary',
+        title: '分管核定 · 不在本页',
+        body:
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>本页底部有<strong>分管领导逐项评分</strong>列</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>月度<strong>不出现分管评分区</strong>；上级提交后进入待确认</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>提交调用 <code>nextPhaseAfterSupervisorSubmit</code> → 月直进 pending_confirm；分管改总分用 <code>canAdjustDivisionTotal</code></p>' +
+          '<p>同人合并（上级=分管）时亦不在此页填分管列。</p>',
+      },
+      {
+        n: 6,
+        attach: '#score-kr-list',
+        title: '评分配 · 两位小数 · v1.1.1',
+        body:
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>上级/分管打分输入最多 2 位小数；失焦与提交时 <code>PerfScoreFormat</code> 规范化，整数如 <code>25.00</code>。</p>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>工作块小计、加减分核定、核定总分均同步格式化；与员工自评、确认页、结果明细口径一致。</p>',
+      },
     ],
   },
 
   'oa-supervisor-score-quarterly': {
-    title: '领导 · 季度评分（占位）',
+    title: '领导 · 季度评分',
     notes: [
       {
         n: 1,
-        attach: '.q-oa-page',
-        title: '季度双节点 · 规格',
+        attach: '#score-sixq3j',
+        title: '6Q3J 只读 · v1.2',
         body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">员工提交 → 上级评（KR/6Q3J/加减分）→ 分管评（分管列）→ 双方完成 → 出总得分 → 奖金结算</div>' +
           '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>两节点分数分别写入 supervisorScore、divisionScore</li>' +
-          '<li>totalScore = f(自评, 上级, 分管) 权重配置</li></ul>' +
+          '<p>与员工 Step3 同源 <code>PerfSixQ3J.renderReadonlyPanel(planId, empNo)</code>；URL 带 plan & no。</p>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>v1.0 本页占位；完整交互后续迭代</li>' +
-          '<li><strong>同人合并</strong>：一次提交，分管列自动粘贴，权重 40%+40%=80%</li>' +
-          '<li>退回任节点联动退回员工</li></ul>',
+          '<ul><li>1368 / 文化经句 / AI 客观分；缺项<strong>待导入</strong></li>' +
+          '<li>HR 计划明细导入后本页 storage 事件刷新</li>' +
+          '<li>本版不与奖金排名联动</li></ul>',
+      },
+      {
+        n: 2,
+        attach: '#score-role-banner',
+        title: '上级/分管分列 · v1.3',
+        body:
+          '<p class="proto-sec">URL 参数</p>' +
+          '<ul><li><code>?id=</code> 任务 id</li>' +
+          '<li><code>&role=supervisor|division</code> 控制可编辑列</li>' +
+          '<li><code>&plan= &no=</code> 6Q3J 只读</li></ul>' +
+          '<p class="proto-sec">权限</p>' +
+          '<ul><li>待上级评：仅上级列可编辑，分管列禁用</li>' +
+          '<li>待分管评：上级列只读，分管列可逐项 + 页底改总分</li>' +
+          '<li>合并评：两列联动同值，一次提交</li></ul>' +
+          '<p class="proto-sec">Mock</p>' +
+          '<ul><li><code>r-zs-2026q2</code> 赵强 · 待上级</li>' +
+          '<li><code>r-lm-2026q2</code> 李明 · 合并评</li>' +
+          '<li><code>r-wf-2026q2&role=division</code> 王芳 · 待分管</li>' +
+          '<li><code>r-hm-2026q2</code> 韩梅 · 待确认只读</li></ul>' +
+          '<p>详见 <code>docs/GRILL_DIVISION_SCORING.md</code></p>',
+      },
+      {
+        n: 3,
+        attach: '#score-summary',
+        title: '折算公式',
+        body:
+          '<p>综合 = 自评×20% + 上级核定×40% + 分管核定×40%。分管改总分覆盖全表后标记「已调整」。</p>',
       },
     ],
   },
@@ -779,7 +986,7 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-fc-desc">新建包 → 组织树勾选 + 职级/岗位筛选 → 预览人员 → 一人仅属一包</div></div>' +
           '<div class="proto-fc-arrow">↓ 写 scopePack[] · memberIds[] · status=draft</div>' +
           '<div class="proto-fc-node"><span class="proto-fc-badge">Step 3</span><strong>开放时间 & 奖金规则</strong>' +
-          '<div class="proto-fc-desc">启动时间 · 截止 · 预览各职级奖金规则匹配（非单选 bonusRuleId）</div></div>' +
+          '<div class="proto-fc-desc">启动时间 · 员工截止 · <strong>确认截止</strong> · 预览各职级奖金规则匹配</div></div>' +
           '<div class="proto-fc-arrow">↓ 写 plan.deadlines · plan.bonusRankingEnabled</div>' +
           '<div class="proto-fc-node"><span class="proto-fc-badge">Step 4</span><strong>模板匹配</strong>' +
           '<div class="proto-fc-desc">每个范围包手动选 1 张模板（月表/季表）；系统不自动人群×职级匹配</div></div>' +
@@ -933,8 +1140,8 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-fc-group"><div class="proto-fc-group-title">员工端 · 小程序 / OA 个人中心</div>' +
           '<div class="proto-fc-node">待办列表出现任务<br><span class="proto-fc-desc">filter: 未截止 + pending/draft</span></div>' +
           '<div class="proto-fc-arrow">↓</div>' +
-          '<div class="proto-fc-node">进入填表向导<br><span class="proto-fc-desc">月表 8 步 / 季表 9 步 · 断点续填 draft</span></div>' +
-          '<div class="proto-fc-arrow">↓ Step8/9 提交</div>' +
+          '<div class="proto-fc-node">进入填表向导<br><span class="proto-fc-desc">月表 6 步 / 季表 7 步 · 断点续填 draft · 同页自评</span></div>' +
+          '<div class="proto-fc-arrow">↓ Step6/7 提交</div>' +
           '<div class="proto-fc-node">写 submitSnapshot · task.status=submitted</div>' +
           '<div class="proto-fc-arrow">↓</div>' +
           '<div class="proto-fc-node proto-fc-node--decision">过 employeeDeadline 未交？</div>' +
@@ -997,9 +1204,10 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-flow">查看各包状态 → 未发点「发放」→ 已发锁定 → 漏人「+新增范围」补发</div>' +
           '<p class="proto-sec">数据流转</p>' +
           '<ul><li>列表读 scopePack[]：名称、人数、模板名、issued|draft</li>' +
+          '<li>名称<strong>可自定义</strong>：点击名称 inline 编辑（新建/补发编辑器内同样可改）</li>' +
           '<li>补发新建 pack，仅可选<strong>未占用</strong>人员</li></ul>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>已发放包：人选+模板不可改，只能催办/解锁/退回单人</li>' +
+          '<ul><li>已发放包：人选+模板不可改，只能催办/解锁/退回单人；包名仍可改</li>' +
           '<li>一包一模板，HR 手动绑定（非人群×职级自动矩阵）</li></ul>',
       },
       {
@@ -1020,7 +1228,7 @@ window.PROTO_NOTE_PAGES = {
       },
       {
         n: 4,
-        attach: '.hr-filter-bar',
+        attach: '.perf-filter-panel',
         title: '员工列表 · 筛选',
         body:
           '<p class="proto-sec">数据流转</p>' +
@@ -1037,14 +1245,38 @@ window.PROTO_NOTE_PAGES = {
           '<dl class="proto-kv">' +
           '<dt>姓名/工号</dt><dd>花名册</dd>' +
           '<dt>组织/岗位/职级</dt><dd>主数据；职级参与奖金分组</dd>' +
-          '<dt>人群</dt><dd>展示字段，不参与模板自动匹配</dd>' +
-          '<dt>所属范围包</dt><dd>scopePack.name</dd>' +
+          '<dt>所属范围包</dt><dd>scopePack.name（可自定义）</dd>' +
           '<dt>匹配模板</dt><dd>scopePack.templateName</dd>' +
           '<dt>任务状态</dt><dd>filling/submitted/scoring/scored/overdue/returned</dd>' +
+          '<dt>处理人</dt><dd>当前待办责任人；批量转办后更新（v1.1.1）</dd>' +
           '<dt>提交时间</dt><dd>submittedAt</dd>' +
-          '<dt>操作</dt><dd>催办 / 解锁 / 查看快照</dd></dl>' +
+          '<dt>操作</dt><dd>催办 / 解锁 / 查看详情 / 退回至员工 / <strong>批量转办</strong>（v1.1.1）</dd></dl>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>一行 = 计划×员工 唯一任务；补发新包会为新人生成新行。</p>',
+          '<p>一行 = 计划×员工 唯一任务；勾选多条 → 批量转办 → 组织架构选人；处理人列展示转办结果。</p>',
+      },
+      {
+        n: 6,
+        attach: '#btn-batch-transfer',
+        title: '批量转办 · v1.1.1',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<div class="proto-flow">勾选待办 → 批量转办 → 组织架构选接收人 → 更新处理人</div>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>转办后待办处理责任变更；员工任务数据不变。样式与新建计划组织树一致。</p>',
+      },
+      {
+        n: 7,
+        attach: '#hr-sixq3j-panel',
+        title: '6Q3J 导入 · v1.2',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<div class="proto-flow">季度计划明细 → 导入 6Q3J → CSV 三列 upsert → 员工/上级只读同步</div>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<ul><li>localStorage <code>perf-sixq3j-{planId}</code></li>' +
+          '<li>空列不更新 · 可分批导入 1368 / 文化 / AI</li>' +
+          '<li>员工列表增加 6Q3J 列摘要</li></ul>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>仅 <code>?plan=2026-Q2</code> 等季度计划显示；本版不做奖金联动与上限校验。</p>',
       },
     ],
   },
@@ -1155,7 +1387,7 @@ window.PROTO_NOTE_PAGES = {
           '<li>命中 bonusTiers/penaltyTiers → bonusAdjust</li>' +
           '<li>未就绪：bonusNote = settlementBlockReason</li></ol>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<ul><li>阻塞原因：未提交 / 待上级 / 待分管 / 待出总分</li>' +
+          '<ul><li>阻塞原因：未提交 / 待上级 / 待分管 / 待出总分 / <strong>待双方确认</strong></li>' +
           '<li>mergedReview：上级完=分管完，标签「合并评/自动粘贴」</li>' +
           '<li>MVP 只展示奖扣调整额，基础奖金对接薪酬为二期</li></ul>',
       },
@@ -1173,7 +1405,93 @@ window.PROTO_NOTE_PAGES = {
           '<dt>奖扣调整</dt><dd>+/- 金额；绿/红着色</dd>' +
           '<dt>说明</dt><dd>命中档位文案或 pending 原因</dd></dl>' +
           '<p class="proto-sec">规则说明</p>' +
-          '<p>顶栏统计：已结算 / 待上级 / 待分管 人数，随评分进度实时变。</p>',
+          '<p>顶栏统计：已结算 / 待上级 / 待分管 人数，随评分进度实时变。</p>' +
+          '<p>v1.1：须 employeeConfirmed ∧ supervisorConfirmed 才纳入结算（<code>hr-bonus.js</code>）。</p>',
+      },
+    ],
+  },
+
+  'hr-perf-results-list': {
+    title: 'HR · 人员绩效结果明细',
+    notes: [
+      {
+        n: 1,
+        attach: '.hr-hint',
+        title: '页面定位 · 权限',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<p>全量计划×人员结果查询；点姓名进待办详情（只读）。不含奖金排名，仅总得分。</p>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>菜单与数据范围由 <code>perf-permissions.js</code> + URL <code>?perm=hr|dept|payroll|employee</code> 控制。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<ul><li>HR：全公司；部门负责人：本部门；薪酬：全量只读；员工：仅本人</li>' +
+          '<li>无范围包列/筛选（v1.1 刻意省略）</li></ul>',
+      },
+      {
+        n: 2,
+        attach: '#res-filter-panel',
+        title: '筛选面板',
+        body:
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>计划 / 部门 / 职级 / phase（含待填写）/ 确认超时 / 已结算奖金 / 关键字 → 前端过滤 MOCK 行。</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>确认态列：月=员工+上级 badge；季=+分管 badge</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>「确认超时」= 过 confirmDeadline 且未双方确认；「已结算奖金」= 奖金引擎 done。</p>',
+      },
+      {
+        n: 3,
+        attach: '.q-table-wrap',
+        title: '结果表 · 字段',
+        body:
+          '<p class="proto-sec">数据流转</p>' +
+          '<dl class="proto-kv">' +
+          '<dt>状态</dt><dd>phase 中文（待填写/已确认等）</dd>' +
+          '<dt>确认态</dt><dd><code>renderConfirmBadges</code>：员工✓ / 上级✓ / 分管✓（季）</dd>' +
+          '<dt>退回次数/原因</dt><dd>HR 退回至员工审计字段</dd></dl>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>筛选栏「导出」→ 列清单 +「模板待确认」占位</p>' +
+          '<p>姓名链至 hr-task-detail.html?from=results。</p>',
+      },
+    ],
+  },
+
+  'hr-task-detail': {
+    title: 'HR · 待办详情',
+    notes: [
+      {
+        n: 1,
+        attach: '#task-detail-header',
+        title: '详情头 · 入口',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<p>从计划明细或结果明细进入；展示员工基本信息、当前 phase、确认态。</p>' +
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>query：no（工号）、plan、from=plan|results 决定面包屑与侧栏高亮。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<p>默认<strong>只读</strong>查看提交快照与评分明细；非领导打分页。</p>',
+      },
+      {
+        n: 2,
+        attach: '#task-detail-body',
+        title: '评分明细 · 只读',
+        body:
+          '<p class="proto-sec">数据流转</p>' +
+          '<p>有 taskId 时读 submitSnapshot + supervisorScores + divisionScores，按 V/X/B 分块表格展示。</p>' +
+          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>仅展示分项表格 + 总分摘要</p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>底部<strong>折算汇总</strong>：模块小计 + 加权公式 + 系统汇总→分管核定</p>' +
+          '<p>加减分表增加「上级评」列；合并评时分管列=上级列。</p>',
+      },
+      {
+        n: 3,
+        attach: '#task-detail-actions',
+        title: 'HR 改分 · v1.1.1',
+        body:
+          '<p class="proto-sec">业务流程</p>' +
+          '<p>计划内入口 + HR 权限：pending_confirm 态可「修改上级分」→ 行内编辑 → 保存重算总分。</p>' +
+          '<p class="proto-sec">规则说明</p>' +
+          '<ul><li>from=results 或其他入口：<strong>不可改分</strong></li>' +
+          '<li>改分后需员工与上级重新确认（原型 alert 提示）</li>' +
+          '<li>不提供整表退回（退回在计划明细操作）</li></ul>',
       },
     ],
   },

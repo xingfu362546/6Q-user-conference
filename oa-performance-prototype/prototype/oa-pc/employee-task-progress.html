@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>任务进度 · 员工</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; <a href="personal-perf.html">我的绩效</a> &gt; <strong>任务进度</strong></nav>
+        <div class="q-oa-page">
+          <div class="q-card-panel">
+            <h2 id="emp-progress-title" style="margin:0 0 12px;font-size:18px">—</h2>
+            <div id="emp-progress-steps"></div>
+            <div id="emp-progress-detail" style="margin-top:16px"></div>
+            <div id="emp-progress-actions" style="margin-top:20px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/employee-tasks.js"></script>
+  <script>
+    initOaShell({ topModule: 'personal', sideActive: 'perf-list' });
+    EmployeeTasks.initProgressPage();
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>

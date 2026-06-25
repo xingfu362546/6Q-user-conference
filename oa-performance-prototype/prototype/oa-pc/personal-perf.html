@@ -1,131 +1,97 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>绩效待办 · 当前</title>
-  <link rel="stylesheet" href="../assets/6q-theme.css" />
-  <link rel="stylesheet" href="../assets/common.css" />
-  <link rel="stylesheet" href="../assets/oa-perf.css" />
-  <link rel="stylesheet" href="../assets/proto-notes.css" />
-</head>
-<body>
-  <div class="q-oa-app">
-    <header id="q-oa-topbar"></header>
-    <div class="q-oa-body">
-      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
-      <div class="q-oa-main">
-        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <strong>当前待办</strong></nav>
-        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
-        <div class="q-oa-page">
-          <div class="tabs card" style="border-radius:2px 2px 0 0;border-bottom:none;margin-bottom:0">
-            <button class="tab active" data-tab="emp">【员工】我的待办 <span class="q-tag q-tag-blue">2</span></button>
-            <button class="tab" data-tab="lead">【领导】待我审核 <span class="q-tag q-tag-orange">1</span></button>
-          </div>
-
-          <div class="q-card-panel" id="panel-emp" style="border-top:none;margin-top:0">
-            <nav class="perf-segment">
-              <a href="personal-perf.html" class="is-active">当前待办</a>
-              <a href="personal-perf-overdue.html">逾期<span class="badge">2</span></a>
-              <a href="personal-perf-past.html">过往提交</a>
-            </nav>
-            <div class="perf-tip perf-tip-blue">📝 未过截止的任务在此填写；支持断点续填，可「复制往期」快速带入 KR 目标与考核标准。</div>
-            <div class="q-table-wrap">
-              <table class="q-table">
-                <thead>
-                  <tr><th>考核任务</th><th>类型</th><th>进度</th><th>截止</th><th>操作</th></tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="perf-task-cell">
-                        <span class="perf-task-icon perf-task-icon--month">月</span>
-                        <div><b>2026年5月 月度绩效考核</b><small>待确认评分 · 可见上级+分管分</small></div>
-                      </div>
-                    </td>
-                    <td>月度</td>
-                    <td><span class="q-tag q-tag-orange">待确认</span></td>
-                    <td>2026-06-15</td>
-                    <td>
-                      <a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px" href="score-confirm.html?role=employee">确认评分</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="perf-task-cell">
-                        <span class="perf-task-icon perf-task-icon--month">月</span>
-                        <div><b>2026年4月 月度绩效考核</b><small>填写中 · 3/8 步</small></div>
-                      </div>
-                    </td>
-                    <td>月度</td>
-                    <td><span class="q-tag q-tag-blue">填写中</span></td>
-                    <td>2026-06-05</td>
-                    <td>
-                      <a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px;margin-right:6px" href="monthly-wizard.html">继续填写</a>
-                      <button type="button" class="q-btn btn-copy-past-secondary" style="padding:2px 10px;font-size:12px" data-copy-past="month" data-storage-key="perf-monthly-oa-pc" data-wizard-href="monthly-wizard.html">复制往期</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="perf-task-cell">
-                        <span class="perf-task-icon perf-task-icon--quarter">季</span>
-                        <div><b>2026 Q2 季度绩效考核</b><small>未开始</small></div>
-                      </div>
-                    </td>
-                    <td>季度</td>
-                    <td><span class="q-tag">未开始</span></td>
-                    <td>2026-07-10</td>
-                    <td><a class="q-btn" style="padding:2px 12px;font-size:12px" href="quarterly-wizard.html">开始填写</a></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="q-card-panel" id="panel-lead" style="display:none">
-            <div class="perf-tip perf-tip-orange" style="margin-bottom:12px">📋 <a href="supervisor-review-list.html">进入完整待我审核列表 →</a></div>
-            <div class="q-table-wrap" style="border:none">
-              <table class="q-table">
-                <thead><tr><th>下属</th><th>考核期</th><th>状态</th><th>操作</th></tr></thead>
-                <tbody id="lead-preview-body"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="../assets/frame.js"></script>
-  <script src="../assets/supervisor-score.js"></script>
-  <script src="../assets/employee-past-copy.js"></script>
-  <script>
-    initOaShell({
-      topModule: 'personal',
-      sideActive: 'perf-list',
-      pageTabs: [
-        { key: 'home', label: '首页', href: 'index.html' },
-        { key: 'perf', label: '绩效待办', href: 'personal-perf.html', closable: true },
-      ],
-      activeTab: 'perf',
-    });
-    SupervisorScore.renderReviewList('lead-preview-body');
-    if (window.EmployeePastCopy) {
-      EmployeePastCopy.bindCopyButtons(document.body, {
-        storageKey: 'perf-monthly-oa-pc',
-        wizardHref: 'monthly-wizard.html',
-        onApplied: function () { location.href = 'monthly-wizard.html'; },
-      });
-    }
-    document.querySelectorAll('.tab[data-tab]').forEach(function(tab) {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.tab[data-tab]').forEach(function(t) { t.classList.remove('active'); });
-        tab.classList.add('active');
-        document.getElementById('panel-emp').style.display = tab.dataset.tab === 'emp' ? '' : 'none';
-        document.getElementById('panel-lead').style.display = tab.dataset.tab === 'emp' ? 'none' : '';
-      });
-    });
-  </script>
-  <script src="../assets/proto-notes-data.js"></script>
-  <script src="../assets/proto-notes.js"></script>
-</body>
-</html>
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>绩效待办 · 当前</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <strong>当前待办</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="tabs card" style="border-radius:2px 2px 0 0;border-bottom:none;margin-bottom:0">
+            <button class="tab active" data-tab="emp">【员工】我的待办 <span class="q-tag q-tag-blue" id="emp-tab-count">—</span></button>
+            <button class="tab" data-tab="lead">【领导】待我审核 <span class="q-tag q-tag-orange" id="lead-tab-badge">1</span></button>
+          </div>
+
+          <div class="q-card-panel" id="panel-emp" style="border-top:none;margin-top:0">
+            <nav class="perf-segment">
+              <a href="personal-perf.html" class="is-active">当前待办</a>
+              <a href="personal-perf-overdue.html">逾期<span class="badge">2</span></a>
+              <a href="personal-perf-past.html">已提交</a>
+            </nav>
+            <div class="perf-tip perf-tip-blue">📝 v1.4 分轨流程：待填写 → 填写中 → 待上级评 →（季·待分管评）→ 待确认 → 已确认。本表展示<strong>未归档</strong>任务；每行含步骤条与当前 phase 标签。</div>
+            <div class="q-table-wrap">
+              <table class="q-table">
+                <thead>
+                  <tr><th>考核任务</th><th>类型</th><th>状态</th><th>截止</th><th>操作</th></tr>
+                </thead>
+                <tbody id="emp-current-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="q-card-panel" id="panel-lead" style="display:none">
+            <div class="perf-tip perf-tip-blue" id="review-list-tip" style="margin-bottom:12px">📋 <a href="supervisor-review-list.html">进入完整待我审核列表 →</a></div>
+            <div class="q-table-wrap" id="review-list-sort-host">
+              <table class="q-table">
+                <thead id="review-list-thead">
+                  <tr><th>员工</th><th>考核期</th><th class="num">自评总分</th><th>状态</th><th>操作</th></tr>
+                </thead>
+                <tbody id="lead-preview-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/supervisor-score.js"></script>
+  <script src="../assets/employee-tasks.js"></script>
+  <script src="../assets/employee-past-copy.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'personal',
+      sideActive: 'perf-list',
+      pageTabs: [
+        { key: 'home', label: '首页', href: 'index.html' },
+        { key: 'perf', label: '绩效待办', href: 'personal-perf.html', closable: true },
+      ],
+      activeTab: 'perf',
+    });
+    EmployeeTasks.renderCurrentTable('emp-current-tbody');
+    EmployeeTasks.updateSegmentBadges();
+    SupervisorScore.renderReviewList('lead-preview-body', { preview: true });
+    if (window.EmployeePastCopy) {
+      EmployeePastCopy.bindCopyButtons(document.body, {
+        storageKey: 'perf-monthly-oa-pc',
+        wizardHref: 'monthly-wizard.html',
+        onApplied: function () { location.href = 'monthly-wizard.html'; },
+      });
+    }
+    document.querySelectorAll('.tab[data-tab]').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab[data-tab]').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById('panel-emp').style.display = tab.dataset.tab === 'emp' ? '' : 'none';
+        document.getElementById('panel-lead').style.display = tab.dataset.tab === 'emp' ? 'none' : '';
+      });
+    });
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>
+

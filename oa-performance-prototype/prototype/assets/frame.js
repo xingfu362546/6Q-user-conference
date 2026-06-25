@@ -170,7 +170,10 @@
   function krPreview(kr, showScore) {
     if (showScore) {
       var m = (kr.m || '').trim();
-      var sc = kr.selfScore ? '自评 ' + kr.selfScore : '';
+      var scVal = kr.selfScore != null && kr.selfScore !== '' ? kr.selfScore : null;
+      var sc = scVal != null
+        ? '自评 ' + (window.PerfScoreFormat ? PerfScoreFormat.format(scVal) : scVal)
+        : '';
       return m ? m.slice(0, 28) + (m.length > 28 ? '…' : '') + (sc ? ' · ' + sc : '') : '点击展开填写';
     }
     var o = (kr.o || '').trim();

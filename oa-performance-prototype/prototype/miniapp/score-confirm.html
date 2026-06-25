@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../assets/6q-theme.css" />
   <link rel="stylesheet" href="../assets/common.css" />
   <link rel="stylesheet" href="../assets/mp-perf.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
 </head>
 <body>
   <div class="mp-screen">
@@ -17,10 +18,14 @@
     <div class="mp-page-body" id="confirm-body"></div>
   </div>
   <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/perf-score-summary.js"></script>
   <script src="../assets/score-confirm.js"></script>
   <script>
     var role = new URLSearchParams(location.search).get('role') || 'employee';
     ScoreConfirm.initPage({ role: role, platform: 'miniapp' });
   </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
 </body>
 </html>

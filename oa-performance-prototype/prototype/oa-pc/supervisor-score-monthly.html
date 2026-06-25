@@ -45,13 +45,7 @@
             </div>
 
             <div class="score-section-title">下月目标 · 对照查看（不打分）</div>
-            <div class="score-ref-tabs" id="score-ref-tabs"></div>
-            <div id="score-ref-panels"></div>
-
-            <div class="score-section-title" id="division-section-title">分管领导评分</div>
-            <p class="hr-hint" id="division-merge-hint" style="margin-top:0;display:none">上级与分管为同一人：提交上级分时自动同步至分管列。</p>
-            <div class="score-kr-list score-kr-list--division" id="score-division-list"></div>
-            <div class="score-summary" id="score-division-summary"></div>
+            <div id="score-next-month-ref" class="score-next-month-ref"></div>
 
             <div class="score-actions">
               <button class="q-btn" type="button" id="btn-return-all">退回整表至员工</button>
@@ -77,6 +71,8 @@
   </div>
 
   <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/perf-kr-hierarchy.js"></script>
   <script src="../assets/supervisor-score.js"></script>
   <script>
     initOaShell({

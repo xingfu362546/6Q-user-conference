@@ -1,93 +1,95 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>人员绩效结果明细 · 绩效管理</title>
-  <link rel="stylesheet" href="../assets/6q-theme.css" />
-  <link rel="stylesheet" href="../assets/common.css" />
-  <link rel="stylesheet" href="../assets/oa-perf.css" />
-  <link rel="stylesheet" href="../assets/proto-notes.css" />
-</head>
-<body>
-  <div class="q-oa-app">
-    <header id="q-oa-topbar"></header>
-    <div class="q-oa-body">
-      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
-      <div class="q-oa-main">
-        <nav class="q-oa-breadcrumb">人力资源 &gt; 绩效管理 &gt; <strong>人员绩效结果明细</strong></nav>
-        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
-        <div class="q-oa-page">
-          <p class="hr-hint" style="margin-top:0">全量计划×人员结果查询；<strong>不含奖金排名</strong>，仅展示总得分。点击姓名可查看待办详情（只读）。</p>
-
-          <div class="perf-filter-panel" id="res-filter-panel">
-            <div class="perf-filter-panel__head">
-              <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
-              筛选条件
-            </div>
-            <div class="perf-filter-grid">
-              <div class="perf-filter-field">
-                <span class="perf-filter-label">考核计划</span>
-                <select id="res-filter-plan"><option value="全部">全部</option><option value="2026-05" selected>2026年5月月度</option><option value="2026-Q2">2026 Q2季度</option></select>
-              </div>
-              <div class="perf-filter-field">
-                <span class="perf-filter-label">部门</span>
-                <select id="res-filter-dept"><option>全部</option><option>信息部</option><option>广州办事处</option><option>人才开发部</option></select>
-              </div>
-              <div class="perf-filter-field">
-                <span class="perf-filter-label">职级</span>
-                <select id="res-filter-level"><option>全部</option><option>总监</option><option>经理</option><option>主管</option><option>职员</option></select>
-              </div>
-              <div class="perf-filter-field">
-                <span class="perf-filter-label">任务状态</span>
-                <select id="res-filter-phase"><option value="全部">全部</option><option value="filling">填写中</option><option value="pending_supervisor">待上级评</option><option value="pending_division">待分管评</option><option value="pending_confirm">待确认</option><option value="completed">已完成</option></select>
-              </div>
-              <div class="perf-filter-field">
-                <span class="perf-filter-label">确认超时</span>
-                <select id="res-filter-confirm-od"><option value="全部">全部</option><option value="yes">是</option><option value="no">否</option></select>
-              </div>
-              <div class="perf-filter-field">
-                <span class="perf-filter-label">已结算奖金</span>
-                <select id="res-filter-bonus"><option value="全部">全部</option><option value="yes">是</option><option value="no">否</option></select>
-              </div>
-              <div class="perf-filter-field perf-filter-field--search">
-                <span class="perf-filter-label">姓名 / 工号</span>
-                <input type="search" id="res-filter-kw" placeholder="输入关键字搜索…" />
-              </div>
-            </div>
-            <div class="perf-filter-footer">
-              <button type="button" class="perf-filter-reset" id="res-filter-reset">重置筛选</button>
-              <span id="res-count">共 0 条</span>
-            </div>
-          </div>
-
-          <div class="q-table-wrap">
-            <table class="q-table">
-              <thead>
-                <tr>
-                  <th>考核计划</th><th>姓名</th><th>工号</th><th>部门</th><th>职级</th>
-                  <th>状态</th><th>自评</th><th>上级分</th><th>分管分</th><th>总得分</th><th>确认态</th><th>退回次数</th><th>最近退回原因</th>
-                </tr>
-              </thead>
-              <tbody id="res-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="../assets/frame.js"></script>
-  <script src="../assets/perf-permissions.js"></script>
-  <script src="../assets/perf-workflow.js"></script>
-  <script src="../assets/hr-perf-results.js"></script>
-  <script>
-    initOaShell({ topModule: 'hr', sideActive: 'perf-results', pageTabs: [
-      { key: 'home', label: '首页', href: '../index.html' },
-      { key: 'results', label: '结果明细', href: 'hr-perf-results-list.html', closable: true },
-    ], activeTab: 'results' });
-    initHrPerfResultsList();
-  </script>
-  <script src="../assets/proto-notes-data.js"></script>
-  <script src="../assets/proto-notes.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>人员绩效结果明细 · 绩效管理</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">人力资源 &gt; 绩效管理 &gt; <strong>人员绩效结果明细</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <p class="hr-hint" style="margin-top:0">全量计划×人员结果查询；<strong>不含奖金排名</strong>，仅展示总得分。点击姓名可查看待办详情（只读）。</p>
+
+          <div class="perf-filter-panel" id="res-filter-panel">
+            <div class="perf-filter-panel__head">
+              <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+              筛选条件
+            </div>
+            <div class="perf-filter-grid">
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">考核计划</span>
+                <select id="res-filter-plan"><option value="全部">全部</option><option value="2026-05" selected>2026年5月月度</option><option value="2026-Q2">2026 Q2季度</option></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">部门</span>
+                <select id="res-filter-dept"><option>全部</option><option>信息部</option><option>广州办事处</option><option>人才开发部</option></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">职级</span>
+                <select id="res-filter-level"><option>全部</option><option>总监</option><option>经理</option><option>主管</option><option>职员</option></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">任务状态</span>
+                <select id="res-filter-phase"><option value="全部">全部</option><option value="not_started">待填写</option><option value="filling">填写中</option><option value="pending_supervisor">待上级评</option><option value="pending_division">待分管评</option><option value="pending_confirm">待确认</option><option value="confirmed">已确认</option><option value="completed">已确认(旧)</option></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">确认超时</span>
+                <select id="res-filter-confirm-od"><option value="全部">全部</option><option value="yes">是</option><option value="no">否</option></select>
+              </div>
+              <div class="perf-filter-field">
+                <span class="perf-filter-label">已结算奖金</span>
+                <select id="res-filter-bonus"><option value="全部">全部</option><option value="yes">是</option><option value="no">否</option></select>
+              </div>
+              <div class="perf-filter-field perf-filter-field--search">
+                <span class="perf-filter-label">姓名 / 工号</span>
+                <input type="search" id="res-filter-kw" placeholder="输入关键字搜索…" />
+              </div>
+            </div>
+            <div class="perf-filter-footer">
+              <button type="button" class="perf-filter-reset" id="res-filter-reset">重置筛选</button>
+              <button type="button" class="q-btn q-btn-primary" id="btn-export-results" style="margin-left:8px">导出</button>
+              <span id="res-count">共 0 条</span>
+            </div>
+          </div>
+
+          <div class="q-table-wrap">
+            <table class="q-table">
+              <thead>
+                <tr>
+                  <th>考核计划</th><th>姓名</th><th>工号</th><th>部门</th><th>职级</th>
+                  <th>状态</th><th>自评</th><th>上级分</th><th>分管分</th><th>总得分</th><th>确认态</th><th>退回次数</th><th>最近退回原因</th>
+                </tr>
+              </thead>
+              <tbody id="res-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-permissions.js"></script>
+  <script src="../assets/perf-workflow.js"></script>
+  <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/hr-perf-results.js"></script>
+  <script>
+    initOaShell({ topModule: 'hr', sideActive: 'perf-results', pageTabs: [
+      { key: 'home', label: '首页', href: '../index.html' },
+      { key: 'results', label: '结果明细', href: 'hr-perf-results-list.html', closable: true },
+    ], activeTab: 'results' });
+    initHrPerfResultsList();
+  </script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>
