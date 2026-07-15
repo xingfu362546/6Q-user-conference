@@ -21,6 +21,144 @@
       z-index: 5;
     }
     .ut-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    /* NL → SQL 双栏（v1.1） */
+    .ut-nl-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-4);
+      align-items: stretch;
+      margin-bottom: 72px;
+    }
+    @media (max-width: 1100px) {
+      .ut-nl-layout { grid-template-columns: 1fr; }
+    }
+    .ut-nl-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg, 12px);
+      display: flex;
+      flex-direction: column;
+      min-height: 520px;
+    }
+    .ut-nl-card__head {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .ut-nl-card__head h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .ut-nl-card__body {
+      padding: var(--space-5);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .ut-nl-card__foot {
+      padding: var(--space-4) var(--space-5);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: flex-end;
+      background: #fafbfc;
+    }
+    .ut-nl-sql-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .ut-nl-sql-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      color: var(--text-muted);
+      text-align: center;
+      padding: var(--space-8) var(--space-4);
+    }
+    .ut-nl-sql-empty__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      margin-bottom: var(--space-2);
+    }
+    .ut-nl-sql-code {
+      flex: 1;
+      margin: 0;
+      padding: var(--space-4);
+      border-radius: var(--radius-md, 8px);
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: var(--font-mono, ui-monospace, monospace);
+      font-size: 12px;
+      line-height: 1.65;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .ut-nl-meta {
+      display: grid;
+      gap: var(--space-3);
+    }
+    .ut-nl-meta__block {
+      padding: var(--space-3) var(--space-4);
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border-default);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .ut-nl-meta__block strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text-primary, #0f172a);
+      font-size: 12px;
+    }
+    .ut-nl-meta__estimate {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent, #4f46e5);
+    }
+    .ut-nl-warn {
+      padding: var(--space-3) var(--space-4);
+      border-radius: 8px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: #9a3412;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .ut-nl-warn[hidden],
+    .ut-nl-sql-result[hidden],
+    .ut-nl-sql-empty[hidden] { display: none !important; }
+    .ut-btn--success {
+      background: #16a34a;
+      border-color: #16a34a;
+      color: #fff;
+    }
+    .ut-btn--success:hover:not(:disabled) {
+      background: #15803d;
+      border-color: #15803d;
+    }
+    .ut-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
   </style>
   <link rel="stylesheet" href="../shared/intent-proto-notes.css" />
 </head>
@@ -36,23 +174,23 @@
           </nav>
           <div class="ut-page-head">
             <div class="ut-page-head__left">
-              <h1>新增标签</h1>
-              <p class="ut-page-head__desc">用户属性从<strong>数据表字段</strong>选取；行为类含<strong>页面路径序列</strong>（A→B→C），依赖埋点上报有序路由；其余行为类必填时间范围。</p>
+              <h1>新增标签 <span class="ut-badge ut-badge--neutral" style="margin-left:8px;vertical-align:middle">v1.1 · NL→SQL</span></h1>
+              <p class="ut-page-head__desc">用<strong>自然语言</strong>描述圈选意图，由智能体生成只读 SQL（结果集仅 <code>member_id</code>）；确认后再计算落版本。</p>
             </div>
           </div>
 
           <p class="ut-banner" id="ut-copy-banner" hidden role="status">
-            复制规则模式：已带入源标签规则与数据源，请填写<strong>新标签名称</strong>后保存。
+            复制模式：已带入源标签的自然语言与已确认 SQL，请填写<strong>新标签名称</strong>后保存；改意图须重新生成。
           </p>
 
-          <form class="ut-card" style="margin-bottom:72px" onsubmit="return false">
-            <section class="ut-section" aria-labelledby="sec-basic">
-              <h2 class="ut-section__title" id="sec-basic"><span aria-hidden="true"></span>基础信息</h2>
-              <div class="ut-form-grid">
-                <div class="ut-field">
-                  <label class="ut-required" for="tag-name">标签名称</label>
-                  <input class="ut-input" id="tag-name" type="text" placeholder="例如：亲子偏好" required />
-                </div>
+          <div class="ut-nl-layout">
+            <!-- 左：基本信息 + 自然语言 + 更新方式 -->
+            <div class="ut-nl-card">
+              <div class="ut-nl-card__head">
+                <h2>标签基本信息</h2>
+                <span class="ut-badge ut-badge--warning" data-nl-status>草稿</span>
+              </div>
+              <div class="ut-nl-card__body">
                 <div class="ut-field">
                   <label class="ut-required" for="parent-tag">父级标签</label>
                   <select class="ut-select" id="parent-tag" required>
@@ -64,128 +202,114 @@
                     <option>用户行为</option>
                   </select>
                 </div>
-                <div class="ut-field ut-form-grid--1" style="grid-column:1/-1">
-                  <label for="tag-remark">备注说明</label>
-                  <textarea class="ut-input ut-textarea" id="tag-remark" data-char-max="150" placeholder="描述标签业务含义与使用场景"></textarea>
-                  <div class="ut-char-count" data-char-count>0 / 150</div>
+                <div class="ut-field">
+                  <label class="ut-required" for="tag-name">标签名称</label>
+                  <input class="ut-input" id="tag-name" type="text" placeholder="例如：喜欢社区" required />
                 </div>
-                <div class="ut-field ut-form-grid--1" style="grid-column:1/-1">
-                  <label class="ut-required">数据源</label>
-                  <div class="ut-source-locked" aria-readonly="true">
-                    <span class="ut-chip">362524</span>
-                    <span class="ut-chip">horizon_events</span>
-                    <span class="ut-badge ut-badge--neutral">已锁定 · 联系研发变更</span>
+                <div class="ut-field">
+                  <label class="ut-required">更新方式</label>
+                  <div class="ut-seg" data-seg data-update-mode-seg role="group" aria-label="更新方式">
+                    <button type="button" class="is-active" data-seg-value="manual" aria-pressed="true">手动更新</button>
+                    <button type="button" data-seg-value="cron" aria-pressed="false">例行更新</button>
                   </div>
-                  <p class="ut-hint">决定属性字段、事件、页面字典范围；运营不可修改。</p>
-                </div>
-              </div>
-            </section>
-
-            <section class="ut-section" aria-labelledby="sec-rules">
-              <h2 class="ut-section__title" id="sec-rules"><span aria-hidden="true"></span>标签规则</h2>
-
-              <div class="ut-rule-toolbar">
-                <div class="ut-rule-insight" aria-live="polite">
-                  <strong>规则解读</strong>
-                  <span data-rule-summary>请添加条件</span>
-                </div>
-                <div class="ut-rule-estimate">
-                  <div>
-                    <div style="font-size:11px;color:var(--text-muted);font-weight:600">预估覆盖（试算）</div>
-                    <span class="ut-rule-estimate__num" data-estimate-count>—</span>
+                  <div class="ut-update-manual" data-update-manual-panel>
+                    <p class="ut-hint" style="margin-top:var(--space-2);margin-bottom:0">
+                      不自动跑批。列表可「立即计算」；确认并计算会立即触发 1 次。
+                    </p>
                   </div>
-                  <button type="button" class="ut-btn ut-btn--primary" data-estimate-run>预估人数</button>
-                </div>
-              </div>
-
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--space-3);gap:var(--space-3);flex-wrap:wrap">
-                <p class="ut-hint" style="margin:0;max-width:58ch">顶层可添加条件或<strong>条件组</strong>。新增「页面路径序列」用于配置 A→B→C 转化路径；与单页「页面行为」不同，必须按访问先后匹配。</p>
-                <div class="ut-rule-list-toolbar">
-                  <button type="button" class="ut-btn ut-btn--sm" data-add-rule>＋ 添加条件</button>
-                  <button type="button" class="ut-btn ut-btn--sm ut-btn--primary" data-add-rule-group>＋ 添加条件组</button>
-                </div>
-              </div>
-
-              <div class="ut-rule-panel">
-                <div class="ut-rule-logic">
-                  <div class="ut-rule-logic__op">
-                    <div class="ut-logic-switch" data-logic-switch role="group" aria-label="顶层逻辑">
-                      <button type="button" class="is-active" data-logic="and" aria-pressed="true">且</button>
-                      <button type="button" data-logic="or" aria-pressed="false">或</button>
+                  <div class="ut-cron-schedule" data-cron-schedule-panel hidden style="margin-top:var(--space-3)">
+                    <div class="ut-field">
+                      <label class="ut-required" for="cron-time">每日执行时刻</label>
+                      <input class="ut-input" id="cron-time" type="time" data-cron-time value="02:00" step="60" />
+                      <p class="ut-hint">例行复用<strong>已确认 SQL</strong>，不再每次调 AI（Asia/Shanghai）</p>
                     </div>
-                    <span class="ut-rule-logic__op-label" data-logic-label>且</span>
+                    <div class="ut-cron-summary" data-cron-summary-live aria-live="polite">
+                      <strong>调度摘要</strong>
+                      <p data-cron-summary-text>将在每个自然日 02:00（北京时间）自动计算本标签。</p>
+                      <p class="ut-cron-summary__next">预计下次执行：<span data-cron-next-run>—</span></p>
+                    </div>
                   </div>
-                  <div class="ut-rule-logic__body" data-rule-list>
-                    <!-- 由 ut-rule-builder.js 自动生成示例行 -->
-                    <!-- 示例条件组由 ut-rule-builder.js 初始化（含组内添加条件） -->
-                    <div data-rule-group-placeholder></div>
+                </div>
+                <div class="ut-field" style="flex:1;display:flex;flex-direction:column">
+                  <label class="ut-required" for="tag-nl">描述（自然语言）</label>
+                  <textarea class="ut-input ut-textarea" id="tag-nl" data-nl-input rows="6" style="flex:1;min-height:140px" placeholder="例如：在社区浏览时间每天大于 5 分钟的用户"></textarea>
+                  <p class="ut-hint">智能体据此编写圈选 SQL；修改描述后须重新「生成 SQL」。</p>
+                </div>
+                <div class="ut-field">
+                  <label>数据范围（只读）</label>
+                  <div class="ut-source-locked" aria-readonly="true">
+                    <span class="ut-chip">数仓 · 固定连接</span>
+                    <span class="ut-chip">表白名单由研发配置</span>
+                    <a class="ut-badge ut-badge--neutral" href="data-tables.html">查看可用表</a>
+                  </div>
+                  <p class="ut-hint">运营不可切换库；生成 SQL 仅可使用白名单内表/字段。</p>
+                </div>
+              </div>
+              <div class="ut-nl-card__foot">
+                <a class="ut-btn" href="tag-list.html">取消</a>
+                <button type="button" class="ut-btn" data-nl-save>保存草稿</button>
+                <button type="button" class="ut-btn ut-btn--success" data-nl-generate>生成 SQL</button>
+              </div>
+            </div>
+
+            <!-- 右：SQL + 解读 + 预估 -->
+            <div class="ut-nl-card">
+              <div class="ut-nl-card__head">
+                <h2>标签 SQL</h2>
+                <span class="ut-nl-sql-note">仅查询 member_id · 只读</span>
+              </div>
+              <div class="ut-nl-card__body">
+                <div class="ut-nl-warn" data-nl-dirty hidden role="alert">
+                  自然语言已变更，当前 SQL 可能与意图不一致。「确认并计算」已禁用，请先重新生成 SQL。
+                </div>
+                <div class="ut-nl-sql-empty" data-nl-empty>
+                  <div class="ut-nl-sql-empty__icon" aria-hidden="true">📄</div>
+                  <strong>尚未生成 SQL</strong>
+                  <p style="margin:0;font-size:13px">填写描述后点击左侧「生成 SQL」</p>
+                </div>
+                <div class="ut-nl-sql-result" data-nl-result hidden>
+                  <pre class="ut-nl-sql-code" data-nl-sql></pre>
+                  <div class="ut-nl-meta">
+                    <div class="ut-nl-meta__block">
+                      <strong>人话解读</strong>
+                      <span data-nl-explain>—</span>
+                    </div>
+                    <div class="ut-nl-meta__block">
+                      <strong>预估覆盖人数</strong>
+                      <span class="ut-nl-meta__estimate" data-nl-estimate>—</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </section>
-
-            <section class="ut-section" aria-labelledby="sec-update">
-              <h2 class="ut-section__title" id="sec-update"><span aria-hidden="true"></span>更新方式</h2>
-              <div class="ut-seg" data-seg data-update-mode-seg role="group" aria-label="更新方式">
-                <button type="button" class="is-active" data-seg-value="manual" aria-pressed="true">手动更新</button>
-                <button type="button" data-seg-value="cron" aria-pressed="false">例行更新</button>
+              <div class="ut-nl-card__foot">
+                <button type="button" class="ut-btn ut-btn--primary" data-nl-confirm disabled>确认并计算</button>
               </div>
-
-              <div class="ut-update-manual" data-update-manual-panel>
-                <p class="ut-hint" style="margin-top:var(--space-3);margin-bottom:0">
-                  不自动跑批。可在标签列表点<strong>立即计算</strong>；保存并计算仍会<strong>立即触发 1 次</strong>。
-                </p>
-              </div>
-
-              <div class="ut-cron-schedule" data-cron-schedule-panel hidden>
-                <p class="ut-hint" style="margin:var(--space-3) 0 var(--space-4)">
-                  到点自动计算（时区 Asia/Shanghai）。保存并计算仍会<strong>立即跑 1 次</strong>；若任务进行中，定时触发将<strong>跳过</strong>。
-                </p>
-                <div class="ut-cron-grid">
-                  <div class="ut-field">
-                    <label class="ut-required" for="cron-time">每日执行时刻</label>
-                    <input class="ut-input" id="cron-time" type="time" data-cron-time value="02:00" step="60" />
-                    <p class="ut-hint">每个自然日按此时刻自动计算（24 小时制，Asia/Shanghai）</p>
-                  </div>
-                </div>
-                <div class="ut-cron-summary" data-cron-summary-live aria-live="polite">
-                  <strong>调度摘要</strong>
-                  <p data-cron-summary-text>将在每个自然日 02:00（北京时间）自动计算本标签。</p>
-                  <p class="ut-cron-summary__next">预计下次执行：<span data-cron-next-run>—</span></p>
-                </div>
-                <ul class="ut-cron-notes">
-                  <li>同一标签同时仅 1 个计算任务；运行中遇到定时点会跳过。</li>
-                  <li>同一天多次成功只保留<strong>最后一次</strong>快照，版本号仍为 YYYYMMDD。</li>
-                  <li>切回「手动更新」并保存后，将注销本标签的定时任务。</li>
-                </ul>
-              </div>
-            </section>
-          </form>
-
-          <div class="ut-form-footer">
-            <a class="ut-btn" href="tag-list.html">取消</a>
-            <button type="button" class="ut-btn">保存草稿</button>
-            <button type="button" class="ut-btn ut-btn--primary">保存并计算</button>
+            </div>
           </div>
+
+          <!--
+          =============================================================================
+          【一期不做 · 原可视化规则配置】v1.0 方案保留注释，待专家模式一期后视需要恢复
+          原能力：条件行 / 条件组 / 且或 / 用户属性·行为事件·页面行为·路径序列 / 规则解读试算
+          相关脚本（仍保留仓库内，页面不再加载）：ut-rule-builder.js · ut-rule-options.js · ut-table-catalog.js
+          =============================================================================
+
+          <section class="ut-section" aria-labelledby="sec-rules">
+            <h2 class="ut-section__title" id="sec-rules">标签规则（可视化 · 一期不做）</h2>
+            <div class="ut-rule-toolbar">...</div>
+            <div class="ut-rule-panel">条件 / 条件组构建器</div>
+          </section>
+          =============================================================================
+          -->
         </div>
       </div>
     </div>
   </div>
 
-  <datalist id="ut-path-seq-presets">
-    <option value="/pages/index/index">首页</option>
-    <option value="/pages/course/list">课程列表</option>
-    <option value="/pages/course/detail">课程详情</option>
-    <option value="/pages/order/confirm">下单确认</option>
-    <option value="/pages/user/profile">个人中心</option>
-  </datalist>
-
   <script src="js/ut-shell.js"></script>
-  <script src="js/ut-table-catalog.js"></script>
-  <script src="js/ut-rule-options.js"></script>
-  <script src="js/ut-rule-builder.js"></script>
   <script src="js/ut-admin.js"></script>
-  <script src="js/ut-tag-create.js"></script>
+  <script src="js/ut-tag-nl.js"></script>
+  <!-- 原规则构建脚本一期不加载：ut-table-catalog / ut-rule-options / ut-rule-builder / ut-tag-create -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script src="../index-features.js"></script>
   <script src="../shared/intent-proto-enrich.js"></script>

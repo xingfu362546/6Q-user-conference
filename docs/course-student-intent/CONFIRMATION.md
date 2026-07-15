@@ -1,6 +1,7 @@
 # 课程会务 · 学员意向分析 — 产品方案稿
 
-> **版本：** v1.0 方案确认版  
+> **版本：** v1.1（标签圈选改为 NL→SQL；详见 [HANDOFF-v1.1.md](./HANDOFF-v1.1.md)）  
+> 上一方案确认基线：v1.0  
 > **阅读对象：** 产品 / 业务 / 研发 / 测试  
 > **交互原型：** `6q-conference-prototype/conference-student-intent.html`  
 > **技术详设：** `DESIGN.md`

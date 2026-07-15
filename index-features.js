@@ -16,28 +16,28 @@ window.INTENT_FEATURE_SPEC = {
     },
     4: {
       title: "二级标签操作集",
-      body: "<ul><li><strong>编辑</strong>：改名称、规则、权重、更新方式（数据源创建后运营不可改源）。</li><li><strong>复制规则</strong>：跳转新增页预填规则，名称需重填。</li><li><strong>执行历史</strong>：仅二级标签；版本号 = 计算日期 YYYYMMDD。</li><li><strong>立即计算</strong>：手动模式也可触发。</li><li><strong>停用</strong>：停用后不再参与新快照（历史仍可读策略）。</li></ul>",
+      body: "<ul><li><strong>编辑</strong>：改名称、自然语言意图、更新方式。</li><li><strong>复制</strong>：跳转新增页预填 NL 与已确认 SQL，名称需重填。</li><li><strong>执行历史</strong>：仅二级标签；版本内可「本版本无效」与查看本次 SQL。</li><li><strong>立即计算</strong>：复用已确认 SQL。</li><li><strong>停用</strong>：停用后不再参与新快照。</li></ul>",
     },
     5: {
-      title: "规则类型与数据源",
-      body: "<ul><li><strong>用户属性</strong>：选数据表→字段，适合注册渠道、会员等级等。</li><li><strong>行为事件</strong>：事件名 + 条件 + <strong>必填时间范围</strong>。</li><li><strong>页面行为</strong>：页面/模块级行为，同属行为类，必填时间窗。</li><li>字段名来自<strong>数据表元数据</strong>技术字段，不预置中文别名。</li></ul>",
-      mermaid: "flowchart TD\n  A[选数据源] --> B{规则类型}\n  B -->|属性| C[表+字段条件]\n  B -->|行为/页面| D[事件+时间范围+条件]\n  C --> E[规则试算人数]\n  D --> E\n  E --> F[保存并计算]",
+      title: "自然语言圈选与数据范围（v1.1）",
+      body: "<p><strong>一期</strong>用自然语言描述意图，由智能体生成只读 SQL（结果集仅 <code>member_id</code>）。</p><ul><li>数据范围：固定数仓连接 + 研发表白名单；页上只读。</li><li><strong>原可视化规则配置（条件行/条件组/且或）一期不做</strong>，脚本保留不加载。</li></ul>",
+      mermaid: "flowchart LR\n  N[自然语言] --> AI[智能体写SQL]\n  AI --> R[解读+预估]\n  R --> C[确认并计算]\n  C --> S[(命中快照)]",
     },
     6: {
-      title: "规则逻辑：且/或",
-      body: "<p>规则构建器顶层与各嵌套条件组均支持 <strong>且 / 或</strong> 切换。</p><p>顶部展示<strong>自然语言规则摘要</strong> + 预估命中人数试算（见 RULE_OPTIMIZATION）。</p>",
+      title: "NL→SQL 生成与确认",
+      body: "<p>按钮：<strong>保存草稿</strong> / <strong>生成 SQL</strong> / <strong>确认并计算</strong>。</p><p>右侧展示 SQL、人话解读、预估人数。修改自然语言后进入脏状态：旧 SQL 保留告警，须重新生成后才能确认。</p><p>例行更新<strong>复用已确认 SQL</strong>，不每次调 AI。</p>",
     },
     7: {
       title: "标签全局权重",
       body: "<p>每条二级标签配置<strong>全局权重</strong>（数值），供会务意向分公式使用：</p><p><code>意向分 = Σ(已命中标签权重) + AI分(0~25)</code></p><p>权重在标签平台维护；会务与 APP <strong>只读</strong>，不可按期次改权重。</p>",
     },
     8: {
-      title: "保存并计算",
-      body: "<p>新增/编辑标签点击「保存并计算」→ <strong>立即触发</strong>该标签批处理（含手动更新模式标签）。</p><p>成功后写入新版本快照；失败版本在执行历史可见错误信息，不可导出。</p>",
+      title: "确认并计算",
+      body: "<p>确认已生成 SQL 后触发批处理，写入当日版本快照（YYYYMMDD）。</p><p>草稿仅保存名称/NL/更新方式；未确认 SQL 不参与例行。</p>",
     },
     9: {
-      title: "执行历史页规则",
-      body: "<ul><li>入口：仅<strong>二级标签</strong>行操作。</li><li>表格「标签」列固定为当前标签名。</li><li>失败版本：侧栏可选，右侧空表 + 错误说明。</li></ul>",
+      title: "执行历史页规则（v1.1）",
+      body: "<ul><li>入口：仅<strong>二级标签</strong>。</li><li>成功版本 Tab：<strong>命中用户</strong>（可单行无效）｜<strong>本次 SQL</strong>。</li><li>无效仅影响<strong>本版本</strong>；重算仍可能再命中。</li><li>失败版本：空表 + 错误说明。</li></ul>",
     },
     10: {
       title: "数据接入（开发态）",
@@ -201,14 +201,13 @@ window.INTENT_FEATURE_SPEC = {
           href: "user-tag-admin/tag-create.html",
           items: [
             { text: "基础信息：名称、所属一级、更新方式（手动/例行）", notes: [8] },
-            { text: "数据源选择（创建后运营不可改）", notes: [5, 10] },
-            { text: "规则类型：用户属性 / 行为事件 / 页面行为", notes: [5] },
-            { text: "行为类必填时间范围；属性类选表字段", notes: [5] },
-            { text: "规则构建：且/或 + 嵌套条件组", notes: [6] },
-            { text: "规则自然语言摘要 + 预估人数试算", notes: [6] },
+            { text: "自然语言描述圈选意图（v1.1）", notes: [5, 6] },
+            { text: "数据范围只读（固定数仓 + 表白名单）", notes: [5, 10] },
+            { text: "生成 SQL → 解读 + 预估人数", notes: [6] },
+            { text: "确认并计算；例行复用已确认 SQL", notes: [6, 8] },
+            { text: "原可视化规则构建 · 一期不做", notes: [5] },
             { text: "标签全局权重（参与意向分 Σ）", notes: [7, 22] },
-            { text: "保存并计算 → 立即批处理", notes: [8] },
-            { text: "复制规则：预填规则，名称需重填", notes: [4] },
+            { text: "复制：预填 NL/SQL，名称需重填", notes: [4] },
           ],
         },
         {
@@ -217,7 +216,7 @@ window.INTENT_FEATURE_SPEC = {
           items: [
             { text: "仅二级标签可进入", notes: [9] },
             { text: "版本号 = 计算日期 YYYYMMDD", notes: [9] },
-            { text: "成功版本：命中人数、耗时、导出（若开放）", notes: [9] },
+            { text: "Tab：命中用户（可本版本无效）｜本次 SQL", notes: [9] },
             { text: "失败版本：空表 + 错误信息", notes: [9] },
           ],
         },

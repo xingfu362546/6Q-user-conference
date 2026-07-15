@@ -86,25 +86,29 @@ window.INTENT_ARCHITECTURE = [
   {
     id: "tag-rules",
     title: "标签平台 · 规则与调度",
-    desc: "四类规则条件；手动/例行每日更新；快照与版本产出。",
+    desc: "v1.1：自然语言→AI 写 SQL（固化后例行复用）；原可视化规则一期不做。产出命中快照。",
     mermaid:
       "flowchart TB\n" +
-      "  subgraph Rules[规则类型 tag-create]\n" +
-      "    R1[用户属性]\n" +
-      "    R2[行为事件]\n" +
-      "    R3[页面行为]\n" +
-      "    R4[页面路径序列 A→B→C]\n" +
+      "  subgraph V11[v1.1 圈选]\n" +
+      "    N[自然语言]\n" +
+      "    AI[智能体生成SQL]\n" +
+      "    C[确认并计算]\n" +
+      "    N --> AI --> C\n" +
+      "  end\n" +
+      "  subgraph Skip[一期不做]\n" +
+      "    R1[可视化条件行]\n" +
+      "    R2[条件组且或]\n" +
       "  end\n" +
       "  subgraph Update[更新方式]\n" +
       "    U1[手动 立即计算]\n" +
-      "    U2[例行 每日 HH:mm]\n" +
+      "    U2[例行 每日·复用SQL]\n" +
       "  end\n" +
       "  subgraph Out[产出]\n" +
       "    O1[覆盖人数 上次成功]\n" +
       "    O2[版本 YYYYMMDD]\n" +
       "    O3[(tag_member_snapshot)]\n" +
       "  end\n" +
-      "  Rules --> O3\n" +
+      "  C --> O3\n" +
       "  U1 --> O3\n" +
       "  U2 --> O3\n" +
       "  O3 --> O1\n" +
