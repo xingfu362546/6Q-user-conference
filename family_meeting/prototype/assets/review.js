@@ -30,6 +30,11 @@
     return (todos || []).filter((todo) => todo.meetingId === meetingId);
   }
 
+  function assigneeLabel(assigneeId, members, fallback) {
+    const member = (members || []).find((candidate) => candidate.id === assigneeId);
+    return member?.nickname || member?.role || member?.name || fallback;
+  }
+
   function progress(meetingId, todos) {
     const related = meetingTodos(meetingId, todos);
     return {
@@ -56,7 +61,7 @@
     });
   }
 
-  function renderDetail(container, meeting, todos) {
+  function renderDetail(container, meeting, todos, members = []) {
     const relatedTodos = meetingTodos(meeting.id, todos);
     const tally = progress(meeting.id, todos);
     const selectedIds = new Set(meeting.actionPlan?.selectedIds || []);
@@ -127,7 +132,7 @@
               ${actions.map((action) => `
                 <article>
                   <strong>${escapeHtml(action.title)}</strong>
-                  <span>负责人：${escapeHtml(action.assigneeName || action.assigneeId || '待定')}</span>
+                  <span>负责人：${escapeHtml(assigneeLabel(action.assigneeId, members, action.assigneeName || '待定'))}</span>
                   <span>时间：${escapeHtml(action.dueText || meeting.actionPlan?.agreedTime || '待定')}</span>
                 </article>
               `).join('')}
@@ -143,7 +148,7 @@
                 <span aria-hidden="true">${todo.status === 'done' ? '✓' : '○'}</span>
                 <div>
                   <strong>${escapeHtml(todo.title)}</strong>
-                  <small>${escapeHtml(todo.assigneeName || todo.assigneeId || '待分配')} · ${todo.status === 'done' ? '已完成' : '待完成'}</small>
+                  <small>${escapeHtml(assigneeLabel(todo.assigneeId, members, todo.assigneeName || '待分配'))} · ${todo.status === 'done' ? '已完成' : '待完成'}</small>
                 </div>
               </article>
             `).join('') : '<p class="review-empty">暂无待办</p>'}
@@ -153,7 +158,7 @@
     `;
   }
 
-  function renderList(container, state, store = root?.Store) {
+  function renderList(container, state, members = state.family?.members || [], store = root?.Store) {
     const archived = (state.meetings || [])
       .filter((meeting) => meeting.status === 'archived')
       .sort((left, right) => (
@@ -185,9 +190,15 @@
       button.addEventListener('click', () => {
         const meeting = archived.find((candidate) => candidate.id === button.dataset.reviewId);
         if (!meeting) return;
-        renderDetail(container, meeting, state.todos || []);
+        renderDetail(container, meeting, state.todos || [], members);
         container.querySelector?.('[data-review-action="back"]')?.addEventListener('click', () => {
-          renderList(container, store?.load?.() || state, store);
+          const latestState = store?.load?.() || state;
+          renderList(
+            container,
+            latestState,
+            latestState.family?.members || members,
+            store,
+          );
         });
       });
     });

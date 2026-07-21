@@ -1,5 +1,4 @@
 (function (root) {
-  const TAB_VIEWS = ['meet', 'review', 'todos', 'family'];
   const LEAVE_CONFIRMATION = '离开会议室？进度已自动保存。';
 
   function memberLabel(member) {
@@ -199,7 +198,7 @@
 
       renderReview(state) {
         const panel = appRoot.querySelector('[data-view-panel="review"]');
-        root.Review.renderList(panel, state);
+        root.Review.renderList(panel, state, state.family?.members || []);
       },
     };
   }

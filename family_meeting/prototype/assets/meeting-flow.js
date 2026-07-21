@@ -1,4 +1,13 @@
 (function (root) {
+  const STEP_LABELS = {
+    opening: '开场',
+    collect: '表达收集',
+    discuss: '讨论',
+    distill: '提炼',
+    consensus: '行动共识',
+    end: '结束',
+  };
+
   function memberLabel(member) {
     return member.nickname || member.name || member.role || '家庭成员';
   }
@@ -508,12 +517,12 @@
           <ol class="meeting-steps" aria-label="会议步骤">
             ${engine.STEPS.map((step, index) => `
               <li class="${index === stepIndex ? 'is-active' : ''} ${index < stepIndex ? 'is-done' : ''}">
-                <span>${index + 1}</span>${step}
+                <span>${index + 1}</span>${STEP_LABELS[step] || step}
               </li>
             `).join('')}
           </ol>
           <section class="meeting-room__guide">
-            <h1>${meeting.step}</h1>
+            <h1>${STEP_LABELS[meeting.step] || meeting.step}</h1>
             <p>${meetingTypes.copyFor(meeting.typeId, meeting.step)}</p>
           </section>
           ${showDistill ? '<section class="meeting-distill-panel" data-distill-panel></section>' : ''}

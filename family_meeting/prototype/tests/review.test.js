@@ -60,6 +60,12 @@ const newer = {
   },
 };
 const state = {
+  family: {
+    members: [
+      { id: 'member-1', nickname: '妈妈', role: '母亲' },
+      { id: 'member-2', nickname: '', role: '孩子' },
+    ],
+  },
   meetings: [newer, { ...older, status: 'active' }, older],
   todos: [
     { id: 'todo-1', meetingId: 'meeting-new', title: '九点收手机', assigneeId: 'member-1', status: 'done' },
@@ -69,7 +75,7 @@ const state = {
 
 {
   const target = container();
-  Review.renderList(target, state);
+  Review.renderList(target, state, state.family.members);
   assert.match(target.innerHTML, /除杂草/);
   assert.match(target.innerHTML, /上网时间/);
   assert.match(target.innerHTML, /1\/2/);
@@ -87,6 +93,10 @@ const state = {
   assert.match(target.innerHTML, /data:image\/png;base64,new/);
   assert.match(target.innerHTML, /睡前不看手机/);
   assert.match(target.innerHTML, /九点收手机/);
+  assert.match(target.innerHTML, /负责人：妈妈/);
+  assert.match(target.innerHTML, /妈妈 · 已完成/);
+  assert.match(target.innerHTML, /孩子 · 待完成/);
+  assert.doesNotMatch(target.innerHTML, /member-1|member-2/);
   assert.match(target.innerHTML, /已完成/);
   assert.match(target.innerHTML, /待完成/);
   assert.doesNotMatch(target.innerHTML, /type="checkbox"|<input|<textarea|<select/);
@@ -98,14 +108,15 @@ const state = {
 
 {
   const target = container();
-  Review.renderDetail(target, newer, state.todos);
+  Review.renderDetail(target, newer, state.todos, state.family.members);
   assert.match(target.innerHTML, /行动进度 1\/2/);
+  assert.match(target.innerHTML, /负责人：妈妈/);
 }
 
 {
   const target = container();
   let latest = JSON.parse(JSON.stringify(state));
-  Review.renderList(target, latest, { load: () => latest });
+  Review.renderList(target, latest, latest.family.members, { load: () => latest });
   target.click('meeting-new');
   latest.todos[1].status = 'done';
   target.click('back');

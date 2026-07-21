@@ -269,6 +269,14 @@ const familyState = {
   assert.match(container.innerHTML, /data-whiteboard-action="clear-own"/);
   assert.match(container.innerHTML, /data-transcript-list/);
   assert.match(container.innerHTML, /data-transcript-action="edit"/);
+  assert.match(container.innerHTML, /开场/);
+  assert.match(container.innerHTML, /表达收集/);
+  assert.match(container.innerHTML, /讨论/);
+  assert.match(container.innerHTML, /提炼/);
+  assert.match(container.innerHTML, /行动共识/);
+  assert.match(container.innerHTML, /结束/);
+  assert.match(container.innerHTML, /<h1>表达收集<\/h1>/);
+  assert.doesNotMatch(container.innerHTML, /<h1>collect<\/h1>|>opening<|>discuss<|>distill<|>consensus<|>end</);
   assert.doesNotMatch(container.innerHTML, /转写开关|停止转写|开始转写/);
 }
 
