@@ -39,6 +39,7 @@
     function renderCurrentView() {
       ui.renderView(currentViewId);
       if (currentViewId === 'family') ui.renderFamily?.(state);
+      if (currentViewId === 'meet') ui.renderMeet?.();
     }
 
     function showView(viewId) {
@@ -103,7 +104,7 @@
     return app;
   }
 
-  function createDomUi(document, familyView) {
+  function createDomUi(document, familyView, getMeetingFlow) {
     const appRoot = document.querySelector('#app');
     const roleName = document.querySelector('#current-role-name');
     const roleSheet = document.querySelector('#role-sheet');
@@ -148,22 +149,34 @@
         const panel = appRoot.querySelector('[data-view-panel="family"]');
         familyView.render(panel, state);
       },
+
+      renderMeet() {
+        const panel = appRoot.querySelector('[data-view-panel="meet"]');
+        getMeetingFlow().renderHub(panel);
+      },
     };
   }
 
   function boot() {
     let app;
+    let meetingFlow;
     root.FamilyView = root.createFamilyView({
       store: root.Store,
       demoSeed: root.demoSeed,
       onChange: (state) => app.replaceState(state),
     });
-    const ui = createDomUi(root.document, root.FamilyView);
+    const ui = createDomUi(root.document, root.FamilyView, () => meetingFlow);
     app = createApp({
       store: root.Store,
       ui,
       confirmLeave: (message) => root.confirm(message),
     });
+    meetingFlow = root.createMeetingFlow({
+      meetingTypes: root.MeetingTypes,
+      store: root.Store,
+      app,
+    });
+    root.MeetingFlow = meetingFlow;
 
     root.document.querySelectorAll('[data-view]').forEach((tab) => {
       tab.addEventListener('click', () => app.showView(tab.dataset.view));
