@@ -7,15 +7,62 @@
   <link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
-  <main id="app"></main>
+  <header class="role-bar">
+    <button id="role-switcher" class="role-bar__switcher" type="button" aria-haspopup="dialog">
+      <span class="role-bar__label">当前角色</span>
+      <strong id="current-role-name">未加入家庭</strong>
+      <span class="role-bar__chevron" aria-hidden="true">⌄</span>
+    </button>
+  </header>
+
+  <main id="app">
+    <section class="view-panel" data-view-panel="meet" hidden>
+      <p class="view-panel__eyebrow">家庭会议</p>
+      <h1>开一场家庭会议</h1>
+      <p>选择适合当前家庭议题的会议类型，一起开始沟通。</p>
+    </section>
+    <section class="view-panel" data-view-panel="review" hidden>
+      <p class="view-panel__eyebrow">会议记录</p>
+      <h1>回顾</h1>
+      <p>回看家庭共同完成的会议与约定。</p>
+    </section>
+    <section class="view-panel" data-view-panel="todos" hidden>
+      <p class="view-panel__eyebrow">行动清单</p>
+      <h1>我的待办</h1>
+      <p>查看分配给当前角色的家庭行动。</p>
+    </section>
+    <section class="view-panel" data-view-panel="family">
+      <p class="view-panel__eyebrow">成员与设置</p>
+      <h1>我的家庭</h1>
+      <p>家庭成员、角色与邀请信息将在这里展示。</p>
+    </section>
+    <section class="view-panel" data-view-panel="meeting-room" hidden>
+      <p class="view-panel__eyebrow">会议进行中</p>
+      <h1>会议室</h1>
+    </section>
+  </main>
+
   <nav class="tab-bar" aria-label="主导航">
-    <span class="tab-bar__item tab-bar__item--active">开会</span>
-    <span class="tab-bar__item">回顾</span>
-    <span class="tab-bar__item">我的待办</span>
-    <span class="tab-bar__item">我的家庭</span>
+    <button class="tab-bar__item" type="button" data-view="meet">开会</button>
+    <button class="tab-bar__item" type="button" data-view="review">回顾</button>
+    <button class="tab-bar__item" type="button" data-view="todos">我的待办</button>
+    <button class="tab-bar__item is-active" type="button" data-view="family" aria-current="page">我的家庭</button>
   </nav>
+
+  <div id="role-sheet" class="role-sheet" role="dialog" aria-modal="true" aria-labelledby="role-sheet-title" aria-hidden="true" hidden>
+    <button id="role-sheet-backdrop" class="role-sheet__backdrop" type="button" aria-label="关闭角色列表"></button>
+    <div class="role-sheet__panel">
+      <div class="role-sheet__header">
+        <h2 id="role-sheet-title">切换角色</h2>
+        <button id="role-sheet-close" class="role-sheet__close" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="role-list" class="role-sheet__list"></div>
+    </div>
+  </div>
+
   <script src="assets/store.js"></script>
   <script src="assets/meeting-types.js"></script>
   <script src="data/demo-seed.js"></script>
+  <script src="assets/app.js"></script>
 </body>
 </html>
