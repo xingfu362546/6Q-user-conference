@@ -2,6 +2,10 @@
   const TAB_VIEWS = ['meet', 'review', 'todos', 'family'];
   const LEAVE_CONFIRMATION = '离开会议室？进度已自动保存。';
 
+  function memberLabel(member) {
+    return member ? member.nickname || member.name || member.role : '未加入家庭';
+  }
+
   function createApp({ store, ui, confirmLeave }) {
     let state = store.load();
     let currentViewId = 'family';
@@ -32,6 +36,11 @@
       return viewId === 'meeting-room' || viewId.startsWith('meeting-');
     }
 
+    function renderCurrentView() {
+      ui.renderView(currentViewId);
+      if (currentViewId === 'family') ui.renderFamily?.(state);
+    }
+
     function showView(viewId) {
       if (
         viewId !== currentViewId
@@ -44,8 +53,15 @@
       }
 
       currentViewId = viewId;
-      ui.renderView(viewId);
+      renderCurrentView();
       return true;
+    }
+
+    function replaceState(nextState) {
+      state = nextState;
+      ui.renderRole(getCurrentMember());
+      ui.renderRoleSheet(members(), getCurrentMember()?.id || null, false);
+      renderCurrentView();
     }
 
     function setCurrentMember(memberId) {
@@ -74,19 +90,20 @@
       getCurrentMember,
       openRoleSheet,
       closeRoleSheet,
+      replaceState,
       onRoleChange,
       get currentViewId() {
         return currentViewId;
       },
     };
 
-    ui.renderView(currentViewId);
+    renderCurrentView();
     ui.renderRole(getCurrentMember());
     ui.renderRoleSheet(members(), getCurrentMember()?.id || null, false);
     return app;
   }
 
-  function createDomUi(document) {
+  function createDomUi(document, familyView) {
     const appRoot = document.querySelector('#app');
     const roleName = document.querySelector('#current-role-name');
     const roleSheet = document.querySelector('#role-sheet');
@@ -109,7 +126,7 @@
       },
 
       renderRole(member) {
-        roleName.textContent = member ? member.name : '未加入家庭';
+        roleName.textContent = memberLabel(member);
       },
 
       renderRoleSheet(members, currentMemberId, open) {
@@ -119,19 +136,30 @@
           button.type = 'button';
           button.className = 'role-sheet__member';
           button.dataset.memberId = member.id;
-          button.textContent = member.name;
+          button.textContent = memberLabel(member);
           button.classList.toggle('is-active', member.id === currentMemberId);
           roleList.appendChild(button);
         });
         roleSheet.hidden = !open;
         roleSheet.setAttribute('aria-hidden', String(!open));
       },
+
+      renderFamily(state) {
+        const panel = appRoot.querySelector('[data-view-panel="family"]');
+        familyView.render(panel, state);
+      },
     };
   }
 
   function boot() {
-    const ui = createDomUi(root.document);
-    const app = createApp({
+    let app;
+    root.FamilyView = root.createFamilyView({
+      store: root.Store,
+      demoSeed: root.demoSeed,
+      onChange: (state) => app.replaceState(state),
+    });
+    const ui = createDomUi(root.document, root.FamilyView);
+    app = createApp({
       store: root.Store,
       ui,
       confirmLeave: (message) => root.confirm(message),
@@ -152,7 +180,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { createApp };
+    module.exports = { createApp, memberLabel };
   }
 
   if (root && root.document) {

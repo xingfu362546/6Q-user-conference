@@ -94,6 +94,368 @@ body {
   line-height: 1.6;
 }
 
+.view-panel--family {
+  max-width: 760px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.family-view {
+  padding: 22px;
+}
+
+.family-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.family-heading h1,
+.family-empty h1 {
+  margin-bottom: 4px;
+}
+
+.family-room {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+  padding: 138px 18px 22px;
+  background:
+    linear-gradient(90deg, transparent 49.5%, rgba(255, 255, 255, 0.35) 50%, transparent 50.5%),
+    linear-gradient(#f6e8d0 0 72%, #d5b78b 72% 100%);
+  border: 8px solid #ead8bb;
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(91, 64, 42, 0.08);
+}
+
+.family-room__window {
+  position: absolute;
+  top: 26px;
+  left: 32px;
+  width: 112px;
+  height: 82px;
+  background:
+    linear-gradient(90deg, transparent 48%, #fff 48% 52%, transparent 52%),
+    linear-gradient(transparent 48%, #fff 48% 52%, transparent 52%),
+    #bfe0ea;
+  border: 7px solid #fffaf1;
+  box-shadow: 0 5px 12px rgba(77, 99, 102, 0.12);
+}
+
+.family-room__picture {
+  position: absolute;
+  top: 30px;
+  right: 48px;
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 62px;
+  color: #d56f73;
+  background: #fffaf1;
+  border: 5px solid #b98a62;
+  font-size: 24px;
+}
+
+.family-room__sofa {
+  position: absolute;
+  right: 14%;
+  bottom: 48px;
+  left: 14%;
+  height: 105px;
+  background: #9ebfc1;
+  border-radius: 24px 24px 12px 12px;
+  box-shadow: 0 14px 0 #789fa1;
+}
+
+.family-room__sofa::before,
+.family-room__sofa::after {
+  position: absolute;
+  bottom: 0;
+  width: 28%;
+  height: 78px;
+  background: #8db0b2;
+  border-radius: 20px 20px 8px 8px;
+  content: '';
+}
+
+.family-room__sofa::before {
+  left: 3%;
+}
+
+.family-room__sofa::after {
+  right: 3%;
+}
+
+.family-room__slots {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+}
+
+.family-slot {
+  min-height: 176px;
+  border: 0;
+  border-radius: 16px;
+}
+
+.family-slot--member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 6px;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 8px 20px rgba(64, 51, 38, 0.1);
+  text-align: center;
+}
+
+.family-slot--member > span {
+  margin-top: 2px;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.family-slot--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  color: #6d817d;
+  background: rgba(255, 255, 255, 0.48);
+  border: 2px dashed rgba(92, 118, 113, 0.45);
+  cursor: pointer;
+}
+
+.family-slot--empty span {
+  font-size: 28px;
+}
+
+.family-person {
+  position: relative;
+  width: 58px;
+  height: 88px;
+  margin-bottom: 8px;
+}
+
+.family-person__head {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  width: 30px;
+  height: 30px;
+  background: #f2c6a5;
+  border: 3px solid rgba(72, 49, 37, 0.15);
+  border-radius: 50%;
+}
+
+.family-person__body {
+  position: absolute;
+  right: 3px;
+  bottom: 0;
+  left: 3px;
+  height: 61px;
+  background: var(--member-color);
+  border-radius: 22px 22px 10px 10px;
+  box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.08);
+}
+
+.family-host {
+  margin-top: 8px;
+  padding: 5px 7px;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.family-host.is-active {
+  color: #76510c;
+  background: #fff1bd;
+  border-color: #eacb66;
+  font-weight: 700;
+}
+
+.family-invite {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.75fr) minmax(280px, 1.25fr);
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.family-invite__code,
+.family-form {
+  padding: 16px;
+  background: var(--color-bg);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+}
+
+.family-invite__code {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.family-invite__code span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.family-invite__code strong {
+  color: var(--color-accent);
+  font-size: 26px;
+  letter-spacing: 0.12em;
+}
+
+.family-form {
+  display: grid;
+  gap: 10px;
+}
+
+.family-form h2 {
+  margin: 0 0 2px;
+  font-size: 17px;
+}
+
+.family-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.family-form input,
+.family-form select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 9px;
+  font: inherit;
+}
+
+.family-form--join {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.family-form--join h2,
+.family-form--join button {
+  grid-column: 1 / -1;
+}
+
+.family-button {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.family-button--primary {
+  color: #fff;
+  background: var(--color-accent);
+}
+
+.family-button--ghost {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.family-button--small {
+  min-height: 34px;
+  padding: 6px 10px;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  font-size: 13px;
+}
+
+.family-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.family-empty {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 54px 22px;
+  text-align: center;
+}
+
+.family-empty > p {
+  color: var(--color-muted);
+}
+
+.family-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: 50%;
+  font-size: 38px;
+}
+
+.family-empty .family-form {
+  margin: 24px 0 12px;
+  text-align: left;
+}
+
+.family-message {
+  min-height: 24px;
+  margin: 10px 0 0;
+  color: var(--color-accent);
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 620px) {
+  #app {
+    padding: 10px;
+  }
+
+  .family-view {
+    padding: 16px;
+  }
+
+  .family-room {
+    min-height: 470px;
+    padding: 124px 12px 18px;
+  }
+
+  .family-room__slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .family-slot {
+    min-height: 148px;
+  }
+
+  .family-room__sofa {
+    bottom: 88px;
+  }
+
+  .family-invite {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tab-bar {
   display: flex;
   height: calc(var(--tab-height) + var(--safe-bottom));

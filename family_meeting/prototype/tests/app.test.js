@@ -1,11 +1,14 @@
 const assert = require('assert');
-const { createApp } = require('../assets/app.js');
+const { createApp, memberLabel } = require('../assets/app.js');
+
+assert.strictEqual(memberLabel({ role: '妈', nickname: '妈妈' }), '妈妈');
+assert.strictEqual(memberLabel({ name: '旧成员' }), '旧成员');
 
 function makeHarness(initialState, confirmResult = true) {
   let state = JSON.parse(JSON.stringify(initialState));
   let saves = 0;
   let confirmationMessage = null;
-  const rendered = { views: [], roles: [], sheets: [] };
+  const rendered = { views: [], roles: [], sheets: [], families: [] };
   const callbacks = [];
 
   const app = createApp({
@@ -26,6 +29,7 @@ function makeHarness(initialState, confirmResult = true) {
       renderRoleSheet: (members, currentMemberId, open) => {
         rendered.sheets.push({ members, currentMemberId, open });
       },
+      renderFamily: (nextState) => rendered.families.push(nextState.family),
     },
   });
 
@@ -59,10 +63,27 @@ const baseState = {
   const { app, rendered } = makeHarness(baseState);
   assert.strictEqual(app.currentViewId, 'family');
   assert.deepStrictEqual(rendered.views, ['family']);
+  assert.strictEqual(rendered.families.length, 1);
 
   assert.strictEqual(app.showView('meet'), true);
   assert.strictEqual(app.currentViewId, 'meet');
   assert.deepStrictEqual(rendered.views, ['family', 'meet']);
+}
+
+{
+  const { app, rendered } = makeHarness(baseState);
+  const nextState = {
+    ...baseState,
+    currentMemberId: 'member-2',
+    family: {
+      ...baseState.family,
+      name: '更新后的家庭',
+    },
+  };
+  app.replaceState(nextState);
+  assert.strictEqual(app.getCurrentMember().id, 'member-2');
+  assert.strictEqual(rendered.roles.at(-1).id, 'member-2');
+  assert.strictEqual(rendered.families.at(-1).name, '更新后的家庭');
 }
 
 {
