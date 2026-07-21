@@ -1,6 +1,8 @@
 const assert = require('assert');
 const MeetingTypes = require('../assets/meeting-types.js');
 const MeetingEngine = require('../assets/meeting-engine.js');
+const Consensus = require('../assets/consensus.js');
+const Todos = require('../assets/todos.js');
 const { createMeetingFlow } = require('../assets/meeting-flow.js');
 
 function makeHarness(initialState, now = 1720000000000) {
@@ -38,6 +40,8 @@ function makeHarness(initialState, now = 1720000000000) {
         distillRenders.push({ container, meeting, options });
       },
     },
+    consensus: Consensus,
+    todos: Todos,
     store: {
       load: () => JSON.parse(JSON.stringify(state)),
       save: (nextState) => {
@@ -122,6 +126,75 @@ const familyState = {
     () => flow.startMeeting({ typeId: '01', topicId: '01-1', hostId: null }),
     /请选择主持人/,
   );
+}
+
+{
+  const rejectedPlan = {
+    candidates: [{ id: 'action-1', title: '一起散步', assigneeId: 'member-1' }],
+    selectedIds: ['action-1'],
+    agreedTime: '周六 10:00',
+    votes: {},
+    memberIds: ['member-1', 'member-2'],
+    locked: false,
+    votingStarted: true,
+  };
+  rejectedPlan.votes['member-2'] = {
+    choice: 'reject',
+    signature: Consensus.signature(rejectedPlan),
+  };
+  const activeMeeting = {
+    id: 'meeting-skip',
+    typeId: '01',
+    topicId: '01-1',
+    hostId: 'member-1',
+    memberIds: ['member-1', 'member-2'],
+    status: 'active',
+    step: 'consensus',
+    moodRoundDone: true,
+    transcript: [],
+    whiteboard: { strokes: [] },
+    actionPlan: rejectedPlan,
+  };
+  const state = {
+    ...familyState,
+    meetings: [activeMeeting],
+    draftMeeting: activeMeeting,
+    activeMeetingId: activeMeeting.id,
+  };
+  let skipHandler;
+  const consensusPanel = {
+    innerHTML: '',
+    querySelector: (selector) => {
+      if (selector === '[data-consensus-action="skip"]') {
+        return {
+          addEventListener: (type, handler) => {
+            if (type === 'click') skipHandler = handler;
+          },
+        };
+      }
+      return null;
+    },
+    querySelectorAll: () => [],
+  };
+  const container = {
+    innerHTML: '',
+    querySelector: (selector) => (
+      selector === '[data-consensus-panel]' ? consensusPanel : null
+    ),
+    querySelectorAll: () => [],
+  };
+  const { flow, getState, shownViews } = makeHarness(state);
+
+  flow.renderRoom(container);
+  skipHandler();
+
+  const completed = getState().draftMeeting;
+  assert.strictEqual(completed.status, 'completed');
+  assert.strictEqual(completed.actionPlan.skipped, true);
+  assert.strictEqual(completed.actionPlan.locked, false);
+  assert.strictEqual(completed.actionPlan.votes['member-2'].choice, 'reject');
+  assert.deepStrictEqual(getState().todos, []);
+  assert.deepStrictEqual(shownViews, ['review']);
 }
 
 {

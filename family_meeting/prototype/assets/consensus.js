@@ -84,7 +84,15 @@
   }
 
   function lock(plan) {
-    const memberIds = plan.memberIds?.length ? plan.memberIds : Object.keys(plan.votes || {});
+    const memberIds = plan.memberIds;
+    const voteMemberIds = Object.keys(plan.votes || {});
+    const hasCompleteMemberIds = Array.isArray(memberIds)
+      && memberIds.length > 0
+      && new Set(memberIds).size === memberIds.length
+      && voteMemberIds.every((memberId) => memberIds.includes(memberId));
+    if (!hasCompleteMemberIds) {
+      throw new Error('成员名单缺失或不完整，无法锁定');
+    }
     if (!plan.selectedIds?.length || !plan.agreedTime || !tally(plan, memberIds).passed) {
       throw new Error('需全员同意后才能锁定');
     }

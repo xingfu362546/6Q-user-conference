@@ -372,7 +372,7 @@
       panel.querySelector('[data-consensus-action="skip"]')?.addEventListener('click', () => {
         saveMeeting({
           ...meeting,
-          actionPlan: { ...plan, skipped: true, locked: true },
+          actionPlan: { ...plan, skipped: true, locked: false },
           status: 'completed',
           step: 'end',
         });

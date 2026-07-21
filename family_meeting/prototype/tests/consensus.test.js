@@ -6,6 +6,7 @@ let plan = {
   selectedIds: ['c1'],
   agreedTime: '周六 10:00',
   votes: {},
+  memberIds: ['m1', 'm2', 'm3'],
   locked: false,
 };
 
@@ -28,5 +29,25 @@ assert.throws(() => C.lock(changed), /全员同意/);
 
 const locked = C.lock(plan);
 assert.strictEqual(locked.locked, true);
+
+const votesWithoutMembers = {
+  ...plan,
+  memberIds: undefined,
+};
+assert.throws(
+  () => C.lock(votesWithoutMembers),
+  /成员名单/,
+  '缺少完整 memberIds 时不能把已投票者当作全体成员',
+);
+
+const incompleteMembers = {
+  ...plan,
+  memberIds: ['m1', 'm2'],
+};
+assert.throws(
+  () => C.lock(incompleteMembers),
+  /成员名单/,
+  '方案中的 memberIds 与投票涉及成员不一致时不能锁定',
+);
 
 console.log('consensus.test.js OK');
