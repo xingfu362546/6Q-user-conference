@@ -40,6 +40,7 @@
       ui.renderView(currentViewId);
       if (currentViewId === 'family') ui.renderFamily?.(state);
       if (currentViewId === 'meet') ui.renderMeet?.();
+      if (currentViewId === 'meeting-room') ui.renderMeetingRoom?.();
     }
 
     function showView(viewId) {
@@ -74,6 +75,7 @@
       ui.renderRole(member);
       ui.renderRoleSheet(members(), member.id, false);
       onRoleChange.forEach((callback) => callback(member));
+      renderCurrentView();
       return true;
     }
 
@@ -154,6 +156,11 @@
         const panel = appRoot.querySelector('[data-view-panel="meet"]');
         getMeetingFlow().renderHub(panel);
       },
+
+      renderMeetingRoom() {
+        const panel = appRoot.querySelector('[data-view-panel="meeting-room"]');
+        getMeetingFlow().renderRoom(panel);
+      },
     };
   }
 
@@ -173,6 +180,7 @@
     });
     meetingFlow = root.createMeetingFlow({
       meetingTypes: root.MeetingTypes,
+      engine: root.MeetingEngine,
       store: root.Store,
       app,
     });

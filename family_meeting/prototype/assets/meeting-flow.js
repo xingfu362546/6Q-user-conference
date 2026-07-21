@@ -5,6 +5,7 @@
 
   function createMeetingFlow({
     meetingTypes,
+    engine,
     store,
     app,
     now = Date.now,
@@ -185,10 +186,90 @@
       return meeting;
     }
 
+    function activeMeeting(state) {
+      return (state.meetings || []).find((meeting) => meeting.id === state.activeMeetingId)
+        || state.draftMeeting
+        || null;
+    }
+
+    function saveMeeting(meeting) {
+      const state = getState();
+      const nextState = {
+        ...state,
+        meetings: (state.meetings || []).map((candidate) => (
+          candidate.id === meeting.id ? meeting : candidate
+        )),
+        draftMeeting: meeting,
+      };
+      store.save(nextState);
+      app.replaceState?.(nextState);
+    }
+
+    function renderRoom(container) {
+      const state = getState();
+      const meeting = activeMeeting(state);
+      if (!meeting || meeting.status !== 'active') {
+        container.innerHTML = '<p>当前没有进行中的会议。</p>';
+        return;
+      }
+
+      const members = state.family?.members || [];
+      const host = members.find((member) => member.id === meeting.hostId);
+      const currentMember = app.getCurrentMember?.();
+      const isHost = currentMember?.id === meeting.hostId;
+      const type = meetingTypes.TYPES.find((candidate) => candidate.id === meeting.typeId);
+      const stepIndex = engine.STEPS.indexOf(meeting.step);
+      const advance = engine.canAdvance(meeting);
+      const showMoodButton = meeting.typeId === '04'
+        && meeting.step === 'opening'
+        && !meeting.moodRoundDone;
+
+      container.innerHTML = `
+        <div class="meeting-room">
+          <p class="view-panel__eyebrow">会议进行中 · ${type?.name || ''}</p>
+          <ol class="meeting-steps" aria-label="会议步骤">
+            ${engine.STEPS.map((step, index) => `
+              <li class="${index === stepIndex ? 'is-active' : ''} ${index < stepIndex ? 'is-done' : ''}">
+                <span>${index + 1}</span>${step}
+              </li>
+            `).join('')}
+          </ol>
+          <section class="meeting-room__guide">
+            <h1>${meeting.step}</h1>
+            <p>${meetingTypes.copyFor(meeting.typeId, meeting.step)}</p>
+          </section>
+          ${showMoodButton && isHost ? `
+            <button class="family-button meeting-mood-button" type="button" data-meeting-room-action="complete-mood">
+              结束心情回合
+            </button>
+          ` : ''}
+          ${isHost ? `
+            <div class="meeting-room__controls">
+              <button class="family-button family-button--ghost" type="button" data-meeting-room-action="prev" ${stepIndex <= 0 ? 'disabled' : ''}>上一步</button>
+              <button class="family-button family-button--primary" type="button" data-meeting-room-action="next" ${advance.ok ? '' : 'disabled'}>下一步</button>
+            </div>
+            ${!advance.ok && advance.reason ? `<p class="meeting-room__gate">${advance.reason}</p>` : ''}
+          ` : `<p class="meeting-room__host">当前由 ${memberLabel(host)} 主持</p>`}
+        </div>
+      `;
+
+      if (!isHost) return;
+      container.querySelector('[data-meeting-room-action="prev"]')?.addEventListener('click', () => {
+        saveMeeting(engine.prev(meeting));
+      });
+      container.querySelector('[data-meeting-room-action="next"]')?.addEventListener('click', () => {
+        saveMeeting(engine.next(meeting));
+      });
+      container.querySelector('[data-meeting-room-action="complete-mood"]')?.addEventListener('click', () => {
+        saveMeeting(engine.completeMoodRound(meeting));
+      });
+    }
+
     return {
       renderHub,
       renderTopics,
       renderPrep,
+      renderRoom,
       startMeeting,
     };
   }
