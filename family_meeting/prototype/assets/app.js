@@ -40,6 +40,7 @@
       ui.renderView(currentViewId);
       if (currentViewId === 'family') ui.renderFamily?.(state);
       if (currentViewId === 'meet') ui.renderMeet?.();
+      if (currentViewId === 'todos') ui.renderTodos?.(state);
       if (currentViewId === 'meeting-room') ui.renderMeetingRoom?.();
     }
 
@@ -161,6 +162,11 @@
         const panel = appRoot.querySelector('[data-view-panel="meeting-room"]');
         getMeetingFlow().renderRoom(panel);
       },
+
+      renderTodos(state) {
+        const panel = appRoot.querySelector('[data-view-panel="todos"]');
+        root.Todos.renderList(panel, state, root.Store);
+      },
     };
   }
 
@@ -184,6 +190,8 @@
       transcript: root.Transcript,
       whiteboard: root.Whiteboard,
       distill: root.Distill,
+      consensus: root.Consensus,
+      todos: root.Todos,
       store: root.Store,
       app,
     });

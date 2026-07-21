@@ -1215,6 +1215,146 @@ body {
   margin-top: 16px;
 }
 
+.meeting-consensus-panel {
+  margin-top: 18px;
+}
+
+.consensus__heading,
+.consensus__choice,
+.todo-item {
+  display: flex;
+  align-items: center;
+}
+
+.consensus__heading {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.consensus__heading h2 {
+  margin: 2px 0 0;
+}
+
+.consensus__heading > span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.consensus__candidates {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.consensus__candidates article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--color-bg);
+  border-radius: 12px;
+}
+
+.consensus__choice {
+  gap: 8px;
+}
+
+.consensus select,
+.consensus input[type="text"] {
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.consensus__add {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.consensus__time {
+  display: grid;
+  gap: 7px;
+  margin: 16px 0;
+  font-weight: 700;
+}
+
+.consensus__progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.consensus__progress span {
+  padding: 6px 9px;
+  color: var(--color-muted);
+  background: var(--color-bg);
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.consensus__progress .is-approved {
+  color: #3b7b56;
+  background: #e4f3e9;
+}
+
+.consensus__progress .is-rejected,
+.consensus__warning {
+  color: #b94b4b;
+}
+
+.consensus__vote {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.todo-section {
+  margin-top: 22px;
+}
+
+.todo-section h2 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+}
+
+.todo-section h2 span {
+  color: var(--color-muted);
+}
+
+.todo-item {
+  gap: 11px;
+  margin-top: 9px;
+  padding: 13px;
+  background: var(--color-bg);
+  border-radius: 11px;
+}
+
+.todo-item input {
+  width: 19px;
+  height: 19px;
+  accent-color: var(--color-accent);
+}
+
+.todo-item span {
+  display: grid;
+  gap: 4px;
+}
+
+.todo-item small,
+.todo-empty {
+  color: var(--color-muted);
+}
+
+.todo-item.is-done strong {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
 @media (max-width: 480px) {
   .meeting-type-grid {
     grid-template-columns: 1fr;
@@ -1247,5 +1387,9 @@ body {
 
   .distill-mark-list article strong {
     grid-column: 1 / -1;
+  }
+
+  .consensus__candidates article {
+    grid-template-columns: 1fr;
   }
 }

@@ -18,6 +18,8 @@
     transcript,
     whiteboard,
     distill,
+    consensus,
+    todos,
     store,
     app,
     now = Date.now,
@@ -219,6 +221,165 @@
       app.replaceState?.(nextState);
     }
 
+    function initialActionPlan(meeting) {
+      if (meeting.actionPlan) return meeting.actionPlan;
+      const candidates = (meeting.insights?.core || []).map((insight, index) => ({
+        id: `action-${index + 1}`,
+        title: insight.text,
+        assigneeId: meeting.hostId,
+        dueText: '',
+      }));
+      return {
+        candidates,
+        selectedIds: candidates.map((candidate) => candidate.id),
+        agreedTime: '',
+        votes: {},
+        memberIds: [...(meeting.memberIds || [])],
+        locked: false,
+        votingStarted: false,
+      };
+    }
+
+    function renderConsensusPanel(panel, meeting, members, isHost) {
+      const plan = initialActionPlan(meeting);
+      const tally = consensus.tally(plan, meeting.memberIds || []);
+      const currentMember = app.getCurrentMember?.();
+      const currentVote = plan.votes?.[currentMember?.id];
+      const memberName = (memberId) => memberLabel(
+        members.find((member) => member.id === memberId) || { nickname: memberId },
+      );
+
+      panel.innerHTML = `
+        <section class="consensus">
+          <div class="consensus__heading">
+            <div>
+              <p class="view-panel__eyebrow">全家一致才生效</p>
+              <h2>共同行动</h2>
+            </div>
+            <span>${Object.keys(plan.votes || {}).length}/${meeting.memberIds.length} 已投票</span>
+          </div>
+          <div class="consensus__candidates">
+            ${(plan.candidates || []).map((candidate) => `
+              <article>
+                <label class="consensus__choice">
+                  <input type="checkbox" data-consensus-select="${candidate.id}" ${(plan.selectedIds || []).includes(candidate.id) ? 'checked' : ''} ${isHost && !plan.locked ? '' : 'disabled'}>
+                  <strong>${escapeHtml(candidate.title)}</strong>
+                </label>
+                <label>负责人
+                  <select data-consensus-assignee="${candidate.id}" ${isHost && !plan.locked ? '' : 'disabled'}>
+                    ${members.map((member) => `<option value="${member.id}" ${candidate.assigneeId === member.id ? 'selected' : ''}>${escapeHtml(memberLabel(member))}</option>`).join('')}
+                  </select>
+                </label>
+                ${isHost && !plan.locked ? `<button type="button" data-consensus-remove="${candidate.id}">删除</button>` : ''}
+              </article>
+            `).join('') || '<p class="todo-empty">请先添加行动候选</p>'}
+          </div>
+          ${isHost && !plan.locked ? `
+            <div class="consensus__add">
+              <input type="text" data-consensus-new placeholder="新增行动候选" maxlength="100">
+              <button type="button" data-consensus-action="add">添加</button>
+            </div>
+          ` : ''}
+          <label class="consensus__time">统一时间
+            <input type="text" data-consensus-time value="${escapeHtml(plan.agreedTime || '')}" placeholder="如：周六 10:00" ${isHost && !plan.locked ? '' : 'disabled'}>
+          </label>
+          <div class="consensus__progress">
+            ${members.map((member) => {
+              const vote = plan.votes?.[member.id];
+              const state = tally.rejected.includes(member.id) ? '反对' : vote ? '同意' : '待投';
+              return `<span class="${state === '同意' ? 'is-approved' : state === '反对' ? 'is-rejected' : ''}">${escapeHtml(memberLabel(member))} · ${state}</span>`;
+            }).join('')}
+          </div>
+          ${tally.rejected.length ? `<p class="consensus__warning">${tally.rejected.map(memberName).join('、')} 反对，主持人可修改方案后重新投票。</p>` : ''}
+          ${!isHost && (!plan.selectedIds.length || !plan.agreedTime) ? '<p class="consensus__warning">等待主持人完成行动与时间设置。</p>' : ''}
+          ${isHost && plan.selectedIds.length && plan.agreedTime && !plan.votingStarted && !plan.locked
+            ? '<button class="family-button family-button--primary" type="button" data-consensus-action="start-vote">发起投票</button>'
+            : ''}
+          ${plan.votingStarted && plan.selectedIds.length && plan.agreedTime && !plan.locked ? `
+            <div class="consensus__vote">
+              <button class="family-button family-button--primary" type="button" data-consensus-vote="approve">${currentVote?.choice === 'approve' ? '已同意' : '同意'}</button>
+              <button class="family-button family-button--ghost" type="button" data-consensus-vote="reject">${currentVote?.choice === 'reject' ? '已反对' : '反对'}</button>
+            </div>
+          ` : ''}
+          ${isHost && !plan.locked ? '<button class="meeting-back" type="button" data-consensus-action="skip">本场无行动</button>' : ''}
+        </section>
+      `;
+
+      function savePlan(nextPlan) {
+        saveMeeting({ ...meeting, actionPlan: nextPlan });
+      }
+
+      panel.querySelector('[data-consensus-action="add"]')?.addEventListener('click', () => {
+        const input = panel.querySelector('[data-consensus-new]');
+        if (!input?.value.trim()) return;
+        savePlan(consensus.createCandidate(plan, {
+          title: input.value,
+          assigneeId: meeting.hostId,
+        }));
+      });
+      panel.querySelectorAll('[data-consensus-remove]').forEach((button) => {
+        button.addEventListener('click', () => savePlan(
+          consensus.removeCandidate(plan, button.dataset.consensusRemove),
+        ));
+      });
+      const saveSelection = () => {
+        const selectedIds = [...panel.querySelectorAll('[data-consensus-select]:checked')]
+          .map((input) => input.dataset.consensusSelect);
+        let nextPlan = {
+          ...plan,
+          candidates: plan.candidates.map((candidate) => {
+            const select = panel.querySelector(`[data-consensus-assignee="${candidate.id}"]`);
+            return { ...candidate, assigneeId: select?.value || candidate.assigneeId };
+          }),
+        };
+        nextPlan = consensus.setSelection(
+          nextPlan,
+          selectedIds,
+          panel.querySelector('[data-consensus-time]')?.value,
+        );
+        savePlan(nextPlan);
+      };
+      panel.querySelectorAll('[data-consensus-select], [data-consensus-assignee]')
+        .forEach((input) => input.addEventListener('change', saveSelection));
+      panel.querySelector('[data-consensus-time]')?.addEventListener('change', saveSelection);
+      panel.querySelector('[data-consensus-action="start-vote"]')?.addEventListener('click', () => {
+        savePlan({ ...plan, votingStarted: true });
+      });
+      panel.querySelectorAll('[data-consensus-vote]').forEach((button) => {
+        button.addEventListener('click', () => {
+          let nextPlan = consensus.castVote(
+            plan,
+            currentMember.id,
+            button.dataset.consensusVote,
+          );
+          const nextTally = consensus.tally(nextPlan, meeting.memberIds);
+          if (nextTally.passed) {
+            nextPlan = consensus.lock(nextPlan);
+            const completedMeeting = {
+              ...meeting,
+              actionPlan: nextPlan,
+              status: 'completed',
+              step: 'end',
+            };
+            todos.distribute(completedMeeting, nextPlan, store);
+            saveMeeting(completedMeeting);
+            app.showView('todos');
+            return;
+          }
+          savePlan(nextPlan);
+        });
+      });
+      panel.querySelector('[data-consensus-action="skip"]')?.addEventListener('click', () => {
+        saveMeeting({
+          ...meeting,
+          actionPlan: { ...plan, skipped: true, locked: true },
+          status: 'completed',
+          step: 'end',
+        });
+        app.showView('review');
+      });
+    }
+
     function transcriptMarkup(meeting) {
       const lines = meeting.transcript || [];
       if (!lines.length) {
@@ -299,6 +460,7 @@
       const showTranscript = meeting.step === 'collect' || meeting.step === 'discuss';
       const showWhiteboard = showTranscript;
       const showDistill = meeting.step === 'distill';
+      const showConsensus = meeting.step === 'consensus';
 
       container.innerHTML = `
         <div class="meeting-room">
@@ -315,6 +477,7 @@
             <p>${meetingTypes.copyFor(meeting.typeId, meeting.step)}</p>
           </section>
           ${showDistill ? '<section class="meeting-distill-panel" data-distill-panel></section>' : ''}
+          ${showConsensus ? '<section class="meeting-consensus-panel" data-consensus-panel></section>' : ''}
           ${showTranscript ? `
             <div class="meeting-collaboration">
             ${showWhiteboard ? `
@@ -360,13 +523,13 @@
               结束心情回合
             </button>
           ` : ''}
-          ${isHost && !showDistill ? `
+          ${isHost && !showDistill && !showConsensus ? `
             <div class="meeting-room__controls">
               <button class="family-button family-button--ghost" type="button" data-meeting-room-action="prev" ${stepIndex <= 0 ? 'disabled' : ''}>上一步</button>
               <button class="family-button family-button--primary" type="button" data-meeting-room-action="next" ${advance.ok ? '' : 'disabled'}>下一步</button>
             </div>
             ${!advance.ok && advance.reason ? `<p class="meeting-room__gate">${advance.reason}</p>` : ''}
-          ` : !isHost && !showDistill ? `<p class="meeting-room__host">当前由 ${memberLabel(host)} 主持</p>` : ''}
+          ` : !isHost && !showDistill && !showConsensus ? `<p class="meeting-room__host">当前由 ${memberLabel(host)} 主持</p>` : ''}
         </div>
       `;
 
@@ -380,6 +543,13 @@
             saveMeeting(engine.next(distilledMeeting));
           },
         });
+        return;
+      }
+
+      const consensusPanel = container.querySelector('[data-consensus-panel]');
+      if (consensusPanel && consensus && todos) {
+        transcript?.stop?.();
+        renderConsensusPanel(consensusPanel, meeting, members, isHost);
         return;
       }
 
