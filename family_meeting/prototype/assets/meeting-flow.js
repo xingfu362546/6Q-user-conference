@@ -16,11 +16,14 @@
     meetingTypes,
     engine,
     transcript,
+    whiteboard,
     store,
     app,
     now = Date.now,
     random = Math.random,
   }) {
+    let latestWhiteboardCanvas = null;
+
     function getState() {
       return store.load();
     }
@@ -293,6 +296,7 @@
         && meeting.step === 'opening'
         && !meeting.moodRoundDone;
       const showTranscript = meeting.step === 'collect' || meeting.step === 'discuss';
+      const showWhiteboard = showTranscript;
 
       container.innerHTML = `
         <div class="meeting-room">
@@ -309,6 +313,31 @@
             <p>${meetingTypes.copyFor(meeting.typeId, meeting.step)}</p>
           </section>
           ${showTranscript ? `
+            <div class="meeting-collaboration">
+            ${showWhiteboard ? `
+            <section class="meeting-whiteboard" data-whiteboard-panel aria-labelledby="meeting-whiteboard-title">
+              <div class="meeting-whiteboard__header">
+                <div>
+                  <p class="view-panel__eyebrow">共享画板</p>
+                  <h2 id="meeting-whiteboard-title">一起画下来</h2>
+                </div>
+                <button class="meeting-whiteboard__clear" type="button" data-whiteboard-action="clear-own">清空我的</button>
+              </div>
+              <div class="meeting-whiteboard__tools" role="toolbar" aria-label="画板工具">
+                ${[
+                  ['pen', '画笔'],
+                  ['eraser', '橡皮'],
+                  ['rect', '矩形'],
+                  ['circle', '圆形'],
+                  ['line', '直线'],
+                  ['arrow', '箭头'],
+                ].map(([tool, label], index) => `
+                  <button class="${index === 0 ? 'is-active' : ''}" type="button" data-whiteboard-tool="${tool}">${label}</button>
+                `).join('')}
+              </div>
+              <canvas class="meeting-whiteboard__canvas" width="720" height="420" data-whiteboard-canvas aria-label="共享画板"></canvas>
+            </section>
+            ` : ''}
             <section class="meeting-transcript" data-transcript-panel aria-labelledby="meeting-transcript-title">
               <div class="meeting-transcript__header">
                 <div>
@@ -321,6 +350,7 @@
                 ${transcriptMarkup(meeting)}
               </div>
             </section>
+            </div>
           ` : ''}
           ${showMoodButton && isHost ? `
             <button class="family-button meeting-mood-button" type="button" data-meeting-room-action="complete-mood">
@@ -339,6 +369,29 @@
 
       const transcriptPanel = container.querySelector('[data-transcript-panel]');
       if (transcriptPanel) bindTranscriptPanel(transcriptPanel, meeting);
+      const whiteboardCanvas = container.querySelector('[data-whiteboard-canvas]');
+      let mountedWhiteboard = null;
+      if (whiteboardCanvas && whiteboard) {
+        latestWhiteboardCanvas = whiteboardCanvas;
+        mountedWhiteboard = whiteboard.mount(whiteboardCanvas, meeting, {
+          getMemberId: () => app.getCurrentMember?.()?.id,
+          getMemberColor: () => app.getCurrentMember?.()?.color,
+          onChange: (updatedMeeting) => saveMeeting(updatedMeeting),
+        });
+        container.querySelectorAll('[data-whiteboard-tool]').forEach((button) => {
+          button.addEventListener('click', () => {
+            mountedWhiteboard.setTool(button.dataset.whiteboardTool);
+            container.querySelectorAll('[data-whiteboard-tool]').forEach((candidate) => {
+              candidate.classList.toggle('is-active', candidate === button);
+            });
+          });
+        });
+        container.querySelector('[data-whiteboard-action="clear-own"]')?.addEventListener('click', () => {
+          whiteboard.clearOwn(meeting, app.getCurrentMember?.()?.id);
+          mountedWhiteboard.redraw();
+          saveMeeting(meeting);
+        });
+      }
       transcript?.start(meeting, {
         onUpdate: (updatedMeeting) => {
           if (transcriptPanel && transcriptPanel.isConnected !== false) {
@@ -352,7 +405,14 @@
         saveMeeting(engine.prev(meeting));
       });
       container.querySelector('[data-meeting-room-action="next"]')?.addEventListener('click', () => {
-        saveMeeting(engine.next(meeting));
+        const nextMeeting = engine.next(meeting);
+        if (
+          latestWhiteboardCanvas
+          && (nextMeeting.step === 'distill' || nextMeeting.step === 'end')
+        ) {
+          whiteboard?.snapshot(latestWhiteboardCanvas, nextMeeting);
+        }
+        saveMeeting(nextMeeting);
       });
       container.querySelector('[data-meeting-room-action="complete-mood"]')?.addEventListener('click', () => {
         saveMeeting(engine.completeMoodRound(meeting));

@@ -7,6 +7,8 @@ function makeHarness(initialState, now = 1720000000000) {
   let state = JSON.parse(JSON.stringify(initialState));
   const shownViews = [];
   const transcriptStarts = [];
+  const whiteboardMounts = [];
+  const whiteboardSnapshots = [];
   const flow = createMeetingFlow({
     meetingTypes: MeetingTypes,
     engine: MeetingEngine,
@@ -14,6 +16,21 @@ function makeHarness(initialState, now = 1720000000000) {
       start: (meeting, options) => transcriptStarts.push({ meeting, options }),
       edit: () => {},
       tag: () => {},
+    },
+    whiteboard: {
+      mount: (canvas, meeting, options) => {
+        whiteboardMounts.push({ canvas, meeting, options });
+        return { setTool: () => {}, redraw: () => {} };
+      },
+      clearOwn: (meeting, memberId) => {
+        meeting.whiteboard.strokes = meeting.whiteboard.strokes
+          .filter((stroke) => stroke.memberId !== memberId);
+      },
+      snapshot: (canvas, meeting) => {
+        meeting.whiteboard.snapshot = 'data:image/png;base64,test';
+        whiteboardSnapshots.push({ canvas, meeting });
+        return meeting.whiteboard.snapshot;
+      },
     },
     store: {
       load: () => JSON.parse(JSON.stringify(state)),
@@ -36,6 +53,8 @@ function makeHarness(initialState, now = 1720000000000) {
     getState: () => state,
     shownViews,
     transcriptStarts,
+    whiteboardMounts,
+    whiteboardSnapshots,
   };
 }
 
@@ -123,17 +142,71 @@ const familyState = {
   };
   const container = {
     innerHTML: '',
-    querySelector: () => null,
+    querySelector: (selector) => (
+      selector === '[data-whiteboard-canvas]' ? { isConnected: true } : null
+    ),
     querySelectorAll: () => [],
   };
-  const { flow, transcriptStarts } = makeHarness(state);
+  const { flow, transcriptStarts, whiteboardMounts } = makeHarness(state);
 
   flow.renderRoom(container);
 
   assert.strictEqual(transcriptStarts.length, 1, '进入会议室应自动启动转写');
+  assert.strictEqual(whiteboardMounts.length, 1, 'collect 阶段应挂载共享画板');
+  assert.match(container.innerHTML, /data-whiteboard-canvas/);
+  assert.match(container.innerHTML, /data-whiteboard-tool="pen"/);
+  assert.match(container.innerHTML, /data-whiteboard-action="clear-own"/);
   assert.match(container.innerHTML, /data-transcript-list/);
   assert.match(container.innerHTML, /data-transcript-action="edit"/);
   assert.doesNotMatch(container.innerHTML, /转写开关|停止转写|开始转写/);
+}
+
+{
+  const activeMeeting = {
+    id: 'meeting-discuss',
+    typeId: '01',
+    topicId: '01-1',
+    hostId: 'member-1',
+    memberIds: ['member-1', 'member-2'],
+    status: 'active',
+    step: 'discuss',
+    moodRoundDone: true,
+    transcript: [],
+    whiteboard: { strokes: [] },
+  };
+  const state = {
+    ...familyState,
+    meetings: [activeMeeting],
+    draftMeeting: activeMeeting,
+    activeMeetingId: activeMeeting.id,
+  };
+  let nextHandler;
+  const canvas = { isConnected: true };
+  const nextButton = {
+    addEventListener: (type, handler) => {
+      if (type === 'click') nextHandler = handler;
+    },
+  };
+  const container = {
+    innerHTML: '',
+    querySelector: (selector) => {
+      if (selector === '[data-whiteboard-canvas]') return canvas;
+      if (selector === '[data-meeting-room-action="next"]') return nextButton;
+      return null;
+    },
+    querySelectorAll: () => [],
+  };
+  const { flow, getState, whiteboardSnapshots } = makeHarness(state);
+
+  flow.renderRoom(container);
+  nextHandler();
+
+  assert.strictEqual(whiteboardSnapshots.length, 1, '进入 distill 前应保存画板快照');
+  assert.strictEqual(getState().draftMeeting.step, 'distill');
+  assert.strictEqual(
+    getState().draftMeeting.whiteboard.snapshot,
+    'data:image/png;base64,test',
+  );
 }
 
 console.log('meeting-flow.test.js OK');

@@ -182,6 +182,7 @@
       meetingTypes: root.MeetingTypes,
       engine: root.MeetingEngine,
       transcript: root.Transcript,
+      whiteboard: root.Whiteboard,
       store: root.Store,
       app,
     });
