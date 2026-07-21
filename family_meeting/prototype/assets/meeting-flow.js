@@ -3,9 +3,19 @@
     return member.nickname || member.name || member.role || '家庭成员';
   }
 
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function createMeetingFlow({
     meetingTypes,
     engine,
+    transcript,
     store,
     app,
     now = Date.now,
@@ -205,6 +215,65 @@
       app.replaceState?.(nextState);
     }
 
+    function transcriptMarkup(meeting) {
+      const lines = meeting.transcript || [];
+      if (!lines.length) {
+        return '<p class="meeting-transcript__empty">正在聆听，转写内容将自动出现在这里…</p>';
+      }
+      return lines.map((line) => {
+        const tags = line.tags || [];
+        const time = new Date(line.at).toLocaleTimeString('zh-CN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        return `
+          <article class="meeting-transcript__line" data-transcript-line="${line.id}">
+            <div class="meeting-transcript__meta">
+              <time>${time}</time>
+              <div class="meeting-transcript__tags">
+                <button class="${tags.includes('idea') ? 'is-active' : ''}" type="button" data-transcript-tag="idea">想法</button>
+                <button class="${tags.includes('keyword') ? 'is-active' : ''}" type="button" data-transcript-tag="keyword">关键词</button>
+              </div>
+            </div>
+            <p data-transcript-text>${escapeHtml(line.text)}</p>
+            <textarea data-transcript-input hidden aria-label="编辑转写内容">${escapeHtml(line.text)}</textarea>
+            <button class="meeting-transcript__edit" type="button" data-transcript-action="edit">编辑</button>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderTranscriptPanel(panel, meeting) {
+      panel.querySelector('[data-transcript-list]').innerHTML = transcriptMarkup(meeting);
+      bindTranscriptPanel(panel, meeting);
+    }
+
+    function bindTranscriptPanel(panel, meeting) {
+      panel.querySelectorAll('[data-transcript-action="edit"]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const line = button.closest('[data-transcript-line]');
+          const text = line.querySelector('[data-transcript-text]');
+          const input = line.querySelector('[data-transcript-input]');
+          if (input.hidden) {
+            input.hidden = false;
+            text.hidden = true;
+            button.textContent = '保存';
+            input.focus();
+            return;
+          }
+          const nextText = input.value.trim();
+          if (nextText) transcript.edit(meeting, line.dataset.transcriptLine, nextText);
+        });
+      });
+      panel.querySelectorAll('[data-transcript-tag]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const line = button.closest('[data-transcript-line]');
+          transcript.tag(meeting, line.dataset.transcriptLine, button.dataset.transcriptTag);
+        });
+      });
+    }
+
     function renderRoom(container) {
       const state = getState();
       const meeting = activeMeeting(state);
@@ -223,6 +292,7 @@
       const showMoodButton = meeting.typeId === '04'
         && meeting.step === 'opening'
         && !meeting.moodRoundDone;
+      const showTranscript = meeting.step === 'collect' || meeting.step === 'discuss';
 
       container.innerHTML = `
         <div class="meeting-room">
@@ -238,6 +308,20 @@
             <h1>${meeting.step}</h1>
             <p>${meetingTypes.copyFor(meeting.typeId, meeting.step)}</p>
           </section>
+          ${showTranscript ? `
+            <section class="meeting-transcript" data-transcript-panel aria-labelledby="meeting-transcript-title">
+              <div class="meeting-transcript__header">
+                <div>
+                  <p class="view-panel__eyebrow">模拟语音转写</p>
+                  <h2 id="meeting-transcript-title">现场记录</h2>
+                </div>
+                <span class="meeting-transcript__live"><i aria-hidden="true"></i>自动记录中</span>
+              </div>
+              <div class="meeting-transcript__list" data-transcript-list aria-live="polite">
+                ${transcriptMarkup(meeting)}
+              </div>
+            </section>
+          ` : ''}
           ${showMoodButton && isHost ? `
             <button class="family-button meeting-mood-button" type="button" data-meeting-room-action="complete-mood">
               结束心情回合
@@ -252,6 +336,16 @@
           ` : `<p class="meeting-room__host">当前由 ${memberLabel(host)} 主持</p>`}
         </div>
       `;
+
+      const transcriptPanel = container.querySelector('[data-transcript-panel]');
+      if (transcriptPanel) bindTranscriptPanel(transcriptPanel, meeting);
+      transcript?.start(meeting, {
+        onUpdate: (updatedMeeting) => {
+          if (transcriptPanel && transcriptPanel.isConnected !== false) {
+            renderTranscriptPanel(transcriptPanel, updatedMeeting);
+          }
+        },
+      });
 
       if (!isHost) return;
       container.querySelector('[data-meeting-room-action="prev"]')?.addEventListener('click', () => {

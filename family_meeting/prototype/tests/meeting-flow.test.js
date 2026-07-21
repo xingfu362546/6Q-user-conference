@@ -1,12 +1,20 @@
 const assert = require('assert');
 const MeetingTypes = require('../assets/meeting-types.js');
+const MeetingEngine = require('../assets/meeting-engine.js');
 const { createMeetingFlow } = require('../assets/meeting-flow.js');
 
 function makeHarness(initialState, now = 1720000000000) {
   let state = JSON.parse(JSON.stringify(initialState));
   const shownViews = [];
+  const transcriptStarts = [];
   const flow = createMeetingFlow({
     meetingTypes: MeetingTypes,
+    engine: MeetingEngine,
+    transcript: {
+      start: (meeting, options) => transcriptStarts.push({ meeting, options }),
+      edit: () => {},
+      tag: () => {},
+    },
     store: {
       load: () => JSON.parse(JSON.stringify(state)),
       save: (nextState) => {
@@ -23,7 +31,12 @@ function makeHarness(initialState, now = 1720000000000) {
     now: () => now,
     random: () => 0.1234,
   });
-  return { flow, getState: () => state, shownViews };
+  return {
+    flow,
+    getState: () => state,
+    shownViews,
+    transcriptStarts,
+  };
 }
 
 const familyState = {
@@ -83,6 +96,44 @@ const familyState = {
     () => flow.startMeeting({ typeId: '01', topicId: '01-1', hostId: null }),
     /请选择主持人/,
   );
+}
+
+{
+  const activeMeeting = {
+    id: 'meeting-active',
+    typeId: '01',
+    topicId: '01-1',
+    hostId: 'member-1',
+    memberIds: ['member-1', 'member-2'],
+    status: 'active',
+    step: 'collect',
+    moodRoundDone: true,
+    transcript: [{
+      id: 'line-1',
+      text: '测试转写',
+      at: 1720000000000,
+      tags: [],
+    }],
+  };
+  const state = {
+    ...familyState,
+    meetings: [activeMeeting],
+    draftMeeting: activeMeeting,
+    activeMeetingId: activeMeeting.id,
+  };
+  const container = {
+    innerHTML: '',
+    querySelector: () => null,
+    querySelectorAll: () => [],
+  };
+  const { flow, transcriptStarts } = makeHarness(state);
+
+  flow.renderRoom(container);
+
+  assert.strictEqual(transcriptStarts.length, 1, '进入会议室应自动启动转写');
+  assert.match(container.innerHTML, /data-transcript-list/);
+  assert.match(container.innerHTML, /data-transcript-action="edit"/);
+  assert.doesNotMatch(container.innerHTML, /转写开关|停止转写|开始转写/);
 }
 
 console.log('meeting-flow.test.js OK');

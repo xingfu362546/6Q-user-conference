@@ -181,6 +181,7 @@
     meetingFlow = root.createMeetingFlow({
       meetingTypes: root.MeetingTypes,
       engine: root.MeetingEngine,
+      transcript: root.Transcript,
       store: root.Store,
       app,
     });

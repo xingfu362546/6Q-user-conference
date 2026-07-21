@@ -825,6 +825,123 @@ body {
   color: #b94b4b;
 }
 
+.meeting-transcript {
+  margin-top: 18px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 16px;
+}
+
+.meeting-transcript__header,
+.meeting-transcript__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.meeting-transcript__header h2 {
+  margin: 2px 0 0;
+  font-size: 19px;
+}
+
+.meeting-transcript__header .view-panel__eyebrow {
+  margin: 0;
+}
+
+.meeting-transcript__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.meeting-transcript__live i {
+  width: 7px;
+  height: 7px;
+  background: #d65757;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(214, 87, 87, 0.12);
+}
+
+.meeting-transcript__list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.meeting-transcript__empty {
+  margin: 2px 0;
+  padding: 18px 10px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.meeting-transcript__line {
+  position: relative;
+  padding: 14px 56px 14px 14px;
+  background: var(--color-bg);
+  border-radius: 12px;
+}
+
+.meeting-transcript__meta time {
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.meeting-transcript__tags {
+  display: flex;
+  gap: 6px;
+}
+
+.meeting-transcript__tags button,
+.meeting-transcript__edit {
+  padding: 5px 8px;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.meeting-transcript__tags button.is-active {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, white);
+  font-weight: 700;
+}
+
+.meeting-transcript__line p {
+  margin: 10px 0 0;
+  line-height: 1.65;
+}
+
+.meeting-transcript__line textarea {
+  width: 100%;
+  min-height: 72px;
+  margin-top: 10px;
+  padding: 9px 10px;
+  resize: vertical;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent);
+  border-radius: 8px;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.meeting-transcript__edit {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  color: var(--color-accent);
+}
+
 @media (max-width: 480px) {
   .meeting-type-grid {
     grid-template-columns: 1fr;
