@@ -81,6 +81,8 @@ const state = {
 
   target.click('meeting-new');
   assert.match(target.innerHTML, /会议回顾/);
+  assert.match(target.innerHTML, /共同发现/);
+  assert.match(target.innerHTML, /规律作息/);
   assert.match(target.innerHTML, /每晚九点放下手机/);
   assert.match(target.innerHTML, /data:image\/png;base64,new/);
   assert.match(target.innerHTML, /睡前不看手机/);
@@ -98,6 +100,16 @@ const state = {
   const target = container();
   Review.renderDetail(target, newer, state.todos);
   assert.match(target.innerHTML, /行动进度 1\/2/);
+}
+
+{
+  const target = container();
+  let latest = JSON.parse(JSON.stringify(state));
+  Review.renderList(target, latest, { load: () => latest });
+  target.click('meeting-new');
+  latest.todos[1].status = 'done';
+  target.click('back');
+  assert.match(target.innerHTML, /行动 2\/2/, '返回列表时应读取最新待办进度');
 }
 
 console.log('review.test.js OK');

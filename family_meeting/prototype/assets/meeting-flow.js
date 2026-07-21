@@ -126,6 +126,7 @@
         ? state.family.defaultHostId
         : '';
       const topicTitle = typeId === '04' ? '冲突后修复 · 无议题' : topic.title;
+      const hasHost = Boolean(defaultHostId);
 
       container.innerHTML = `
         <div class="meeting-flow">
@@ -148,8 +149,8 @@
               </label>
             `).join('')}
           </fieldset>
-          <p class="meeting-flow__error" data-meeting-error aria-live="polite"></p>
-          <button class="family-button family-button--primary meeting-start" type="button" data-meeting-action="start">开始会议</button>
+          <p class="meeting-flow__error" data-meeting-error aria-live="polite">${hasHost ? '' : '请先指定一位主持人，才能开始会议。'}</p>
+          <button class="family-button family-button--primary meeting-start" type="button" data-meeting-action="start" ${hasHost ? '' : 'disabled'}>开始会议</button>
         </div>
       `;
 
@@ -157,7 +158,14 @@
         if (typeId === '04') renderHub(container);
         else renderTopics(container, typeId);
       });
-      container.querySelector('[data-meeting-action="start"]').addEventListener('click', () => {
+      const startButton = container.querySelector('[data-meeting-action="start"]');
+      container.querySelectorAll('input[name="meeting-host"]').forEach((radio) => {
+        radio.addEventListener('change', () => {
+          startButton.disabled = false;
+          container.querySelector('[data-meeting-error]').textContent = '';
+        });
+      });
+      startButton.addEventListener('click', () => {
         const selectedHost = container.querySelector('input[name="meeting-host"]:checked');
         if (!selectedHost) {
           container.querySelector('[data-meeting-error]').textContent = '请选择主持人';
@@ -170,6 +178,7 @@
     function startMeeting({ typeId, topicId, hostId }) {
       const state = getState();
       const members = state.family?.members || [];
+      if (!state.family) throw new Error('请先创建或加入家庭');
       if (!hostId || !members.some((member) => member.id === hostId)) {
         throw new Error('请选择主持人');
       }
@@ -210,12 +219,24 @@
 
     function saveMeeting(meeting) {
       const state = getState();
+      const storedMeeting = (state.meetings || []).find(
+        (candidate) => candidate.id === meeting.id,
+      );
+      const mergedMeeting = storedMeeting
+        ? {
+          ...storedMeeting,
+          ...meeting,
+          transcript: Array.isArray(storedMeeting.transcript)
+            ? storedMeeting.transcript
+            : (meeting.transcript || []),
+        }
+        : meeting;
       const nextState = {
         ...state,
         meetings: (state.meetings || []).map((candidate) => (
-          candidate.id === meeting.id ? meeting : candidate
+          candidate.id === mergedMeeting.id ? mergedMeeting : candidate
         )),
-        draftMeeting: meeting,
+        draftMeeting: mergedMeeting,
       };
       store.save(nextState);
       app.replaceState?.(nextState);
@@ -260,6 +281,7 @@
     function renderConsensusPanel(panel, meeting, members, isHost) {
       const plan = initialActionPlan(meeting);
       const tally = consensus.tally(plan, meeting.memberIds || []);
+      const voteGate = consensus.canStartVote(plan);
       const currentMember = app.getCurrentMember?.();
       const currentVote = plan.votes?.[currentMember?.id];
       const memberName = (memberId) => memberLabel(
@@ -308,9 +330,10 @@
             }).join('')}
           </div>
           ${tally.rejected.length ? `<p class="consensus__warning">${tally.rejected.map(memberName).join('、')} 反对，主持人可修改方案后重新投票。</p>` : ''}
-          ${!isHost && (!plan.selectedIds.length || !plan.agreedTime) ? '<p class="consensus__warning">等待主持人完成行动与时间设置。</p>' : ''}
-          ${isHost && plan.selectedIds.length && plan.agreedTime && !plan.votingStarted && !plan.locked
-            ? '<button class="family-button family-button--primary" type="button" data-consensus-action="start-vote">发起投票</button>'
+          ${!isHost && !voteGate.ok ? '<p class="consensus__warning">等待主持人完成行动构成与统一时间。</p>' : ''}
+          ${isHost && !plan.votingStarted && !plan.locked
+            ? `<p class="consensus__gate ${voteGate.ok ? 'is-valid' : ''}">${escapeHtml(voteGate.ok ? '行动构成与统一时间已就绪' : voteGate.reason)}</p>
+              <button class="family-button family-button--primary" type="button" data-consensus-action="start-vote" ${voteGate.ok ? '' : 'disabled'}>发起投票</button>`
             : ''}
           ${plan.votingStarted && plan.selectedIds.length && plan.agreedTime && !plan.locked ? `
             <div class="consensus__vote">
@@ -360,6 +383,7 @@
         .forEach((input) => input.addEventListener('change', saveSelection));
       panel.querySelector('[data-consensus-time]')?.addEventListener('change', saveSelection);
       panel.querySelector('[data-consensus-action="start-vote"]')?.addEventListener('click', () => {
+        if (!consensus.canStartVote(plan).ok) return;
         savePlan({ ...plan, votingStarted: true });
       });
       panel.querySelectorAll('[data-consensus-vote]').forEach((button) => {
@@ -479,7 +503,7 @@
       const showEnd = meeting.step === 'end';
 
       container.innerHTML = `
-        <div class="meeting-room">
+        <div class="meeting-room meeting-room--type-${meeting.typeId}" style="--type-color:${escapeHtml(type?.color || '#4A90A4')}">
           <p class="view-panel__eyebrow">会议进行中 · ${type?.name || ''}</p>
           <ol class="meeting-steps" aria-label="会议步骤">
             ${engine.STEPS.map((step, index) => `

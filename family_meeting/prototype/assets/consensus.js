@@ -52,6 +52,16 @@
     return resetDecision(plan, { selectedIds: nextIds, agreedTime: nextTime });
   }
 
+  function canStartVote(plan) {
+    if (!(plan.selectedIds || []).length) {
+      return { ok: false, reason: '请至少选择一项行动' };
+    }
+    if (!String(plan.agreedTime || '').trim()) {
+      return { ok: false, reason: '请填写全家统一的行动时间' };
+    }
+    return { ok: true, reason: '' };
+  }
+
   function castVote(plan, memberId, choice, reason) {
     if (plan.locked) throw new Error('行动方案已锁定');
     if (!memberId || !['approve', 'reject'].includes(choice)) {
@@ -103,6 +113,7 @@
     createCandidate,
     removeCandidate,
     setSelection,
+    canStartVote,
     castVote,
     tally,
     lock,

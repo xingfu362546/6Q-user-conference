@@ -1,6 +1,19 @@
 const assert = require('assert');
 const C = require('../assets/consensus.js');
 
+assert.deepStrictEqual(C.canStartVote({ selectedIds: [], agreedTime: '' }), {
+  ok: false,
+  reason: '请至少选择一项行动',
+});
+assert.deepStrictEqual(C.canStartVote({ selectedIds: ['c1'], agreedTime: '' }), {
+  ok: false,
+  reason: '请填写全家统一的行动时间',
+});
+assert.deepStrictEqual(C.canStartVote({ selectedIds: ['c1'], agreedTime: '周六 10:00' }), {
+  ok: true,
+  reason: '',
+});
+
 let plan = {
   candidates: [{ id: 'c1', title: '每周散步' }],
   selectedIds: ['c1'],

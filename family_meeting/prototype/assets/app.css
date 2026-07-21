@@ -130,6 +130,31 @@ body {
   box-shadow: inset 0 0 0 1px rgba(91, 64, 42, 0.08);
 }
 
+.family-room::before {
+  position: absolute;
+  right: 22px;
+  bottom: 72px;
+  width: 54px;
+  height: 82px;
+  background:
+    radial-gradient(ellipse at 28% 25%, #7fac75 0 23%, transparent 25%),
+    radial-gradient(ellipse at 72% 35%, #5f9b66 0 25%, transparent 27%),
+    linear-gradient(90deg, transparent 45%, #66845f 46% 54%, transparent 55%);
+  content: '';
+}
+
+.family-room::after {
+  position: absolute;
+  right: 24px;
+  bottom: 44px;
+  width: 50px;
+  height: 34px;
+  background: #b9734d;
+  border-radius: 5px 5px 14px 14px;
+  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.16);
+  content: '';
+}
+
 .family-room__window {
   position: absolute;
   top: 26px;
@@ -538,6 +563,27 @@ body {
   overflow: auto;
 }
 
+.role-sheet__settings {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 14px;
+  background: var(--color-bg);
+  border-radius: 12px;
+}
+
+.role-sheet__settings div {
+  display: grid;
+  gap: 3px;
+}
+
+.role-sheet__settings span {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
 .role-sheet__member {
   padding: 14px 16px;
   color: var(--color-text);
@@ -585,6 +631,7 @@ body {
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .meeting-type-card::before {
@@ -785,11 +832,13 @@ body {
 .meeting-room__guide {
   min-height: 180px;
   padding: 24px;
-  background: var(--color-bg);
+  background: color-mix(in srgb, var(--type-color, var(--color-accent)) 9%, white);
+  border-left: 5px solid var(--type-color, var(--color-accent));
   border-radius: 16px;
 }
 
 .meeting-room__guide h1 {
+  color: var(--type-color, var(--color-accent));
   text-transform: capitalize;
 }
 
@@ -1305,6 +1354,16 @@ body {
   color: #b94b4b;
 }
 
+.consensus__gate {
+  margin: 14px 0 8px;
+  color: #b94b4b;
+  font-size: 13px;
+}
+
+.consensus__gate.is-valid {
+  color: #3b7b56;
+}
+
 .consensus__vote {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1353,6 +1412,41 @@ body {
 .todo-item.is-done strong {
   color: var(--color-muted);
   text-decoration: line-through;
+}
+
+.todo-empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.todo-empty-state > span {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: 50%;
+  font-size: 30px;
+}
+
+.todo-empty-state h1,
+.todo-empty-state p {
+  margin: 0;
+}
+
+.todo-empty-state p {
+  max-width: 380px;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.todo-empty-state > div {
+  display: flex;
+  gap: 8px;
 }
 
 .meeting-room__archive {
@@ -1502,6 +1596,20 @@ body {
 
 .review-insights {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.review-common {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.review-common > span {
+  padding: 7px 10px;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: 999px;
+  font-size: 13px;
 }
 
 .review-insights article {

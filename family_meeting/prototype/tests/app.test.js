@@ -7,6 +7,7 @@ assert.strictEqual(memberLabel({ name: '旧成员' }), '旧成员');
 function makeHarness(initialState, confirmResult = true) {
   let state = JSON.parse(JSON.stringify(initialState));
   let saves = 0;
+  let resets = 0;
   let confirmationMessage = null;
   const rendered = {
     views: [], roles: [], sheets: [], families: [], reviews: [],
@@ -20,7 +21,25 @@ function makeHarness(initialState, confirmResult = true) {
         state = JSON.parse(JSON.stringify(nextState));
         saves += 1;
       },
+      reset: () => {
+        resets += 1;
+        state = {
+          family: null,
+          currentMemberId: null,
+          meetings: [],
+          todos: [],
+          draftMeeting: null,
+        };
+      },
     },
+    createDemoState: () => ({
+      family: {
+        id: 'family-demo',
+        defaultHostId: 'demo-mother',
+        members: [{ id: 'demo-mother', nickname: '妈妈' }],
+      },
+      currentMemberId: 'demo-mother',
+    }),
     confirmLeave: (message) => {
       confirmationMessage = message;
       return confirmResult;
@@ -43,6 +62,7 @@ function makeHarness(initialState, confirmResult = true) {
     callbacks,
     getState: () => state,
     getSaves: () => saves,
+    getResets: () => resets,
     getConfirmationMessage: () => confirmationMessage,
     setStoredState: (nextState) => {
       state = JSON.parse(JSON.stringify(nextState));
@@ -105,6 +125,21 @@ const baseState = {
 }
 
 {
+  const harness = makeHarness(baseState);
+  harness.setStoredState({
+    ...baseState,
+    meetings: [{ id: 'meeting-live', transcript: [{ id: 'line-1', text: '刚写入的转写' }] }],
+    draftMeeting: { id: 'meeting-live', transcript: [{ id: 'line-1', text: '刚写入的转写' }] },
+  });
+  harness.app.setCurrentMember('member-2');
+  assert.strictEqual(
+    harness.getState().meetings[0].transcript[0].text,
+    '刚写入的转写',
+    '切换角色不得覆盖其他模块刚写入的会议数据',
+  );
+}
+
+{
   const { app, rendered } = makeHarness({ ...baseState, family: null, currentMemberId: null });
   assert.strictEqual(app.getCurrentMember(), null);
   assert.strictEqual(rendered.roles.at(-1), null);
@@ -150,6 +185,20 @@ const baseState = {
     'done',
     '切换视图时应读取待办保存后的最新状态',
   );
+}
+
+{
+  const harness = makeHarness({
+    ...baseState,
+    meetings: [{ id: 'old-meeting', status: 'archived' }],
+    todos: [{ id: 'old-todo', status: 'done' }],
+  });
+  const resetState = harness.app.resetDemo();
+  assert.strictEqual(harness.getResets(), 1, '重置演示应先清空存储');
+  assert.strictEqual(resetState.family.id, 'family-demo');
+  assert.strictEqual(resetState.currentMemberId, 'demo-mother');
+  assert.deepStrictEqual(resetState.meetings, []);
+  assert.deepStrictEqual(resetState.todos, []);
 }
 
 console.log('app.test.js OK');

@@ -66,6 +66,9 @@ function makeHarness(initialState, now = 1720000000000) {
     whiteboardMounts,
     whiteboardSnapshots,
     distillRenders,
+    setState: (nextState) => {
+      state = JSON.parse(JSON.stringify(nextState));
+    },
   };
 }
 
@@ -314,6 +317,52 @@ const familyState = {
   assert.strictEqual(
     getState().draftMeeting.whiteboard.snapshot,
     'data:image/png;base64,test',
+  );
+}
+
+{
+  const activeMeeting = {
+    id: 'meeting-live-transcript',
+    typeId: '03',
+    topicId: '03-1',
+    hostId: 'member-1',
+    memberIds: ['member-1', 'member-2'],
+    status: 'active',
+    step: 'collect',
+    moodRoundDone: true,
+    transcript: [],
+    whiteboard: { strokes: [] },
+  };
+  const initial = {
+    ...familyState,
+    meetings: [activeMeeting],
+    draftMeeting: activeMeeting,
+    activeMeetingId: activeMeeting.id,
+  };
+  let nextHandler;
+  const container = {
+    innerHTML: '',
+    querySelector: (selector) => {
+      if (selector === '[data-meeting-room-action="next"]') {
+        return { addEventListener: (type, handler) => { if (type === 'click') nextHandler = handler; } };
+      }
+      return null;
+    },
+    querySelectorAll: () => [],
+  };
+  const harness = makeHarness(initial);
+  harness.flow.renderRoom(container);
+  const line = { id: 'line-live', text: '计时器刚写入的转写', at: 1, tags: [] };
+  harness.setState({
+    ...initial,
+    meetings: [{ ...activeMeeting, transcript: [line] }],
+    draftMeeting: { ...activeMeeting, transcript: [line] },
+  });
+  nextHandler();
+  assert.deepStrictEqual(
+    harness.getState().draftMeeting.transcript,
+    [line],
+    '主持人推进步骤时不得覆盖刚写入的自动转写',
   );
 }
 

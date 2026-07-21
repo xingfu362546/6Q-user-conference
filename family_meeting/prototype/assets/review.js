@@ -63,6 +63,7 @@
     const actions = (meeting.actionPlan?.candidates || [])
       .filter((candidate) => selectedIds.has(candidate.id));
     const transcript = meeting.transcript || [];
+    const common = meeting.insights?.common || [];
     const core = meeting.insights?.core || [];
 
     container.innerHTML = `
@@ -96,6 +97,15 @@
           ${meeting.whiteboard?.snapshot
             ? `<img class="review-snapshot" src="${escapeHtml(meeting.whiteboard.snapshot)}" alt="本次会议画板快照">`
             : '<p class="review-empty">本场没有画板内容</p>'}
+        </section>
+
+        <section class="review-section">
+          <h2>共同发现</h2>
+          <div class="review-common">
+            ${common.length
+              ? common.map((insight) => `<span>${escapeHtml(insight)}</span>`).join('')
+              : '<p class="review-empty">本场没有记录共同点</p>'}
+          </div>
         </section>
 
         <section class="review-section">
@@ -143,7 +153,7 @@
     `;
   }
 
-  function renderList(container, state) {
+  function renderList(container, state, store = root?.Store) {
     const archived = (state.meetings || [])
       .filter((meeting) => meeting.status === 'archived')
       .sort((left, right) => (
@@ -177,7 +187,7 @@
         if (!meeting) return;
         renderDetail(container, meeting, state.todos || []);
         container.querySelector?.('[data-review-action="back"]')?.addEventListener('click', () => {
-          renderList(container, state);
+          renderList(container, store?.load?.() || state, store);
         });
       });
     });

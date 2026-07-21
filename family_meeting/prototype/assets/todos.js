@@ -37,10 +37,42 @@
   }
 
   function renderList(container, state, store = root?.Store) {
+    if (!state.family) {
+      container.innerHTML = `
+        <div class="todo-empty-state">
+          <span aria-hidden="true">⌂</span>
+          <h1>先加入家庭</h1>
+          <p>加入家庭后，会议达成的共同行动会出现在这里。</p>
+          <button class="family-button family-button--primary" type="button" data-todo-action="family">去「我的家庭」</button>
+        </div>
+      `;
+      container.querySelector?.('[data-todo-action="family"]')
+        ?.addEventListener('click', () => root.App?.showView('family'));
+      return;
+    }
     const meetings = new Map((state.meetings || []).map((meeting) => [meeting.id, meeting]));
     const todos = (state.todos || []).filter((todo) => todo.assigneeId === state.currentMemberId);
     const open = todos.filter((todo) => todo.status !== 'done');
     const done = todos.filter((todo) => todo.status === 'done');
+
+    if (!todos.length) {
+      container.innerHTML = `
+        <div class="todo-empty-state">
+          <span aria-hidden="true">✓</span>
+          <h1>还没有我的待办</h1>
+          <p>完成一次家庭会议并达成全员共识后，行动会自动分发到这里。</p>
+          <div>
+            <button class="family-button family-button--primary" type="button" data-todo-action="meet">去开会</button>
+            <button class="family-button family-button--ghost" type="button" data-todo-action="review">看回顾</button>
+          </div>
+        </div>
+      `;
+      container.querySelector?.('[data-todo-action="meet"]')
+        ?.addEventListener('click', () => root.App?.showView('meet'));
+      container.querySelector?.('[data-todo-action="review"]')
+        ?.addEventListener('click', () => root.App?.showView('review'));
+      return;
+    }
 
     function section(title, items) {
       return `

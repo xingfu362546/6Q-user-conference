@@ -6,7 +6,12 @@
     return member ? member.nickname || member.name || member.role : '未加入家庭';
   }
 
-  function createApp({ store, ui, confirmLeave }) {
+  function createApp({
+    store,
+    ui,
+    confirmLeave,
+    createDemoState,
+  }) {
     let state = store.load();
     let currentViewId = 'family';
     const onRoleChange = [];
@@ -70,6 +75,7 @@
     }
 
     function setCurrentMember(memberId) {
+      state = store.load();
       const member = members().find((candidate) => candidate.id === memberId);
       if (!member) return false;
 
@@ -90,6 +96,26 @@
       ui.renderRoleSheet(members(), getCurrentMember()?.id || null, false);
     }
 
+    function resetDemo(loadDemo = true) {
+      store.reset();
+      const emptyState = store.load();
+      const demoState = loadDemo && typeof createDemoState === 'function'
+        ? createDemoState()
+        : {};
+      const nextState = {
+        ...emptyState,
+        ...demoState,
+        meetings: [],
+        todos: [],
+        draftMeeting: null,
+        activeMeetingId: null,
+      };
+      store.save(nextState);
+      currentViewId = 'family';
+      replaceState(nextState);
+      return nextState;
+    }
+
     const app = {
       showView,
       setCurrentMember,
@@ -97,6 +123,7 @@
       openRoleSheet,
       closeRoleSheet,
       replaceState,
+      resetDemo,
       onRoleChange,
       get currentViewId() {
         return currentViewId;
@@ -190,6 +217,7 @@
       store: root.Store,
       ui,
       confirmLeave: (message) => root.confirm(message),
+      createDemoState: () => root.demoSeed.createDemoFamily(),
     });
     meetingFlow = root.createMeetingFlow({
       meetingTypes: root.MeetingTypes,
@@ -213,6 +241,11 @@
     root.document.querySelector('#role-list').addEventListener('click', (event) => {
       const memberButton = event.target.closest('[data-member-id]');
       if (memberButton) app.setCurrentMember(memberButton.dataset.memberId);
+    });
+    root.document.querySelector('#reset-demo')?.addEventListener('click', () => {
+      if (!root.confirm('重置演示数据？现有会议、待办和家庭数据将被清空。')) return;
+      app.resetDemo();
+      app.closeRoleSheet();
     });
 
     root.App = app;
