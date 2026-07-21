@@ -8,7 +8,9 @@ function makeHarness(initialState, confirmResult = true) {
   let state = JSON.parse(JSON.stringify(initialState));
   let saves = 0;
   let confirmationMessage = null;
-  const rendered = { views: [], roles: [], sheets: [], families: [] };
+  const rendered = {
+    views: [], roles: [], sheets: [], families: [], reviews: [],
+  };
   const callbacks = [];
 
   const app = createApp({
@@ -30,6 +32,7 @@ function makeHarness(initialState, confirmResult = true) {
         rendered.sheets.push({ members, currentMemberId, open });
       },
       renderFamily: (nextState) => rendered.families.push(nextState.family),
+      renderReview: (nextState) => rendered.reviews.push(nextState),
     },
   });
 
@@ -41,6 +44,9 @@ function makeHarness(initialState, confirmResult = true) {
     getState: () => state,
     getSaves: () => saves,
     getConfirmationMessage: () => confirmationMessage,
+    setStoredState: (nextState) => {
+      state = JSON.parse(JSON.stringify(nextState));
+    },
   };
 }
 
@@ -130,6 +136,20 @@ const baseState = {
   const denied = makeHarness(activeById, false);
   denied.app.showView('meeting-room');
   assert.strictEqual(denied.app.showView('family'), false);
+}
+
+{
+  const harness = makeHarness(baseState);
+  harness.setStoredState({
+    ...baseState,
+    todos: [{ id: 'todo-1', status: 'done' }],
+  });
+  harness.app.showView('review');
+  assert.strictEqual(
+    harness.rendered.reviews.at(-1).todos[0].status,
+    'done',
+    '切换视图时应读取待办保存后的最新状态',
+  );
 }
 
 console.log('app.test.js OK');

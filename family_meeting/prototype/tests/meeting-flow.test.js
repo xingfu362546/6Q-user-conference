@@ -188,12 +188,40 @@ const familyState = {
   flow.renderRoom(container);
   skipHandler();
 
-  const completed = getState().draftMeeting;
-  assert.strictEqual(completed.status, 'completed');
-  assert.strictEqual(completed.actionPlan.skipped, true);
-  assert.strictEqual(completed.actionPlan.locked, false);
-  assert.strictEqual(completed.actionPlan.votes['member-2'].choice, 'reject');
+  const ending = getState().draftMeeting;
+  assert.strictEqual(ending.status, 'active');
+  assert.strictEqual(ending.step, 'end');
+  assert.strictEqual(ending.actionPlan.skipped, true);
+  assert.strictEqual(ending.actionPlan.locked, false);
+  assert.strictEqual(ending.actionPlan.votes['member-2'].choice, 'reject');
   assert.deepStrictEqual(getState().todos, []);
+  assert.deepStrictEqual(shownViews, []);
+
+  let archiveHandler;
+  const endContainer = {
+    innerHTML: '',
+    querySelector: (selector) => {
+      if (selector === '[data-meeting-room-action="archive"]') {
+        return {
+          addEventListener: (type, handler) => {
+            if (type === 'click') archiveHandler = handler;
+          },
+        };
+      }
+      return null;
+    },
+    querySelectorAll: () => [],
+  };
+  flow.renderRoom(endContainer);
+  assert.match(endContainer.innerHTML, /完成并归档/);
+  archiveHandler();
+
+  const archived = getState().draftMeeting;
+  assert.strictEqual(archived.status, 'archived');
+  assert.strictEqual(archived.archivedAt, 1720000000000);
+  assert.match(archived.whiteboard.snapshot, /^data:image\/svg\+xml/);
+  assert.deepStrictEqual(archived.insights, { common: [], core: [] });
+  assert.strictEqual(getState().activeMeetingId, null);
   assert.deepStrictEqual(shownViews, ['review']);
 }
 

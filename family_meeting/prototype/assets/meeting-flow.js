@@ -221,6 +221,23 @@
       app.replaceState?.(nextState);
     }
 
+    function archiveMeeting(meeting) {
+      const archivedMeeting = engine.archive(meeting, now());
+      const state = getState();
+      const nextState = {
+        ...state,
+        meetings: (state.meetings || []).map((candidate) => (
+          candidate.id === archivedMeeting.id ? archivedMeeting : candidate
+        )),
+        draftMeeting: archivedMeeting,
+        activeMeetingId: null,
+      };
+      store.save(nextState);
+      app.replaceState?.(nextState);
+      app.showView('review');
+      return archivedMeeting;
+    }
+
     function initialActionPlan(meeting) {
       if (meeting.actionPlan) return meeting.actionPlan;
       const candidates = (meeting.insights?.core || []).map((insight, index) => ({
@@ -358,12 +375,11 @@
             const completedMeeting = {
               ...meeting,
               actionPlan: nextPlan,
-              status: 'completed',
+              status: 'active',
               step: 'end',
             };
             todos.distribute(completedMeeting, nextPlan, store);
             saveMeeting(completedMeeting);
-            app.showView('todos');
             return;
           }
           savePlan(nextPlan);
@@ -373,10 +389,9 @@
         saveMeeting({
           ...meeting,
           actionPlan: { ...plan, skipped: true, locked: false },
-          status: 'completed',
+          status: 'active',
           step: 'end',
         });
-        app.showView('review');
       });
     }
 
@@ -461,6 +476,7 @@
       const showWhiteboard = showTranscript;
       const showDistill = meeting.step === 'distill';
       const showConsensus = meeting.step === 'consensus';
+      const showEnd = meeting.step === 'end';
 
       container.innerHTML = `
         <div class="meeting-room">
@@ -523,7 +539,12 @@
               结束心情回合
             </button>
           ` : ''}
-          ${isHost && !showDistill && !showConsensus ? `
+          ${showEnd && isHost ? `
+            <div class="meeting-room__archive">
+              <p>请确认本场记录，归档后会议内容将转为只读。</p>
+              <button class="family-button family-button--primary" type="button" data-meeting-room-action="archive">完成并归档</button>
+            </div>
+          ` : showEnd ? `<p class="meeting-room__host">等待 ${memberLabel(host)} 完成归档</p>` : isHost && !showDistill && !showConsensus ? `
             <div class="meeting-room__controls">
               <button class="family-button family-button--ghost" type="button" data-meeting-room-action="prev" ${stepIndex <= 0 ? 'disabled' : ''}>上一步</button>
               <button class="family-button family-button--primary" type="button" data-meeting-room-action="next" ${advance.ok ? '' : 'disabled'}>下一步</button>
@@ -550,6 +571,14 @@
       if (consensusPanel && consensus && todos) {
         transcript?.stop?.();
         renderConsensusPanel(consensusPanel, meeting, members, isHost);
+        return;
+      }
+
+      if (showEnd) {
+        transcript?.stop?.();
+        container.querySelector('[data-meeting-room-action="archive"]')?.addEventListener('click', () => {
+          archiveMeeting(meeting);
+        });
         return;
       }
 

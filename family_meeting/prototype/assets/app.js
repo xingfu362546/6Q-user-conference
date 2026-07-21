@@ -40,6 +40,7 @@
       ui.renderView(currentViewId);
       if (currentViewId === 'family') ui.renderFamily?.(state);
       if (currentViewId === 'meet') ui.renderMeet?.();
+      if (currentViewId === 'review') ui.renderReview?.(state);
       if (currentViewId === 'todos') ui.renderTodos?.(state);
       if (currentViewId === 'meeting-room') ui.renderMeetingRoom?.();
     }
@@ -56,6 +57,7 @@
       }
 
       currentViewId = viewId;
+      state = store.load();
       renderCurrentView();
       return true;
     }
@@ -166,6 +168,11 @@
       renderTodos(state) {
         const panel = appRoot.querySelector('[data-view-panel="todos"]');
         root.Todos.renderList(panel, state, root.Store);
+      },
+
+      renderReview(state) {
+        const panel = appRoot.querySelector('[data-view-panel="review"]');
+        root.Review.renderList(panel, state);
       },
     };
   }
