@@ -17,6 +17,7 @@
     engine,
     transcript,
     whiteboard,
+    distill,
     store,
     app,
     now = Date.now,
@@ -297,6 +298,7 @@
         && !meeting.moodRoundDone;
       const showTranscript = meeting.step === 'collect' || meeting.step === 'discuss';
       const showWhiteboard = showTranscript;
+      const showDistill = meeting.step === 'distill';
 
       container.innerHTML = `
         <div class="meeting-room">
@@ -312,6 +314,7 @@
             <h1>${meeting.step}</h1>
             <p>${meetingTypes.copyFor(meeting.typeId, meeting.step)}</p>
           </section>
+          ${showDistill ? '<section class="meeting-distill-panel" data-distill-panel></section>' : ''}
           ${showTranscript ? `
             <div class="meeting-collaboration">
             ${showWhiteboard ? `
@@ -357,15 +360,28 @@
               结束心情回合
             </button>
           ` : ''}
-          ${isHost ? `
+          ${isHost && !showDistill ? `
             <div class="meeting-room__controls">
               <button class="family-button family-button--ghost" type="button" data-meeting-room-action="prev" ${stepIndex <= 0 ? 'disabled' : ''}>上一步</button>
               <button class="family-button family-button--primary" type="button" data-meeting-room-action="next" ${advance.ok ? '' : 'disabled'}>下一步</button>
             </div>
             ${!advance.ok && advance.reason ? `<p class="meeting-room__gate">${advance.reason}</p>` : ''}
-          ` : `<p class="meeting-room__host">当前由 ${memberLabel(host)} 主持</p>`}
+          ` : !isHost && !showDistill ? `<p class="meeting-room__host">当前由 ${memberLabel(host)} 主持</p>` : ''}
         </div>
       `;
+
+      const distillPanel = container.querySelector('[data-distill-panel]');
+      if (distillPanel && distill) {
+        transcript?.stop?.();
+        distill.render(distillPanel, meeting, {
+          isHost,
+          onSave: (insights) => {
+            const distilledMeeting = { ...meeting, insights };
+            saveMeeting(engine.next(distilledMeeting));
+          },
+        });
+        return;
+      }
 
       const transcriptPanel = container.querySelector('[data-transcript-panel]');
       if (transcriptPanel) bindTranscriptPanel(transcriptPanel, meeting);

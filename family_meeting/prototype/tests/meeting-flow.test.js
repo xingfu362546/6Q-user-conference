@@ -9,6 +9,7 @@ function makeHarness(initialState, now = 1720000000000) {
   const transcriptStarts = [];
   const whiteboardMounts = [];
   const whiteboardSnapshots = [];
+  const distillRenders = [];
   const flow = createMeetingFlow({
     meetingTypes: MeetingTypes,
     engine: MeetingEngine,
@@ -30,6 +31,11 @@ function makeHarness(initialState, now = 1720000000000) {
         meeting.whiteboard.snapshot = 'data:image/png;base64,test';
         whiteboardSnapshots.push({ canvas, meeting });
         return meeting.whiteboard.snapshot;
+      },
+    },
+    distill: {
+      render: (container, meeting, options) => {
+        distillRenders.push({ container, meeting, options });
       },
     },
     store: {
@@ -55,6 +61,7 @@ function makeHarness(initialState, now = 1720000000000) {
     transcriptStarts,
     whiteboardMounts,
     whiteboardSnapshots,
+    distillRenders,
   };
 }
 
@@ -207,6 +214,51 @@ const familyState = {
     getState().draftMeeting.whiteboard.snapshot,
     'data:image/png;base64,test',
   );
+}
+
+{
+  const activeMeeting = {
+    id: 'meeting-distill',
+    typeId: '01',
+    topicId: '01-1',
+    hostId: 'member-1',
+    memberIds: ['member-1', 'member-2'],
+    status: 'active',
+    step: 'distill',
+    moodRoundDone: true,
+    transcript: [{ id: 'line-1', text: '一起散步', tags: ['idea'] }],
+    whiteboard: { strokes: [], snapshot: 'data:image/png;base64,test' },
+    insights: null,
+  };
+  const state = {
+    ...familyState,
+    meetings: [activeMeeting],
+    draftMeeting: activeMeeting,
+    activeMeetingId: activeMeeting.id,
+  };
+  const container = {
+    innerHTML: '',
+    querySelector: (selector) => (
+      selector === '[data-distill-panel]' ? { innerHTML: '' } : null
+    ),
+    querySelectorAll: () => [],
+  };
+  const { flow, getState, distillRenders } = makeHarness(state);
+
+  flow.renderRoom(container);
+
+  assert.strictEqual(distillRenders.length, 1, 'distill 阶段应渲染四步提炼');
+  distillRenders[0].options.onSave({
+    common: ['一起散步', '少催促', '每周复盘'],
+    core: [
+      { text: '一起散步', mark: 'star', color: '#f2b84b' },
+      { text: '少催促', mark: 'heart', color: '#dc6b7a' },
+      { text: '每周复盘', mark: 'none' },
+    ],
+  });
+
+  assert.strictEqual(getState().draftMeeting.step, 'consensus');
+  assert.strictEqual(getState().draftMeeting.insights.core.length, 3);
 }
 
 console.log('meeting-flow.test.js OK');

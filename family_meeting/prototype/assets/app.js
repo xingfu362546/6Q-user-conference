@@ -183,6 +183,7 @@
       engine: root.MeetingEngine,
       transcript: root.Transcript,
       whiteboard: root.Whiteboard,
+      distill: root.Distill,
       store: root.Store,
       app,
     });
