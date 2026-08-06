@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>欢迎登录 · 6Q面谈官</title>
+  <link rel="stylesheet" href="css/portal-tokens.css" />
+  <link rel="stylesheet" href="css/portal-login.css" />
+</head>
+<body class="iv-body">
+  <div class="iv-login-page">
+    <div class="iv-login-card">
+      <p class="iv-login-brand">6Q 面谈官门户 · v1.0.3</p>
+      <h1>欢迎登录</h1>
+      <div class="iv-login-tabs" role="tablist">
+        <button type="button" class="is-active" data-mode="phone" role="tab">手机登录</button>
+        <button type="button" data-mode="email" role="tab">邮箱登录</button>
+      </div>
+
+      <form id="loginForm" autocomplete="on">
+        <div id="phoneField" class="iv-field">
+          <span class="iv-field__icon" aria-hidden="true">📱</span>
+          <span class="iv-field__prefix">+86 ▾</span>
+          <input id="phoneInput" type="tel" name="phone" placeholder="请输入手机号" inputmode="numeric" />
+        </div>
+        <div id="emailField" class="iv-field" hidden>
+          <span class="iv-field__icon" aria-hidden="true">✉</span>
+          <input id="emailInput" type="email" name="email" placeholder="请输入邮箱" />
+        </div>
+        <div class="iv-field">
+          <span class="iv-field__icon" aria-hidden="true">🔒</span>
+          <input id="passwordInput" type="password" name="password" placeholder="请输入密码" />
+          <button type="button" class="iv-field__eye" id="togglePwd" aria-label="显示密码">👁</button>
+        </div>
+        <div class="iv-captcha-row">
+          <div class="iv-field">
+            <input id="captchaInput" type="text" name="captcha" placeholder="请输入验证码" autocomplete="off" />
+          </div>
+          <div class="iv-captcha-box" id="captchaBox" title="点击刷新" role="button" tabindex="0"></div>
+        </div>
+        <p class="iv-login-error" id="loginError" aria-live="polite"></p>
+        <button type="submit" class="iv-btn-login">登录</button>
+      </form>
+
+      <p class="iv-login-hint">
+        原型账号：手机 <code>13800001111</code> / 邮箱 <code>interviewer@6q.test</code> /
+        无会务 <code>13900002222</code>；密码均为 <code>Passw0rd!</code>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/auth-mock.js"></script>
+  <script src="js/captcha-mock.js"></script>
+  <script>
+    (function () {
+      var mode = "phone";
+      var tabs = document.querySelectorAll(".iv-login-tabs button");
+      var phoneField = document.getElementById("phoneField");
+      var emailField = document.getElementById("emailField");
+      var captchaBox = document.getElementById("captchaBox");
+      var err = document.getElementById("loginError");
+      var pwd = document.getElementById("passwordInput");
+
+      function paintCaptcha() {
+        var c = InterviewerCaptcha.refresh();
+        captchaBox.innerHTML = c.displayHtml;
+      }
+
+      tabs.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          mode = btn.getAttribute("data-mode");
+          tabs.forEach(function (b) {
+            b.classList.toggle("is-active", b === btn);
+          });
+          phoneField.hidden = mode !== "phone";
+          emailField.hidden = mode !== "email";
+          err.textContent = "";
+        });
+      });
+
+      captchaBox.addEventListener("click", paintCaptcha);
+      captchaBox.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          paintCaptcha();
+        }
+      });
+
+      document.getElementById("togglePwd").addEventListener("click", function () {
+        pwd.type = pwd.type === "password" ? "text" : "password";
+      });
+
+      document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        err.textContent = "";
+        var account =
+          mode === "phone"
+            ? document.getElementById("phoneInput").value
+            : document.getElementById("emailInput").value;
+        try {
+          InterviewerAuth.login({
+            mode: mode,
+            account: account,
+            password: pwd.value,
+            captcha: document.getElementById("captchaInput").value,
+            expectedCaptcha: InterviewerCaptcha.getCode(),
+          });
+          location.href = "conference-select.html";
+        } catch (ex) {
+          err.textContent = ex.message || "登录失败";
+          paintCaptcha();
+        }
+      });
+
+      if (InterviewerAuth.getSession()) {
+        location.href = "conference-select.html";
+        return;
+      }
+      paintCaptcha();
+    })();
+  </script>
+</body>
+</html>

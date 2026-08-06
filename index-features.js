@@ -106,25 +106,49 @@ window.INTENT_FEATURE_SPEC = {
       body: "<p>Chip 展示本期快照命中的二级标签（一级路径作副标题）。</p><p>与「关注标签」无关：关注标签只决定是否出现在列表中。</p>",
     },
     25: {
-      title: "列表 · 跟进内容列",
-      body: "<p>取<strong>本期会务</strong>下该学员最新/汇总跟进人工原文；过长截断 + tooltip 全文。</p><p>录入入口在「会务跟进」菜单（本页与抽屉均不提供新建跟进，避免与分析视图职责混淆）。</p><p>保存跟进后会异步触发 AI，AI 列更新有延迟属正常现象。</p>",
+      title: "列表 · 跟进内容（当前会务）",
+      body: "<p><strong>v1.0.2</strong> 列名更正为「跟进内容（当前会务）」：取<strong>本期会务</strong>下该学员最新/汇总跟进人工原文；过长截断 + tooltip 全文。</p><p>跨会务历史跟进见<strong>画像档案 · 跟进记录 · 查看更多</strong>（已从意向抽屉迁出）。</p><p>录入入口在「会务跟进」菜单；保存后异步触发 AI。</p>",
     },
     26: {
       title: "列表 · AI 提炼列",
       body: "<p>独立列展示 AI <strong>短摘要</strong>；完整分析在抽屉。</p><p>AI 输入：命中标签 + 跟进原文（+ 行为摘要可选）。</p>",
     },
     27: {
-      title: "列表 · 行为摘要列",
-      body: "<p>社区 / 学习 / 视频三列：数仓聚合摘要 + tooltip。</p><p>与标签<strong>并重展示</strong>，不互相替代；能标签化的行为优先在标签平台沉淀。</p>",
+      title: "行为明细归画像档案（v1.0.2）",
+      body: "<p><strong>v1.0.2</strong>：意向分析列表<strong>不再</strong>展示社区/学习/视频/直播列。</p><p>四类明细统一在<strong>画像档案 · 近期行为明细</strong>：卡片四 Tab 各预览 5 条 +「查看更多」抽屉全量。</p><ul><li>社区：关联话题 / 内容 / 创建时间</li><li>学习：课程 / 学习次数 / 更新时间</li><li>视频：标题 / ID / 标签 / 观看时间</li><li>直播：直播团队 + 场次 / 时长 / 成交</li></ul>",
     },
     28: {
       title: "列表 · 推荐课程列（后台）",
       body: "<p>展示 AI 主推产品名 + 匹配度；详情在抽屉。</p><p>规则见课程推荐方案：产品级、不排除已报读、不可人工改排序。</p>",
     },
     29: {
-      title: "学员明细抽屉",
-      body: "<ul><li><strong>标签命中</strong>：命中标签、权重明细、意向度徽章</li><li><strong>洞察与推荐</strong>：会务跟进 + AI 提炼 + 产品推荐合并在同一 Tab，自上而下阅读</li><li><strong>360 行为</strong>：社区 / 学习 / 视频三个 Tab（只读数仓摘要）</li></ul>",
-      mermaid: "flowchart LR\n  ROW[列表行] --> DR[明细抽屉]\n  DR --> T1[标签命中]\n  DR --> T2[洞察与推荐]\n  T2 --> F[会务跟进]\n  T2 --> A[AI分析]\n  T2 --> R[产品推荐]\n  DR --> T3[社区/学习/视频]",
+      title: "学员明细抽屉（v1.0.2）",
+      body: "<ul><li><strong>标签命中</strong>：命中标签、权重明细、意向度徽章</li><li><strong>洞察与推荐</strong>：跟进内容（当前会务）+ AI + 产品推荐</li><li><strong>已迁出</strong>：历史跟进、行为四 Tab → 画像档案</li><li><strong>姓名点击</strong>：跳转画像档案页（页顶落地）</li></ul>",
+      mermaid: "flowchart LR\n  ROW[列表行] --> NAME[点姓名]\n  NAME --> PF[画像档案]\n  ROW --> DR[查看明细]\n  DR --> T1[标签命中]\n  DR --> T2[洞察与推荐]\n  PF --> B[行为四Tab]\n  PF --> F[跟进查看更多]",
+    },
+    41: {
+      title: "画像档案 · 定位（v1.0.1→v1.0.2）",
+      body: "<p>会员<strong>全局档案</strong>（member_id）；会务学员信息仅作入口上下文。</p><p>独立页打开；事实聚合 + 图表；<strong>不含</strong>商机/AI 诊断。</p>",
+    },
+    42: {
+      title: "画像档案 · 家庭组与关系图谱（v1.0.2）",
+      body: "<ul><li><strong>家庭组</strong>：家庭ID + 成员表（编号/姓名/性别/身份/手机），高亮本人。</li><li><strong>关系图谱</strong>：推荐/归属双边、仅当前生效、1跳；环形分区交互图；箭头业务方向，实线主动/虚线被动。</li><li>位置：右栏，替换原「跟进类型占比」环图。</li></ul>",
+    },
+    43: {
+      title: "画像档案 · 基础信息补齐（v1.0.2）",
+      body: "<p>对齐会员详情：身份与状态、关系人摘要（归属/推荐）、认证与人口属性、社会属性与联系。</p>",
+    },
+    44: {
+      title: "会务后台版本封版",
+      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：家庭组/关系图谱/基础信息/AI；行为与跟进归画像；意向列表精简</li><li><strong>v1.0.3</strong>（当前）：6Q 面谈官独立门户（会员登录、选进行中会务、只读意向/画像）</li></ul><p>导航：<code>6q-conference-prototype/index.html</code>；门户：<code>6q-interviewer-portal/</code></p>",
+    },
+    45: {
+      title: "画像档案 · 行为与跟进抽屉（v1.0.2）",
+      body: "<ul><li><strong>近期行为</strong>：社区/学习/视频/直播四 Tab，预览 5 条 + 查看更多全量抽屉</li><li><strong>跟进记录</strong>：卡片预览 + 查看更多抽屉（会员详情字段）</li><li>承接原意向分析中的行为明细与历史跟进</li></ul>",
+    },
+    46: {
+      title: "6Q 面谈官门户（v1.0.3）",
+      body: "<p>独立 PC 门户：会员账号登录（手机/邮箱+密码+验证码）→ 选进行中会务 → 只读意向列表/明细抽屉 → 画像（含 AI）。</p><ul><li>角色来自会务内「面谈官」赋权；看会务全部学员</li><li>不搬策略配置；无跟进入录/导出</li><li>无会务空态：「当前无正在进行中的会务」</li></ul><p>入口：<code>6q-interviewer-portal/login.html</code></p>",
     },
     30: {
       title: "搜索与导出",
@@ -242,56 +266,95 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "pc",
       name: "会务后台 PC",
-      tag: "策略 + 分析",
+      tag: "v1.0.2 · 策略+档案+分析",
       color: "#4f46e5",
       entry: "6q-conference-prototype/",
       modules: [
         {
+          name: "【版本导航】按版本追溯功能变更",
+          href: "6q-conference-prototype/index.html",
+          items: [
+            { text: "v1.0.2（当前）/ v1.0.1 / v1.0.0 模块与功能清单", notes: [44] },
+            { text: "文档：6q-conference-prototype/docs/FEATURE-CHANGELOG.md", notes: [44] },
+          ],
+        },
+        {
+          name: "面谈官门户（独立端）",
+          href: "6q-interviewer-portal/login.html",
+          items: [
+            { text: "[v1.0.3] 手机/邮箱+密码登录 + 图形验证码", notes: [46] },
+            { text: "[v1.0.3] 选择进行中会务；无会务空态", notes: [46] },
+            { text: "[v1.0.3] 只读意向列表 + 查看明细 + 画像", notes: [46, 29, 45] },
+            { text: "[v1.0.3] 不包含策略配置/跟进入录/导出", notes: [46] },
+          ],
+        },
+        {
           name: "会务工具 · 分析策略模板",
           href: "6q-conference-prototype/tools-intent-strategy-template.html",
           items: [
-            { text: "模板列表：名称、说明、关注标签数、意向度方式、更新时间", notes: [13, 14] },
-            { text: "新建 / 编辑 / 删除模板", notes: [13, 14] },
-            { text: "删除：若本期已选用二次确认；已保存快照不受影响", notes: [14, 19] },
-            { text: "权限：会务统筹配置角色", notes: [13] },
+            { text: "[v1.0.0] 模板列表：名称、说明、关注标签数、意向度方式、更新时间", notes: [13, 14] },
+            { text: "[v1.0.0] 新建 / 编辑 / 删除模板", notes: [13, 14] },
+            { text: "[v1.0.0] 删除：若本期已选用二次确认；已保存快照不受影响", notes: [14, 19] },
+            { text: "[v1.0.0] 权限：会务统筹配置角色", notes: [13] },
           ],
         },
         {
           name: "会务工具 · 编辑模板",
           href: "6q-conference-prototype/tools-intent-strategy-template-edit.html",
           items: [
-            { text: "模板名称、说明", notes: [13] },
-            { text: "① 关注标签：系统标签树多选 + 任一/全部", notes: [15, 2] },
-            { text: "② 意向度：按权重分 OR 按命中标签（二选一）", notes: [16] },
-            { text: "方式 A：高/中/低 三个分值阈值", notes: [17, 22] },
-            { text: "方式 B：高/中/低 三组标签 + 组内任一/全部", notes: [18] },
-            { text: "保存模板 → 供各期选用", notes: [13, 19] },
+            { text: "[v1.0.0] 模板名称、说明", notes: [13] },
+            { text: "[v1.0.0] ① 关注标签：系统标签树多选 + 任一/全部", notes: [15, 2] },
+            { text: "[v1.0.0] ② 意向度：按权重分 OR 按命中标签（二选一）", notes: [16] },
+            { text: "[v1.0.0] 方式 A：高/中/低 三个分值阈值", notes: [17, 22] },
+            { text: "[v1.0.0] 方式 B：高/中/低 三组标签 + 组内任一/全部", notes: [18] },
+            { text: "[v1.0.0] 保存模板 → 供各期选用", notes: [13, 19] },
           ],
         },
         {
           name: "会务详情 · 本期分析策略",
           href: "6q-conference-prototype/conference-intent-strategy.html",
           items: [
-            { text: "下拉选用分析策略模板 + 规则预览", notes: [19] },
-            { text: "复制上期策略", notes: [19] },
-            { text: "保存本期策略并重算（版本号++）", notes: [19, 32] },
-            { text: "已保存策略预览 + 高/中/低人数分布", notes: [19] },
-            { text: "跳转学员意向分析 / 管理模板", notes: [20, 21] },
+            { text: "[v1.0.0] 下拉选用分析策略模板 + 规则预览", notes: [19] },
+            { text: "[v1.0.0] 复制上期策略", notes: [19] },
+            { text: "[v1.0.0] 保存本期策略并重算（版本号++）", notes: [19, 32] },
+            { text: "[v1.0.0] 已保存策略预览 + 高/中/低人数分布", notes: [19] },
+            { text: "[v1.0.0] 跳转学员意向分析 / 管理模板", notes: [20, 21] },
+          ],
+        },
+        {
+          name: "会务详情 · 学员信息",
+          href: "6q-conference-prototype/conference-students.html",
+          items: [
+            { text: "[v1.0.1] 会务子导航启用「学员信息」", notes: [41] },
+            { text: "[v1.0.1] 操作列「画像档案」入口", notes: [41] },
+          ],
+        },
+        {
+          name: "会务详情 · 画像档案",
+          href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+          items: [
+            { text: "[v1.0.1] 三栏事实档案：系统标签 / 购课复购 / 跟进退款行为", notes: [41] },
+            { text: "[v1.0.1] 购课按课程产品计次；复购=同产品≥2；退款订单口径", notes: [41] },
+            { text: "[v1.0.1] 图表：购课条形 + 近30天行为折线（无商机诊断）", notes: [41] },
+            { text: "[v1.0.2] 家庭组：家庭ID + 成员表，高亮本人", notes: [42] },
+            { text: "[v1.0.2] 关系图谱：推荐/归属双边·1跳·当前生效·环形交互图", notes: [42] },
+            { text: "[v1.0.2] 基础信息补齐：身份状态 / 关系人 / 认证 / 社会属性", notes: [43] },
+            { text: "[v1.0.2] 社区活跃按话题名称细拆", notes: [42] },
+            { text: "[v1.0.2] 近期行为四 Tab + 查看更多抽屉（社区/学习/视频/直播）", notes: [27, 45] },
+            { text: "[v1.0.2] 跟进记录查看更多抽屉（承接历史跟进）", notes: [45] },
+            { text: "[v1.0.2] AI 分析对话小弹窗（非正式商机）", notes: [41] },
           ],
         },
         {
           name: "会务详情 · 学员意向分析",
           href: "6q-conference-prototype/conference-student-intent.html",
           items: [
-            { text: "未配置：空态引导 → 本期分析策略", notes: [20] },
-            { text: "已配置：只读策略摘要条", notes: [21] },
-            { text: "汇总 KPI：本期人数 / 关注命中 / 高意向 / 列表数", notes: [15, 17, 18] },
-            { text: "搜索：姓名 / 手机 / 会员 ID", notes: [30] },
-            { text: "列：学员、意向分、意向度、命中标签", notes: [22, 23, 24, 17, 18] },
-            { text: "列：跟进内容、AI 提炼分析", notes: [25, 26, 31] },
-            { text: "列：社区 / 学习 / 视频摘要", notes: [27] },
-            { text: "列：推荐课程（产品级）", notes: [28, 38] },
-            { text: "查看明细抽屉：标签 / 跟进 / AI / 360 / 推荐", notes: [29] },
+            { text: "[v1.0.0] 未配置空态引导；已配置只读策略摘要 + KPI", notes: [20, 21] },
+            { text: "[v1.0.0] 列：学员、意向分、意向度、命中标签、AI、推荐", notes: [22, 23, 24, 26, 28] },
+            { text: "[v1.0.2] 列名：跟进内容（当前会务）", notes: [25] },
+            { text: "[v1.0.2] 行为列/历史跟进已迁出 → 画像档案", notes: [27, 45] },
+            { text: "[v1.0.2] 查看明细仅保留：标签命中 + 洞察与推荐", notes: [29] },
+            { text: "[v1.0.2] 点击学员姓名 → 画像档案", notes: [29] },
             { text: "导出（二期占位）", notes: [30, 40] },
           ],
         },
@@ -299,9 +362,9 @@ window.INTENT_FEATURE_SPEC = {
           name: "关联 · 跟进记录（已有菜单）",
           href: "6q-conference-prototype/conference-detail-basic.html",
           items: [
-            { text: "人工录入：跟进内容、跟进标签、图片", notes: [25, 31] },
-            { text: "保存后触发 AI 异步分析", notes: [31] },
-            { text: "数据范围：仅本期会务 × 该学员", notes: [25] },
+            { text: "[v1.0.0] 人工录入：跟进内容、跟进标签、图片", notes: [25, 31] },
+            { text: "[v1.0.0] 保存后触发 AI 异步分析", notes: [31] },
+            { text: "[v1.0.0] 数据范围：仅本期会务 × 该学员", notes: [25] },
           ],
         },
       ],
@@ -378,6 +441,101 @@ window.INTENT_FEATURE_SPEC = {
     {
       title: "策略配置到出数",
       notes: [19, 15, 20],
+    },
+    {
+      title: "会务后台版本封版说明",
+      notes: [44, 46, 41, 42, 43, 45],
+    },
+  ],
+
+  /** 会务后台 PC · 按版本追溯（供根清单与原型导航对齐） */
+  conferenceVersions: [
+    {
+      id: "v103",
+      version: "v1.0.3",
+      date: "2026-08-05",
+      current: true,
+      theme: "6Q 面谈官独立门户（只读查档）",
+      href: "6q-interviewer-portal/login.html",
+      modules: [
+        {
+          name: "面谈官门户",
+          href: "6q-interviewer-portal/login.html",
+          changes: [
+            "手机/邮箱+密码登录；选进行中会务；空态文案",
+            "只读意向列表+明细抽屉；点姓名进画像（含AI）",
+            "不包含策略配置/跟进入录/导出",
+          ],
+        },
+      ],
+    },
+    {
+      id: "v102",
+      version: "v1.0.2",
+      date: "2026-08-05",
+      current: false,
+      theme: "画像档案增强 + 行为/跟进归档案；意向列表精简",
+      href: "6q-conference-prototype/index.html#v102",
+      modules: [
+        {
+          name: "学员信息 / 画像档案",
+          href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+          changes: [
+            "家庭组、关系图谱、基础信息补齐、社区话题细拆、AI 对话",
+            "近期行为四 Tab（预览5条）+ 查看更多抽屉全量",
+            "跟进记录查看更多抽屉（承接历史跟进）",
+          ],
+        },
+        {
+          name: "学员意向分析",
+          href: "6q-conference-prototype/conference-student-intent.html",
+          changes: [
+            "列表「跟进内容」→「跟进内容（当前会务）」",
+            "删除社区/学习/视频/直播列与抽屉 Tab；历史跟进迁画像",
+            "查看明细仅标签命中 + 洞察与推荐；点姓名进档案",
+          ],
+        },
+      ],
+    },
+    {
+      id: "v101",
+      version: "v1.0.1",
+      date: "2026-08-03",
+      theme: "学员画像档案首版",
+      href: "6q-conference-prototype/index.html#v101",
+      modules: [
+        {
+          name: "学员信息",
+          href: "6q-conference-prototype/conference-students.html",
+          changes: ["启用菜单", "操作列「画像档案」入口"],
+        },
+        {
+          name: "画像档案（新建）",
+          href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+          changes: [
+            "三栏事实聚合 + 系统标签",
+            "购课/复购/退款/跨会务跟进",
+            "购课条形 + 行为折线 + 跟进类型环图",
+          ],
+        },
+      ],
+    },
+    {
+      id: "v100",
+      version: "v1.0.0",
+      date: "基线",
+      theme: "意向分析与策略配置",
+      href: "6q-conference-prototype/index.html#v100",
+      modules: [
+        {
+          name: "分析策略模板 / 本期策略 / 学员意向分析",
+          href: "6q-conference-prototype/conference-student-intent.html",
+          changes: [
+            "策略模板与本期策略配置",
+            "意向列表与明细抽屉（行为仅摘要）",
+          ],
+        },
+      ],
     },
   ],
 };
