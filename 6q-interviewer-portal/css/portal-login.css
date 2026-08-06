@@ -73,6 +73,10 @@
   border: 1px solid transparent;
 }
 
+.iv-field[hidden] {
+  display: none !important;
+}
+
 .iv-field:focus-within {
   border-color: var(--iv-orange);
 }
