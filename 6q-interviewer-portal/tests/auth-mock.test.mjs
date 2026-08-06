@@ -17,24 +17,13 @@ function mem() {
 
 const auth = createAuth(mem());
 assert.equal(auth.getSession(), null);
-assert.throws(
-  () =>
-    auth.login({
-      mode: "phone",
-      account: "13800001111",
-      password: "wrong",
-      captcha: "abcd",
-      expectedCaptcha: "abcd",
-    }),
-  /密码/
-);
 
+// 原型免校验：错误密码也能进，且落到演示账号匹配的用户
 auth.login({
   mode: "phone",
   account: "13800001111",
-  password: "Passw0rd!",
-  captcha: "b7s8n",
-  expectedCaptcha: "b7s8n",
+  password: "wrong",
+  captcha: "",
 });
 assert.equal(auth.getSession().userId, "iv_demo");
 
@@ -51,23 +40,19 @@ auth.logout();
 assert.equal(auth.getSession(), null);
 assert.equal(auth.getConference(), null);
 
+// 空表单登录 → 默认演示账号
+auth.login({ mode: "phone", account: "", password: "", captcha: "" });
+assert.equal(auth.getSession().userId, "iv_demo");
+
+auth.logout();
 auth.login({
   mode: "email",
   account: "interviewer@6q.test",
-  password: "Passw0rd!",
-  captcha: "x",
-  expectedCaptcha: "x",
 });
 assert.equal(auth.getSession().userId, "iv_demo");
 
 const auth2 = createAuth(mem());
-auth2.login({
-  mode: "phone",
-  account: "13900002222",
-  password: "Passw0rd!",
-  captcha: "x",
-  expectedCaptcha: "x",
-});
+auth2.login({ mode: "phone", account: "13900002222" });
 assert.equal(auth2.getSession().userId, "iv_empty");
 
 console.log("auth-mock tests: PASS");

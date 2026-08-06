@@ -43,8 +43,8 @@
       </form>
 
       <p class="iv-login-hint">
-        原型账号：手机 <code>13800001111</code> / 邮箱 <code>interviewer@6q.test</code> /
-        无会务 <code>13900002222</code>；密码均为 <code>Passw0rd!</code>
+        原型免校验：可直接点「登录」进入演示会务。可选填手机
+        <code>13900002222</code> 体验无会务空态；正式环境需校验密码与验证码（见开发 handoff）。
       </p>
     </div>
   </div>
@@ -97,19 +97,9 @@
           mode === "phone"
             ? document.getElementById("phoneInput").value
             : document.getElementById("emailInput").value;
-        try {
-          InterviewerAuth.login({
-            mode: mode,
-            account: account,
-            password: pwd.value,
-            captcha: document.getElementById("captchaInput").value,
-            expectedCaptcha: InterviewerCaptcha.getCode(),
-          });
-          location.href = "conference-select.html";
-        } catch (ex) {
-          err.textContent = ex.message || "登录失败";
-          paintCaptcha();
-        }
+        // 原型：不做密码/验证码校验
+        InterviewerAuth.login({ mode: mode, account: account });
+        location.href = "conference-select.html";
       });
 
       if (InterviewerAuth.getSession()) {

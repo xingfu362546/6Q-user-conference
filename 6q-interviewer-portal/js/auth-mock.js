@@ -30,15 +30,20 @@
       .toLowerCase();
   }
 
-  function findUser(mode, account, password) {
+  /** 原型：仅按账号匹配，不校验密码（正式环境见 handoff） */
+  function findUserByAccount(mode, account) {
     var acc = normalizeAccount(mode, account);
+    if (!acc) return null;
     for (var i = 0; i < USERS.length; i++) {
       var u = USERS[i];
-      if (u.password !== password) continue;
       if (mode === "phone" && u.phone === acc) return u;
       if (mode === "email" && u.email && u.email.toLowerCase() === acc) return u;
     }
     return null;
+  }
+
+  function defaultDemoUser() {
+    return USERS[0];
   }
 
   function createAuth(storage) {
@@ -64,38 +69,16 @@
       KEY_SESSION: KEY_SESSION,
       KEY_CONFERENCE: KEY_CONFERENCE,
 
+      /**
+       * 原型登录：不做密码/验证码校验，便于演示。
+       * - 填了已知手机/邮箱 → 对应用户（如 139… → 无会务）
+       * - 未填或未知账号 → 默认演示面谈官 iv_demo
+       * 正式环境必须校验：见 docs/superpowers/handoff/2026-08-06-interviewer-portal-handoff.md
+       */
       login: function (opts) {
         opts = opts || {};
         var mode = opts.mode === "email" ? "email" : "phone";
-        var account = opts.account;
-        var password = opts.password;
-        var captcha = String(opts.captcha || "").trim();
-        var expected = String(opts.expectedCaptcha || "").trim();
-
-        if (!account) {
-          throw new Error(mode === "email" ? "请输入邮箱" : "请输入手机号");
-        }
-        if (!password) {
-          throw new Error("请输入密码");
-        }
-        if (!captcha) {
-          throw new Error("请输入验证码");
-        }
-        if (!expected || captcha.toLowerCase() !== expected.toLowerCase()) {
-          throw new Error("验证码错误");
-        }
-
-        var user = findUser(mode, account, password);
-        if (!user) {
-          var accNorm = normalizeAccount(mode, account);
-          var exists = USERS.some(function (u) {
-            return mode === "phone"
-              ? u.phone === accNorm
-              : u.email && u.email.toLowerCase() === accNorm;
-          });
-          if (exists) throw new Error("密码错误");
-          throw new Error("账号或密码错误");
-        }
+        var user = findUserByAccount(mode, opts.account) || defaultDemoUser();
 
         var session = {
           userId: user.userId,
