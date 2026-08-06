@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>画像档案 · 课程会务 · 6Q 原型</title>
+  <link rel="stylesheet" href="css/6q-conference.css" />
+  <link rel="stylesheet" href="css/6q-profile.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+</head>
+<body class="q-app" data-cf-page="students">
+  <header id="q-topbar-mount"></header>
+  <div class="q-body">
+    <aside id="q-sidenav-mount" class="q-sidenav"></aside>
+    <div class="q-main">
+      <nav id="q-doc-tabs-mount" class="q-doc-tabs"></nav>
+      <div class="q-breadcrumb">
+        线下课程会务 / 课程会务 /
+        <a href="conference-students.html">学员信息</a> /
+        <strong>画像档案</strong>
+      </div>
+      <div class="q-content-wrap">
+        <nav id="q-subnav-mount" class="q-subnav" aria-label="会务子菜单"></nav>
+        <main class="q-page">
+          <div class="pf-toolbar">
+            <div class="pf-toolbar__left">
+              <a class="q-btn" href="conference-students.html">← 返回学员信息</a>
+              <h1 class="pf-toolbar__title">
+                画像档案
+                <span class="pf-ver">v1.0.2</span>
+              </h1>
+              <span class="pf-toolbar__ctx" id="ctxLine">会员全局档案 · 当前会务上下文</span>
+            </div>
+            <div class="q-actions">
+              <button type="button" class="q-btn" id="pfAiOpenBtn">AI 分析对话</button>
+              <button type="button" class="q-btn" disabled title="录入走跟进菜单">发起跟进</button>
+            </div>
+          </div>
+
+          <div class="pf-layout" id="profileRoot"></div>
+          <p class="pf-note" style="margin-top:8px">
+            v1.0.2 原型：事实聚合 + 可视化。右下角「问学员」可针对该学员自然语言追问（基于本页档案 mock，非正式商机模块）。
+            <a href="index.html#v102">版本说明</a>
+          </p>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/6q-shell.js"></script>
+  <script src="js/conference-profile-data.js"></script>
+  <script src="js/conference-profile-behavior.js"></script>
+  <script src="js/conference-student-profile.js"></script>
+  <script src="js/conference-profile-ai-chat.js"></script>
+  <script>
+    (function () {
+      var btn = document.getElementById("pfAiOpenBtn");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        var fab = document.getElementById("pfAiFab");
+        if (fab) fab.click();
+      });
+    })();
+  </script>
+</body>
+</html>

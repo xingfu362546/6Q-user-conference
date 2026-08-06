@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学员信息 · 课程会务 · 6Q 原型</title>
+  <link rel="stylesheet" href="css/6q-conference.css" />
+  <link rel="stylesheet" href="css/6q-profile.css" />
+</head>
+<body class="q-app" data-cf-page="students">
+  <header id="q-topbar-mount"></header>
+  <div class="q-body">
+    <aside id="q-sidenav-mount" class="q-sidenav"></aside>
+    <div class="q-main">
+      <nav id="q-doc-tabs-mount" class="q-doc-tabs"></nav>
+      <div class="q-breadcrumb">线下课程会务 / 课程会务 / <strong>详情</strong></div>
+      <div class="q-content-wrap">
+        <nav id="q-subnav-mount" class="q-subnav" aria-label="会务子菜单"></nav>
+        <main class="q-page">
+          <div class="q-page-head">
+            <div>
+              <h1 class="q-page-head__title">
+                学员信息
+                <span class="pf-ver">v1.0.2</span>
+              </h1>
+              <p class="q-page-head__meta">第12551期 · 画像档案入口（v1.0.1 起）· 当前封版 v1.0.2 · <a href="index.html#v102">版本清单</a></p>
+            </div>
+          </div>
+
+          <section class="q-card">
+            <div class="q-card__body">
+              <form class="st-filter" onsubmit="return false">
+                <div class="st-field">
+                  <label>签到号</label>
+                  <input type="search" id="fCheckin" placeholder="请输入" />
+                </div>
+                <div class="st-field">
+                  <label>小组名称</label>
+                  <input type="search" id="fGroup" placeholder="请输入" />
+                </div>
+                <div class="st-field">
+                  <label>6Q姓名</label>
+                  <input type="search" id="fName" placeholder="请输入" />
+                </div>
+                <div class="st-field">
+                  <label>真实姓名</label>
+                  <input type="search" id="fReal" placeholder="请输入" />
+                </div>
+                <div class="st-field">
+                  <label>&nbsp;</label>
+                  <div style="display:flex;gap:8px">
+                    <button type="button" class="q-btn q-btn--primary" id="btnSearch">查询</button>
+                    <button type="button" class="q-btn" id="btnReset">重置</button>
+                  </div>
+                </div>
+              </form>
+
+              <div class="st-actions">
+                <button type="button" class="q-btn">导出</button>
+                <button type="button" class="q-btn">通关导入</button>
+                <button type="button" class="q-btn">学习记录</button>
+                <button type="button" class="q-btn">进关/待通关</button>
+                <button type="button" class="q-btn">同步到签到设备</button>
+              </div>
+
+              <div class="st-table-wrap">
+                <table class="st-table">
+                  <thead>
+                    <tr>
+                      <th style="width:40px"><input type="checkbox" aria-label="全选" /></th>
+                      <th>签到号</th>
+                      <th>学员信息</th>
+                      <th>6Q状态</th>
+                      <th>性别</th>
+                      <th>通关</th>
+                      <th>签到</th>
+                      <th>学习状态</th>
+                      <th>核销状态</th>
+                      <th>联系状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/6q-shell.js"></script>
+  <script src="js/conference-profile-data.js"></script>
+  <script>
+    (function () {
+      var tbody = document.getElementById("studentTbody");
+      var Data = window.ConferenceProfileData;
+
+      function render() {
+        var checkin = document.getElementById("fCheckin").value.trim();
+        var group = document.getElementById("fGroup").value.trim();
+        var name = document.getElementById("fName").value.trim();
+        var real = document.getElementById("fReal").value.trim();
+        var rows = Data.listStudents().filter(function (s) {
+          if (checkin && String(s.checkinNo).indexOf(checkin) < 0) return false;
+          if (group && s.group.indexOf(group) < 0) return false;
+          if (name && s.name6q.indexOf(name) < 0) return false;
+          if (real && s.realName.indexOf(real) < 0) return false;
+          return true;
+        });
+        tbody.innerHTML = rows
+          .map(function (s) {
+            return (
+              "<tr>" +
+              '<td><input type="checkbox" /></td>' +
+              "<td>" +
+              s.checkinNo +
+              "</td>" +
+              '<td><div class="st-member">' +
+              '<div class="st-member__av">' +
+              s.name6q.charAt(0) +
+              "</div>" +
+              '<div class="st-member__lines">' +
+              "<div><strong>" +
+              s.name6q +
+              "</strong></div>" +
+              "<div>会员ID: " +
+              s.memberId +
+              "</div>" +
+              "<div>真实姓名: " +
+              s.realName +
+              "</div>" +
+              "<div>手机号码: " +
+              s.phone +
+              "</div>" +
+              "</div></div></td>" +
+              "<td>" +
+              s.memberStatus +
+              "</td>" +
+              "<td>" +
+              s.gender +
+              "</td>" +
+              "<td>" +
+              s.clearance +
+              "</td>" +
+              "<td>" +
+              s.checkinRatio +
+              "</td>" +
+              "<td>" +
+              s.learnStatus +
+              "</td>" +
+              "<td>" +
+              s.writeoff +
+              "</td>" +
+              "<td>" +
+              s.contactStatus +
+              "</td>" +
+              '<td><div class="st-ops">' +
+              '<a href="conference-student-profile.html?id=' +
+              encodeURIComponent(s.id) +
+              '">画像档案</a>' +
+              '<a href="#" class="pf-muted">历史会务跟进</a>' +
+              "</div></td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+      }
+
+      document.getElementById("btnSearch").addEventListener("click", render);
+      document.getElementById("btnReset").addEventListener("click", function () {
+        ["fCheckin", "fGroup", "fName", "fReal"].forEach(function (id) {
+          document.getElementById(id).value = "";
+        });
+        render();
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>
