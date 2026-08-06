@@ -9,6 +9,46 @@
   var TAG_TREE = window.INTENT_TAG_TREE || [];
   var TAG_FLAT = window.INTENT_TAG_FLAT || [];
 
+  /** 短视频池（对齐图3），观看时间按学员模拟 */
+  var VIDEO_POOL = [
+    {
+      title: "【教育方法】《全脑教养法》",
+      id: "DSP2505231442293127",
+      tags: "亲子教育、本周精选",
+    },
+    {
+      title: "【内驱力】厌学的发展过程，如何识别早期信号",
+      id: "DSP2409121120304699",
+      tags: "亲子教育、厌学、情绪",
+    },
+    {
+      title: "【学习】如何协助孩子提升学习专注力",
+      id: "DSP2506161411459966",
+      tags: "本周精选、学习分享",
+    },
+    {
+      title: "【道歉】智慧的父母会如何道歉",
+      id: "DSP250609150244487",
+      tags: "亲子教育、亲子关系",
+    },
+    {
+      title: "【学习成长】和父母关系好是孩子最大的底气",
+      id: "DSP2409111959219947",
+      tags: "学习成长、自我成长",
+    },
+  ];
+
+  function withWatchTimes(times) {
+    return VIDEO_POOL.map(function (v, i) {
+      return {
+        title: v.title,
+        id: v.id,
+        tags: v.tags,
+        watchedAt: times[i] || times[times.length - 1] || "—",
+      };
+    });
+  }
+
   var STUDENTS = [
     {
       id: "m10001",
@@ -20,10 +60,78 @@
         content: "学员今天找我了解了《如何说孩子》进阶班，希望开课前电话沟通，预算在 8k 左右。",
         time: "2025-04-02",
       },
-      ai: { score: 22, summary: "意向明确，匹配本期亲子课程", full: "结合亲子偏好、近期消费高与跟进内容：学员主动咨询进阶班并给出预算，建议优先安排会销席位。" },
-      community: "发帖：孩子沟通技巧求推荐",
-      learn: "近年 3 门 · 《情绪管理入门》",
-      video: "亲子类 Top · 《正面管教片段》",
+      ai: {
+        score: 22,
+        summary: "意向明确，匹配本期亲子课程",
+        full: "结合亲子偏好、近期消费高与跟进内容：学员主动咨询进阶班并给出预算，建议优先安排会销席位。",
+      },
+      communityRecords: [
+        {
+          topic: "人人分享6Q征集活动",
+          content: "6Q之爱自己是第一步",
+          time: "2026-08-04 11:11:55",
+        },
+        {
+          topic: "人人分享6Q征集活动",
+          content: "今日小红书打卡",
+          time: "2026-07-29 22:11:25",
+        },
+        {
+          topic: "人人分享6Q征集活动",
+          content: "你真的会接孩子的话吗",
+          time: "2026-07-28 13:41:30",
+        },
+        {
+          topic: "6Q雪山探索",
+          content: "雪山1",
+          time: "2026-06-29 19:46:02",
+        },
+      ],
+      learnRecords: [
+        {
+          course: "《高EQ智慧父母》(一阶)",
+          count: 8,
+          updatedAt: "2026-07-30 21:12:08",
+        },
+        {
+          course: "有效沟通之如何听（主题沙龙）",
+          count: 3,
+          updatedAt: "2026-07-18 19:40:22",
+        },
+        {
+          course: "6Q创意沙龙",
+          count: 2,
+          updatedAt: "2026-06-22 15:08:11",
+        },
+        {
+          course: "孩子作业拖拉怎么办（主题沙龙）",
+          count: 1,
+          updatedAt: "2026-05-09 10:26:44",
+        },
+      ],
+      videoRecords: withWatchTimes([
+        "2026-08-03 21:18:06",
+        "2026-08-01 12:05:33",
+        "2026-07-28 20:44:10",
+        "2026-07-20 09:12:51",
+        "2026-07-11 22:30:18",
+      ]),
+      liveRecords: [
+        {
+          team: "广州亲子晚间场",
+          sessions: 3,
+          liveDuration: "02:18:40",
+          replayDuration: "00:45:12",
+          amount: 8600,
+        },
+        {
+          team: "高EQ答疑直播间",
+          sessions: 1,
+          liveDuration: "00:52:06",
+          replayDuration: "00:00:00",
+          amount: 0,
+        },
+      ],
     },
     {
       id: "m10002",
@@ -35,10 +143,43 @@
         content: "电话沟通提到价格敏感，希望了解分期与优惠政策，暂未承诺到课。",
         time: "2025-04-01",
       },
-      ai: { score: 14, summary: "有需求但价格敏感", full: "标签显示亲子与消费潜力；跟进强调分期诉求，建议推送优惠方案后再判高意向。" },
-      community: "近 7 天无发帖",
-      learn: "近年 1 门",
-      video: "教育类 · 《亲子沟通》",
+      ai: {
+        score: 14,
+        summary: "有需求但价格敏感",
+        full: "标签显示亲子与消费潜力；跟进强调分期诉求，建议推送优惠方案后再判高意向。",
+      },
+      communityRecords: [
+        {
+          topic: "人人分享6Q征集活动",
+          content: "多指责孩子也是在指责小时候的自己",
+          time: "2026-07-28 13:40:36",
+        },
+      ],
+      learnRecords: [
+        {
+          course: "《如何说孩子才会听》基础班",
+          count: 2,
+          updatedAt: "2026-07-12 18:20:01",
+        },
+      ],
+      videoRecords: withWatchTimes([
+        "2026-07-30 19:08:22",
+        "2026-07-25 11:40:05",
+        "2026-07-19 16:22:48",
+        "—",
+        "—",
+      ]).filter(function (v) {
+        return v.watchedAt !== "—";
+      }),
+      liveRecords: [
+        {
+          team: "广州亲子晚间场",
+          sessions: 1,
+          liveDuration: "00:36:20",
+          replayDuration: "01:02:00",
+          amount: 0,
+        },
+      ],
     },
     {
       id: "m10003",
@@ -46,10 +187,56 @@
       phone: "136****0091",
       hits: ["tag_4402", "tag_6604"],
       follow: { tag: "—", content: "—", time: "—" },
-      ai: { score: 8, summary: "行为标签尚可，缺跟进", full: "命中课程浏览与高价值分层，暂无会务跟进记录，AI 分偏低；建议补跟进后重新分析。" },
-      community: "评论：会务场地咨询",
-      learn: "近年 5 门",
-      video: "家庭关系 · 《夫妻沟通》",
+      ai: {
+        score: 8,
+        summary: "行为标签尚可，缺跟进",
+        full: "命中课程浏览与高价值分层，暂无会务跟进记录，AI 分偏低；建议补跟进后重新分析。",
+      },
+      communityRecords: [
+        {
+          topic: "人人分享6Q征集活动",
+          content: "有个小练习请已掌握倾听的家长试试",
+          time: "2026-07-23 09:46:32",
+        },
+        {
+          topic: "会务通知",
+          content: "咨询本场次停车与签到时间",
+          time: "2026-07-15 08:12:09",
+        },
+      ],
+      learnRecords: [
+        {
+          course: "《高EQ智慧父母》(一阶)",
+          count: 5,
+          updatedAt: "2026-07-26 14:11:33",
+        },
+        {
+          course: "有效沟通之如何听（主题沙龙）",
+          count: 4,
+          updatedAt: "2026-07-08 20:05:17",
+        },
+        {
+          course: "6Q创意沙龙",
+          count: 1,
+          updatedAt: "2026-04-16 09:48:52",
+        },
+      ],
+      videoRecords: withWatchTimes([
+        "2026-08-02 07:55:40",
+        "2026-07-29 23:10:12",
+        "2026-07-21 13:28:46",
+        "2026-07-10 18:01:03",
+        "2026-06-30 21:44:29",
+      ]),
+      liveRecords: [
+        {
+          team: "家庭关系专题直播",
+          sessions: 2,
+          liveDuration: "01:05:33",
+          replayDuration: "00:20:00",
+          amount: 0,
+        },
+      ],
     },
     {
       id: "m10004",
@@ -61,10 +248,53 @@
         content: "已添加企微，约定本周试听线上课，对导师风格比较在意。",
         time: "2025-04-03",
       },
-      ai: { score: 18, summary: "跟进积极，待试听转化", full: "社区活跃+跟进显示已建联并约试听；标签单一，需试听结果提升意向分。" },
-      community: "发帖：分享学习心得",
-      learn: "近年 2 门",
-      video: "个人成长",
+      ai: {
+        score: 18,
+        summary: "跟进积极，待试听转化",
+        full: "社区活跃+跟进显示已建联并约试听；标签单一，需试听结果提升意向分。",
+      },
+      communityRecords: [
+        {
+          topic: "人人分享6Q征集活动",
+          content: "开启小红书公域分享6Q",
+          time: "2026-07-22 22:41:43",
+        },
+        {
+          topic: "人人分享6Q征集活动",
+          content: "分享试听后的三点收获",
+          time: "2026-07-20 16:08:11",
+        },
+      ],
+      learnRecords: [
+        {
+          course: "孩子作业拖拉怎么办（主题沙龙）",
+          count: 3,
+          updatedAt: "2026-07-27 11:33:20",
+        },
+        {
+          course: "6Q创意沙龙",
+          count: 1,
+          updatedAt: "2026-06-01 19:22:07",
+        },
+      ],
+      videoRecords: withWatchTimes([
+        "2026-08-03 08:20:15",
+        "2026-07-31 22:48:09",
+        "—",
+        "2026-07-18 14:06:44",
+        "—",
+      ]).filter(function (v) {
+        return v.watchedAt !== "—";
+      }),
+      liveRecords: [
+        {
+          team: "高EQ答疑直播间",
+          sessions: 2,
+          liveDuration: "01:40:00",
+          replayDuration: "00:15:30",
+          amount: 300,
+        },
+      ],
     },
     {
       id: "m10005",
@@ -76,10 +306,88 @@
         content: "明确要买本期配套课程包，需确认席位与发票抬头，希望当天签约。",
         time: "2025-04-04",
       },
-      ai: { score: 25, summary: "强意向，建议立即锁席", full: "多标签命中+跟进确认购课意向；AI 分顶格，建议会务优先接待并推进签约。" },
-      community: "发帖：咨询套餐优惠",
-      learn: "近年 6 门 · 《如何说孩子》",
-      video: "亲子类 · 累计>120分钟",
+      ai: {
+        score: 25,
+        summary: "强意向，建议立即锁席",
+        full: "多标签命中+跟进确认购课意向；AI 分顶格，建议会务优先接待并推进签约。",
+      },
+      communityRecords: [
+        {
+          topic: "人人分享6Q征集活动",
+          content: "咨询套餐优惠与发票抬头怎么开",
+          time: "2026-08-02 10:15:28",
+        },
+        {
+          topic: "人人分享6Q征集活动",
+          content: "今日小红书打卡",
+          time: "2026-07-29 22:11:25",
+        },
+        {
+          topic: "人人分享6Q征集活动",
+          content: "你真的会接孩子的话吗",
+          time: "2026-07-28 13:41:30",
+        },
+        {
+          topic: "人人分享6Q征集活动",
+          content: "多指责孩子也是在指责小时候的自己",
+          time: "2026-07-28 13:40:36",
+        },
+        {
+          topic: "6Q雪山探索",
+          content: "雪山1",
+          time: "2026-06-29 19:46:02",
+        },
+      ],
+      learnRecords: [
+        {
+          course: "《高EQ智慧父母》(一阶)",
+          count: 8,
+          updatedAt: "2026-08-01 20:16:40",
+        },
+        {
+          course: "《如何说孩子才会听》进阶班",
+          count: 4,
+          updatedAt: "2026-07-29 09:50:12",
+        },
+        {
+          course: "有效沟通之如何听（主题沙龙）",
+          count: 3,
+          updatedAt: "2026-07-14 17:28:55",
+        },
+        {
+          course: "6Q创意沙龙",
+          count: 2,
+          updatedAt: "2026-06-22 15:08:11",
+        },
+        {
+          course: "孩子作业拖拉怎么办（主题沙龙）",
+          count: 1,
+          updatedAt: "2026-05-09 10:26:44",
+        },
+      ],
+      videoRecords: withWatchTimes([
+        "2026-08-04 07:12:33",
+        "2026-08-03 23:05:18",
+        "2026-08-02 19:40:07",
+        "2026-07-31 12:18:44",
+        "2026-07-28 08:55:02",
+      ]),
+      liveRecords: [
+        {
+          team: "广州亲子晚间场",
+          sessions: 4,
+          liveDuration: "03:42:15",
+          replayDuration: "01:10:00",
+          amount: 13600,
+        },
+        {
+          team: "高EQ答疑直播间",
+          sessions: 2,
+          liveDuration: "01:28:50",
+          replayDuration: "00:33:20",
+          amount: 0,
+        },
+      ],
     },
     {
       id: "m10006",
@@ -87,12 +395,399 @@
       phone: "158****3344",
       hits: ["tag_2201"],
       follow: { tag: "—", content: "—", time: "—" },
-      ai: { score: 3, summary: "新学员，数据不足", full: "仅基础渠道标签，无跟进与行为沉淀，暂维持低分观察。" },
-      community: "—",
-      learn: "新学员",
-      video: "—",
+      ai: {
+        score: 3,
+        summary: "新学员，数据不足",
+        full: "仅基础渠道标签，无跟进与行为沉淀，暂维持低分观察。",
+      },
+      communityRecords: [],
+      learnRecords: [],
+      videoRecords: [],
+      liveRecords: [],
     },
   ];
+
+  /** 历史跟进：对齐会员详情·跟进记录（跨会务） */
+  var HISTORY_FOLLOWS = {
+    m10001: [
+      {
+        type: "会务跟进",
+        checkinNo: "12",
+        group: "2组",
+        identity: "会员",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["有意向用户"],
+        content: "了解进阶班，预算约 8k，约定开课前电话沟通。",
+        follower: "罗欢（总统筹）",
+        conference: "第12551期《如何说孩子才会听》（广州站）",
+        visible: "是",
+        time: "2026-08-03 14:20:00",
+      },
+      {
+        type: "天使跟进",
+        checkinNo: "88",
+        group: "1组",
+        identity: "会员、天使（二级天使）",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["已报读二级天使"],
+        content: "已报读二级天使，持续跟进成长路径。",
+        follower: "邓琪姗",
+        conference: "第1469期《高EQ智慧父母》一阶（广州站）",
+        visible: "是",
+        time: "2026-07-26 18:08:40",
+      },
+      {
+        type: "会务跟进",
+        checkinNo: "88",
+        group: "1组",
+        identity: "会员",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["待回访"],
+        content: "现场确认复训资格与签到信息。",
+        follower: "刘壮（面谈岗）",
+        conference: "第1469期《高EQ智慧父母》一阶（广州站）",
+        visible: "是",
+        time: "2026-07-10 10:12:00",
+      },
+    ],
+    m10002: [
+      {
+        type: "会务跟进",
+        checkinNo: "21",
+        group: "3组",
+        identity: "会员",
+        angelId: "VFWV2R",
+        angelName: "洪振午",
+        angelPhone: "13725117757",
+        tags: ["待回访"],
+        content: "价格敏感，希望了解分期与优惠政策，暂未承诺到课。",
+        follower: "刘佳（查询官）",
+        conference: "第12551期《如何说孩子才会听》（广州站）",
+        visible: "是",
+        time: "2026-08-01 16:40:12",
+      },
+      {
+        type: "天使跟进",
+        checkinNo: "45",
+        group: "2组",
+        identity: "会员",
+        angelId: "VFWV2R",
+        angelName: "洪振午",
+        angelPhone: "13725117757",
+        tags: ["有意向用户"],
+        content: "个人对亲子沟通课感兴趣，需再确认时间。",
+        follower: "洪振午",
+        conference: "第1402期《如何说孩子才会听》（深圳站）",
+        visible: "是",
+        time: "2026-06-18 11:22:08",
+      },
+    ],
+    m10003: [
+      {
+        type: "会务跟进",
+        checkinNo: "501",
+        group: "1组",
+        identity: "会员、天使（三级天使）",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["已报读三级天使"],
+        content: "已报读三级天使",
+        follower: "刘壮（面谈岗）",
+        conference: "第1469期《高EQ智慧父母》一阶（广州站）",
+        visible: "是",
+        time: "2026-07-26 18:08:40",
+      },
+    ],
+    m10004: [
+      {
+        type: "会务跟进",
+        checkinNo: "36",
+        group: "4组",
+        identity: "会员",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["有意向用户"],
+        content: "已添加企微，约定本周试听线上课，对导师风格比较在意。",
+        follower: "邓灿媚",
+        conference: "第12551期《如何说孩子才会听》（广州站）",
+        visible: "是",
+        time: "2026-08-03 19:05:00",
+      },
+      {
+        type: "天使跟进",
+        checkinNo: "36",
+        group: "4组",
+        identity: "会员",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["二级天使"],
+        content: "试听后反馈良好，继续跟进转化。",
+        follower: "邓琪姗",
+        conference: "第1469期《高EQ智慧父母》一阶（广州站）",
+        visible: "是",
+        time: "2026-07-20 15:30:22",
+      },
+    ],
+    m10005: [
+      {
+        type: "会务跟进",
+        checkinNo: "3",
+        group: "1组",
+        identity: "会员、天使（三级天使）",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["高意向", "已报读三级天使"],
+        content: "明确要买本期配套课程包，需确认席位与发票抬头，希望当天签约。",
+        follower: "罗欢（总统筹）",
+        conference: "第12551期《如何说孩子才会听》（广州站）",
+        visible: "是",
+        time: "2026-08-04 09:18:30",
+      },
+      {
+        type: "会务跟进",
+        checkinNo: "501",
+        group: "1组",
+        identity: "会员、天使（三级天使）",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["已报读三级天使"],
+        content: "已报读三级天使",
+        follower: "刘壮（面谈岗）",
+        conference: "第1469期《高EQ智慧父母》一阶（广州站）",
+        visible: "是",
+        time: "2026-07-26 18:08:40",
+      },
+      {
+        type: "天使跟进",
+        checkinNo: "501",
+        group: "1组",
+        identity: "会员、天使（三级天使）",
+        angelId: "RCJR2W",
+        angelName: "邓琪姗",
+        angelPhone: "18022316536",
+        tags: ["有意向用户"],
+        content: "个人对三级天使感兴趣，我校老师先生，也是老师。",
+        follower: "邓琪姗",
+        conference: "第1469期《高EQ智慧父母》一阶（广州站）",
+        visible: "是",
+        time: "2026-07-26 18:06:12",
+      },
+    ],
+    m10006: [],
+  };
+
+  STUDENTS.forEach(function (s) {
+    s.historyFollows = HISTORY_FOLLOWS[s.id] || [];
+  });
+
+  function summarizeCommunity(s) {
+    var list = s.communityRecords || [];
+    if (!list.length) return "—";
+    return list.length + " 条想法 · " + list[0].topic;
+  }
+
+  function summarizeLearn(s) {
+    var list = s.learnRecords || [];
+    if (!list.length) return "新学员";
+    return list.length + " 门 · " + list[0].course;
+  }
+
+  function summarizeVideo(s) {
+    var list = s.videoRecords || [];
+    if (!list.length) return "—";
+    return list.length + " 条 · " + truncate(list[0].title, 14);
+  }
+
+  function summarizeLive(s) {
+    var list = s.liveRecords || [];
+    if (!list.length) return "—";
+    var sessions = list.reduce(function (n, r) {
+      return n + (r.sessions || 0);
+    }, 0);
+    return sessions + " 场 · " + list[0].team;
+  }
+
+  function renderBehaviorTable(headers, rowsHtml, emptyText) {
+    if (!rowsHtml) {
+      return '<p class="intent-empty">' + escapeHtml(emptyText || "暂无记录") + "</p>";
+    }
+    return (
+      '<div class="intent-behavior-note">按会员维度取数 · 原型展示最近记录</div>' +
+      '<div class="intent-behavior-table-wrap"><table class="intent-behavior-table"><thead><tr>' +
+      headers
+        .map(function (h) {
+          return "<th>" + escapeHtml(h) + "</th>";
+        })
+        .join("") +
+      "</tr></thead><tbody>" +
+      rowsHtml +
+      "</tbody></table></div>"
+    );
+  }
+
+  function renderCommunityPanel(s) {
+    var rows = (s.communityRecords || [])
+      .map(function (r, i) {
+        return (
+          "<tr><td>" +
+          (i + 1) +
+          "</td><td>" +
+          escapeHtml(r.topic) +
+          "</td><td>" +
+          escapeHtml(r.content) +
+          "</td><td>" +
+          escapeHtml(r.time) +
+          "</td></tr>"
+        );
+      })
+      .join("");
+    return renderBehaviorTable(
+      ["序号", "关联话题", "内容", "创建时间"],
+      rows,
+      "暂无社区发想法记录"
+    );
+  }
+
+  function renderLearnPanel(s) {
+    var rows = (s.learnRecords || [])
+      .map(function (r) {
+        return (
+          "<tr><td>" +
+          escapeHtml(r.course) +
+          "</td><td>" +
+          r.count +
+          "</td><td>" +
+          escapeHtml(r.updatedAt) +
+          "</td></tr>"
+        );
+      })
+      .join("");
+    return renderBehaviorTable(
+      ["课程", "学习次数", "更新时间"],
+      rows,
+      "暂无学习档案记录"
+    );
+  }
+
+  function renderVideoPanel(s) {
+    var rows = (s.videoRecords || [])
+      .map(function (r) {
+        return (
+          "<tr><td>" +
+          escapeHtml(r.title) +
+          '</td><td class="intent-mono">' +
+          escapeHtml(r.id) +
+          "</td><td>" +
+          escapeHtml(r.tags) +
+          "</td><td>" +
+          escapeHtml(r.watchedAt) +
+          "</td></tr>"
+        );
+      })
+      .join("");
+    return renderBehaviorTable(
+      ["视频标题", "ID", "标签", "观看时间"],
+      rows,
+      "暂无短视频观看记录"
+    );
+  }
+
+  function renderLivePanel(s) {
+    var rows = (s.liveRecords || [])
+      .map(function (r) {
+        return (
+          "<tr><td>" +
+          escapeHtml(r.team) +
+          "</td><td>" +
+          r.sessions +
+          "</td><td>" +
+          escapeHtml(r.liveDuration) +
+          "</td><td>" +
+          escapeHtml(r.replayDuration) +
+          "</td><td>¥ " +
+          Number(r.amount || 0).toLocaleString("zh-CN") +
+          "</td></tr>"
+        );
+      })
+      .join("");
+    return renderBehaviorTable(
+      ["直播团队", "观看场次", "直播观看累计时长", "录播观看时长", "直播间成交金额"],
+      rows,
+      "暂无直播间记录"
+    );
+  }
+
+  function renderHistoryFollowPanel(s) {
+    var rows = (s.historyFollows || [])
+      .map(function (r, i) {
+        var tags = (r.tags || [])
+          .map(function (t) {
+            return '<span class="pf-chip pf-chip--blue">' + escapeHtml(t) + "</span>";
+          })
+          .join(" ");
+        return (
+          "<tr><td>" +
+          (i + 1) +
+          '</td><td><a href="#">' +
+          escapeHtml(r.type) +
+          "</a></td><td>" +
+          escapeHtml(r.checkinNo || "—") +
+          "</td><td>" +
+          escapeHtml(r.group || "—") +
+          "</td><td>" +
+          escapeHtml(r.identity || "—") +
+          "</td><td>" +
+          escapeHtml(r.angelName || "—") +
+          '<div class="intent-cell-sub">' +
+          escapeHtml(r.angelId || "") +
+          " · " +
+          escapeHtml(r.angelPhone || "") +
+          "</div></td><td>" +
+          (tags || "—") +
+          "</td><td>" +
+          escapeHtml(r.content) +
+          "</td><td>" +
+          escapeHtml(r.follower) +
+          "</td><td>" +
+          escapeHtml(r.conference) +
+          "</td><td>" +
+          escapeHtml(r.visible || "是") +
+          "</td><td>" +
+          escapeHtml(r.time) +
+          "</td></tr>"
+        );
+      })
+      .join("");
+    return renderBehaviorTable(
+      [
+        "序号",
+        "跟进类型",
+        "签到号",
+        "小组",
+        "6Q身份",
+        "上级天使",
+        "跟进标签",
+        "跟进内容",
+        "跟进人",
+        "关联会务",
+        "是否显示",
+        "创建时间",
+      ],
+      rows,
+      "暂无历史跟进记录"
+    );
+  }
 
   var PICKER_TITLES = {
     watch: "选择关注标签",
@@ -148,6 +843,12 @@
   function renderStrategyBanner() {
     var el = document.getElementById("intent-strategy-banner");
     if (!el || !global.IntentStrategyCore) return;
+    if (global.INTENT_PORTAL_CONFIG && global.INTENT_PORTAL_CONFIG.hideStrategyLinks) {
+      el.hidden = true;
+      el.innerHTML = "";
+      return;
+    }
+    el.hidden = false;
     if (!global.IntentStrategyCore.isConferenceConfigured()) {
       el.className = "intent-strategy-banner intent-strategy-banner--empty";
       el.innerHTML =
@@ -475,9 +1176,16 @@
           grad +
           '">' +
           initial +
-          "</span><div><div class=\"intent-student__name\">" +
+          '</span><div><div class="intent-student__name"><a class="intent-student__link" href="' +
+          ((global.INTENT_PORTAL_CONFIG && global.INTENT_PORTAL_CONFIG.profilePage) ||
+            "conference-student-profile.html") +
+          "?id=" +
+          encodeURIComponent(s.id) +
+          "&name=" +
+          encodeURIComponent(s.name) +
+          '">' +
           escapeHtml(s.name) +
-          '</div><div class="intent-student__meta">' +
+          '</a></div><div class="intent-student__meta">' +
           escapeHtml(s.id) +
           " · " +
           escapeHtml(s.phone) +
@@ -509,15 +1217,6 @@
           (window.CourseRecommend
             ? window.CourseRecommend.renderTableCell(s)
             : "—") +
-          "</td>" +
-          "<td>" +
-          tipCell(truncate(s.community, 22), s.community) +
-          "</td>" +
-          "<td>" +
-          tipCell(truncate(s.learn, 22), s.learn) +
-          "</td>" +
-          "<td>" +
-          tipCell(truncate(s.video, 22), s.video) +
           "</td>" +
           '<td><button type="button" class="q-btn q-btn--link q-btn--sm" data-open-drawer="' +
           s.id +
@@ -668,7 +1367,7 @@
     return (
       '<div class="intent-drawer-stack">' +
       '<section class="intent-drawer-section">' +
-      '<h3 class="intent-drawer-section__title">会务跟进</h3>' +
+      '<h3 class="intent-drawer-section__title">跟进内容（当前会务）</h3>' +
       renderFollowBlock(s) +
       "</section>" +
       '<section class="intent-drawer-section">' +
@@ -720,11 +1419,6 @@
     if (window.CourseRecommend) {
       window.CourseRecommend.bindCopyButtons(insightEl);
     }
-
-    document.getElementById("panel-community").innerHTML =
-      "<p>" + escapeHtml(s.community) + "</p>";
-    document.getElementById("panel-learn").innerHTML = "<p>" + escapeHtml(s.learn) + "</p>";
-    document.getElementById("panel-video").innerHTML = "<p>" + escapeHtml(s.video) + "</p>";
 
     backdrop.classList.add("is-open");
     document.body.style.overflow = "hidden";

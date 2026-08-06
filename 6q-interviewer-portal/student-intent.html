@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学员意向分析 · 6Q面谈官</title>
+  <link rel="stylesheet" href="../6q-conference-prototype/css/6q-conference.css" />
+  <link rel="stylesheet" href="../6q-conference-prototype/css/6q-intent-premium.css" />
+  <link rel="stylesheet" href="css/portal-tokens.css" />
+  <link rel="stylesheet" href="css/portal-shell.css" />
+  <link rel="stylesheet" href="css/portal-intent.css" />
+</head>
+<body class="q-app intent-theme portal-app iv-body" data-cf-page="intent">
+  <header class="iv-topbar" id="portal-topbar"></header>
+
+  <div class="iv-portal-main">
+    <main class="q-page">
+      <section class="intent-hero" aria-labelledby="intent-hero-title">
+        <div class="intent-hero__inner">
+          <div>
+            <p class="intent-hero__eyebrow">6Q 面谈官 · 学员意向</p>
+            <h1 class="intent-hero__title" id="intent-hero-title">会务学员意向</h1>
+            <p class="intent-hero__sub">
+              只读查看本期学员购买意向。点击学员姓名进入画像档案。
+            </p>
+            <div class="intent-hero__meta">
+              <span class="intent-hero__pill" id="hero-cf-id">—</span>
+              <span class="intent-hero__pill" id="hero-cf-city">—</span>
+              <span class="intent-hero__pill">门户 v1.0.3</span>
+            </div>
+          </div>
+          <div class="intent-hero__actions"></div>
+        </div>
+      </section>
+
+      <div class="intent-kpi" role="group" aria-label="汇总指标">
+        <div class="intent-kpi__card">
+          <div>
+            <div class="intent-kpi__label">本期学员</div>
+            <div class="intent-kpi__value" id="stat-total">—</div>
+          </div>
+        </div>
+        <div class="intent-kpi__card">
+          <div>
+            <div class="intent-kpi__label">命中关注标签</div>
+            <div class="intent-kpi__value intent-kpi__value--accent" id="stat-watch">—</div>
+          </div>
+        </div>
+        <div class="intent-kpi__card">
+          <div>
+            <div class="intent-kpi__label">高意向学员</div>
+            <div class="intent-kpi__value" id="stat-high">—</div>
+          </div>
+        </div>
+        <div class="intent-kpi__card">
+          <div>
+            <div class="intent-kpi__label">当前列表</div>
+            <div class="intent-kpi__value" id="stat-list">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="intent-strategy-banner" class="intent-strategy-banner" role="status" hidden></div>
+
+      <p class="intent-notice">
+        本页为<strong>只读分析</strong>。跟进与 AI 分列展示；深挖行为与历史跟进请进入画像档案。
+      </p>
+
+      <div class="intent-workspace intent-workspace--analysis">
+        <section class="intent-table-panel intent-table-panel--full" aria-label="学员列表">
+          <div class="intent-table-panel__head">
+            <div>
+              <h2 class="intent-table-panel__title">本期学员意向一览</h2>
+              <p class="intent-table-panel__sub">按意向总分降序 · 点击姓名进入画像</p>
+            </div>
+            <input class="q-input intent-search" type="search" id="student-search" placeholder="搜索姓名 / 会员 ID" />
+          </div>
+          <div class="intent-table-wrap">
+            <table class="intent-table">
+              <thead>
+                <tr>
+                  <th>学员</th>
+                  <th>意向分</th>
+                  <th>意向度</th>
+                  <th class="intent-table__col-tags">命中标签</th>
+                  <th>跟进内容（当前会务）</th>
+                  <th>AI提炼分析</th>
+                  <th>推荐产品</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="student-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="q-drawer-backdrop" id="drawer-backdrop" aria-hidden="true">
+    <aside class="q-drawer" role="dialog" aria-labelledby="drawer-name">
+      <div class="q-drawer__head">
+        <div>
+          <h2 class="q-drawer__title" id="drawer-name">学员</h2>
+          <p class="q-cell-muted" id="drawer-meta" style="margin:4px 0 0"></p>
+        </div>
+        <button type="button" class="q-drawer__close" id="drawer-close" aria-label="关闭">×</button>
+      </div>
+      <div class="q-drawer__tabs" role="tablist">
+        <button type="button" class="is-active" data-tab="tags" role="tab">标签命中</button>
+        <button type="button" data-tab="insight" role="tab">洞察与推荐</button>
+      </div>
+      <div class="q-drawer__body">
+        <div class="q-drawer-panel is-active" id="panel-tags" role="tabpanel"></div>
+        <div class="q-drawer-panel" id="panel-insight" role="tabpanel"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="q-toast" id="toast" role="status"></div>
+
+  <script src="js/auth-mock.js"></script>
+  <script src="js/conference-mock.js"></script>
+  <script src="js/portal-shell.js"></script>
+  <script>
+    window.INTENT_PORTAL_CONFIG = {
+      profilePage: "student-profile.html",
+      hideStrategyLinks: true,
+    };
+    (function () {
+      if (!InterviewerAuth.requireAuth("login.html")) return;
+      if (!InterviewerAuth.requireConference("conference-select.html")) return;
+      InterviewerShell.mount({ containerSelector: "#portal-topbar", active: "intent" });
+      var c = InterviewerAuth.getConference();
+      if (c) {
+        var title = document.getElementById("intent-hero-title");
+        if (title) title.textContent = (c.periodLabel || "") + " · " + (c.title || "");
+        var idEl = document.getElementById("hero-cf-id");
+        if (idEl) idEl.textContent = c.id;
+        var cityEl = document.getElementById("hero-cf-city");
+        if (cityEl) cityEl.textContent = (c.city || "") + " · 进行中";
+      }
+    })();
+  </script>
+  <script src="../6q-conference-prototype/js/tag-catalog-tree.js"></script>
+  <script src="../6q-conference-prototype/js/intent-strategy-core.js"></script>
+  <script src="../6q-conference-app-prototype/js/course-recommend.js"></script>
+  <script src="../6q-conference-prototype/js/conference-intent.js"></script>
+</body>
+</html>

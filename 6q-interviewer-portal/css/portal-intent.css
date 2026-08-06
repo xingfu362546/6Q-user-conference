@@ -1,0 +1,50 @@
+/* 门户意向页：去运营入口，橙系微调 */
+.portal-app.intent-theme {
+  --q-primary: var(--iv-orange, #f39800);
+}
+
+.portal-app .q-sidenav,
+.portal-app #q-sidenav-mount,
+.portal-app #q-doc-tabs-mount,
+.portal-app #q-subnav-mount,
+.portal-app .q-breadcrumb {
+  display: none !important;
+}
+
+.portal-app .q-body,
+.portal-app .q-main,
+.portal-app .q-content-wrap {
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+}
+
+.portal-app .q-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+}
+
+.portal-app .intent-hero {
+  background: linear-gradient(135deg, #fff8ef, #ffffff 55%);
+  border-color: var(--iv-border, #f0d9b5);
+}
+
+.portal-app .intent-hero__actions,
+.portal-app #btn-export-mock,
+.portal-app .intent-notice a[href*="INTENT-STRATEGY"],
+.portal-app a[href*="conference-intent-strategy"],
+.portal-app a[href*="tag-list"] {
+  display: none !important;
+}
+
+.portal-app #intent-strategy-banner,
+.portal-app .intent-strategy-banner {
+  display: none !important;
+}
+
+.portal-app .intent-kpi__value--accent,
+.portal-app .intent-score {
+  color: var(--iv-orange-deep, #e85d04);
+}

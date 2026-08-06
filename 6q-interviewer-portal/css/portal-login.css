@@ -1,0 +1,188 @@
+.iv-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(243, 152, 0, 0.18), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 80%, rgba(232, 93, 4, 0.12), transparent 50%),
+    var(--iv-bg);
+}
+
+.iv-login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--iv-card);
+  border-radius: 16px;
+  padding: 36px 32px 28px;
+  box-shadow: 0 12px 40px rgba(120, 70, 0, 0.08);
+}
+
+.iv-login-card h1 {
+  margin: 0 0 20px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+.iv-login-tabs {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.iv-login-tabs button {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0 0 12px;
+  font-size: 16px;
+  color: var(--iv-muted);
+  cursor: pointer;
+  position: relative;
+  font-family: inherit;
+}
+
+.iv-login-tabs button.is-active {
+  color: var(--iv-text);
+  font-weight: 600;
+}
+
+.iv-login-tabs button.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--iv-orange);
+}
+
+.iv-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--iv-orange-input);
+  border-radius: 10px;
+  padding: 0 14px;
+  margin-bottom: 16px;
+  min-height: 52px;
+  border: 1px solid transparent;
+}
+
+.iv-field[hidden] {
+  display: none !important;
+}
+
+.iv-field:focus-within {
+  border-color: var(--iv-orange);
+}
+
+.iv-field__icon {
+  color: #c47a20;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.iv-field__prefix {
+  color: var(--iv-text);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 10px;
+  border-right: 1px solid #e8c9a0;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.iv-field input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font-size: 15px;
+  outline: none;
+  min-width: 0;
+  font-family: inherit;
+  color: var(--iv-text);
+  padding: 14px 0;
+}
+
+.iv-field__eye {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: #b07a30;
+  padding: 4px;
+  font-size: 16px;
+}
+
+.iv-captcha-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.iv-captcha-row .iv-field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.iv-captcha-box {
+  width: 120px;
+  min-height: 52px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fff8ef, #ffe8cc);
+  border: 1px dashed var(--iv-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.iv-btn-login {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: var(--iv-orange);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 8px;
+}
+
+.iv-btn-login:hover {
+  background: var(--iv-orange-deep);
+}
+
+.iv-login-error {
+  color: var(--iv-danger);
+  font-size: 13px;
+  min-height: 20px;
+  margin: 0 0 8px;
+}
+
+.iv-login-hint {
+  margin: 20px 0 0;
+  font-size: 12px;
+  color: var(--iv-muted);
+  line-height: 1.6;
+}
+
+.iv-login-brand {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--iv-orange-deep);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}

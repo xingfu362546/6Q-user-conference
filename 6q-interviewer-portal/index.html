@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6Q面谈官门户</title>
+  <script src="js/auth-mock.js"></script>
+  <script>
+    (function () {
+      var s = InterviewerAuth.getSession();
+      if (!s) {
+        location.replace("login.html");
+        return;
+      }
+      var c = InterviewerAuth.getConference();
+      if (!c) {
+        location.replace("conference-select.html");
+        return;
+      }
+      location.replace("student-intent.html");
+    })();
+  </script>
+</head>
+<body></body>
+</html>

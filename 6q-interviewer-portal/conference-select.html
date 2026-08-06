@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>选择会务 · 6Q面谈官</title>
+  <link rel="stylesheet" href="css/portal-tokens.css" />
+  <link rel="stylesheet" href="css/portal-shell.css" />
+</head>
+<body class="iv-body">
+  <header class="iv-topbar" id="portal-topbar"></header>
+  <main class="iv-page">
+    <h1 class="iv-select-title">选择会务</h1>
+    <p class="iv-select-sub">仅展示进行中且您具备面谈官角色的会务</p>
+    <div id="confRoot"></div>
+  </main>
+
+  <script src="js/auth-mock.js"></script>
+  <script src="js/conference-mock.js"></script>
+  <script src="js/portal-shell.js"></script>
+  <script>
+    (function () {
+      var session = InterviewerAuth.requireAuth("login.html");
+      if (!session) return;
+      InterviewerShell.mount({ containerSelector: "#portal-topbar", active: "select" });
+
+      var list = InterviewerConferences.listForUser(session.userId);
+      var root = document.getElementById("confRoot");
+
+      if (!list.length) {
+        root.innerHTML =
+          '<div class="iv-empty">' +
+          '<p class="iv-empty__main">当前无正在进行中的会务</p>' +
+          '<p class="iv-empty__sub">请联系会务运营确认面谈官权限</p>' +
+          "</div>";
+        return;
+      }
+
+      var grid = document.createElement("div");
+      grid.className = "iv-conf-grid";
+      list.forEach(function (c) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "iv-conf-card";
+        btn.innerHTML =
+          '<p class="iv-conf-card__period">' +
+          escapeHtml(c.periodLabel) +
+          " · 进行中</p>" +
+          '<p class="iv-conf-card__title">' +
+          escapeHtml(c.title) +
+          "</p>" +
+          '<p class="iv-conf-card__meta">' +
+          escapeHtml(c.city) +
+          " · " +
+          escapeHtml(c.timeRange || "") +
+          "</p>";
+        btn.addEventListener("click", function () {
+          InterviewerAuth.setConference(c);
+          location.href = "student-intent.html";
+        });
+        grid.appendChild(btn);
+      });
+      root.appendChild(grid);
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+    })();
+  </script>
+</body>
+</html>

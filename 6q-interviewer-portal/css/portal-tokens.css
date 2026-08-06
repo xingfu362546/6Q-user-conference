@@ -1,0 +1,26 @@
+:root {
+  --iv-orange: #f39800;
+  --iv-orange-deep: #e85d04;
+  --iv-orange-soft: #fff4e6;
+  --iv-orange-input: #fff0e0;
+  --iv-text: #2b2b2b;
+  --iv-muted: #8c8c8c;
+  --iv-border: #f0d9b5;
+  --iv-bg: #f7f4f0;
+  --iv-card: #ffffff;
+  --iv-danger: #cf1322;
+  --iv-radius: 12px;
+  --iv-font: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.iv-body {
+  margin: 0;
+  font-family: var(--iv-font);
+  color: var(--iv-text);
+  background: var(--iv-bg);
+  min-height: 100vh;
+}
