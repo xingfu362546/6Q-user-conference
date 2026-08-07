@@ -255,9 +255,9 @@
 <body>
   <header class="top">
     <div class="top__inner">
-      <p class="top__eyebrow">Feature Spec · 面谈�?v1.0.3 · 会务后台 · APP · 标签 v1.1</p>
+      <p class="top__eyebrow">Feature Spec · 面谈官 v1.0.3 · 会务后台 · APP · 标签 v1.1</p>
       <h1>课程会务 · 学员意向分析 · 功能清单</h1>
-      <p>四端平级折叠（默认收起）：面谈官门户 �?会务 APP �?会务后台 �?标签系统。全局结构/流程在上方单独展示；版本区默认只展开当前封版�?/p>
+      <p>四端平级折叠（默认收起）：面谈官门户 → 会务 APP → 会务后台 → 标签系统。全局结构/流程在上方单独展示；版本区默认只展开当前封版。</p>
       <nav class="top__links" id="jump-nav"></nav>
     </div>
   </header>
@@ -265,27 +265,27 @@
   <div class="container">
     <section class="arch" id="architecture">
       <div class="arch__head">
-        <h2>全局 · 系统结构�?/h2>
-        <p>跨端总览与边界。各端专属图在下方对应产品折叠内打开�?/p>
+        <h2>全局 · 系统结构图</h2>
+        <p>跨端总览与边界。各端专属图在下方对应产品折叠内打开。</p>
       </div>
       <div class="arch-list" id="arch-mount"></div>
     </section>
 
     <section class="flows" id="global-flows-section">
-      <h2>全局流程（点击展开说明�?/h2>
+      <h2>全局流程（点击展开说明）</h2>
       <div class="flows__btns" id="global-flows"></div>
     </section>
 
     <section class="flows" id="conference-versions">
       <h2>功能清单（版本一览）</h2>
-      <p style="font-size:12px;color:#64748b;margin:0 0 12px">默认展开当前封版；旧版本点击展开。完整导航：<a href="6q-conference-prototype/versions.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 �?/a></p>
+      <p style="font-size:12px;color:#64748b;margin:0 0 12px">默认展开当前封版；旧版本点击展开。完整导航：<a href="6q-conference-prototype/versions.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
       <div id="versions-mount"></div>
     </section>
 
     <div id="terminals-mount"></div>
   </div>
 
-  <p class="foot">文档�?code>docs/course-student-intent/CONFIRMATION.md</code> · 交接�?code>docs/course-student-intent/HANDOFF-v1.1.md</code> · 上线清单�?code>docs/course-student-intent/intent-rollout-workbook.xlsx</code></p>
+  <p class="foot">文档：<code>docs/course-student-intent/CONFIRMATION.md</code> · 交接：<code>docs/course-student-intent/HANDOFF-v1.1.md</code> · 上线清单：<code>docs/course-student-intent/intent-rollout-workbook.xlsx</code></p>
 
   <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true">
     <aside class="drawer" role="dialog" aria-labelledby="drawer-title">
@@ -422,7 +422,7 @@
           item.title +
           '</div><div class="arch-item__desc">' +
           (item.desc || "") +
-          '</div></div><span class="arch-item__chev" aria-hidden="true">�?/span>';
+          '</div></div><span class="arch-item__chev" aria-hidden="true">›</span>';
 
         var panel = document.createElement("div");
         panel.className = "arch-item__panel";
@@ -467,7 +467,7 @@
       [
         { href: "#architecture", text: "全局结构" },
         { href: "#global-flows-section", text: "全局流程" },
-        { href: "#conference-versions", text: "功能清单（版本一览）" },
+        { href: "#conference-versions", text: "版本变更" },
       ].forEach(function (j) {
         var a = document.createElement("a");
         a.href = j.href;
@@ -484,7 +484,7 @@
         jump.appendChild(a);
       });
 
-      /* 全局结构�?*/
+      /* 全局结构图 */
       var archMount = document.getElementById("arch-mount");
       archData
         .filter(function (item) {
@@ -526,14 +526,14 @@
           v.date +
           "</strong><p class=\"ver-block__theme\" style=\"margin:4px 0 0\">" +
           v.theme +
-          "</p></div><span class=\"ver-block__chev\">�?/span>";
+          "</p></div><span class=\"ver-block__chev\">›</span>";
 
         var body = document.createElement("div");
         body.className = "ver-block__body";
         body.innerHTML =
           '<p style="font-size:12px;margin:10px 0 8px"><a href="' +
           v.href +
-          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开入口 �?/a></p>';
+          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开入口 →</a></p>';
 
         (v.modules || []).forEach(function (m) {
           var mod = document.createElement("div");
@@ -542,7 +542,7 @@
             "<strong>" +
             m.name +
             "</strong>" +
-            (m.href ? '<a href="' + m.href + '">打开 �?/a>' : "") +
+            (m.href ? '<a href="' + m.href + '">打开 →</a>' : "") +
             "<ul>" +
             (m.changes || [])
               .map(function (c) {
@@ -564,7 +564,7 @@
         versionsMount.appendChild(block);
       });
 
-      /* 四端折叠（默认全收起�?*/
+      /* 四端折叠（默认全收起） */
       var mount = document.getElementById("terminals-mount");
       spec.terminals.forEach(function (t) {
         var sec = document.createElement("section");
@@ -596,14 +596,14 @@
           "</span><h2>" +
           t.name +
           "</h2></div>" +
-          '<span class="terminal__chev">�?/span>';
+          '<span class="terminal__chev">›</span>';
 
         var entryWrap = document.createElement("div");
         entryWrap.className = "terminal__bar-entry";
         var entryLink = document.createElement("a");
         entryLink.className = "terminal__entry";
         entryLink.href = t.entry;
-        entryLink.textContent = "进入原型 �?;
+        entryLink.textContent = "进入原型 →";
         entryLink.title = t.entry;
         entryLink.addEventListener("click", function (e) {
           e.stopPropagation();
