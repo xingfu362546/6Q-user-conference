@@ -140,7 +140,7 @@ window.INTENT_FEATURE_SPEC = {
     },
     44: {
       title: "会务后台版本封版",
-      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：家庭组/关系图谱/基础信息/AI；行为与跟进归画像；意向列表精简</li><li><strong>v1.0.3</strong>（当前）：6Q 面谈官独立门户（会员登录、选进行中会务、只读意向/画像）</li></ul><p>导航：<code>6q-conference-prototype/index.html</code>；门户：<code>6q-interviewer-portal/</code></p>",
+      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：家庭组/关系图谱/基础信息/AI；行为与跟进归画像；意向列表精简</li><li><strong>v1.0.3</strong>（当前）：6Q 面谈官独立门户（会员登录、选进行中会务、只读意向/画像）</li></ul><p>套件：<code>6q-intent-suite/</code>；后台：<code>6q-conference-prototype/</code>；门户：<code>6q-interviewer-portal/</code></p>",
     },
     45: {
       title: "画像档案 · 行为与跟进抽屉（v1.0.2）",

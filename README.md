@@ -1,24 +1,29 @@
 # 6Q 会务 · 学员意向分析
 
-本仓库仅维护 **学员意向分析** 一条产品线（后台 PC + 会务 APP + 用户标签平台 + 方案文档）。
+意向分析四端原型已收纳到 **`6q-intent-suite/`**。
 
-## 目录
+## 入口（唯一功能清单总页）
 
 | 路径 | 说明 |
 |------|------|
-| `6q-conference-prototype/` | 后台 PC：本期策略、意向分析、分析策略模板 |
-| `6q-conference-app-prototype/` | 会务 APP：AI 分析、意向中控、学员详情与课程推荐 |
-| `user-tag-admin/` | 用户标签平台原型（系统标签来源） |
-| `docs/course-student-intent/` | 方案与确认稿（Markdown / Word） |
-| `index.html` | 部署总入口（Cloudflare Pages 站点首页） |
+| [`6q-intent-suite/index.html`](6q-intent-suite/index.html) | **功能清单总页**（套件内唯一总 index） |
+| [`index.html`](index.html) | 仓库根跳转 → 上述总页 |
+
+## 套件内子项目
+
+| 路径 | 说明 |
+|------|------|
+| `6q-intent-suite/6q-interviewer-portal/` | 面谈官门户 |
+| `6q-intent-suite/6q-conference-app-prototype/` | 会务 APP |
+| `6q-intent-suite/6q-conference-prototype/` | 会务后台 PC |
+| `6q-intent-suite/user-tag-admin/` | 用户标签平台 |
+| `docs/course-student-intent/` | 方案与确认稿 |
 
 ## 本地预览
 
-直接用浏览器打开根目录 `index.html`，或：
-
 ```bash
-# 任选静态服务，在仓库根目录执行
 npx serve .
+# 打开 / 或 /6q-intent-suite/
 ```
 
 ## Cloudflare Pages
@@ -26,13 +31,6 @@ npx serve .
 | 配置项 | 值 |
 |--------|-----|
 | Production branch | `main` |
-| Framework preset | None |
-| Build command | （留空） |
 | Build output directory | `/` |
 
-部署后访问：`https://<项目名>.pages.dev/`
-
-## 分支
-
-- `main`：生产分支，Pages 部署用
-- 功能开发可在 feature 分支进行，合并进 `main` 后自动部署
+根 `index.html` 会跳转到 `6q-intent-suite/`。
