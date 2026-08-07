@@ -70,14 +70,14 @@
           <div class="ut-page-head">
             <div class="ut-page-head__left">
               <h1>页面路径序列 · A→B→C</h1>
-              <p class="ut-page-head__desc">第四类规则条件：在时间窗口内按访问先后匹配路径链。完整配置入口见 <a href="tag-create.html">新增标签</a>�?/p>
+              <p class="ut-page-head__desc">第四类规则条件：在时间窗口内按访问先后匹配路径链。完整配置入口见 <a href="tag-create.html">新增标签</a>。</p>
             </div>
             <a class="ut-btn ut-btn--primary" href="tag-create.html">打开新增标签</a>
           </div>
 
           <div class="demo-q" role="note">
-            <strong>Grill #1（待你确认）</strong>：定时上报的「路由路径集合」是�?strong>�?enter_time 且服务端按时间排�?/strong>�?
-            推荐答：<strong>�?/strong>——集合只是传输形态，计算时必须还原为有序序列；否�?A→B→C 无法判定�?
+            <strong>Grill #1（待你确认）</strong>：定时上报的「路由路径集合」是否<strong>带 enter_time 且服务端按时间排序</strong>？
+            推荐答：<strong>是</strong>——集合只是传输形态，计算时必须还原为有序序列；否则 A→B→C 无法判定。
           </div>
 
           <div class="demo-grid" style="margin-top:var(--space-4)">
@@ -85,17 +85,17 @@
               <div class="ut-rule-toolbar" style="margin-bottom:var(--space-3)">
                 <div class="ut-rule-insight">
                   <strong>规则解读</strong>
-                  <span data-rule-summary>�?/span>
+                  <span data-rule-summary>—</span>
                 </div>
               </div>
               <div class="ut-rule-panel">
                 <div class="ut-rule-logic">
                   <div class="ut-rule-logic__op">
                     <div class="ut-logic-switch" data-logic-switch role="group">
-                      <button type="button" class="is-active" data-logic="and">�?/button>
-                      <button type="button" data-logic="or">�?/button>
+                      <button type="button" class="is-active" data-logic="and">且</button>
+                      <button type="button" data-logic="or">或</button>
                     </div>
-                    <span class="ut-rule-logic__op-label" data-logic-label>�?/span>
+                    <span class="ut-rule-logic__op-label" data-logic-label>且</span>
                   </div>
                   <div class="ut-rule-logic__body" data-rule-list></div>
                 </div>
@@ -104,12 +104,12 @@
 
             <div class="demo-side">
               <div class="demo-card">
-                <h2>匹配流程（子序列模式�?/h2>
+                <h2>匹配流程（子序列模式）</h2>
                 <div class="demo-mermaid mermaid">
 flowchart TD
-  B[定时批次 route_logs] --> S[�?enter_time 排序]
+  B[定时批次 route_logs] --> S[按 enter_time 排序]
   S --> W[截取时间窗口]
-  W --> M{子序列匹�?A→B→C?}
+  W --> M{子序列匹配 A→B→C?}
   M -->|是| H[命中标签]
   M -->|否| N[未命中]
                 </div>
@@ -120,13 +120,13 @@ flowchart TD
   "member_id": "m10001",
   "batch_time": "2025-04-06T10:00:00Z",
   "routes": [
-    { "path": "/pages/course/list", "enter_time": "�?9:12:01" },
-    { "path": "/pages/course/detail", "enter_time": "�?9:12:45" },
-    { "path": "/pages/user/profile", "enter_time": "�?9:13:02" },
-    { "path": "/pages/order/confirm", "enter_time": "�?9:14:10" }
+    { "path": "/pages/course/list", "enter_time": "…09:12:01" },
+    { "path": "/pages/course/detail", "enter_time": "…09:12:45" },
+    { "path": "/pages/user/profile", "enter_time": "…09:13:02" },
+    { "path": "/pages/order/confirm", "enter_time": "…09:14:10" }
   ]
 }</pre>
-                <p class="ut-hint" style="margin-top:8px">上例在子序列模式下命�?A=list �?B=detail �?C=confirm（中间可�?profile）�?/p>
+                <p class="ut-hint" style="margin-top:8px">上例在子序列模式下命中 A=list → B=detail → C=confirm（中间可插 profile）。</p>
               </div>
             </div>
           </div>

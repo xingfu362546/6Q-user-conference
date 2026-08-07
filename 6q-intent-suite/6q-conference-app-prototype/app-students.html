@@ -12,7 +12,7 @@
   <div class="phone-frame">
     <header class="app-nav">
       <div class="app-nav__row">
-        <button type="button" class="app-nav__back" aria-label="返回">�?/button>
+        <button type="button" class="app-nav__back" aria-label="返回">‹</button>
         <div class="app-nav__tabs">
           <span class="app-nav__tab is-active">学员</span>
           <span class="app-nav__tab">小组</span>
@@ -21,24 +21,24 @@
         <div class="app-nav__extra"></div>
       </div>
       <div class="app-search">
-        <span class="app-search__icon">�?/span>
-        <input type="search" placeholder="搜索学员、手机号码、小组、签到号、跟进助�? id="searchInput" />
+        <span class="app-search__icon">⌕</span>
+        <input type="search" placeholder="搜索学员、手机号码、小组、签到号、跟进助教" id="searchInput" />
       </div>
     </header>
 
     <a href="app-intent-scan.html" class="ai-entry-banner" id="aiEntry" data-href-scan="app-intent-scan.html" data-href-dash="app-intent-dashboard.html">
-      <div class="ai-entry-banner__icon">�?/div>
+      <div class="ai-entry-banner__icon">✦</div>
       <div class="ai-entry-banner__text">
         <div class="ai-entry-banner__title">
           AI 意向洞察
           <span class="ai-entry-banner__badge">智能分析</span>
         </div>
-        <div class="ai-entry-banner__desc">基于会务后台策略，自动分析本期学员高/�?低意向分�?/div>
+        <div class="ai-entry-banner__desc">基于会务后台策略，自动分析本期学员高/中/低意向分布</div>
       </div>
-      <span class="ai-entry-banner__arrow">�?/span>
+      <span class="ai-entry-banner__arrow">›</span>
     </a>
 
-    <p class="app-meta" id="studentCount">学员人数：�?/p>
+    <p class="app-meta" id="studentCount">学员人数：—</p>
 
     <div class="student-scroll" id="studentList"></div>
 
@@ -50,7 +50,7 @@
     <nav class="app-tabbar">
       <a class="app-tabbar__item" href="#"><span class="app-tabbar__icon">💼</span>工作</a>
       <a class="app-tabbar__item is-active" href="app-students.html"><span class="app-tabbar__icon">👥</span>学员</a>
-      <a class="app-tabbar__item" href="home.html"><span class="app-tabbar__icon">�?/span>原型</a>
+      <a class="app-tabbar__item" href="home.html"><span class="app-tabbar__icon">◎</span>原型</a>
     </nav>
   </div>
 
@@ -73,7 +73,7 @@
             );
           });
         }
-        countEl.textContent = "学员人数�? + students.length;
+        countEl.textContent = "学员人数：" + students.length;
         listEl.innerHTML = students
           .map(function (s) {
             var tags = [s.trainTag, s.roleTag].filter(Boolean);
@@ -96,7 +96,7 @@
               "</span>" +
               tagHtml +
               "</div>" +
-              '<div class="student-row__phone">手机号码�? +
+              '<div class="student-row__phone">手机号码：' +
               s.phone +
               "</div>" +
               "</div>" +
@@ -119,7 +119,7 @@
       if (window.AppIntent.CONFIG.analyzedAt && !forceScan) {
         entry.href = entry.dataset.hrefDash;
         entry.querySelector(".ai-entry-banner__desc").textContent =
-          "最近分�?" +
+          "最近分析 " +
           window.AppIntent.formatAnalyzedTime() +
           " · 点击查看意向中控";
       } else {

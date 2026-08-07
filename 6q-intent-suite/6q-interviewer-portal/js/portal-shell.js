@@ -1,5 +1,5 @@
 /**
- * 面谈官门户顶�?
+ * 面谈官门户顶栏
  */
 (function (global) {
   function mount(opts) {
@@ -23,7 +23,7 @@
 
     el.innerHTML =
       '<a class="iv-topbar__brand" href="hub.html">' +
-      "6Q面谈�? +
+      "6Q面谈官" +
       '<span class="iv-topbar__badge">v1.0.3</span></a>' +
       '<div class="iv-topbar__conf">' +
       confText +
@@ -37,7 +37,7 @@
       (showSwitch
         ? '<a class="iv-btn iv-btn--ghost" href="conference-select.html">切换会务</a>'
         : "") +
-      '<button type="button" class="iv-btn" id="ivLogoutBtn">退�?/button>' +
+      '<button type="button" class="iv-btn" id="ivLogoutBtn">退出</button>' +
       "</div>";
 
     var btn = document.getElementById("ivLogoutBtn");
