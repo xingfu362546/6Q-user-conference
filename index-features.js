@@ -203,171 +203,72 @@ window.INTENT_FEATURE_SPEC = {
 
   terminals: [
     {
-      id: "tag",
-      name: "用户标签平台",
-      tag: "数据与规则层",
-      color: "#059669",
-      entry: "user-tag-admin/tag-list.html",
-      modules: [
-        {
-          name: "标签中心 · 标签管理",
-          href: "user-tag-admin/tag-list.html",
-          items: [
-            { text: "树形列表：一级分类 + 二级标签", notes: [1, 2, 3] },
-            { text: "筛选：分类 / 状态 / 关键词", notes: [3] },
-            { text: "二级行：覆盖人数（上次成功版本）", notes: [3] },
-            { text: "操作：编辑、复制规则、执行历史、立即计算、停用", notes: [4] },
-            { text: "顶栏「新增二级标签」", notes: [2, 5] },
-          ],
-        },
-        {
-          name: "标签中心 · 新增/编辑标签",
-          href: "user-tag-admin/tag-create.html",
-          items: [
-            { text: "基础信息：名称、所属一级、更新方式（手动/例行）", notes: [8] },
-            { text: "自然语言描述圈选意图（v1.1）", notes: [5, 6] },
-            { text: "数据范围只读（固定数仓 + 表白名单）", notes: [5, 10] },
-            { text: "生成 SQL → 解读 + 预估人数", notes: [6] },
-            { text: "确认并计算；例行复用已确认 SQL", notes: [6, 8] },
-            { text: "原可视化规则构建 · 一期不做", notes: [5] },
-            { text: "标签全局权重（参与意向分 Σ）", notes: [7, 22] },
-            { text: "复制：预填 NL/SQL，名称需重填", notes: [4] },
-          ],
-        },
-        {
-          name: "标签中心 · 执行历史",
-          href: "user-tag-admin/tag-history.html",
-          items: [
-            { text: "仅二级标签可进入", notes: [9] },
-            { text: "版本号 = 计算日期 YYYYMMDD", notes: [9] },
-            { text: "Tab：命中用户（可本版本无效）｜本次 SQL", notes: [9] },
-            { text: "失败版本：空表 + 错误信息", notes: [9] },
-          ],
-        },
-        {
-          name: "数据资产 · 数据接入",
-          href: "user-tag-admin/data-access.html",
-          items: [
-            { text: "只读 endpoint + 复制", notes: [10] },
-            { text: "仅开发可修改接入配置", notes: [10] },
-          ],
-        },
-        {
-          name: "数据资产 · 数据表管理",
-          href: "user-tag-admin/data-tables.html",
-          items: [
-            { text: "表清单：库名、表名、说明、更新时间", notes: [11] },
-            { text: "字段详情抽屉：类型、可空、样例", notes: [11, 5] },
-            { text: "全员只读，不可删表", notes: [11] },
-          ],
-        },
+      id: "portal",
+      name: "面谈官门户",
+      tag: "v1.0.3 · 只读查档",
+      color: "#ea580c",
+      entry: "6q-interviewer-portal/login.html",
+      archIds: [
+        "portal-flow"
       ],
-    },
-    {
-      id: "pc",
-      name: "会务后台 PC",
-      tag: "v1.0.2 · 策略+档案+分析",
-      color: "#4f46e5",
-      entry: "6q-conference-prototype/",
+      flows: [
+        {
+          title: "面谈官门户说明",
+          notes: [46]
+        }
+      ],
       modules: [
         {
-          name: "【版本导航】按版本追溯功能变更",
-          href: "6q-conference-prototype/index.html",
-          items: [
-            { text: "v1.0.2（当前）/ v1.0.1 / v1.0.0 模块与功能清单", notes: [44] },
-            { text: "文档：6q-conference-prototype/docs/FEATURE-CHANGELOG.md", notes: [44] },
-          ],
-        },
-        {
-          name: "面谈官门户（独立端）",
+          name: "门户链路",
           href: "6q-interviewer-portal/login.html",
           items: [
-            { text: "[v1.0.3] 手机/邮箱+密码登录 + 图形验证码", notes: [46] },
-            { text: "[v1.0.3] 选择进行中会务；无会务空态", notes: [46] },
-            { text: "[v1.0.3] 只读意向列表 + 查看明细 + 画像", notes: [46, 29, 45] },
-            { text: "[v1.0.3] 不包含策略配置/跟进入录/导出", notes: [46] },
-          ],
+            {
+              text: "[v1.0.3] 手机/邮箱+密码登录 + 图形验证码",
+              notes: [46]
+            },
+            {
+              text: "[v1.0.3] 选择进行中会务；无会务空态",
+              notes: [46]
+            },
+            {
+              text: "[v1.0.3] 只读意向列表 + 查看明细 + 画像",
+              notes: [46, 29, 45]
+            },
+            {
+              text: "[v1.0.3] 不包含策略配置/跟进入录/导出",
+              notes: [46]
+            }
+          ]
         },
         {
-          name: "会务工具 · 分析策略模板",
-          href: "6q-conference-prototype/tools-intent-strategy-template.html",
+          name: "学员意向列表",
+          href: "6q-interviewer-portal/student-intent.html",
           items: [
-            { text: "[v1.0.0] 模板列表：名称、说明、关注标签数、意向度方式、更新时间", notes: [13, 14] },
-            { text: "[v1.0.0] 新建 / 编辑 / 删除模板", notes: [13, 14] },
-            { text: "[v1.0.0] 删除：若本期已选用二次确认；已保存快照不受影响", notes: [14, 19] },
-            { text: "[v1.0.0] 权限：会务统筹配置角色", notes: [13] },
-          ],
+            {
+              text: "[v1.0.3] 对齐后台意向列表呈现",
+              notes: [46, 29]
+            },
+            {
+              text: "[v1.0.3] 点姓名进画像；查看明细只读",
+              notes: [46, 29]
+            }
+          ]
         },
         {
-          name: "会务工具 · 编辑模板",
-          href: "6q-conference-prototype/tools-intent-strategy-template-edit.html",
+          name: "画像档案",
+          href: "6q-interviewer-portal/student-profile.html?id=m10009",
           items: [
-            { text: "[v1.0.0] 模板名称、说明", notes: [13] },
-            { text: "[v1.0.0] ① 关注标签：系统标签树多选 + 任一/全部", notes: [15, 2] },
-            { text: "[v1.0.0] ② 意向度：按权重分 OR 按命中标签（二选一）", notes: [16] },
-            { text: "[v1.0.0] 方式 A：高/中/低 三个分值阈值", notes: [17, 22] },
-            { text: "[v1.0.0] 方式 B：高/中/低 三组标签 + 组内任一/全部", notes: [18] },
-            { text: "[v1.0.0] 保存模板 → 供各期选用", notes: [13, 19] },
-          ],
-        },
-        {
-          name: "会务详情 · 本期分析策略",
-          href: "6q-conference-prototype/conference-intent-strategy.html",
-          items: [
-            { text: "[v1.0.0] 下拉选用分析策略模板 + 规则预览", notes: [19] },
-            { text: "[v1.0.0] 复制上期策略", notes: [19] },
-            { text: "[v1.0.0] 保存本期策略并重算（版本号++）", notes: [19, 32] },
-            { text: "[v1.0.0] 已保存策略预览 + 高/中/低人数分布", notes: [19] },
-            { text: "[v1.0.0] 跳转学员意向分析 / 管理模板", notes: [20, 21] },
-          ],
-        },
-        {
-          name: "会务详情 · 学员信息",
-          href: "6q-conference-prototype/conference-students.html",
-          items: [
-            { text: "[v1.0.1] 会务子导航启用「学员信息」", notes: [41] },
-            { text: "[v1.0.1] 操作列「画像档案」入口", notes: [41] },
-          ],
-        },
-        {
-          name: "会务详情 · 画像档案",
-          href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
-          items: [
-            { text: "[v1.0.1] 三栏事实档案：系统标签 / 购课复购 / 跟进退款行为", notes: [41] },
-            { text: "[v1.0.1] 购课按课程产品计次；复购=同产品≥2；退款订单口径", notes: [41] },
-            { text: "[v1.0.1] 图表：购课条形 + 近30天行为折线（无商机诊断）", notes: [41] },
-            { text: "[v1.0.2] 家庭组：家庭ID + 成员表，高亮本人", notes: [42] },
-            { text: "[v1.0.2] 关系图谱：推荐/归属双边·1跳·当前生效·环形交互图", notes: [42] },
-            { text: "[v1.0.2] 基础信息补齐：身份状态 / 关系人 / 认证 / 社会属性", notes: [43] },
-            { text: "[v1.0.2] 社区活跃按话题名称细拆", notes: [42] },
-            { text: "[v1.0.2] 近期行为四 Tab + 查看更多抽屉（社区/学习/视频/直播）", notes: [27, 45] },
-            { text: "[v1.0.2] 跟进记录查看更多抽屉（承接历史跟进）", notes: [45] },
-            { text: "[v1.0.2] AI 分析对话：4 chips（跟进/话术/消费力/购课建议）+ 自由洞察", notes: [41, 45] },
-          ],
-        },
-        {
-          name: "会务详情 · 学员意向分析",
-          href: "6q-conference-prototype/conference-student-intent.html",
-          items: [
-            { text: "[v1.0.0] 未配置空态引导；已配置只读策略摘要 + KPI", notes: [20, 21] },
-            { text: "[v1.0.0] 列：学员、意向分、意向度、命中标签、AI、推荐", notes: [22, 23, 24, 26, 28] },
-            { text: "[v1.0.2] 列名：跟进内容（当前会务）", notes: [25] },
-            { text: "[v1.0.2] 行为列/历史跟进已迁出 → 画像档案", notes: [27, 45] },
-            { text: "[v1.0.2] 查看明细仅保留：标签命中 + 洞察与推荐", notes: [29] },
-            { text: "[v1.0.2] 点击学员姓名 → 画像档案", notes: [29] },
-            { text: "导出（二期占位）", notes: [30, 40] },
-          ],
-        },
-        {
-          name: "关联 · 跟进记录（已有菜单）",
-          href: "6q-conference-prototype/conference-detail-basic.html",
-          items: [
-            { text: "[v1.0.0] 人工录入：跟进内容、跟进标签、图片", notes: [25, 31] },
-            { text: "[v1.0.0] 保存后触发 AI 异步分析", notes: [31] },
-            { text: "[v1.0.0] 数据范围：仅本期会务 × 该学员", notes: [25] },
-          ],
-        },
-      ],
+            {
+              text: "[v1.0.3] 复用后台画像口径（行为/跟进/AI）",
+              notes: [46, 45]
+            },
+            {
+              text: "[v1.0.2+] AI 4 chips：跟进/话术/消费力/购课建议",
+              notes: [41, 45]
+            }
+          ]
+        }
+      ]
     },
     {
       id: "app",
@@ -380,71 +281,491 @@ window.INTENT_FEATURE_SPEC = {
           name: "学员列表（入口）",
           href: "6q-conference-app-prototype/app-students.html",
           items: [
-            { text: "本期学员列表（与会务后台同源）", notes: [12, 33] },
-            { text: "AI 意向洞察横幅 → 进入分析链路", notes: [33, 34] },
-            { text: "策略版本变化 → 强制重跑分析动效", notes: [32, 19] },
-          ],
+            {
+              text: "本期学员列表（与会务后台同源）",
+              notes: [12, 33]
+            },
+            {
+              text: "AI 意向洞察横幅 → 进入分析链路",
+              notes: [33, 34]
+            },
+            {
+              text: "策略版本变化 → 强制重跑分析动效",
+              notes: [32, 19]
+            }
+          ]
         },
         {
           name: "AI 分析过程",
           href: "6q-conference-app-prototype/app-intent-scan.html",
           items: [
-            { text: "全屏分析动效（扫描视觉）", notes: [34] },
-            { text: "结束后进入意向洞察中控", notes: [34] },
-            { text: "与后台同一套策略版本绑定", notes: [32] },
-          ],
+            {
+              text: "全屏分析动效（扫描视觉）",
+              notes: [34]
+            },
+            {
+              text: "结束后进入意向洞察中控",
+              notes: [34]
+            },
+            {
+              text: "与后台同一套策略版本绑定",
+              notes: [32]
+            }
+          ]
         },
         {
           name: "意向洞察中控",
           href: "6q-conference-app-prototype/app-intent-dashboard.html",
           items: [
-            { text: "环形分布：高/中/低/未分级", notes: [35, 17, 18] },
-            { text: "KPI：高意向人数、待跟进等", notes: [35] },
-            { text: "优先跟进 TOP3", notes: [35] },
-            { text: "点击档位 → 意向学员列表", notes: [36] },
-          ],
+            {
+              text: "环形分布：高/中/低/未分级",
+              notes: [35, 17, 18]
+            },
+            {
+              text: "KPI：高意向人数、待跟进等",
+              notes: [35]
+            },
+            {
+              text: "优先跟进 TOP3",
+              notes: [35]
+            },
+            {
+              text: "点击档位 → 意向学员列表",
+              notes: [36]
+            }
+          ]
         },
         {
           name: "意向学员列表",
           href: "6q-conference-app-prototype/app-intent-list.html",
           items: [
-            { text: "Tab：高 / 中 / 低意向", notes: [36, 18] },
-            { text: "展示意向分、关键标签摘要", notes: [22, 24] },
-            { text: "进入学员意向详情", notes: [37] },
-          ],
+            {
+              text: "Tab：高 / 中 / 低意向",
+              notes: [36, 18]
+            },
+            {
+              text: "展示意向分、关键标签摘要",
+              notes: [22, 24]
+            },
+            {
+              text: "进入学员意向详情",
+              notes: [37]
+            }
+          ]
         },
         {
           name: "学员意向详情",
           href: "6q-conference-app-prototype/app-student-detail.html",
           items: [
-            { text: "意向度、意向分、命中标签", notes: [37, 22] },
-            { text: "AI 一句话总结 + 完整分析入口", notes: [26, 31] },
-            { text: "会务跟进只读", notes: [25, 37] },
-            { text: "AI 课程产品推荐：主推 + 备选", notes: [38] },
-            { text: "已报读/已购买状态 + 工作人员提醒", notes: [38] },
-            { text: "参考 SKU 价格区间；不可改推荐", notes: [38, 40] },
-          ],
-        },
+            {
+              text: "意向度、意向分、命中标签",
+              notes: [37, 22]
+            },
+            {
+              text: "AI 一句话总结 + 完整分析入口",
+              notes: [26, 31]
+            },
+            {
+              text: "会务跟进只读",
+              notes: [25, 37]
+            },
+            {
+              text: "AI 课程产品推荐：主推 + 备选",
+              notes: [38]
+            },
+            {
+              text: "已报读/已购买状态 + 工作人员提醒",
+              notes: [38]
+            },
+            {
+              text: "参考 SKU 价格区间；不可改推荐",
+              notes: [38, 40]
+            }
+          ]
+        }
       ],
+      archIds: [
+        "app-flow"
+      ],
+      flows: [
+        {
+          title: "APP 现场链路说明",
+          notes: [33, 34, 35]
+        }
+      ]
     },
+    {
+      id: "pc",
+      name: "会务后台",
+      tag: "v1.0.3 · 策略+档案+分析",
+      color: "#4f46e5",
+      entry: "6q-conference-prototype/",
+      modules: [
+        {
+          name: "【版本导航】按版本追溯功能变更",
+          href: "6q-conference-prototype/index.html",
+          items: [
+            {
+              text: "v1.0.3 / v1.0.2 / v1.0.1 / v1.0.0 模块与功能清单",
+              notes: [44]
+            },
+            {
+              text: "文档：6q-conference-prototype/docs/FEATURE-CHANGELOG.md",
+              notes: [44]
+            }
+          ]
+        },
+        {
+          name: "会务工具 · 分析策略模板",
+          href: "6q-conference-prototype/tools-intent-strategy-template.html",
+          items: [
+            {
+              text: "[v1.0.0] 模板列表：名称、说明、关注标签数、意向度方式、更新时间",
+              notes: [13, 14]
+            },
+            {
+              text: "[v1.0.0] 新建 / 编辑 / 删除模板",
+              notes: [13, 14]
+            },
+            {
+              text: "[v1.0.0] 删除：若本期已选用二次确认；已保存快照不受影响",
+              notes: [14, 19]
+            },
+            {
+              text: "[v1.0.0] 权限：会务统筹配置角色",
+              notes: [13]
+            }
+          ]
+        },
+        {
+          name: "会务工具 · 编辑模板",
+          href: "6q-conference-prototype/tools-intent-strategy-template-edit.html",
+          items: [
+            {
+              text: "[v1.0.0] 模板名称、说明",
+              notes: [13]
+            },
+            {
+              text: "[v1.0.0] ① 关注标签：系统标签树多选 + 任一/全部",
+              notes: [15, 2]
+            },
+            {
+              text: "[v1.0.0] ② 意向度：按权重分 OR 按命中标签（二选一）",
+              notes: [16]
+            },
+            {
+              text: "[v1.0.0] 方式 A：高/中/低 三个分值阈值",
+              notes: [17, 22]
+            },
+            {
+              text: "[v1.0.0] 方式 B：高/中/低 三组标签 + 组内任一/全部",
+              notes: [18]
+            },
+            {
+              text: "[v1.0.0] 保存模板 → 供各期选用",
+              notes: [13, 19]
+            }
+          ]
+        },
+        {
+          name: "会务详情 · 本期分析策略",
+          href: "6q-conference-prototype/conference-intent-strategy.html",
+          items: [
+            {
+              text: "[v1.0.0] 下拉选用分析策略模板 + 规则预览",
+              notes: [19]
+            },
+            {
+              text: "[v1.0.0] 复制上期策略",
+              notes: [19]
+            },
+            {
+              text: "[v1.0.0] 保存本期策略并重算（版本号++）",
+              notes: [19, 32]
+            },
+            {
+              text: "[v1.0.0] 已保存策略预览 + 高/中/低人数分布",
+              notes: [19]
+            },
+            {
+              text: "[v1.0.0] 跳转学员意向分析 / 管理模板",
+              notes: [20, 21]
+            }
+          ]
+        },
+        {
+          name: "会务详情 · 学员信息",
+          href: "6q-conference-prototype/conference-students.html",
+          items: [
+            {
+              text: "[v1.0.1] 会务子导航启用「学员信息」",
+              notes: [41]
+            },
+            {
+              text: "[v1.0.1] 操作列「画像档案」入口",
+              notes: [41]
+            }
+          ]
+        },
+        {
+          name: "会务详情 · 画像档案",
+          href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+          items: [
+            {
+              text: "[v1.0.1] 三栏事实档案：系统标签 / 购课复购 / 跟进退款行为",
+              notes: [41]
+            },
+            {
+              text: "[v1.0.1] 购课按课程产品计次；复购=同产品≥2；退款订单口径",
+              notes: [41]
+            },
+            {
+              text: "[v1.0.1] 图表：购课条形 + 近30天行为折线（无商机诊断）",
+              notes: [41]
+            },
+            {
+              text: "[v1.0.2] 家庭组：家庭ID + 成员表，高亮本人",
+              notes: [42]
+            },
+            {
+              text: "[v1.0.2] 关系图谱：推荐/归属双边·1跳·当前生效·环形交互图",
+              notes: [42]
+            },
+            {
+              text: "[v1.0.2] 基础信息补齐：身份状态 / 关系人 / 认证 / 社会属性",
+              notes: [43]
+            },
+            {
+              text: "[v1.0.2] 社区活跃按话题名称细拆",
+              notes: [42]
+            },
+            {
+              text: "[v1.0.2] 近期行为四 Tab + 查看更多抽屉（社区/学习/视频/直播）",
+              notes: [27, 45]
+            },
+            {
+              text: "[v1.0.2] 跟进记录查看更多抽屉（承接历史跟进）",
+              notes: [45]
+            },
+            {
+              text: "[v1.0.2] AI 分析对话：4 chips（跟进/话术/消费力/购课建议）+ 自由洞察",
+              notes: [41, 45]
+            }
+          ]
+        },
+        {
+          name: "会务详情 · 学员意向分析",
+          href: "6q-conference-prototype/conference-student-intent.html",
+          items: [
+            {
+              text: "[v1.0.0] 未配置空态引导；已配置只读策略摘要 + KPI",
+              notes: [20, 21]
+            },
+            {
+              text: "[v1.0.0] 列：学员、意向分、意向度、命中标签、AI、推荐",
+              notes: [22, 23, 24, 26, 28]
+            },
+            {
+              text: "[v1.0.2] 列名：跟进内容（当前会务）",
+              notes: [25]
+            },
+            {
+              text: "[v1.0.2] 行为列/历史跟进已迁出 → 画像档案",
+              notes: [27, 45]
+            },
+            {
+              text: "[v1.0.2] 查看明细仅保留：标签命中 + 洞察与推荐",
+              notes: [29]
+            },
+            {
+              text: "[v1.0.2] 点击学员姓名 → 画像档案",
+              notes: [29]
+            },
+            {
+              text: "导出（二期占位）",
+              notes: [30, 40]
+            }
+          ]
+        },
+        {
+          name: "关联 · 跟进记录（已有菜单）",
+          href: "6q-conference-prototype/conference-detail-basic.html",
+          items: [
+            {
+              text: "[v1.0.0] 人工录入：跟进内容、跟进标签、图片",
+              notes: [25, 31]
+            },
+            {
+              text: "[v1.0.0] 保存后触发 AI 异步分析",
+              notes: [31]
+            },
+            {
+              text: "[v1.0.0] 数据范围：仅本期会务 × 该学员",
+              notes: [25]
+            }
+          ]
+        }
+      ],
+      archIds: [
+        "pc-strategy"
+      ],
+      flows: [
+        {
+          title: "策略配置到出数",
+          notes: [19, 15, 20]
+        },
+        {
+          title: "意向分与意向度",
+          notes: [22, 16, 17, 18]
+        },
+        {
+          title: "会务后台版本封版说明",
+          notes: [44, 46, 41, 42, 43, 45]
+        }
+      ]
+    },
+    {
+      id: "tag",
+      name: "标签系统",
+      tag: "数据与规则层",
+      color: "#059669",
+      entry: "user-tag-admin/tag-list.html",
+      modules: [
+        {
+          name: "标签中心 · 标签管理",
+          href: "user-tag-admin/tag-list.html",
+          items: [
+            {
+              text: "树形列表：一级分类 + 二级标签",
+              notes: [1, 2, 3]
+            },
+            {
+              text: "筛选：分类 / 状态 / 关键词",
+              notes: [3]
+            },
+            {
+              text: "二级行：覆盖人数（上次成功版本）",
+              notes: [3]
+            },
+            {
+              text: "操作：编辑、复制规则、执行历史、立即计算、停用",
+              notes: [4]
+            },
+            {
+              text: "顶栏「新增二级标签」",
+              notes: [2, 5]
+            }
+          ]
+        },
+        {
+          name: "标签中心 · 新增/编辑标签",
+          href: "user-tag-admin/tag-create.html",
+          items: [
+            {
+              text: "基础信息：名称、所属一级、更新方式（手动/例行）",
+              notes: [8]
+            },
+            {
+              text: "自然语言描述圈选意图（v1.1）",
+              notes: [5, 6]
+            },
+            {
+              text: "数据范围只读（固定数仓 + 表白名单）",
+              notes: [5, 10]
+            },
+            {
+              text: "生成 SQL → 解读 + 预估人数",
+              notes: [6]
+            },
+            {
+              text: "确认并计算；例行复用已确认 SQL",
+              notes: [6, 8]
+            },
+            {
+              text: "原可视化规则构建 · 一期不做",
+              notes: [5]
+            },
+            {
+              text: "标签全局权重（参与意向分 Σ）",
+              notes: [7, 22]
+            },
+            {
+              text: "复制：预填 NL/SQL，名称需重填",
+              notes: [4]
+            }
+          ]
+        },
+        {
+          name: "标签中心 · 执行历史",
+          href: "user-tag-admin/tag-history.html",
+          items: [
+            {
+              text: "仅二级标签可进入",
+              notes: [9]
+            },
+            {
+              text: "版本号 = 计算日期 YYYYMMDD",
+              notes: [9]
+            },
+            {
+              text: "Tab：命中用户（可本版本无效）｜本次 SQL",
+              notes: [9]
+            },
+            {
+              text: "失败版本：空表 + 错误信息",
+              notes: [9]
+            }
+          ]
+        },
+        {
+          name: "数据资产 · 数据接入",
+          href: "user-tag-admin/data-access.html",
+          items: [
+            {
+              text: "只读 endpoint + 复制",
+              notes: [10]
+            },
+            {
+              text: "仅开发可修改接入配置",
+              notes: [10]
+            }
+          ]
+        },
+        {
+          name: "数据资产 · 数据表管理",
+          href: "user-tag-admin/data-tables.html",
+          items: [
+            {
+              text: "表清单：库名、表名、说明、更新时间",
+              notes: [11]
+            },
+            {
+              text: "字段详情抽屉：类型、可空、样例",
+              notes: [11, 5]
+            },
+            {
+              text: "全员只读，不可删表",
+              notes: [11]
+            }
+          ]
+        }
+      ],
+      archIds: [
+        "tag-rules"
+      ],
+      flows: [
+        {
+          title: "自然语言圈选 NL→SQL",
+          notes: [5, 6]
+        }
+      ]
+    }
   ],
 
   globalFlows: [
     {
       title: "系统总数据流",
       notes: [39],
-    },
-    {
-      title: "意向分与意向度",
-      notes: [22, 16, 17, 18],
-    },
-    {
-      title: "策略配置到出数",
-      notes: [19, 15, 20],
-    },
-    {
-      title: "会务后台版本封版说明",
-      notes: [44, 46, 41, 42, 43, 45],
     },
   ],
 

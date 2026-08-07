@@ -199,37 +199,77 @@
     .ver-block__mod a { color: var(--pc); text-decoration: none; font-weight: 600; margin-left: 8px; }
     .ver-block__mod ul { margin: 4px 0 0 16px; color: var(--ink); }
     .ver-block__mod li { margin-bottom: 2px; }
+    .ver-block { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; background: #fff; }
+    .ver-block__toggle {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 14px; border: none; background: #f8fafc; cursor: pointer; font-family: inherit; text-align: left;
+    }
+    .ver-block__toggle:hover { background: #f1f5f9; }
+    .ver-block__body { display: none; padding: 0 14px 12px; border-top: 1px dashed var(--line); }
+    .ver-block.is-open .ver-block__body { display: block; }
+    .ver-block__chev {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px;
+      background: #e2e8f0; color: var(--muted); font-size: 14px; line-height: 22px; text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .ver-block.is-open .ver-block__chev { transform: rotate(90deg); background: #c7d2fe; color: var(--pc); }
+    .terminal { margin-bottom: 14px; }
+    .terminal__toggle {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 18px; border: none; background: #f8fafc; cursor: pointer; font-family: inherit; text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+    .terminal__toggle:hover { background: #f1f5f9; }
+    .terminal__toggle-main { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .terminal__toggle h2 { font-size: 16px; margin: 0; }
+    .terminal__body { display: none; }
+    .terminal.is-open .terminal__body { display: block; }
+    .terminal__chev {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 6px;
+      background: #e2e8f0; color: var(--muted); font-size: 15px; line-height: 24px; text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .terminal.is-open .terminal__chev { transform: rotate(90deg); }
+    .terminal__side {
+      padding: 12px 18px; border-bottom: 1px solid var(--line); background: #fafafa;
+    }
+    .terminal__side h3 { font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+    .terminal--portal .terminal__chev { background: rgba(234,88,12,0.15); color: #ea580c; }
+    .terminal--app .terminal__chev { background: rgba(234,88,12,0.12); color: #ea580c; }
+    .terminal--pc .terminal__chev { background: rgba(79,70,229,0.12); color: #4f46e5; }
+    .terminal--tag .terminal__chev { background: rgba(5,150,105,0.12); color: #059669; }
   </style>
 </head>
 <body>
   <header class="top">
     <div class="top__inner">
-      <p class="top__eyebrow">Feature Spec · 标签平台 v1.1 · 会务后台 v1.0.3</p>
-      <h1>课程会务 · 学员意向分析 · 三端功能清单</h1>
-      <p>功能清单按三端列出；会务后台按<strong>版本</strong>追溯变更（当前封版 v1.0.3，含面谈官门户）。系统结构图可展开；模块点「查看说明」打开注释。</p>
+      <p class="top__eyebrow">Feature Spec · 面谈官 v1.0.3 · 会务后台 · APP · 标签 v1.1</p>
+      <h1>课程会务 · 学员意向分析 · 功能清单</h1>
+      <p>四端平级折叠（默认收起）：面谈官门户 → 会务 APP → 会务后台 → 标签系统。全局结构/流程在上方单独展示；版本区默认只展开当前封版。</p>
       <nav class="top__links" id="jump-nav"></nav>
     </div>
   </header>
 
   <div class="container">
-    <section class="flows" id="conference-versions">
-      <h2>会务后台 · 版本变更（当前 v1.0.3）</h2>
-      <p style="font-size:12px;color:#64748b;margin:0 0 12px">按版本罗列模块与功能，便于追溯。面谈官门户：<a href="6q-interviewer-portal/login.html" style="color:#f39800;font-weight:600">打开入口 →</a> · 完整导航：<a href="6q-conference-prototype/index.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
-      <div id="versions-mount"></div>
-    </section>
-
     <section class="arch" id="architecture">
       <div class="arch__head">
-        <h2>系统结构图</h2>
-        <p>点击标题展开/收起；首次展开时渲染 Mermaid 图。</p>
+        <h2>全局 · 系统结构图</h2>
+        <p>跨端总览与边界。各端专属图在下方对应产品折叠内打开。</p>
       </div>
       <div class="arch-list" id="arch-mount"></div>
     </section>
 
-    <section class="flows">
-      <h2>全局流程（点击展开）</h2>
+    <section class="flows" id="global-flows-section">
+      <h2>全局流程（点击展开说明）</h2>
       <div class="flows__btns" id="global-flows"></div>
     </section>
+
+    <section class="flows" id="conference-versions">
+      <h2>会务后台 · 版本变更</h2>
+      <p style="font-size:12px;color:#64748b;margin:0 0 12px">默认展开当前封版；旧版本点击展开。完整导航：<a href="6q-conference-prototype/index.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
+      <div id="versions-mount"></div>
+    </section>
+
     <div id="terminals-mount"></div>
   </div>
 
@@ -333,140 +373,11 @@
         if (e.key === "Escape") closeDrawer();
       });
 
-      var jump = document.getElementById("jump-nav");
-      var verJump = document.createElement("a");
-      verJump.href = "#conference-versions";
-      var curVer = (spec.conferenceVersions || []).find(function (v) {
-        return v.current;
-      });
-      verJump.textContent = curVer
-        ? "会务版本 " + curVer.version
-        : "会务版本";
-      jump.appendChild(verJump);
-      var portalJump = document.createElement("a");
-      portalJump.href = "6q-interviewer-portal/login.html";
-      portalJump.textContent = "面谈官门户";
-      jump.appendChild(portalJump);
-      var archJump = document.createElement("a");
-      archJump.href = "#architecture";
-      archJump.textContent = "系统结构图";
-      jump.appendChild(archJump);
-      spec.terminals.forEach(function (t) {
-        var a = document.createElement("a");
-        a.href = "#terminal-" + t.id;
-        a.textContent = t.name;
-        jump.appendChild(a);
-      });
-
-      var versionsMount = document.getElementById("versions-mount");
-      (spec.conferenceVersions || []).forEach(function (v) {
-        var block = document.createElement("div");
-        block.className = "ver-block";
-        block.id = "feat-" + v.id;
-        var head = document.createElement("div");
-        head.className = "ver-block__head";
-        head.innerHTML =
-          "<h3><span class=\"ver-pill" +
-          (v.current ? "" : " ver-pill--old") +
-          "\">" +
-          v.version +
-          (v.current ? " 当前" : "") +
-          "</span> " +
-          v.date +
-          '</h3><p class="ver-block__theme">' +
-          v.theme +
-          ' · <a href="' +
-          v.href +
-          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开版本页</a></p>';
-        block.appendChild(head);
-        (v.modules || []).forEach(function (m) {
-          var mod = document.createElement("div");
-          mod.className = "ver-block__mod";
-          mod.innerHTML =
-            "<strong>" +
-            m.name +
-            "</strong>" +
-            (m.href
-              ? '<a href="' + m.href + '">打开 →</a>'
-              : "") +
-            "<ul>" +
-            (m.changes || [])
-              .map(function (c) {
-                return "<li>" + c + "</li>";
-              })
-              .join("") +
-            "</ul>";
-          block.appendChild(mod);
-        });
-        versionsMount.appendChild(block);
-      });
-
-      var flowsEl = document.getElementById("global-flows");
-      spec.globalFlows.forEach(function (f) {
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = f.title;
-        btn.addEventListener("click", function () {
-          openNotes(f.notes, f.title);
-        });
-        flowsEl.appendChild(btn);
-      });
-
-      var mount = document.getElementById("terminals-mount");
-      spec.terminals.forEach(function (t) {
-        var sec = document.createElement("section");
-        sec.className = "terminal terminal--" + t.id;
-        sec.id = "terminal-" + t.id;
-        var badgeColor = t.id === "tag" ? "rgba(5,150,105,0.12)" : t.id === "app" ? "rgba(234,88,12,0.12)" : "rgba(79,70,229,0.12)";
-        var badgeText = t.color;
-        sec.innerHTML =
-          '<div class="terminal__head">' +
-          "<h2><span class=\"terminal__badge\" style=\"background:" + badgeColor + ";color:" + badgeText + "\">" + t.tag + "</span>" + t.name + "</h2>" +
-          '<a class="terminal__entry" href="' + t.entry + '">进入原型 →</a>' +
-          "</div>";
-        t.modules.forEach(function (mod) {
-          var modEl = document.createElement("div");
-          modEl.className = "module";
-          var noteIds = collectNoteIds(mod.items);
-          var head = document.createElement("div");
-          head.className = "module__head";
-          head.innerHTML = "<h3>" + mod.name + "</h3>";
-          var actions = document.createElement("div");
-          actions.className = "module__actions";
-          if (mod.href) {
-            var pageLink = document.createElement("a");
-            pageLink.href = mod.href;
-            pageLink.textContent = "打开页面";
-            actions.appendChild(pageLink);
-          }
-          if (noteIds.length) {
-            var docBtn = document.createElement("button");
-            docBtn.type = "button";
-            docBtn.className = "module__doc";
-            docBtn.textContent = "查看说明";
-            docBtn.addEventListener("click", function () {
-              openNotes(noteIds, mod.name);
-            });
-            actions.appendChild(docBtn);
-          }
-          head.appendChild(actions);
-          modEl.appendChild(head);
-          var ul = document.createElement("ul");
-          ul.className = "feat-list";
-          mod.items.forEach(function (item) {
-            var li = document.createElement("li");
-            li.textContent = item.text;
-            ul.appendChild(li);
-          });
-          modEl.appendChild(ul);
-          sec.appendChild(modEl);
-        });
-        mount.appendChild(sec);
-      });
-
-      /* —— 系统结构图（折叠面板） —— */
-      var archMount = document.getElementById("arch-mount");
       var archData = window.INTENT_ARCHITECTURE || [];
+      var archById = {};
+      archData.forEach(function (item) {
+        archById[item.id] = item;
+      });
       var archRendered = {};
 
       function renderArchMermaid(id, code, container) {
@@ -477,12 +388,15 @@
         pre.textContent = code;
         container.appendChild(pre);
         mermaid.run({ nodes: [pre] }).catch(function () {
-          pre.innerHTML = "<pre style='font-size:11px;white-space:pre-wrap;margin:0'>" + code + "</pre>";
+          pre.innerHTML =
+            "<pre style='font-size:11px;white-space:pre-wrap;margin:0'>" +
+            code +
+            "</pre>";
         });
         archRendered[id] = true;
       }
 
-      archData.forEach(function (item) {
+      function mountArchItem(item, parent) {
         var wrap = document.createElement("div");
         wrap.className = "arch-item";
         wrap.id = "arch-" + item.id;
@@ -526,8 +440,238 @@
 
         wrap.appendChild(btn);
         wrap.appendChild(panel);
-        archMount.appendChild(wrap);
+        parent.appendChild(wrap);
+      }
+
+      function openTerminal(id) {
+        var sec = document.getElementById("terminal-" + id);
+        if (!sec) return;
+        sec.classList.add("is-open");
+        var tbtn = sec.querySelector(".terminal__toggle");
+        if (tbtn) tbtn.setAttribute("aria-expanded", "true");
+      }
+
+      var jump = document.getElementById("jump-nav");
+      [
+        { href: "#architecture", text: "全局结构" },
+        { href: "#global-flows-section", text: "全局流程" },
+        { href: "#conference-versions", text: "版本变更" },
+      ].forEach(function (j) {
+        var a = document.createElement("a");
+        a.href = j.href;
+        a.textContent = j.text;
+        jump.appendChild(a);
       });
+      spec.terminals.forEach(function (t) {
+        var a = document.createElement("a");
+        a.href = "#terminal-" + t.id;
+        a.textContent = t.name;
+        a.addEventListener("click", function () {
+          openTerminal(t.id);
+        });
+        jump.appendChild(a);
+      });
+
+      /* 全局结构图 */
+      var archMount = document.getElementById("arch-mount");
+      archData
+        .filter(function (item) {
+          return !item.scope || item.scope === "global";
+        })
+        .forEach(function (item) {
+          mountArchItem(item, archMount);
+        });
+
+      var flowsEl = document.getElementById("global-flows");
+      (spec.globalFlows || []).forEach(function (f) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = f.title;
+        btn.addEventListener("click", function () {
+          openNotes(f.notes, f.title);
+        });
+        flowsEl.appendChild(btn);
+      });
+
+      /* 版本变更：默认仅当前展开 */
+      var versionsMount = document.getElementById("versions-mount");
+      (spec.conferenceVersions || []).forEach(function (v) {
+        var block = document.createElement("div");
+        block.className = "ver-block" + (v.current ? " is-open" : "");
+        block.id = "feat-" + v.id;
+
+        var toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "ver-block__toggle";
+        toggle.setAttribute("aria-expanded", v.current ? "true" : "false");
+        toggle.innerHTML =
+          "<div><span class=\"ver-pill" +
+          (v.current ? "" : " ver-pill--old") +
+          "\">" +
+          v.version +
+          (v.current ? " 当前" : "") +
+          "</span> <strong style=\"margin-left:6px\">" +
+          v.date +
+          "</strong><p class=\"ver-block__theme\" style=\"margin:4px 0 0\">" +
+          v.theme +
+          "</p></div><span class=\"ver-block__chev\">›</span>";
+
+        var body = document.createElement("div");
+        body.className = "ver-block__body";
+        body.innerHTML =
+          '<p style="font-size:12px;margin:10px 0 8px"><a href="' +
+          v.href +
+          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开入口 →</a></p>';
+
+        (v.modules || []).forEach(function (m) {
+          var mod = document.createElement("div");
+          mod.className = "ver-block__mod";
+          mod.innerHTML =
+            "<strong>" +
+            m.name +
+            "</strong>" +
+            (m.href ? '<a href="' + m.href + '">打开 →</a>' : "") +
+            "<ul>" +
+            (m.changes || [])
+              .map(function (c) {
+                return "<li>" + c + "</li>";
+              })
+              .join("") +
+            "</ul>";
+          body.appendChild(mod);
+        });
+
+        toggle.addEventListener("click", function () {
+          var open = !block.classList.contains("is-open");
+          block.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        block.appendChild(toggle);
+        block.appendChild(body);
+        versionsMount.appendChild(block);
+      });
+
+      /* 四端折叠（默认全收起） */
+      var mount = document.getElementById("terminals-mount");
+      spec.terminals.forEach(function (t) {
+        var sec = document.createElement("section");
+        sec.className = "terminal terminal--" + t.id;
+        sec.id = "terminal-" + t.id;
+
+        var badgeColor =
+          t.id === "tag"
+            ? "rgba(5,150,105,0.12)"
+            : t.id === "pc"
+              ? "rgba(79,70,229,0.12)"
+              : "rgba(234,88,12,0.12)";
+
+        var toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "terminal__toggle";
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.innerHTML =
+          '<div class="terminal__toggle-main">' +
+          '<span class="terminal__badge" style="background:' +
+          badgeColor +
+          ";color:" +
+          t.color +
+          '">' +
+          t.tag +
+          "</span><h2>" +
+          t.name +
+          "</h2></div>" +
+          '<span class="terminal__chev">›</span>';
+
+        var body = document.createElement("div");
+        body.className = "terminal__body";
+
+        var side = document.createElement("div");
+        side.className = "terminal__side";
+        side.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">' +
+          "<h3 style=\"margin:0\">本端结构 / 流程</h3>" +
+          '<a class="terminal__entry" href="' +
+          t.entry +
+          '">进入原型 →</a></div>';
+
+        var archList = document.createElement("div");
+        archList.className = "arch-list";
+        (t.archIds || []).forEach(function (aid) {
+          if (archById[aid]) mountArchItem(archById[aid], archList);
+        });
+        side.appendChild(archList);
+
+        if (t.flows && t.flows.length) {
+          var flowRow = document.createElement("div");
+          flowRow.className = "flows__btns";
+          flowRow.style.marginTop = "8px";
+          t.flows.forEach(function (f) {
+            var fbtn = document.createElement("button");
+            fbtn.type = "button";
+            fbtn.textContent = f.title;
+            fbtn.addEventListener("click", function (e) {
+              e.stopPropagation();
+              openNotes(f.notes, f.title);
+            });
+            flowRow.appendChild(fbtn);
+          });
+          side.appendChild(flowRow);
+        }
+        body.appendChild(side);
+
+        t.modules.forEach(function (mod) {
+          var modEl = document.createElement("div");
+          modEl.className = "module";
+          var noteIds = collectNoteIds(mod.items);
+          var head = document.createElement("div");
+          head.className = "module__head";
+          head.innerHTML = "<h3>" + mod.name + "</h3>";
+          var actions = document.createElement("div");
+          actions.className = "module__actions";
+          if (mod.href) {
+            var pageLink = document.createElement("a");
+            pageLink.href = mod.href;
+            pageLink.textContent = "打开页面";
+            actions.appendChild(pageLink);
+          }
+          if (noteIds.length) {
+            var docBtn = document.createElement("button");
+            docBtn.type = "button";
+            docBtn.className = "module__doc";
+            docBtn.textContent = "查看说明";
+            docBtn.addEventListener("click", function () {
+              openNotes(noteIds, mod.name);
+            });
+            actions.appendChild(docBtn);
+          }
+          head.appendChild(actions);
+          modEl.appendChild(head);
+          var ul = document.createElement("ul");
+          ul.className = "feat-list";
+          mod.items.forEach(function (item) {
+            var li = document.createElement("li");
+            li.textContent = item.text;
+            ul.appendChild(li);
+          });
+          modEl.appendChild(ul);
+          body.appendChild(modEl);
+        });
+
+        toggle.addEventListener("click", function () {
+          var open = !sec.classList.contains("is-open");
+          sec.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        sec.appendChild(toggle);
+        sec.appendChild(body);
+        mount.appendChild(sec);
+      });
+
+      if (location.hash && location.hash.indexOf("#terminal-") === 0) {
+        openTerminal(location.hash.replace("#terminal-", ""));
+      }
     })();
   </script>
 </body>
