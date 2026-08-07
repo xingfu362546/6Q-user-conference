@@ -1,6 +1,7 @@
 /**
  * 画像档案 · AI 对话小弹窗（原型）
  * 针对当前学员，用自然语言追问；回答基于本页 mock 档案事实。
+ * 预设 chips：分析跟进记录 / 生成沟通话术 / 近期消费能力（事实归纳 + 轻建议）。
  */
 (function () {
   "use strict";
@@ -14,6 +15,15 @@
 
   var s = pack.student;
   var d = pack.detail;
+
+  /** 原型「今天」锚点，用于近 12 个月口径 */
+  var TODAY = new Date("2026-08-07T00:00:00");
+
+  var CHIPS = [
+    { label: "分析跟进记录", q: "分析沟通跟进记录" },
+    { label: "生成沟通话术", q: "生成沟通话术策略" },
+    { label: "近期消费能力", q: "查询学员近期消费能力" },
+  ];
 
   function esc(t) {
     return String(t == null ? "" : t)
@@ -106,13 +116,334 @@
       .join("；");
   }
 
+  function unitPriceMap() {
+    var map = {};
+    (d.purchaseByProduct || []).forEach(function (p) {
+      var c = Math.max(1, Number(p.count) || 1);
+      map[p.product] = (Number(p.amount) || 0) / c;
+    });
+    return map;
+  }
+
+  /** 近 12 个月已支付（按购课时间；金额用产品均价估算） */
+  function recentSpendStats() {
+    var cutoff = new Date(TODAY);
+    cutoff.setFullYear(cutoff.getFullYear() - 1);
+    var prices = unitPriceMap();
+    var recent = (d.purchases || []).filter(function (p) {
+      if (!p.time) return false;
+      var t = new Date(String(p.time).replace(/-/g, "/"));
+      return !isNaN(t.getTime()) && t >= cutoff && t <= TODAY;
+    });
+    var total = 0;
+    var lines = recent.map(function (p) {
+      var amt = Math.round(prices[p.product] || 0);
+      total += amt;
+      return (
+        "· " +
+        p.time +
+        " " +
+        p.product +
+        " / " +
+        (p.goods || "") +
+        " ≈¥" +
+        amt
+      );
+    });
+    var rep = (d.repurchase || [])
+      .map(function (r) {
+        return r.product + "×" + r.count;
+      })
+      .join("、");
+    var tier;
+    var tierHint;
+    if (!recent.length || total < 5000) {
+      tier = "偏弱";
+      tierHint = "近 12 个月成交偏少，沟通宜先建立信任与需求，不宜强推高客单。";
+    } else if (total < 20000) {
+      tier = "中等";
+      tierHint = "有一定付费基础，可围绕已购主题做进阶/复训轻建议。";
+    } else {
+      tier = "偏强";
+      tierHint = "付费能力相对较强，可优先高质量跟进，仍避免逼单话术。";
+    }
+    return {
+      cutoff: cutoff,
+      recent: recent,
+      total: total,
+      lines: lines,
+      rep: rep,
+      tier: tier,
+      tierHint: tierHint,
+    };
+  }
+
+  function answerAnalyzeFollow(name) {
+    var follows = d.follows || [];
+    if (!follows.length) {
+      return (
+        "【分析跟进记录】\n暂无跟进记录可分析。\n\n建议先在会务跟进中补录沟通内容后再问我。"
+      );
+    }
+    var points = follows
+      .slice(0, 5)
+      .map(function (f, i) {
+        return (
+          i +
+          1 +
+          ". [" +
+          f.type +
+          "] " +
+          (f.time || "") +
+          "\n   " +
+          (f.content || "（无正文）") +
+          (f.tags && f.tags.length ? "｜标签：" + f.tags.join("/") : "") +
+          (f.conference ? "｜" + f.conference : "")
+        );
+      })
+      .join("\n");
+    var latest = follows[0];
+    var risk =
+      /担心|冲突|犹豫|观望|时间/.test(latest.content || "")
+        ? "最近一条出现顾虑信号（时间/犹豫类），跟进时需先回应障碍。"
+        : "最近一条未出现明显抗拒措辞，可延续兴趣点深挖。";
+    return (
+      "【分析跟进记录 · " +
+      name +
+      "】\n" +
+      "数据范围：画像跟进全量（跨会务，与「跟进查看更多」同源）\n\n" +
+      "一、沟通脉络\n" +
+      points +
+      (follows.length > 5 ? "\n…另有 " + (follows.length - 5) + " 条见档案跟进抽屉\n" : "\n") +
+      "\n二、关注点 / 风险\n" +
+      "· " +
+      risk +
+      "\n· 标签线索：" +
+      (tagLine() || "无系统标签") +
+      "\n\n" +
+      "三、待确认问题（轻建议）\n" +
+      "1. 当前最卡的是时间、预算，还是决策人？\n" +
+      "2. 对已购课程的体验如何，是否愿意谈进阶？\n" +
+      "3. 是否需要协同归属天使（" +
+      (d.basic && d.basic.belongAngel ? d.basic.belongAngel : "—") +
+      "）一起触达？\n\n" +
+      "说明：事实归纳 + 轻建议，非正式商机诊断。"
+    );
+  }
+
+  function answerScriptStrategy(name) {
+    var latest =
+      (d.follows && d.follows[0] && d.follows[0].content) || "暂无最近跟进";
+    var hasRep = (d.repurchase || []).length > 0;
+    return (
+      "【沟通话术策略 · 原型推演 · " +
+      name +
+      "】\n" +
+      "依据：档案标签 / 跟进 / 购课复购 / 关系（不绑定意向推荐课）\n\n" +
+      "一、开场框架\n" +
+      "「" +
+      name +
+      "你好，看到你之前提到「" +
+      latest.slice(0, 36) +
+      (latest.length > 36 ? "…" : "") +
+      "」，想先跟你对齐一下近况和最关心的点。」\n\n" +
+      "二、追问点\n" +
+      "1. 结合标签「" +
+      (tagLine() || "—") +
+      "」，确认当下真实需求场景。\n" +
+      "2. 购课侧：" +
+      (hasRep
+        ? "已有复购（" +
+          (d.repurchase || [])
+            .map(function (r) {
+              return r.product;
+            })
+            .join("、") +
+          "），可问复训/进阶体验预期。"
+        : "可围绕已购「" +
+          (purchaseLine() || "课程") +
+          "」问收获与未满足点。") +
+      "\n" +
+      "3. 关系侧：可礼貌协同推荐人 " +
+      (d.basic && d.basic.recommender ? d.basic.recommender : "—") +
+      " / 归属天使 " +
+      (d.basic && d.basic.belongAngel ? d.basic.belongAngel : "—") +
+      "。\n\n" +
+      "三、避免点\n" +
+      "· 不直接锁席/逼单；不臆造未在档案中的承诺。\n" +
+      "· 先回应跟进里的顾虑，再谈下一步。\n\n" +
+      "说明：此为对话式推演，供面谈参考，不替代正式商机模块。"
+    );
+  }
+
+  function answerSpendAbility(name) {
+    var st = recentSpendStats();
+    var body =
+      st.lines.length > 0
+        ? st.lines.join("\n")
+        : "· 近 12 个月暂无已支付购课记录";
+    return (
+      "【近期消费能力 · " +
+      name +
+      "】\n" +
+      "口径：近 12 个月已支付订单（原型锚点 " +
+      TODAY.toISOString().slice(0, 10) +
+      "）\n\n" +
+      "一、事实\n" +
+      body +
+      "\n· 估算合计 ≈¥" +
+      st.total +
+      " · 笔数 " +
+      st.recent.length +
+      "\n· 复购产品：" +
+      (st.rep || "暂无") +
+      "\n· 历史购课结构：" +
+      (purchaseLine() || "无") +
+      "\n\n" +
+      "二、粗标签：" +
+      st.tier +
+      "\n· " +
+      st.tierHint +
+      "\n\n" +
+      "脚注（原型阈值）：≥2万偏强；5千～2万中等；<5千或无单偏弱。非正式风控评级。"
+    );
+  }
+
+  function answerInterest(name) {
+    var learn = d.learnRecords || [];
+    var video = d.videoRecords || [];
+    var live = d.liveRecords || [];
+    var learnLine = learn
+      .slice(0, 3)
+      .map(function (x) {
+        return x.course || "";
+      })
+      .filter(Boolean)
+      .join("、");
+    var videoLine = video
+      .slice(0, 3)
+      .map(function (x) {
+        return x.title || "";
+      })
+      .filter(Boolean)
+      .join("、");
+    var liveLine = live
+      .slice(0, 2)
+      .map(function (x) {
+        return x.team || x.session || "";
+      })
+      .filter(Boolean)
+      .join("、");
+    return (
+      "【近期兴趣点 · " +
+      name +
+      "】\n" +
+      "· 社区话题：" +
+      communityLine() +
+      "\n" +
+      "· 学习：" +
+      (learnLine || "暂无明细，可看档案「近期行为」") +
+      "\n" +
+      "· 视频：" +
+      (videoLine || "暂无") +
+      "\n" +
+      "· 直播：" +
+      (liveLine || "暂无") +
+      "\n" +
+      "· 购课偏好：" +
+      (purchaseLine() || "无") +
+      "\n\n" +
+      "轻建议：面谈可从高频话题/在学课程切入，再确认是否愿意深入相关主题。"
+    );
+  }
+
+  function answerBehaviorSummary(name) {
+    var trend = d.behaviorTrend || {};
+    var lastC = (trend.community || []).slice(-1)[0];
+    var lastL = (trend.live || []).slice(-1)[0];
+    return (
+      "【行为汇总 · " +
+      name +
+      "】\n" +
+      "· 近30天趋势点：社区 " +
+      (lastC != null ? lastC : "—") +
+      " · 直播 " +
+      (lastL != null ? lastL : "—") +
+      "\n" +
+      "· 明细条数：社区 " +
+      (d.communityRecords || []).length +
+      " · 学习 " +
+      (d.learnRecords || []).length +
+      " · 视频 " +
+      (d.videoRecords || []).length +
+      " · 直播 " +
+      (d.liveRecords || []).length +
+      "\n" +
+      "· 社区摘要：" +
+      communityLine() +
+      "\n\n" +
+      "完整明细见档案「近期行为」四 Tab / 查看更多。"
+    );
+  }
+
+  function answerTagInsight(name) {
+    var tags = d.systemTags || [];
+    if (!tags.length) {
+      return (
+        "【标签命中解读 · " +
+        name +
+        "】\n当前无系统标签命中。可结合跟进与行为再观察意向信号。"
+      );
+    }
+    var lines = tags
+      .map(function (t, i) {
+        return (
+          i +
+          1 +
+          ". " +
+          t.parent +
+          " / " +
+          t.name +
+          (t.weight != null ? "（权重 " + t.weight + "）" : "")
+        );
+      })
+      .join("\n");
+    return (
+      "【标签命中解读 · " +
+      name +
+      "】\n" +
+      lines +
+      "\n\n" +
+      "轻建议：面谈话术优先覆盖权重较高或与最近跟进一致的标签场景；标签是信号不是结论。"
+    );
+  }
+
   function answer(q) {
     var text = String(q || "").trim();
-    var low = text.toLowerCase();
     var name = s.name6q;
 
     if (!text) {
-      return "请用自然语言提问，例如：「" + name + "适合推什么课？」";
+      return "请用自然语言提问，或点击下方快捷问题。";
+    }
+
+    /* 预设与第 4 类代表：优先于泛匹配 */
+    if (/分析.*跟进|沟通跟进记录|跟进记录分析/.test(text)) {
+      return answerAnalyzeFollow(name);
+    }
+    if (/沟通话术|话术策略|生成.*话术/.test(text)) {
+      return answerScriptStrategy(name);
+    }
+    if (/消费能力|近期消费|消费力/.test(text)) {
+      return answerSpendAbility(name);
+    }
+    if (/兴趣|感兴趣|偏好/.test(text)) {
+      return answerInterest(name);
+    }
+    if (/行为汇总|汇总.*行为/.test(text)) {
+      return answerBehaviorSummary(name);
+    }
+    if (/标签命中|标签解读|解读.*标签/.test(text)) {
+      return answerTagInsight(name);
     }
 
     if (/概括|画像|整体|总结|是谁|简介/.test(text)) {
@@ -142,7 +473,7 @@
         "· 家庭：" +
         familyLine() +
         "\n\n" +
-        "以上为档案事实汇总；如需商机结论可继续追问「适合怎么跟进」。"
+        "也可点快捷问题：分析跟进记录 / 生成沟通话术 / 近期消费能力。"
       );
     }
 
@@ -165,7 +496,7 @@
         "，退款单 " +
         (d.refunds || []).length +
         " 笔\n\n" +
-        "口径：已支付订单按「课程产品」+1；复购看同产品次数。"
+        "若要看近 12 个月消费力，可问「查询学员近期消费能力」。"
       );
     }
 
@@ -209,61 +540,19 @@
         followLine() +
         "\n" +
         (hist ? "· 近几条：\n" + hist + "\n" : "") +
-        "\n建议结合标签「" +
-        (tagLine() || "—") +
-        "」与现场签到（" +
-        s.group +
-        " / " +
-        s.clearance +
-        "）安排跟进话术。"
+        "\n需要结构化分析可点「分析跟进记录」；需要话术可点「生成沟通话术」。"
       );
     }
 
     if (/社区|话题|直播|行为|活跃|视频|学习/.test(text)) {
-      var trend = d.behaviorTrend || {};
-      var lastC = (trend.community || []).slice(-1)[0];
-      var lastL = (trend.live || []).slice(-1)[0];
-      return (
-        "【行为活跃】\n" +
-        "· 社区话题（按话题名称）：" +
-        communityLine() +
-        "\n" +
-        "· 近30天趋势（今日点）：社区 " +
-        (lastC != null ? lastC : "—") +
-        " · 直播 " +
-        (lastL != null ? lastL : "—") +
-        "\n" +
-        "· 近期明细可参考档案「近期行为」表\n\n" +
-        "社区口径对齐话题管理·话题名称，不用分类汇总代替。"
-      );
+      return answerBehaviorSummary(name);
     }
 
-    if (/跟进建议|下一步|怎么跟|推什么|适合|转化|锁席|会销/.test(text) || /建议/.test(text)) {
-      var highValue = tagLine().indexOf("高价值") >= 0 || tagLine().indexOf("消费") >= 0;
-      var hasRep = (d.repurchase || []).length > 0;
-      return (
-        "【跟进建议 · 原型推演】\n" +
-        "基于 " +
-        name +
-        " 的档案事实（非正式商机诊断）：\n" +
-        "1. 优先结合最近跟进：" +
-        ((d.follows && d.follows[0] && d.follows[0].content) || "暂无") +
-        "\n" +
-        "2. 产品侧：" +
-        (hasRep
-          ? "已有复购，可谈进阶/复训权益与家庭同行。"
-          : "可围绕已购课程产品做进阶或同主题沙龙转化。") +
-        "\n" +
-        "3. 关系侧：归属天使 " +
-        (d.basic.belongAngel || "—") +
-        "，协同推荐人 " +
-        (d.basic.recommender || "—") +
-        " 做触达。\n" +
-        "4. 标签侧：" +
-        (highValue ? "命中高价值相关标签，可提高跟进优先级。" : "关注亲子/行为标签，匹配话术场景。") +
-        "\n\n" +
-        "说明：此为对话式分析原型，结论供会务参考，不替代正式商机模块。"
-      );
+    if (
+      /跟进建议|下一步|怎么跟|推什么|适合|转化|锁席|会销/.test(text) ||
+      /建议/.test(text)
+    ) {
+      return answerScriptStrategy(name);
     }
 
     if (/家庭|孩子|配偶|父母/.test(text)) {
@@ -288,14 +577,13 @@
       );
     }
 
-    // 默认：给结构化速览 + 引导
     return (
       "已结合 " +
       name +
       "（" +
       s.memberId +
       "）档案检索。\n\n" +
-      "可继续问：画像概括、购课复购、关系图谱、跟进重点、行为活跃、跟进建议。\n\n" +
+      "可点快捷问题，或试着问：近期兴趣点、行为汇总、标签命中解读、画像概括、购课复购、关系图谱。\n\n" +
       "当前速览：标签「" +
       (tagLine() || "无") +
       "」；购课「" +
@@ -323,8 +611,9 @@
       '<button type="button" class="pf-ai__close" id="pfAiClose" aria-label="关闭">×</button>' +
       "</div>" +
       '<div class="pf-ai__msgs" id="pfAiMsgs" role="log" aria-live="polite"></div>' +
+      '<div class="pf-ai__chips" id="pfAiChips"></div>' +
       '<form class="pf-ai__form" id="pfAiForm">' +
-      '<input type="text" id="pfAiInput" placeholder="用自然语言提问，例如：适合怎么跟进？" autocomplete="off" />' +
+      '<input type="text" id="pfAiInput" placeholder="用自然语言提问，或点上方快捷问题" autocomplete="off" />' +
       '<button type="submit" class="q-btn q-btn--primary pf-ai__send">发送</button>' +
       "</form>" +
       '<p class="pf-ai__foot">原型模拟回复 · 非正式商机诊断</p>' +
@@ -335,8 +624,21 @@
     var fab = document.getElementById("pfAiFab");
     var panel = document.getElementById("pfAiPanel");
     var msgs = document.getElementById("pfAiMsgs");
+    var chipsEl = document.getElementById("pfAiChips");
     var form = document.getElementById("pfAiForm");
     var input = document.getElementById("pfAiInput");
+
+    CHIPS.forEach(function (c) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pf-ai__chip";
+      btn.textContent = c.label;
+      btn.addEventListener("click", function () {
+        ask(c.q);
+      });
+      chipsEl.appendChild(btn);
+    });
+
     function open() {
       panel.hidden = false;
       fab.setAttribute("aria-expanded", "true");
@@ -346,7 +648,7 @@
           "ai",
           "你好，我是 " +
             s.name6q +
-            " 的分析助手。可基于档案事实用自然语言提问，例如画像概括、购课复购、关系、跟进建议等。"
+            " 的分析助手。可点下方快捷问题，或自由追问（如近期兴趣点、行为汇总、标签命中解读）。"
         );
       }
       input.focus();
