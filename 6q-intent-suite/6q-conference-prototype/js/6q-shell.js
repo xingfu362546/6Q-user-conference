@@ -1,5 +1,5 @@
 /**
- * 6Q 后台 · 统一壳层（支持会务详情 / 会务工具）
+ * 6Q 后台 · 统一壳层（支持会务详�?/ 会务工具�?
  */
 (function () {
   "use strict";
@@ -23,7 +23,7 @@
     { id: "purchase", href: "#", label: "学员购课", disabled: true },
     { id: "cert", href: "#", label: "学员证书", disabled: true },
     { id: "approval", href: "#", label: "审批管理", disabled: true },
-    { id: "briefing", href: "#", label: "事业说明会", disabled: true },
+    { id: "briefing", href: "#", label: "事业说明�?, disabled: true },
     { id: "followup", href: "#", label: "跟进记录", disabled: true },
     {
       id: "intent-strategy",
@@ -80,13 +80,13 @@
       '<a href="#">排课管理</a>' +
       '<a href="#">意向导师管理</a>' +
       '<a href="#">传播天使管理</a>' +
-      '<a href="#" class="is-active">计划与实施</a>' +
+      '<a href="#" class="is-active">计划与实�?/a>' +
       '<a href="#">积分管理</a>' +
       "</nav>" +
       '<div class="q-topbar__right">' +
-      '<span aria-hidden="true">⬇</span>' +
-      '<span><span class="q-avatar">余</span> 余玲玲</span>' +
-      '<span aria-hidden="true">⚙</span>' +
+      '<span aria-hidden="true">�?/span>' +
+      '<span><span class="q-avatar">�?/span> 余玲�?/span>' +
+      '<span aria-hidden="true">�?/span>' +
       "</div>";
   }
 
@@ -94,12 +94,12 @@
     var el = document.getElementById("q-sidenav-mount");
     if (!el) return;
     el.innerHTML =
-      '<a class="q-sidenav__item" href="index.html">首页</a>' +
+      '<a class="q-sidenav__item" href="versions.html">首页</a>' +
       '<p class="q-sidenav__group-title">线下课程会务</p>' +
       '<a class="q-sidenav__item is-active" href="conference-detail-basic.html">课程会务</a>' +
       '<a class="q-sidenav__item" href="#">学习档案</a>' +
       '<a class="q-sidenav__item" href="#">积分记录</a>' +
-      '<a class="q-sidenav__item" href="#">一办三团招募</a>' +
+      '<a class="q-sidenav__item" href="#">一办三团招�?/a>' +
       '<a class="q-sidenav__item" href="#">学习修练活动</a>' +
       '<details class="q-sidenav__details" open>' +
       '<summary class="q-sidenav__item q-sidenav__summary">会务工具</summary>' +
@@ -111,7 +111,7 @@
           );
         }
         var cls = item.id === TOOL_PAGE ? " is-active" : "";
-        var tag = item.isNew ? ' <span class="q-sidenav__new">新</span>' : "";
+        var tag = item.isNew ? ' <span class="q-sidenav__new">�?/span>' : "";
         return (
           '<a class="q-sidenav__sub-item' +
           cls +
@@ -130,12 +130,12 @@
     var el = document.getElementById("q-sidenav-mount");
     if (!el) return;
     el.innerHTML =
-      '<a class="q-sidenav__item" href="index.html">首页</a>' +
+      '<a class="q-sidenav__item" href="versions.html">首页</a>' +
       '<p class="q-sidenav__group-title">线下课程会务</p>' +
       '<a class="q-sidenav__item" href="conference-detail-basic.html">课程会务</a>' +
       '<a class="q-sidenav__item" href="#">学习档案</a>' +
       '<a class="q-sidenav__item" href="#">积分记录</a>' +
-      '<a class="q-sidenav__item" href="#">一办三团招募</a>' +
+      '<a class="q-sidenav__item" href="#">一办三团招�?/a>' +
       '<a class="q-sidenav__item" href="#">学习修练活动</a>' +
       '<details class="q-sidenav__details" open>' +
       '<summary class="q-sidenav__item q-sidenav__summary is-active-group">会务工具</summary>' +
@@ -147,7 +147,7 @@
           );
         }
         var cls = item.id === TOOL_PAGE ? " is-active" : "";
-        var tag = item.isNew ? ' <span class="q-sidenav__new">新</span>' : "";
+        var tag = item.isNew ? ' <span class="q-sidenav__new">�?/span>' : "";
         return (
           '<a class="q-sidenav__sub-item' +
           cls +

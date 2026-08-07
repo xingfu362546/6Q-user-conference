@@ -1,5 +1,5 @@
 /**
- * 用户标签后台 — 统一顶栏 + 侧栏（全站菜单一致，仅内容区各页不同）
+ * 用户标签后台 �?统一顶栏 + 侧栏（全站菜单一致，仅内容区各页不同�?
  */
 (function () {
   "use strict";
@@ -23,7 +23,7 @@
     {
       group: "数据资产",
       items: [
-        { id: "data-tables", href: "data-tables.html", label: "数据表管理" },
+        { id: "data-tables", href: "data-tables.html", label: "数据表管�? },
         { id: "data-access", href: "data-access.html", label: "数据接入" },
       ],
     },
@@ -48,8 +48,8 @@
       nav +
       "</nav>" +
       '<div class="ut-topbar__tools">' +
-      '<a class="ut-topbar__link" href="index.html">原型导航</a>' +
-      '<span class="ut-user"><span class="ut-avatar">李</span>李明</span>' +
+      '<a class="ut-topbar__link" href="home.html">原型导航</a>' +
+      '<span class="ut-user"><span class="ut-avatar">�?/span>李明</span>' +
       "</div>";
   }
 
@@ -80,7 +80,7 @@
       });
     });
     mount.outerHTML =
-      '<aside class="ut-side" id="ut-side-mount" aria-label="主导航">' + html + "</aside>";
+      '<aside class="ut-side" id="ut-side-mount" aria-label="主导�?>' + html + "</aside>";
   }
 
   renderTopbar();
