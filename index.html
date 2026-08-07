@@ -277,7 +277,7 @@
     </section>
 
     <section class="flows" id="conference-versions">
-      <h2>会务后台 · 版本变更</h2>
+      <h2>功能清单（版本一览）</h2>
       <p style="font-size:12px;color:#64748b;margin:0 0 12px">默认展开当前封版；旧版本点击展开。完整导航：<a href="6q-conference-prototype/index.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
       <div id="versions-mount"></div>
     </section>
@@ -598,17 +598,25 @@
           "</h2></div>" +
           '<span class="terminal__chev">›</span>';
 
+        var entryWrap = document.createElement("div");
+        entryWrap.className = "terminal__bar-entry";
         var entryLink = document.createElement("a");
         entryLink.className = "terminal__entry";
         entryLink.href = t.entry;
         entryLink.textContent = "进入原型 →";
-        entryLink.title = t.name + "入口";
+        entryLink.title = t.entry;
         entryLink.addEventListener("click", function (e) {
           e.stopPropagation();
         });
+        var pathEl = document.createElement("span");
+        pathEl.className = "terminal__path";
+        pathEl.textContent = t.entry;
+        pathEl.title = t.entry;
+        entryWrap.appendChild(entryLink);
+        entryWrap.appendChild(pathEl);
 
         bar.appendChild(toggle);
-        bar.appendChild(entryLink);
+        bar.appendChild(entryWrap);
 
         var body = document.createElement("div");
         body.className = "terminal__body";
