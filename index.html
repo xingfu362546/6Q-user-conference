@@ -214,14 +214,18 @@
     }
     .ver-block.is-open .ver-block__chev { transform: rotate(90deg); background: #c7d2fe; color: var(--pc); }
     .terminal { margin-bottom: 14px; }
+    .terminal__bar {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 0;
+      border-bottom: 1px solid var(--line); background: #f8fafc;
+    }
     .terminal__toggle {
-      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      padding: 14px 18px; border: none; background: #f8fafc; cursor: pointer; font-family: inherit; text-align: left;
-      border-bottom: 1px solid var(--line);
+      flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 8px 8px 8px 18px; border: none; background: transparent; cursor: pointer; font-family: inherit; text-align: left;
     }
     .terminal__toggle:hover { background: #f1f5f9; }
     .terminal__toggle-main { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .terminal__toggle h2 { font-size: 16px; margin: 0; }
+    .terminal__bar .terminal__entry { flex-shrink: 0; margin-right: 8px; }
     .terminal__body { display: none; }
     .terminal.is-open .terminal__body { display: block; }
     .terminal__chev {
@@ -566,6 +570,9 @@
               ? "rgba(79,70,229,0.12)"
               : "rgba(234,88,12,0.12)";
 
+        var bar = document.createElement("div");
+        bar.className = "terminal__bar";
+
         var toggle = document.createElement("button");
         toggle.type = "button";
         toggle.className = "terminal__toggle";
@@ -583,17 +590,24 @@
           "</h2></div>" +
           '<span class="terminal__chev">›</span>';
 
+        var entryLink = document.createElement("a");
+        entryLink.className = "terminal__entry";
+        entryLink.href = t.entry;
+        entryLink.textContent = "进入原型 →";
+        entryLink.title = t.name + "入口";
+        entryLink.addEventListener("click", function (e) {
+          e.stopPropagation();
+        });
+
+        bar.appendChild(toggle);
+        bar.appendChild(entryLink);
+
         var body = document.createElement("div");
         body.className = "terminal__body";
 
         var side = document.createElement("div");
         side.className = "terminal__side";
-        side.innerHTML =
-          '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">' +
-          "<h3 style=\"margin:0\">本端结构 / 流程</h3>" +
-          '<a class="terminal__entry" href="' +
-          t.entry +
-          '">进入原型 →</a></div>';
+        side.innerHTML = "<h3 style=\"margin:0 0 8px\">本端结构 / 流程</h3>";
 
         var archList = document.createElement("div");
         archList.className = "arch-list";
@@ -664,7 +678,7 @@
           toggle.setAttribute("aria-expanded", open ? "true" : "false");
         });
 
-        sec.appendChild(toggle);
+        sec.appendChild(bar);
         sec.appendChild(body);
         mount.appendChild(sec);
       });
