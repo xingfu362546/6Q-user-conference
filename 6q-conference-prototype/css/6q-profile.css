@@ -767,6 +767,31 @@
   font-style: italic;
 }
 
+.pf-ai__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.pf-ai__chip {
+  border: 1px solid #91d5ff;
+  background: #e6f7ff;
+  color: #096dd9;
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.pf-ai__chip:hover {
+  border-color: #1890ff;
+  background: #bae7ff;
+}
+
 .pf-ai__form {
   display: flex;
   gap: 8px;
