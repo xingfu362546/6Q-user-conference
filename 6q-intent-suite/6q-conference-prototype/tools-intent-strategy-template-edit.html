@@ -44,15 +44,16 @@
             <aside class="intent-config intent-config--wide" aria-label="策略配置">
               <div class="intent-panel">
                 <div class="intent-panel__head">
-                  <h2 class="intent-panel__title"><span class="intent-panel__step">1</span>关注标签 · 列表筛选</h2>
+                  <h2 class="intent-panel__title"><span class="intent-panel__step">1</span>关注标签 · 筛选 + 计分权重</h2>
                 </div>
                 <div class="intent-panel__body">
                   <p class="intent-field__hint" style="margin:0 0 12px">
-                    从平台<strong>系统标签</strong>（一级分类 / 二级标签）中选择；点击区域打开标签树，支持多选。
+                    从平台系统标签中多选；<strong>权重在本模板维护</strong>（不在标签平台）。关注集合同时用于列表筛选与意向分加总。
                   </p>
                   <div class="intent-chip-area intent-chip-area--pick" data-pick="watch" id="watch-chips" tabindex="0"></div>
+                  <div id="watch-weights" class="intent-watch-weights-wrap" style="margin-top:12px"></div>
                   <div class="intent-logic-row">
-                    <span class="intent-field__label" style="margin:0">逻辑</span>
+                    <span class="intent-field__label" style="margin:0">筛选逻辑</span>
                     <select class="q-select" id="watch-logic">
                       <option value="any">命中任一</option>
                       <option value="all">命中全部</option>
@@ -66,7 +67,7 @@
                 </div>
                 <div class="intent-panel__body">
                   <p class="intent-field__hint" style="margin:0 0 12px">
-                    二选一：<strong>按权重分</strong>（标签权重 + AI 分阈值）或<strong>按命中标签</strong>（高/中/低组合判定）。
+                    二选一：<strong>按权重分</strong>（关注权重 Σ + AI，配阈值）或<strong>按命中标签</strong>（高/中/低组合；详情不展示权重，仍保留 AI 与参考分排序）。
                   </p>
                   <div class="intent-mode-switch" role="radiogroup">
                     <label class="intent-mode-switch__item">

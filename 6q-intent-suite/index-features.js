@@ -28,8 +28,8 @@ window.INTENT_FEATURE_SPEC = {
       body: "<p>按钮：<strong>保存草稿</strong> / <strong>生成 SQL</strong> / <strong>确认并计算</strong>。</p><p>右侧展示 SQL、人话解读、预估人数。修改自然语言后进入脏状态：旧 SQL 保留告警，须重新生成后才能确认。</p><p>例行更新<strong>复用已确认 SQL</strong>，不每次调 AI。</p>",
     },
     7: {
-      title: "标签全局权重",
-      body: "<p>每条二级标签配置<strong>全局权重</strong>（数值），供会务意向分公式使用：</p><p><code>意向分 = Σ(已命中标签权重) + AI分(0~25)</code></p><p>权重在标签平台维护；会务与 APP <strong>只读</strong>，不可按期次改权重。</p>",
+      title: "策略模板 · 关注标签权重（非标签平台）",
+      body: "<p>意向分标签部分 = <code>Σ(关注标签 ∩ 命中)</code> 的<strong>策略权重</strong> + AI(0~25)。</p><ul><li>权重在<strong>分析策略模板 / 本期策略</strong>的关注标签上配置，<strong>不在</strong>标签平台。</li><li>未进关注集合的命中标签可展示，但<strong>不计分</strong>。</li></ul>",
     },
     8: {
       title: "确认并计算",
@@ -61,8 +61,14 @@ window.INTENT_FEATURE_SPEC = {
     },
     15: {
       title: "关注标签配置",
-      body: "<p>从系统标签树多选二级标签；逻辑二选一：</p><ul><li><strong>命中任一</strong>：学员命中集合 ∩ 关注集合 ≠ ∅</li><li><strong>命中全部</strong>：关注集合 ⊆ 学员命中集合</li></ul><p>作用：<strong>仅缩小列表展示范围</strong>，不改变平台是否命中、不改变意向分加总标签范围。</p>",
-      mermaid: "flowchart TD\n  A[选关注标签树] --> B{逻辑}\n  B -->|任一| C[交集非空]\n  B -->|全部| D[关注⊆命中]\n  C --> E[进入列表]\n  D --> E",
+      body: "<p>从系统标签树多选二级标签；逻辑二选一：</p><ul><li><strong>命中任一</strong>：学员命中集合 ∩ 关注集合 ≠ ∅</li><li><strong>命中全部</strong>：关注集合 ⊆ 学员命中集合</li></ul><p>作用：<strong>缩小列表</strong> + <strong>挂策略权重计分</strong>。未关注命中标签不加分。</p>",
+      mermaid: "flowchart TD
+  A[选关注标签树] --> B{逻辑}
+  B -->|任一| C[交集非空]
+  B -->|全部| D[关注⊆命中]
+  C --> E[进入列表]
+  D --> E
+  A --> W[为每条填策略权重]",
     },
     16: {
       title: "意向度 · 二选一",
@@ -93,9 +99,14 @@ window.INTENT_FEATURE_SPEC = {
       body: "<p>分析页顶部只读展示：模板名、关注标签摘要、意向度方式、保存时间。</p><p>本页<strong>不可编辑</strong>规则；修改须去「本期分析策略」或「分析策略模板」。</p>",
     },
     22: {
-      title: "意向分公式",
-      body: "<p><code>意向分 = Σ(该学员所有已命中标签的平台权重) + AI权重分</code></p><ul><li>AI 分 ∈ [0, 25]</li><li>加总标签<strong>不限于</strong>「关注标签」子集</li><li>列表默认按意向分<strong>降序</strong></li></ul>",
-      mermaid: "flowchart LR\n  T[命中标签] --> SUM[Σ权重]\n  AI[AI分0-25] --> ADD[+]\n  SUM --> ADD\n  ADD --> SCORE[意向分]",
+      title: "意向分公式与排序",
+      body: "<p><code>意向分 = Σ(关注∩命中 的策略权重) + AI权重分(0~25)</code></p><ul><li>列表默认排序：意向分降序 → AI 降序 → 数据更新时间倒序</li><li>「按命中标签」模式：档位由组合判定；意向分仍作参考列与排序</li><li>详情：按权重分显示权重/不计分；按命中标签显示档位组合贡献、不显示权重数字</li></ul>",
+      mermaid: "flowchart LR
+  W[关注权重] --> SUM[Σ命中关注]
+  AI[AI分0-25] --> ADD[+]
+  SUM --> ADD
+  ADD --> SCORE[意向分]
+  SCORE --> SORT[排序]",
     },
     23: {
       title: "列表 · 学员列",

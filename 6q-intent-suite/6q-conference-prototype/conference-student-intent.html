@@ -30,6 +30,7 @@
                 <div class="intent-hero__meta">
                   <span class="intent-hero__pill">会务 CF-2025-12551</span>
                   <span class="intent-hero__pill">广州 · 待上课</span>
+                  <a class="intent-hero__pill" href="index.html#v102" style="text-decoration:none">封版 v1.0.2</a>
                 </div>
               </div>
               <div class="intent-hero__actions">
@@ -83,7 +84,7 @@
 
           <p class="intent-notice">
             本页为<strong>只读分析</strong>：策略由「本期分析策略」或会务工具模板维护，此处不可编辑。
-            跟进与 AI 分列展示；意向分 = 标签权重 + AI 分（≤25）。
+            跟进与 AI 分列展示；意向分 = 关注标签策略权重 Σ + AI 分（≤25）；排序：意向分 → AI → 更新时间。
             <a href="../docs/course-student-intent/INTENT-STRATEGY-CONFIG.md" target="_blank" rel="noopener">配置说明</a>
           </p>
 
@@ -106,12 +107,9 @@
                       <th>意向分</th>
                       <th>意向度</th>
                       <th class="intent-table__col-tags">命中标签</th>
-                      <th>跟进内容</th>
+                      <th>跟进内容（当前会务）</th>
                       <th>AI提炼分析</th>
                       <th>推荐产品</th>
-                      <th>社区</th>
-                      <th>学习</th>
-                      <th>视频</th>
                       <th>操作</th>
                     </tr>
                   </thead>
@@ -137,16 +135,10 @@
       <div class="q-drawer__tabs" role="tablist">
         <button type="button" class="is-active" data-tab="tags" role="tab">标签命中</button>
         <button type="button" data-tab="insight" role="tab">洞察与推荐</button>
-        <button type="button" data-tab="community" role="tab">社区</button>
-        <button type="button" data-tab="learn" role="tab">学习</button>
-        <button type="button" data-tab="video" role="tab">视频</button>
       </div>
       <div class="q-drawer__body">
         <div class="q-drawer-panel is-active" id="panel-tags" role="tabpanel"></div>
         <div class="q-drawer-panel" id="panel-insight" role="tabpanel"></div>
-        <div class="q-drawer-panel" id="panel-community" role="tabpanel"></div>
-        <div class="q-drawer-panel" id="panel-learn" role="tabpanel"></div>
-        <div class="q-drawer-panel" id="panel-video" role="tabpanel"></div>
       </div>
     </aside>
   </div>

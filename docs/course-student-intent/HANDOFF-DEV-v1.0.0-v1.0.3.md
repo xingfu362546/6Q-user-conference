@@ -3,8 +3,7 @@
 > **交付范围：** v1.0.0 → v1.0.3（一次开发）  
 > **日期：** 2026-08-24  
 > **对象：** 研发 / 测试  
-> **原型仓库：** `xingfu362546/6Q-user-conference`  
-> **套件入口：** [`6q-intent-suite/index.html`](../../6q-intent-suite/index.html)（功能清单总页）  
+> **原型仓库：** `xingfu362546/6Q-user-conference`（本仓）  
 > **阅读顺序：** 本文清单 → 打开对应原型页右下角**红点注释** → 详设文档
 
 ---
@@ -22,14 +21,14 @@
 
 | 用途 | 路径 |
 |------|------|
-| 三端/四端功能清单（含注释正文） | [`6q-intent-suite/index.html`](../../6q-intent-suite/index.html) + [`index-features.js`](../../6q-intent-suite/index-features.js) |
-| 会务后台版本导航 | [`6q-intent-suite/6q-conference-prototype/versions.html`](../../6q-intent-suite/6q-conference-prototype/versions.html) |
-| 功能变更 changelog | [`FEATURE-CHANGELOG.md`](../../6q-intent-suite/6q-conference-prototype/docs/FEATURE-CHANGELOG.md) |
+| 三端功能清单（含注释正文） | [`index.html`](../../index.html) + [`index-features.js`](../../index-features.js) |
+| 会务后台版本导航 | [`6q-conference-prototype/index.html`](../../6q-conference-prototype/index.html) |
+| 功能变更 changelog | [`6q-conference-prototype/docs/FEATURE-CHANGELOG.md`](../../6q-conference-prototype/docs/FEATURE-CHANGELOG.md) |
 | 产品方案 | [`CONFIRMATION.md`](./CONFIRMATION.md) |
 | 课程推荐规则 | [`COURSE-RECOMMENDATION.md`](./COURSE-RECOMMENDATION.md) |
 | 策略配置说明 | [`INTENT-STRATEGY-CONFIG.md`](./INTENT-STRATEGY-CONFIG.md) |
-| 标签 NL→SQL（v1.1） | [`HANDOFF-v1.1.md`](./HANDOFF-v1.1.md) · `6q-intent-suite/user-tag-admin/LOGIC_ALIGNMENT.md` |
-| 页→注释映射 | [`shared/intent-proto-pages.js`](../../6q-intent-suite/shared/intent-proto-pages.js) |
+| 标签 NL→SQL（v1.1） | [`HANDOFF-v1.1.md`](./HANDOFF-v1.1.md) · `user-tag-admin/LOGIC_ALIGNMENT.md` |
+| 页→注释映射 | [`shared/intent-proto-pages.js`](../../shared/intent-proto-pages.js) |
 
 ### 页内注释覆盖（交付前已核对）
 
@@ -73,7 +72,7 @@ flowchart LR
 |------|----------|
 | 主键 | `member_id` 全链路直连，**不做映射表**（注释 #12） |
 | 标签计算 | 全平台批处理 → `tag_member_snapshot`；会务只取 **本期名单 ∩ 命中**（#1） |
-| 会务不配标签规则 | 规则/权重在标签平台；会务只选用关注标签 + 意向度方式（#15–18） |
+| 会务不配标签规则 | 规则在标签平台；**权重在会务策略模板**；会务选用关注标签 + 意向度方式（#7、#15–18） |
 | 未配置策略 | 意向页**禁止**静默默认出数；空态引导去「本期分析策略」（#20） |
 | 一期不做 | 会务改标签规则、秒级画像、人工改 AI 推荐、展示快照版本号（#40） |
 
@@ -81,10 +80,10 @@ flowchart LR
 
 | 概念 | 公式 / 规则 | 注释 |
 |------|-------------|------|
-| 意向分 | `Σ(命中标签平台权重) + AI分(0~25)`；加总**不限**关注标签子集 | #22 |
+| 意向分 | `Σ(关注∩命中 的策略权重) + AI分(0~25)`；排序：意向分→AI→更新时间 | #22 |
 | 意向度 A | 三阈值：高→中→低→未分级 | #17 |
-| 意向度 B | 高/中/低标签组合；允许多档命中取最高；**不用**分数切档 | #18 |
-| 关注标签 | 仅筛列表是否出现；**不改**分、不改平台命中 | #15 |
+| 意向度 B | 高/中/低标签组合；详情不展示权重，展示组合贡献 | #18 |
+| 关注标签 | 筛列表 + 挂策略权重；未关注命中不计分 | #15 |
 
 ### 2.3 策略保存副作用
 
@@ -125,7 +124,7 @@ flowchart LR
 | A2 | NL→SQL 圈选 | `tag-create.html` | 生成→解读/预估→确认计算；例行复用已确认 SQL；可视化规则一期不做 | #5–8 |
 | A3 | 执行历史 | `tag-history.html` | 本版本无效；Tab：命中用户｜本次 SQL | #9 |
 | A4 | 数据资产 | `data-access.html` / `data-tables.html` | 接入只读；表字段只读 | #10–11 |
-| A5 | 全局权重 | 标签编辑 | 供意向分 Σ；会务不可改 | #7 |
+| A5 | 关注标签权重 | 策略模板编辑 | 每条关注标签填策略 weight；供意向分 Σ | #7 |
 
 ### B. 会务后台 · v1.0.0 基线
 

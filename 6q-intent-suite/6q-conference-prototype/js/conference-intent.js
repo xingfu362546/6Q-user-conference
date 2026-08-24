@@ -800,6 +800,7 @@
     ? global.IntentStrategyCore.cloneConfig(global.IntentStrategyCore.getActiveConfig())
     : {
         watchTags: ["tag_1233", "tag_3301", "tag_4402"],
+        watchWeights: { tag_1233: 30, tag_3301: 25, tag_4402: 20 },
         watchLogic: "any",
         intentMode: "score",
         thresholdHigh: 70,
@@ -809,6 +810,10 @@
         mid: { tags: ["tag_1233", "tag_5503"], logic: "all" },
         low: { tags: ["tag_2201"], logic: "any" },
       };
+
+  if (global.IntentStrategyCore && global.IntentStrategyCore.normalizeConfig) {
+    Object.assign(state, global.IntentStrategyCore.normalizeConfig(state));
+  }
 
   state.search = "";
   state.pickerTarget = null;
@@ -886,18 +891,64 @@
     });
   }
 
+  function watchWeightOf(code) {
+    if (state.watchWeights && state.watchWeights[code] != null) {
+      return Number(state.watchWeights[code]) || 0;
+    }
+    var t = tagByCode(code);
+    return t && t.weight != null ? t.weight : 0;
+  }
+
+  /** 意向分标签部分：仅 Σ「关注标签 ∩ 命中」的策略权重 */
   function tagScore(hits) {
+    var watchSet = {};
+    (state.watchTags || []).forEach(function (c) {
+      watchSet[c] = true;
+    });
     var sum = 0;
-    hits.forEach(function (code) {
-      var t = tagByCode(code);
-      if (t) sum += t.weight;
+    (hits || []).forEach(function (code) {
+      if (watchSet[code]) sum += watchWeightOf(code);
     });
     return sum;
   }
 
+  function aiScoreOf(s) {
+    return s.ai && s.ai.score != null
+      ? Math.min(AI_SCORE_MAX, Math.max(0, s.ai.score))
+      : 0;
+  }
+
   function totalScore(s) {
-    var ai = s.ai && s.ai.score ? Math.min(AI_SCORE_MAX, Math.max(0, s.ai.score)) : 0;
-    return tagScore(s.hits) + ai;
+    return tagScore(s.hits) + aiScoreOf(s);
+  }
+
+  function studentUpdatedAt(s) {
+    if (s.updatedAt) return s.updatedAt;
+    if (s.follow && s.follow.time && s.follow.time !== "—") return s.follow.time;
+    return "";
+  }
+
+  function hitsKey(hits) {
+    return (hits || []).slice().sort().join("|");
+  }
+
+  /** 意向分降序 → AI 降序 → 更新时间倒序 */
+  function compareStudents(a, b) {
+    var sa = totalScore(a);
+    var sb = totalScore(b);
+    if (sb !== sa) return sb - sa;
+    var aa = aiScoreOf(a);
+    var ab = aiScoreOf(b);
+    if (ab !== aa) return ab - aa;
+    return String(studentUpdatedAt(b)).localeCompare(String(studentUpdatedAt(a)));
+  }
+
+  function comboRoleForTag(code) {
+    var roles = [];
+    if ((state.high.tags || []).indexOf(code) !== -1) roles.push("高意向组合");
+    if ((state.mid.tags || []).indexOf(code) !== -1) roles.push("中意向组合");
+    if ((state.low.tags || []).indexOf(code) !== -1) roles.push("低意向组合");
+    return roles;
   }
 
   function intentLevelByScore(total) {
@@ -982,8 +1033,19 @@
   }
 
   function setTagsForTarget(target, codes) {
-    if (target === "watch") state.watchTags = codes;
-    else if (target === "high") state.high.tags = codes;
+    if (target === "watch") {
+      state.watchTags = codes;
+      state.watchWeights = state.watchWeights || {};
+      codes.forEach(function (code) {
+        if (state.watchWeights[code] == null) {
+          var t = tagByCode(code);
+          state.watchWeights[code] = t && t.weight != null ? t.weight : 10;
+        }
+      });
+      Object.keys(state.watchWeights).forEach(function (code) {
+        if (codes.indexOf(code) === -1) delete state.watchWeights[code];
+      });
+    } else if (target === "high") state.high.tags = codes;
     else if (target === "mid") state.mid.tags = codes;
     else if (target === "low") state.low.tags = codes;
   }
@@ -995,6 +1057,51 @@
         return c !== code;
       })
     );
+  }
+
+  function renderWatchWeights() {
+    var box = document.getElementById("watch-weights");
+    if (!box) return;
+    var codes = state.watchTags || [];
+    if (!codes.length) {
+      box.innerHTML =
+        '<p class="intent-field__hint" style="margin:0">请先选择关注标签，再为每条标签填写策略权重（用于意向分 Σ，不在标签平台维护）。</p>';
+      return;
+    }
+    box.innerHTML =
+      '<p class="intent-field__hint" style="margin:0 0 8px">策略权重（仅关注标签计分；未关注的命中标签可展示但不加分）</p>' +
+      '<div class="intent-watch-weights">' +
+      codes
+        .map(function (code) {
+          var t = tagByCode(code);
+          var w = watchWeightOf(code);
+          return (
+            '<label class="intent-watch-weight">' +
+            '<span class="intent-watch-weight__name">' +
+            escapeHtml(t ? t.name : code) +
+            "</span>" +
+            '<input type="number" class="intent-watch-weight__input" min="0" max="200" data-watch-weight="' +
+            escapeAttr(code) +
+            '" value="' +
+            w +
+            '" />' +
+            "<span>分</span></label>"
+          );
+        })
+        .join("") +
+      "</div>";
+    box.querySelectorAll("[data-watch-weight]").forEach(function (inp) {
+      inp.addEventListener("change", function () {
+        state.watchWeights = state.watchWeights || {};
+        state.watchWeights[inp.getAttribute("data-watch-weight")] =
+          Number(inp.value) || 0;
+      });
+      inp.addEventListener("input", function () {
+        state.watchWeights = state.watchWeights || {};
+        state.watchWeights[inp.getAttribute("data-watch-weight")] =
+          Number(inp.value) || 0;
+      });
+    });
   }
 
   function renderChips(container, codes, pickTarget) {
@@ -1010,12 +1117,19 @@
       if (!t) return;
       var chip = document.createElement("span");
       chip.className = "intent-chip";
-      chip.title = t.parentName + " / " + t.name;
+      var wHint =
+        pickTarget === "watch"
+          ? " · 权 " + watchWeightOf(code)
+          : "";
+      chip.title = t.parentName + " / " + t.name + wHint;
       chip.innerHTML =
         '<span class="intent-chip__main"><span class="intent-chip__path">' +
         escapeHtml(t.parentName) +
         '</span><span class="intent-chip__name">' +
         escapeHtml(t.name) +
+        (pickTarget === "watch"
+          ? '<em class="intent-chip__w">+' + watchWeightOf(code) + "</em>"
+          : "") +
         "</span></span>" +
         (pickTarget
           ? '<button type="button" class="intent-chip__remove" data-remove="' +
@@ -1090,6 +1204,7 @@
     renderChips(document.getElementById("high-chips"), state.high.tags, "high");
     renderChips(document.getElementById("mid-chips"), state.mid.tags, "mid");
     renderChips(document.getElementById("low-chips"), state.low.tags, "low");
+    renderWatchWeights();
   }
 
   function filteredStudents() {
@@ -1128,9 +1243,7 @@
   function renderTable() {
     var tbody = document.getElementById("student-tbody");
     if (!tbody) return;
-    var list = filteredStudents().slice().sort(function (a, b) {
-      return totalScore(b) - totalScore(a);
-    });
+    var list = filteredStudents().slice().sort(compareStudents);
     updateStats(list);
     if (!list.length) {
       var cols = 11;
@@ -1149,7 +1262,7 @@
         var total = totalScore(s);
         var lv = getIntentLevel(s);
         var tScore = tagScore(s.hits);
-        var aiSc = s.ai ? s.ai.score : 0;
+        var aiSc = aiScoreOf(s);
         var initial = s.name.charAt(0);
         var grad = avatarStyle(s.id);
         var chips = s.hits
@@ -1168,7 +1281,19 @@
           s.follow.content === "—" ? "—" : truncate(s.follow.content, 24);
         var aiShort = s.ai && s.ai.summary ? s.ai.summary : "—";
         var scoreTip =
-          "标签 " + tScore + " 分 + AI " + aiSc + " 分（AI 最高 " + AI_SCORE_MAX + "）";
+          state.intentMode === "tags"
+            ? "参考分：关注权重 " +
+              tScore +
+              " + AI " +
+              aiSc +
+              "（档位由命中标签组合判定）"
+            : "关注权重 " +
+              tScore +
+              " + AI " +
+              aiSc +
+              "（AI 最高 " +
+              AI_SCORE_MAX +
+              "）";
         return (
           "<tr>" +
           '<td><div class="intent-student">' +
@@ -1255,8 +1380,9 @@
             escapeHtml(t.code) +
             " · " +
             escapeHtml(t.type) +
-            " · 权重 " +
-            t.weight +
+            (state.pickerTarget === "watch" && (state.watchTags || []).indexOf(t.code) !== -1
+              ? " · 策略权 " + watchWeightOf(t.code)
+              : "") +
             "</span></span></label>"
           );
         })
@@ -1388,31 +1514,90 @@
     if (!s) return;
     var total = totalScore(s);
     var lv = getIntentLevel(s);
+    var tScore = tagScore(s.hits);
+    var aiSc = aiScoreOf(s);
     var backdrop = document.getElementById("drawer-backdrop");
     document.getElementById("drawer-name").textContent = s.name;
-    document.getElementById("drawer-meta").textContent =
-      s.id + " · 意向分 " + total + "（标签 " + tagScore(s.hits) + " + AI " + (s.ai ? s.ai.score : 0) + "）";
+    var metaLine =
+      state.intentMode === "tags"
+        ? s.id +
+          " · 意向度 " +
+          lv.label +
+          " · 参考分 " +
+          total +
+          "（关注权重 " +
+          tScore +
+          " + AI " +
+          aiSc +
+          "）"
+        : s.id +
+          " · 意向分 " +
+          total +
+          "（关注权重 " +
+          tScore +
+          " + AI " +
+          aiSc +
+          "）";
+    document.getElementById("drawer-meta").textContent = metaLine;
+
+    var watchSet = {};
+    (state.watchTags || []).forEach(function (c) {
+      watchSet[c] = true;
+    });
 
     document.getElementById("panel-tags").innerHTML =
       '<p style="margin:0 0 12px;font-size:13px;color:#64748b">意向度 <span class="' +
       levelPillClass(lv.key) +
       '">' +
       lv.label +
-      "</span></p>" +
+      "</span>" +
+      (state.intentMode === "score"
+        ? " · 模式：按权重分"
+        : " · 模式：按命中标签（详情不展示权重数字）") +
+      "</p>" +
       s.hits
         .map(function (c) {
           var t = tagByCode(c);
+          var title = escapeHtml(t ? t.parentName + " / " + t.name : c);
+          var right = "";
+          if (state.intentMode === "score") {
+            if (watchSet[c]) {
+              right =
+                '<span class="intent-drawer-tag__w">+' +
+                watchWeightOf(c) +
+                " 分</span>";
+            } else {
+              right =
+                '<span class="intent-drawer-tag__w intent-drawer-tag__w--muted">不计分</span>';
+            }
+          } else {
+            var roles = comboRoleForTag(c);
+            right = roles.length
+              ? '<span class="intent-drawer-tag__w">' +
+                escapeHtml(roles.join(" · ")) +
+                "</span>"
+              : '<span class="intent-drawer-tag__w intent-drawer-tag__w--muted">未入档位组合</span>';
+          }
           return (
-            '<div class="intent-drawer-tag">' +
-            "<strong>" +
-            escapeHtml(t ? t.parentName + " / " + t.name : c) +
+            '<div class="intent-drawer-tag"><strong>' +
+            title +
             "</strong>" +
-            '<span class="intent-drawer-tag__w">+' +
-            (t ? t.weight : 0) +
-            " 分</span></div>"
+            right +
+            "</div>"
           );
         })
-        .join("");
+        .join("") +
+      (state.intentMode === "score"
+        ? '<p style="margin:14px 0 0;font-size:12px;color:#64748b">AI 权重分 <strong>' +
+          aiSc +
+          "</strong> / " +
+          AI_SCORE_MAX +
+          "</p>"
+        : '<p style="margin:14px 0 0;font-size:12px;color:#64748b">AI 权重分仍参与参考分与排序：<strong>' +
+          aiSc +
+          "</strong> / " +
+          AI_SCORE_MAX +
+          "</p>");
 
     var insightEl = document.getElementById("panel-insight");
     insightEl.innerHTML = renderInsightPanel(s);

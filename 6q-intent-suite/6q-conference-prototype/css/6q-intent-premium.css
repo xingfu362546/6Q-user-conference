@@ -637,6 +637,14 @@
   font-weight: 600;
   color: var(--intent-ink);
 }
+.intent-student__link {
+  color: #1890ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.intent-student__link:hover {
+  text-decoration: underline;
+}
 .intent-student__meta {
   font-size: 11px;
   color: var(--intent-ink-3);
@@ -1005,8 +1013,49 @@
 }
 .intent-drawer-tag__w {
   font-size: 12px;
-  font-weight: 700;
-  color: var(--intent-accent);
+  font-weight: 600;
+  color: #4f46e5;
+  white-space: nowrap;
+}
+.intent-drawer-tag__w--muted {
+  color: #94a3b8;
+  font-weight: 500;
+}
+.intent-chip__w {
+  margin-left: 4px;
+  font-style: normal;
+  font-size: 11px;
+  color: #6366f1;
+  font-weight: 600;
+}
+.intent-watch-weights-wrap {
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px dashed rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+}
+.intent-watch-weights {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.intent-watch-weight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.intent-watch-weight__name {
+  flex: 1;
+  min-width: 0;
+  color: #0f172a;
+}
+.intent-watch-weight__input {
+  width: 72px;
+  padding: 6px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font: inherit;
 }
 .intent-empty {
   font-size: 13px;

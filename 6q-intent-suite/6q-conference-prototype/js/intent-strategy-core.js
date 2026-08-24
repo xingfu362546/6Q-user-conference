@@ -11,6 +11,8 @@
 
   var DEFAULT_CONFIG = {
     watchTags: ["tag_1233", "tag_3301", "tag_4402"],
+    /** 关注标签权重：仅策略模板维护，不在标签平台配置 */
+    watchWeights: { tag_1233: 30, tag_3301: 25, tag_4402: 20 },
     watchLogic: "any",
     intentMode: "score",
     thresholdHigh: 70,
@@ -36,6 +38,7 @@
       updatedAt: "2025-02-20",
       config: {
         watchTags: ["tag_1233", "tag_3301"],
+        watchWeights: { tag_1233: 30, tag_3301: 25 },
         watchLogic: "any",
         intentMode: "tags",
         thresholdHigh: 70,
@@ -52,12 +55,51 @@
     return JSON.parse(JSON.stringify(c));
   }
 
+  /** 补齐/裁剪 watchWeights；缺省从标签目录 mock 权重迁移，正式环境应由运营在模板填写 */
+  function normalizeWatchWeights(config) {
+    if (!config) return config;
+    var weights = Object.assign({}, config.watchWeights || {});
+    var flat = (global.INTENT_TAG_FLAT || []).reduce(function (m, t) {
+      m[t.code] = t.weight;
+      return m;
+    }, {});
+    (config.watchTags || []).forEach(function (code) {
+      if (weights[code] == null || weights[code] === "") {
+        weights[code] = flat[code] != null ? flat[code] : 10;
+      } else {
+        weights[code] = Number(weights[code]) || 0;
+      }
+    });
+    Object.keys(weights).forEach(function (code) {
+      if ((config.watchTags || []).indexOf(code) === -1) delete weights[code];
+    });
+    config.watchWeights = weights;
+    return config;
+  }
+
+  function normalizeConfig(config) {
+    var c = cloneConfig(config || DEFAULT_CONFIG);
+    if (!c.watchTags) c.watchTags = [];
+    if (!c.high) c.high = { tags: [], logic: "all" };
+    if (!c.mid) c.mid = { tags: [], logic: "any" };
+    if (!c.low) c.low = { tags: [], logic: "any" };
+    return normalizeWatchWeights(c);
+  }
+
   function loadTemplates() {
     try {
       var raw = localStorage.getItem(STORAGE_TEMPLATES);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        return JSON.parse(raw).map(function (t) {
+          t.config = normalizeConfig(t.config);
+          return t;
+        });
+      }
     } catch (e) {}
-    return cloneConfig(SEED_TEMPLATES);
+    return cloneConfig(SEED_TEMPLATES).map(function (t) {
+      t.config = normalizeConfig(t.config);
+      return t;
+    });
   }
 
   function saveTemplates(list) {
@@ -115,7 +157,7 @@
       templateName: meta.templateName || null,
       savedAt: new Date().toISOString(),
       savedBy: meta.savedBy || "会务统筹",
-      config: cloneConfig(config),
+      config: normalizeConfig(config),
     };
     localStorage.setItem(STORAGE_CONFERENCE, JSON.stringify(payload));
     bumpAnalysisVersion();
@@ -155,8 +197,8 @@
 
   function getActiveConfig() {
     var conf = getConferenceConfig();
-    if (conf && conf.config) return cloneConfig(conf.config);
-    return cloneConfig(DEFAULT_CONFIG);
+    if (conf && conf.config) return normalizeConfig(conf.config);
+    return normalizeConfig(DEFAULT_CONFIG);
   }
 
   function tagByCode(code) {
@@ -226,6 +268,7 @@
     bumpAnalysisVersion: bumpAnalysisVersion,
     getAnalysisVersion: getAnalysisVersion,
     cloneConfig: cloneConfig,
+    normalizeConfig: normalizeConfig,
     tagNames: tagNames,
   };
 })(window);
