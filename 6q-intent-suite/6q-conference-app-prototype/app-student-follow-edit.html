@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>会务跟进 · 会务 APP</title>
+  <link rel="stylesheet" href="css/app-conference.css" />
+  <link rel="stylesheet" href="css/ios-device.css" />
+</head>
+<body class="app-body">
+  <div class="phone-frame">
+    <header class="ops-nav">
+      <button type="button" class="ops-nav__back" id="btnBack" aria-label="返回">‹</button>
+      <div class="ops-nav__title" id="navTitle">会务跟进</div>
+      <span></span>
+    </header>
+
+    <div class="ops-edit-body">
+      <div class="ops-tag-bar" id="tagBar">
+        <button type="button" class="ops-tag-add" id="btnAddTag">＋ 自定义标签</button>
+      </div>
+
+      <div class="ops-editor">
+        <textarea
+          class="ops-editor__textarea"
+          id="contentInput"
+          maxlength="1000"
+          placeholder="请填写跟进内容...如：&#10;😆 学员诉求:&#10;🌟 跟进情况:&#10;💡 跟进建议:"
+        ></textarea>
+        <div class="ops-editor__tools">
+          <button type="button" class="ops-editor__tpl" id="btnTpl">示例模板</button>
+          <span class="ops-editor__count"><span id="charCount">0</span>/1000</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ops-footer">
+      <button type="button" class="ops-btn ops-btn--primary" id="btnSave" disabled>保存</button>
+    </footer>
+  </div>
+
+  <!-- 弹层由脚本移入 .phone-frame，避免超出 iOS 外框 -->
+  <div class="ops-modal-mask" id="tagModal" aria-hidden="true">
+    <div class="ops-modal" role="dialog" aria-labelledby="tagModalTitle">
+      <button type="button" class="ops-modal__close" id="tagModalClose" aria-label="关闭">×</button>
+      <h3 class="ops-modal__title" id="tagModalTitle">添加自定义标签</h3>
+      <input class="ops-modal__input" id="tagInput" type="text" maxlength="20" placeholder="请输入自定义标签" />
+      <button type="button" class="ops-btn ops-btn--primary" id="tagModalOk">确定</button>
+    </div>
+  </div>
+
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/app-intent-core.js"></script>
+  <script src="js/app-student-ops.js"></script>
+  <script>
+    (function () {
+      var id = new URLSearchParams(location.search).get("id") || "m10009";
+      var Ops = window.AppStudentOps;
+      var s = Ops.getById(id);
+      var tags = [];
+      var input = document.getElementById("contentInput");
+      var saveBtn = document.getElementById("btnSave");
+      var tagBar = document.getElementById("tagBar");
+      var modal = document.getElementById("tagModal");
+      var tagInput = document.getElementById("tagInput");
+      var phone = document.querySelector(".phone-frame");
+      if (phone && modal && modal.parentElement !== phone) {
+        phone.appendChild(modal);
+      }
+
+      if (!s) {
+        document.getElementById("navTitle").textContent = "会务跟进";
+      } else {
+        document.getElementById("navTitle").textContent = s.name + "的会务跟进";
+        document.title = s.name + "的会务跟进";
+      }
+
+      function syncSave() {
+        saveBtn.disabled = !input.value.trim();
+      }
+
+      function renderTags() {
+        var addBtn = document.getElementById("btnAddTag");
+        tagBar.innerHTML = "";
+        tags.forEach(function (t, i) {
+          var chip = document.createElement("span");
+          chip.className = "ops-tag-chip";
+          chip.innerHTML =
+            t +
+            '<button type="button" class="ops-tag-chip__x" data-i="' +
+            i +
+            '" aria-label="移除">×</button>';
+          tagBar.appendChild(chip);
+        });
+        tagBar.appendChild(addBtn);
+      }
+
+      tagBar.addEventListener("click", function (e) {
+        var x = e.target.closest("[data-i]");
+        if (!x) return;
+        tags.splice(Number(x.getAttribute("data-i")), 1);
+        renderTags();
+      });
+
+      document.getElementById("btnAddTag").addEventListener("click", function () {
+        tagInput.value = "";
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        setTimeout(function () {
+          tagInput.focus();
+        }, 50);
+      });
+
+      function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+
+      document.getElementById("tagModalClose").addEventListener("click", closeModal);
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+      document.getElementById("tagModalOk").addEventListener("click", function () {
+        var v = tagInput.value.trim();
+        if (!v) return;
+        if (tags.indexOf(v) === -1) tags.push(v);
+        renderTags();
+        closeModal();
+      });
+
+      input.addEventListener("input", function () {
+        document.getElementById("charCount").textContent = String(input.value.length);
+        syncSave();
+      });
+
+      document.getElementById("btnTpl").addEventListener("click", function () {
+        if (input.value.trim()) return;
+        input.value =
+          "😆 学员诉求:\n\n🌟 跟进情况:\n\n💡 跟进建议:\n";
+        document.getElementById("charCount").textContent = String(input.value.length);
+        syncSave();
+        input.focus();
+      });
+
+      document.getElementById("btnBack").addEventListener("click", function () {
+        location.href = "app-student-ops-detail.html?id=" + encodeURIComponent(id);
+      });
+
+      saveBtn.addEventListener("click", function () {
+        if (saveBtn.disabled || !s) return;
+        Ops.addFollowup(id, {
+          content: input.value.trim(),
+          tags: tags.slice(),
+          follower: "当前跟进人",
+          followerRole: "会务跟进",
+          starred: false,
+        });
+        location.href = "app-student-ops-detail.html?id=" + encodeURIComponent(id);
+      });
+
+      renderTags();
+      syncSave();
+    })();
+  </script>
+  <script src="js/ios-wrap.js"></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>学员详情 · 会务 APP</title>
+  <link rel="stylesheet" href="css/app-conference.css" />
+  <link rel="stylesheet" href="css/ios-device.css" />
+</head>
+<body class="app-body">
+  <div class="phone-frame">
+    <header class="ops-nav">
+      <button type="button" class="ops-nav__back" id="btnBack" aria-label="返回">‹</button>
+      <div class="ops-nav__title">学员详情</div>
+      <span></span>
+    </header>
+
+    <section class="ops-profile" id="profileBlock"></section>
+
+    <nav class="ops-tabs" role="tablist" aria-label="学员详情分区">
+      <button type="button" class="ops-tabs__item is-active" data-tab="follow">本场会务跟进</button>
+      <button type="button" class="ops-tabs__item" data-tab="order">本场订单</button>
+      <button type="button" class="ops-tabs__item" data-tab="card">TA的课程卡</button>
+      <button type="button" class="ops-tabs__item" data-tab="history">历史会务跟进</button>
+    </nav>
+
+    <div class="ops-scroll" id="tabPanel"></div>
+
+    <footer class="ops-footer">
+      <button type="button" class="ops-btn ops-btn--ghost" id="btnStar">购课意向标注</button>
+      <button type="button" class="ops-btn ops-btn--primary" id="btnFollow">登记学员信息</button>
+    </footer>
+  </div>
+
+  <script src="js/tag-catalog-tree.js"></script>
+  <script src="js/app-intent-core.js"></script>
+  <script src="js/app-student-ops.js"></script>
+  <script>
+    (function () {
+      var id = new URLSearchParams(location.search).get("id") || "m10009";
+      var Ops = window.AppStudentOps;
+      var panel = document.getElementById("tabPanel");
+      var profileEl = document.getElementById("profileBlock");
+      var activeTab = "follow";
+
+      function toast(msg) {
+        var el = document.createElement("div");
+        el.className = "ops-toast";
+        el.textContent = msg;
+        var host =
+          document.querySelector(".phone-frame") ||
+          document.querySelector(".ios-device__screen") ||
+          document.body;
+        host.appendChild(el);
+        requestAnimationFrame(function () {
+          el.classList.add("is-show");
+        });
+        setTimeout(function () {
+          el.classList.remove("is-show");
+          setTimeout(function () {
+            el.remove();
+          }, 200);
+        }, 1600);
+      }
+
+      function renderProfile(s) {
+        var starText = Ops.starLabel(s.purchaseStar);
+        profileEl.innerHTML =
+          '<div class="ops-avatar-wrap">' +
+          '<div class="ops-avatar" style="background:' +
+          window.AppIntent.avatarGradient(s.id) +
+          '">' +
+          s.name.charAt(0) +
+          "</div>" +
+          '<span class="ops-avatar__star"' +
+          (starText ? "" : " hidden") +
+          ">" +
+          (starText ? "★ " + starText : "") +
+          "</span>" +
+          "</div>" +
+          '<div class="ops-profile__body">' +
+          '<div class="ops-profile__name-line">' +
+          '<span class="ops-profile__name">' +
+          s.name +
+          "</span>" +
+          (s.trainTag ? '<span class="student-tag">' + s.trainTag + "</span>" : "") +
+          (s.roleTag ? '<span class="student-tag">' + s.roleTag + "</span>" : "") +
+          "</div>" +
+          '<p class="ops-profile__line">ID: ' +
+          s.memberCode +
+          " · " +
+          s.phone +
+          " · " +
+          s.gender +
+          " · " +
+          s.age +
+          "岁 · " +
+          s.city +
+          "</p>" +
+          '<p class="ops-profile__line">' +
+          s.group +
+          " | 签到号: " +
+          s.checkinNo +
+          " | 订餐次数: " +
+          s.mealCount +
+          "</p>" +
+          "</div>";
+      }
+
+      function renderFollow(s) {
+        var list = s.followups || [];
+        if (!list.length) {
+          panel.innerHTML =
+            '<div class="ops-empty">暂无本场会务跟进<br />点击下方「登记学员信息」添加</div>';
+          return;
+        }
+        panel.innerHTML =
+          list
+            .map(function (f) {
+              var tags =
+                f.tags && f.tags.length
+                  ? '<div class="ops-follow-card__tags">' +
+                    f.tags
+                      .map(function (t) {
+                        return '<span class="ops-follow-card__tag">' + t + "</span>";
+                      })
+                      .join("") +
+                    "</div>"
+                  : "";
+              return (
+                '<article class="ops-follow-card">' +
+                (f.starred ? '<div class="ops-follow-card__ribbon" aria-hidden="true"></div>' : "") +
+                '<div class="ops-follow-card__head">' +
+                '<span class="ops-follow-card__type">' +
+                f.type +
+                "</span>" +
+                '<span class="ops-follow-card__time">' +
+                Ops.relativeTime(f.createdAt) +
+                "</span>" +
+                "</div>" +
+                '<p class="ops-follow-card__row"><span>学员</span> ' +
+                s.name +
+                "（" +
+                s.phone +
+                "）</p>" +
+                '<p class="ops-follow-card__row"><span>跟进人</span> ' +
+                f.follower +
+                "（" +
+                f.followerRole +
+                "）</p>" +
+                '<p class="ops-follow-card__row">' +
+                (f.content || "—") +
+                "</p>" +
+                tags +
+                "</article>"
+              );
+            })
+            .join("") +
+          '<p class="ops-end-hint">没有更多了~</p>';
+      }
+
+      function renderPlaceholder(title) {
+        panel.innerHTML =
+          '<div class="ops-empty">' + title + "（本期原型占位）</div>";
+      }
+
+      function render() {
+        var s = Ops.getById(id);
+        if (!s) {
+          profileEl.innerHTML = "";
+          panel.innerHTML = '<div class="ops-empty">未找到学员</div>';
+          return;
+        }
+        document.title = s.name + " · 学员详情";
+        renderProfile(s);
+        if (activeTab === "follow") renderFollow(s);
+        else if (activeTab === "order") renderPlaceholder("本场订单");
+        else if (activeTab === "card") renderPlaceholder("TA的课程卡");
+        else renderPlaceholder("历史会务跟进");
+      }
+
+      document.getElementById("btnBack").addEventListener("click", function () {
+        location.href = "app-students.html";
+      });
+
+      document.querySelector(".ops-tabs").addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-tab]");
+        if (!btn) return;
+        activeTab = btn.getAttribute("data-tab");
+        document.querySelectorAll(".ops-tabs__item").forEach(function (b) {
+          b.classList.toggle("is-active", b === btn);
+        });
+        render();
+      });
+
+      document.getElementById("btnStar").addEventListener("click", function () {
+        var s = Ops.getById(id);
+        Ops.openStarSheet({
+          current: s ? s.purchaseStar : 3,
+          showAll: false,
+          onConfirm: function (star) {
+            Ops.setStar(id, star);
+            toast("已标注 " + star + " 星意向");
+            render();
+          },
+        });
+      });
+
+      document.getElementById("btnFollow").addEventListener("click", function () {
+        location.href = "app-student-follow-edit.html?id=" + encodeURIComponent(id);
+      });
+
+      render();
+    })();
+  </script>
+  <script src="js/ios-wrap.js"></script>
+</body>
+</html>

@@ -140,7 +140,7 @@ window.INTENT_FEATURE_SPEC = {
     },
     44: {
       title: "会务后台版本封版",
-      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：家庭组/关系图谱/基础信息/AI；行为与跟进归画像；意向列表精简</li><li><strong>v1.0.3</strong>（当前）：6Q 面谈官独立门户（会员登录、选进行中会务、只读意向/画像）</li></ul><p>套件：<code>6q-intent-suite/</code>；后台：<code>6q-conference-prototype/</code>；门户：<code>6q-interviewer-portal/</code></p>",
+      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：家庭组/关系图谱/基础信息/AI；行为与跟进归画像；意向列表精简</li><li><strong>v1.0.3</strong>（当前）：6Q 面谈官独立门户（会员登录、选进行中会务、只读意向/画像）</li></ul><p>套件入口：<code>6q-intent-suite/index.html</code>；开发交接：<code>docs/course-student-intent/HANDOFF-DEV-v1.0.0-v1.0.3.md</code></p>",
     },
     45: {
       title: "画像档案 · 行为与跟进抽屉（v1.0.2）",
@@ -149,6 +149,10 @@ window.INTENT_FEATURE_SPEC = {
     46: {
       title: "6Q 面谈官门户（v1.0.3）",
       body: "<p>独立 PC 门户：会员账号登录（手机/邮箱+密码+验证码）→ 选进行中会务 → 只读意向列表/明细抽屉 → 画像（含 AI）。</p><ul><li>角色来自会务内「面谈官」赋权；看会务全部学员</li><li>不搬策略配置；无跟进入录/导出</li><li>无会务空态：「当前无正在进行中的会务」</li></ul><p>入口：<code>6q-interviewer-portal/login.html</code></p>",
+    },
+    47: {
+      title: "画像 AI 对话 · 四预设 chips（v1.0.2/v1.0.3）",
+      body: "<p>右下角「问学员」弹窗；输出=档案事实归纳 + 轻建议（非正式商机诊断）。</p><ul><li><strong>分析跟进</strong>：跨会务跟进全量归纳</li><li><strong>沟通话术</strong>：基于标签/跟进/购课生成开场与追问</li><li><strong>近期消费能力</strong>：近 12 个月已支付粗估；分档 &lt;5千 / 5千–2万 / ≥2万</li><li><strong>课程购买建议</strong>：按消费力分档建议路径（低档偏免费直播·社区·免费课；高档可谈高客单），不绑定意向列表推荐课</li></ul><p>支持自由输入；命中关键词可路由到对应预设逻辑。</p>",
     },
     30: {
       title: "搜索与导出",
@@ -264,7 +268,7 @@ window.INTENT_FEATURE_SPEC = {
             },
             {
               text: "[v1.0.2+] AI 4 chips：跟进/话术/消费力/购课建议",
-              notes: [41, 45]
+              notes: [47, 41, 45]
             }
           ]
         }
@@ -273,7 +277,7 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "app",
       name: "会务 APP",
-      tag: "现场执行",
+      tag: "v1.0.0+ · 现场执行",
       color: "#f39800",
       entry: "6q-conference-app-prototype/home.html",
       modules: [
@@ -549,7 +553,7 @@ window.INTENT_FEATURE_SPEC = {
             },
             {
               text: "[v1.0.2] AI 分析对话：4 chips（跟进/话术/消费力/购课建议）+ 自由洞察",
-              notes: [41, 45]
+              notes: [47, 41, 45]
             }
           ]
         },
@@ -627,7 +631,7 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "tag",
       name: "标签系统",
-      tag: "数据与规则层",
+      tag: "v1.1 · NL→SQL",
       color: "#059669",
       entry: "user-tag-admin/tag-list.html",
       modules: [

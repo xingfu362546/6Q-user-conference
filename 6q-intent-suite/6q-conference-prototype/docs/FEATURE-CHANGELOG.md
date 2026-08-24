@@ -1,10 +1,12 @@
 # 课程会务后台 · 功能变更清单
 
-> 按版本追溯模块与功能变更。原型入口见 [../versions.html](../versions.html)；总功能清单见仓库根目录 [index.html](../../index.html)。
+> 按版本追溯模块与功能变更。原型入口见 [versions.html](../versions.html)；**总功能清单**见 [../../index.html](../../index.html)（套件根）。
 
 ## v1.0.3 · 2026-08-05（当前封版）
 
 **主题：** 6Q 面谈官独立 PC 门户（只读查档）
+
+> **开发交接（v1.0.0–v1.0.3 全量）：** [docs/course-student-intent/HANDOFF-DEV-v1.0.0-v1.0.3.md](../../docs/course-student-intent/HANDOFF-DEV-v1.0.0-v1.0.3.md)
 
 ### 模块：面谈官门户（新）
 
@@ -18,7 +20,7 @@
 | 画像档案 | 复用后台口径（含行为/跟进查看更多 + AI 问答） |
 | AI 对话预设 | 4 chips：分析跟进 / 沟通话术 / 消费能力 / 课程购买建议（按消费力分档：免费直播·社区·免费课 vs 高客单）；自由输入接兴趣点·行为汇总·标签解读 |
 
-**入口：** [面谈官门户](../6q-interviewer-portal/login.html)
+**入口：** [面谈官门户](../../6q-interviewer-portal/login.html)
 
 ---
 
