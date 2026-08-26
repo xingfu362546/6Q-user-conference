@@ -2,25 +2,548 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=6q-intent-suite/" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>跳转 · 6Q 意向功能清单</title>
-  <link rel="canonical" href="6q-intent-suite/" />
+  <title>6Q 会务 · 学员意向分析 · 功能清单</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #fff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: rgba(15, 23, 42, 0.08);
+      --radius: 12px;
+      --pc: #4f46e5;
+      --app: #ea580c;
+      --tag: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-      padding: 48px 24px;
-      color: #0f172a;
-      background: #f1f5f9;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      padding-bottom: 48px;
     }
-    a { color: #4f46e5; font-weight: 600; }
+    .top {
+      background: linear-gradient(135deg, #1e1b4b, #4338ca);
+      color: #fff;
+      padding: 28px 24px 32px;
+    }
+    .top__inner { max-width: 1200px; margin: 0 auto; }
+    .top__eyebrow { font-size: 11px; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .top h1 { font-size: 26px; margin-bottom: 8px; }
+    .top p { font-size: 13px; opacity: 0.9; max-width: 720px; }
+    .top__links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .top__links a {
+      font-size: 12px; color: #fff; text-decoration: none;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+    }
+    .top__links a:hover { background: rgba(255,255,255,0.25); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 0; }
+    .flows {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 18px 20px; margin-bottom: 20px;
+    }
+    .flows h2 { font-size: 14px; margin-bottom: 12px; }
+    .flows__btns { display: flex; flex-wrap: wrap; gap: 8px; }
+    .flows__btns button {
+      font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer;
+      border: 1px solid var(--line); background: #f8fafc;
+    }
+    .flows__btns button:hover { border-color: var(--pc); color: var(--pc); }
+    .arch {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 18px 20px; margin-bottom: 20px;
+    }
+    .arch__head { margin-bottom: 14px; }
+    .arch__head h2 { font-size: 14px; margin-bottom: 6px; }
+    .arch__head p { font-size: 12px; color: var(--muted); margin: 0; }
+    .arch-list { display: flex; flex-direction: column; gap: 8px; }
+    .arch-item {
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+      background: #fafafa;
+    }
+    .arch-item__btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 14px; border: none; background: transparent; cursor: pointer;
+      font-family: inherit; text-align: left;
+    }
+    .arch-item__btn:hover { background: #f1f5f9; }
+    .arch-item__title { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .arch-item__desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .arch-item__chev {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px;
+      background: #e2e8f0; color: var(--muted); font-size: 14px; line-height: 22px; text-align: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .arch-item.is-open .arch-item__chev { transform: rotate(90deg); background: #c7d2fe; color: var(--pc); }
+    .arch-item__panel {
+      display: none; padding: 0 14px 14px; border-top: 1px dashed var(--line);
+      background: #fff;
+    }
+    .arch-item.is-open .arch-item__panel { display: block; }
+    .arch-item__mermaid {
+      margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;
+      border: 1px solid var(--line); overflow: auto;
+    }
+    .arch-item__mermaid svg { max-width: 100%; height: auto; }
+    .arch-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px;
+    }
+    .arch-table th, .arch-table td {
+      padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left;
+    }
+    .arch-table th { background: #f8fafc; font-weight: 600; color: var(--muted); }
+    .terminal {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .terminal__head {
+      padding: 16px 20px; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .terminal__head h2 { font-size: 17px; display: flex; align-items: center; gap: 10px; }
+    .terminal__badge {
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+    }
+    .terminal__entry {
+      font-size: 12px; color: var(--pc); text-decoration: none; font-weight: 600;
+    }
+    .terminal--tag .terminal__entry { color: var(--tag); }
+    .terminal--app .terminal__entry { color: var(--app); }
+    .module { border-top: 1px solid var(--line); }
+    .module__head {
+      padding: 12px 20px; background: #f8fafc;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+    .module__head h3 { font-size: 14px; font-weight: 600; }
+    .module__head a { font-size: 12px; color: var(--muted); text-decoration: none; }
+    .module__head a:hover { text-decoration: underline; }
+    .feat-list { list-style: none; padding: 8px 12px 14px 20px; }
+    .feat-list li {
+      padding: 7px 0; border-bottom: 1px dashed rgba(15,23,42,0.06);
+      font-size: 13px; color: var(--ink);
+    }
+    .feat-list li:last-child { border-bottom: none; }
+    .module__actions { display: flex; align-items: center; gap: 12px; }
+    .module__doc {
+      font-size: 12px; color: var(--pc); background: none; border: none;
+      cursor: pointer; font-weight: 600; padding: 0;
+    }
+    .module__doc:hover { text-decoration: underline; }
+    .terminal--tag .module__doc { color: var(--tag); }
+    .terminal--app .module__doc { color: var(--app); }
+    .drawer__section { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+    .drawer__section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .drawer__section h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+    .drawer-backdrop {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 2000;
+      display: none; align-items: stretch; justify-content: flex-end;
+    }
+    .drawer-backdrop.is-open { display: flex; }
+    .drawer {
+      width: min(520px, 100vw); background: #fff; height: 100%;
+      display: flex; flex-direction: column;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+      animation: slideIn 0.22s ease;
+    }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .drawer__head {
+      padding: 16px 20px; border-bottom: 1px solid var(--line);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .drawer__head h2 { font-size: 16px; line-height: 1.4; padding-right: 8px; }
+    .drawer__close {
+      border: none; background: #f1f5f9; width: 32px; height: 32px; border-radius: 8px;
+      cursor: pointer; font-size: 18px; line-height: 1; flex-shrink: 0;
+    }
+    .drawer__body { padding: 16px 20px 32px; overflow: auto; flex: 1; font-size: 13px; }
+    .drawer__body p { margin-bottom: 10px; }
+    .drawer__body ul, .drawer__body ol { margin: 0 0 12px 18px; }
+    .drawer__body li { margin-bottom: 6px; }
+    .drawer__body code {
+      font-size: 12px; background: #f1f5f9; padding: 1px 6px; border-radius: 4px;
+    }
+    .drawer__mermaid {
+      margin-top: 16px; padding: 14px; background: #f8fafc; border-radius: 8px;
+      border: 1px solid var(--line); overflow: auto;
+    }
+    .drawer__refs {
+      margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line);
+      font-size: 11px; color: var(--muted);
+    }
+    .foot {
+      max-width: 1200px; margin: 8px auto 0; padding: 0 20px;
+      font-size: 11px; color: var(--muted);
+    }
+    .ver-block {
+      border: 1px solid var(--line); border-radius: 10px; background: #fafafa;
+      margin-bottom: 10px; overflow: hidden;
+    }
+    .ver-block__head {
+      padding: 10px 14px; display: flex; align-items: baseline; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap; background: #fff; border-bottom: 1px solid var(--line);
+    }
+    .ver-block__head h3 { font-size: 13px; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .ver-pill {
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: rgba(79,70,229,0.12); color: var(--pc);
+    }
+    .ver-pill--old { background: #f1f5f9; color: var(--muted); }
+    .ver-block__theme { font-size: 12px; color: var(--muted); margin: 0; }
+    .ver-block__mod { padding: 10px 14px; border-top: 1px dashed var(--line); font-size: 12px; }
+    .ver-block__mod:first-of-type { border-top: none; }
+    .ver-block__mod strong { display: inline-block; margin-bottom: 4px; }
+    .ver-block__mod a { color: var(--pc); text-decoration: none; font-weight: 600; margin-left: 8px; }
+    .ver-block__mod ul { margin: 4px 0 0 16px; color: var(--ink); }
+    .ver-block__mod li { margin-bottom: 2px; }
   </style>
 </head>
 <body>
-  <p>正在进入功能清单总页…</p>
-  <p>若未自动跳转，请打开 <a href="6q-intent-suite/">6q-intent-suite/</a></p>
+  <header class="top">
+    <div class="top__inner">
+      <p class="top__eyebrow">Feature Spec · 标签平台 v1.1 · 会务后台 v1.0.3</p>
+      <h1>课程会务 · 学员意向分析 · 三端功能清单</h1>
+      <p>功能清单按三端列出；会务后台按<strong>版本</strong>追溯变更（当前封版 v1.0.3，含面谈官门户）。系统结构图可展开；模块点「查看说明」打开注释。</p>
+      <nav class="top__links" id="jump-nav"></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="flows" id="conference-versions">
+      <h2>会务后台 · 版本变更（当前 v1.0.3）</h2>
+      <p style="font-size:12px;color:#64748b;margin:0 0 12px">按版本罗列模块与功能，便于追溯。面谈官门户：<a href="6q-intent-suite/6q-interviewer-portal/login.html" style="color:#f39800;font-weight:600">打开入口 →</a> · 完整导航：<a href="6q-intent-suite/6q-conference-prototype/versions.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
+      <div id="versions-mount"></div>
+    </section>
+
+    <section class="arch" id="architecture">
+      <div class="arch__head">
+        <h2>系统结构图</h2>
+        <p>点击标题展开/收起；首次展开时渲染 Mermaid 图。</p>
+      </div>
+      <div class="arch-list" id="arch-mount"></div>
+    </section>
+
+    <section class="flows">
+      <h2>全局流程（点击展开）</h2>
+      <div class="flows__btns" id="global-flows"></div>
+    </section>
+    <div id="terminals-mount"></div>
+  </div>
+
+  <p class="foot">文档：<code>docs/course-student-intent/CONFIRMATION.md</code> · 交接：<code>docs/course-student-intent/HANDOFF-v1.1.md</code> · 上线清单：<code>docs/course-student-intent/intent-rollout-workbook.xlsx</code></p>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true">
+    <aside class="drawer" role="dialog" aria-labelledby="drawer-title">
+      <div class="drawer__head">
+        <h2 id="drawer-title">注释</h2>
+        <button type="button" class="drawer__close" id="drawer-close" aria-label="关闭">×</button>
+      </div>
+      <div class="drawer__body" id="drawer-body"></div>
+    </aside>
+  </div>
+
+  <script src="index-features.js"></script>
+  <script src="shared/intent-proto-architecture.js"></script>
   <script>
-    location.replace("6q-intent-suite/");
+    (function () {
+      var spec = window.INTENT_FEATURE_SPEC;
+      if (!spec) return;
+
+      function prototypeHref(raw) {
+        if (!raw || /^(?:https?:|mailto:|#)/.test(raw)) return raw;
+        var href = raw;
+        if (href === "6q-conference-prototype/") {
+          href = "6q-conference-prototype/versions.html";
+        } else if (href === "6q-conference-app-prototype/") {
+          href = "6q-conference-app-prototype/home.html";
+        }
+        href = href.replace(
+          /^6q-conference-prototype\/index\.html/,
+          "6q-conference-prototype/versions.html",
+        );
+        return "6q-intent-suite/" + href;
+      }
+
+      mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose" });
+
+      var backdrop = document.getElementById("drawer-backdrop");
+      var bodyEl = document.getElementById("drawer-body");
+      var titleEl = document.getElementById("drawer-title");
+      var mmCounter = 0;
+
+      function renderMermaid(container, code) {
+        var id = "mm-" + ++mmCounter;
+        var pre = document.createElement("div");
+        pre.className = "mermaid";
+        pre.id = id;
+        pre.textContent = code;
+        container.appendChild(pre);
+        mermaid.run({ nodes: [pre] }).catch(function () {
+          pre.innerHTML = "<pre style='font-size:11px;white-space:pre-wrap'>" + code + "</pre>";
+        });
+      }
+
+      function openNotes(ids, title) {
+        titleEl.textContent = title;
+        bodyEl.innerHTML = "";
+        mmCounter = 0;
+        ids.forEach(function (id) {
+          var n = spec.notes[id];
+          if (!n) return;
+          var sec = document.createElement("div");
+          sec.className = "drawer__section";
+          var h = document.createElement("h3");
+          h.textContent = n.title;
+          sec.appendChild(h);
+          var div = document.createElement("div");
+          div.innerHTML = n.body;
+          sec.appendChild(div);
+          if (n.mermaid) {
+            var box = document.createElement("div");
+            box.className = "drawer__mermaid";
+            sec.appendChild(box);
+            renderMermaid(box, n.mermaid);
+          }
+          bodyEl.appendChild(sec);
+        });
+        var ref = document.createElement("p");
+        ref.className = "drawer__refs";
+        ref.textContent = "关联文档：docs/course-student-intent/CONFIRMATION.md · INTENT-STRATEGY-CONFIG.md · COURSE-RECOMMENDATION.md";
+        bodyEl.appendChild(ref);
+        backdrop.classList.add("is-open");
+        backdrop.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function collectNoteIds(items) {
+        var seen = {};
+        var out = [];
+        items.forEach(function (item) {
+          (item.notes || []).forEach(function (id) {
+            if (!seen[id]) {
+              seen[id] = true;
+              out.push(id);
+            }
+          });
+        });
+        return out.sort(function (a, b) {
+          return a - b;
+        });
+      }
+
+      function closeDrawer() {
+        backdrop.classList.remove("is-open");
+        backdrop.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      document.getElementById("drawer-close").addEventListener("click", closeDrawer);
+      backdrop.addEventListener("click", function (e) {
+        if (e.target === backdrop) closeDrawer();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeDrawer();
+      });
+
+      var jump = document.getElementById("jump-nav");
+      var verJump = document.createElement("a");
+      verJump.href = "#conference-versions";
+      var curVer = (spec.conferenceVersions || []).find(function (v) {
+        return v.current;
+      });
+      verJump.textContent = curVer
+        ? "会务版本 " + curVer.version
+        : "会务版本";
+      jump.appendChild(verJump);
+      var portalJump = document.createElement("a");
+      portalJump.href = prototypeHref("6q-interviewer-portal/login.html");
+      portalJump.textContent = "面谈官门户";
+      jump.appendChild(portalJump);
+      var archJump = document.createElement("a");
+      archJump.href = "#architecture";
+      archJump.textContent = "系统结构图";
+      jump.appendChild(archJump);
+      spec.terminals.forEach(function (t) {
+        var a = document.createElement("a");
+        a.href = "#terminal-" + t.id;
+        a.textContent = t.name;
+        jump.appendChild(a);
+      });
+
+      var versionsMount = document.getElementById("versions-mount");
+      (spec.conferenceVersions || []).forEach(function (v) {
+        var block = document.createElement("div");
+        block.className = "ver-block";
+        block.id = "feat-" + v.id;
+        var head = document.createElement("div");
+        head.className = "ver-block__head";
+        head.innerHTML =
+          "<h3><span class=\"ver-pill" +
+          (v.current ? "" : " ver-pill--old") +
+          "\">" +
+          v.version +
+          (v.current ? " 当前" : "") +
+          "</span> " +
+          v.date +
+          '</h3><p class="ver-block__theme">' +
+          v.theme +
+          ' · <a href="' +
+          prototypeHref(v.href) +
+          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开版本页</a></p>';
+        block.appendChild(head);
+        (v.modules || []).forEach(function (m) {
+          var mod = document.createElement("div");
+          mod.className = "ver-block__mod";
+          mod.innerHTML =
+            "<strong>" +
+            m.name +
+            "</strong>" +
+            (m.href
+              ? '<a href="' + prototypeHref(m.href) + '">打开 →</a>'
+              : "") +
+            "<ul>" +
+            (m.changes || [])
+              .map(function (c) {
+                return "<li>" + c + "</li>";
+              })
+              .join("") +
+            "</ul>";
+          block.appendChild(mod);
+        });
+        versionsMount.appendChild(block);
+      });
+
+      var flowsEl = document.getElementById("global-flows");
+      spec.globalFlows.forEach(function (f) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = f.title;
+        btn.addEventListener("click", function () {
+          openNotes(f.notes, f.title);
+        });
+        flowsEl.appendChild(btn);
+      });
+
+      var mount = document.getElementById("terminals-mount");
+      spec.terminals.forEach(function (t) {
+        var sec = document.createElement("section");
+        sec.className = "terminal terminal--" + t.id;
+        sec.id = "terminal-" + t.id;
+        var badgeColor = t.id === "tag" ? "rgba(5,150,105,0.12)" : t.id === "app" ? "rgba(234,88,12,0.12)" : "rgba(79,70,229,0.12)";
+        var badgeText = t.color;
+        sec.innerHTML =
+          '<div class="terminal__head">' +
+          "<h2><span class=\"terminal__badge\" style=\"background:" + badgeColor + ";color:" + badgeText + "\">" + t.tag + "</span>" + t.name + "</h2>" +
+          '<a class="terminal__entry" href="' + prototypeHref(t.entry) + '">进入原型 →</a>' +
+          "</div>";
+        t.modules.forEach(function (mod) {
+          var modEl = document.createElement("div");
+          modEl.className = "module";
+          var noteIds = collectNoteIds(mod.items);
+          var head = document.createElement("div");
+          head.className = "module__head";
+          head.innerHTML = "<h3>" + mod.name + "</h3>";
+          var actions = document.createElement("div");
+          actions.className = "module__actions";
+          if (mod.href) {
+            var pageLink = document.createElement("a");
+            pageLink.href = prototypeHref(mod.href);
+            pageLink.textContent = "打开页面";
+            actions.appendChild(pageLink);
+          }
+          if (noteIds.length) {
+            var docBtn = document.createElement("button");
+            docBtn.type = "button";
+            docBtn.className = "module__doc";
+            docBtn.textContent = "查看说明";
+            docBtn.addEventListener("click", function () {
+              openNotes(noteIds, mod.name);
+            });
+            actions.appendChild(docBtn);
+          }
+          head.appendChild(actions);
+          modEl.appendChild(head);
+          var ul = document.createElement("ul");
+          ul.className = "feat-list";
+          mod.items.forEach(function (item) {
+            var li = document.createElement("li");
+            li.textContent = item.text;
+            ul.appendChild(li);
+          });
+          modEl.appendChild(ul);
+          sec.appendChild(modEl);
+        });
+        mount.appendChild(sec);
+      });
+
+      /* —— 系统结构图（折叠面板） —— */
+      var archMount = document.getElementById("arch-mount");
+      var archData = window.INTENT_ARCHITECTURE || [];
+      var archRendered = {};
+
+      function renderArchMermaid(id, code, container) {
+        if (archRendered[id]) return;
+        var pre = document.createElement("div");
+        pre.className = "mermaid";
+        pre.id = "arch-mm-" + id;
+        pre.textContent = code;
+        container.appendChild(pre);
+        mermaid.run({ nodes: [pre] }).catch(function () {
+          pre.innerHTML = "<pre style='font-size:11px;white-space:pre-wrap;margin:0'>" + code + "</pre>";
+        });
+        archRendered[id] = true;
+      }
+
+      archData.forEach(function (item) {
+        var wrap = document.createElement("div");
+        wrap.className = "arch-item";
+        wrap.id = "arch-" + item.id;
+
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "arch-item__btn";
+        btn.setAttribute("aria-expanded", "false");
+        btn.innerHTML =
+          '<div><div class="arch-item__title">' +
+          item.title +
+          '</div><div class="arch-item__desc">' +
+          (item.desc || "") +
+          '</div></div><span class="arch-item__chev" aria-hidden="true">›</span>';
+
+        var panel = document.createElement("div");
+        panel.className = "arch-item__panel";
+        panel.hidden = true;
+
+        if (item.html) {
+          panel.innerHTML = item.html;
+        } else if (item.mermaid) {
+          var box = document.createElement("div");
+          box.className = "arch-item__mermaid";
+          box.setAttribute("data-arch-mermaid", item.id);
+          panel.appendChild(box);
+        }
+
+        btn.addEventListener("click", function () {
+          var open = !wrap.classList.contains("is-open");
+          wrap.classList.toggle("is-open", open);
+          panel.hidden = !open;
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          if (open && item.mermaid) {
+            var mBox = panel.querySelector("[data-arch-mermaid]");
+            if (mBox && !archRendered[item.id]) {
+              renderArchMermaid(item.id, item.mermaid, mBox);
+            }
+          }
+        });
+
+        wrap.appendChild(btn);
+        wrap.appendChild(panel);
+        archMount.appendChild(wrap);
+      });
+    })();
   </script>
 </body>
 </html>

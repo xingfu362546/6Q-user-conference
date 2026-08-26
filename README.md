@@ -2,12 +2,12 @@
 
 意向分析四端原型收纳在 **`6q-intent-suite/`**。
 
-## 入口（唯一功能清单总页）
+## 入口（Cloudflare 首页）
 
 | 路径 | 说明 |
 |------|------|
-| [`6q-intent-suite/index.html`](6q-intent-suite/index.html) | **功能清单总页**（套件内唯一总 index） |
-| [`index.html`](index.html) | 仓库根跳转 → 上述总页 |
+| [`index.html`](index.html) | **Cloudflare 首页 / 全量功能清单**（用户标签、会务后台、会务 APP 全部展开） |
+| [`6q-intent-suite/index.html`](6q-intent-suite/index.html) | 套件内折叠式功能清单 |
 
 ## 版本一览（本次交付）
 
@@ -37,4 +37,4 @@ npx serve .
 | Production branch | 建议 `feature/conference-intent` 或 `main`（以 Pages 项目配置为准） |
 | Build output directory | `/` |
 
-根 `index.html` 会跳转到 `6q-intent-suite/`。
+根 `index.html` 直接渲染全量功能清单；各原型链接指向 `6q-intent-suite/` 内实际页面。
