@@ -62,13 +62,7 @@ window.INTENT_FEATURE_SPEC = {
     15: {
       title: "关注标签配置",
       body: "<p>从系统标签树多选二级标签；逻辑二选一：</p><ul><li><strong>命中任一</strong>：学员命中集合 ∩ 关注集合 ≠ ∅</li><li><strong>命中全部</strong>：关注集合 ⊆ 学员命中集合</li></ul><p>作用：<strong>缩小列表</strong> + <strong>挂策略权重计分</strong>。未关注命中标签不加分。</p>",
-      mermaid: "flowchart TD
-  A[选关注标签树] --> B{逻辑}
-  B -->|任一| C[交集非空]
-  B -->|全部| D[关注⊆命中]
-  C --> E[进入列表]
-  D --> E
-  A --> W[为每条填策略权重]",
+      mermaid: "flowchart TD\n  A[选关注标签树] --> B{逻辑}\n  B -->|任一| C[交集非空]\n  B -->|全部| D[关注⊆命中]\n  C --> E[进入列表]\n  D --> E\n  A --> W[为每条填策略权重]",
     },
     16: {
       title: "意向度 · 二选一",
@@ -101,12 +95,7 @@ window.INTENT_FEATURE_SPEC = {
     22: {
       title: "意向分公式与排序",
       body: "<p><code>意向分 = Σ(关注∩命中 的策略权重) + AI权重分(0~25)</code></p><ul><li>列表默认排序：意向分降序 → AI 降序 → 数据更新时间倒序</li><li>「按命中标签」模式：档位由组合判定；意向分仍作参考列与排序</li><li>详情：按权重分显示权重/不计分；按命中标签显示档位组合贡献、不显示权重数字</li></ul>",
-      mermaid: "flowchart LR
-  W[关注权重] --> SUM[Σ命中关注]
-  AI[AI分0-25] --> ADD[+]
-  SUM --> ADD
-  ADD --> SCORE[意向分]
-  SCORE --> SORT[排序]",
+      mermaid: "flowchart LR\n  W[关注权重] --> SUM[Σ命中关注]\n  AI[AI分0-25] --> ADD[+]\n  SUM --> ADD\n  ADD --> SCORE[意向分]\n  SCORE --> SORT[排序]",
     },
     23: {
       title: "列表 · 学员列",
