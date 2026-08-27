@@ -254,3 +254,93 @@ test("强制失败返回明确标记且预算过滤的兜底产品", () => {
     ),
   );
 });
+
+test("演示入口含三大分析意图和三条 AI 智搜原句", () => {
+  const labels = Core.DEMO_GROUPS.flatMap((group) =>
+    group.items.map((item) => item.label),
+  );
+  assert.deepEqual(labels, [
+    "学员在系统中对什么类型的课程感兴趣？",
+    "学员下一步应该如何跟进？",
+    "应该推荐什么课程产品比较适合该学员？",
+    "广州最近有哪些课程正在开课？",
+    "总导师的课程有哪些？",
+    "一阶和二阶有什么区别？",
+  ]);
+});
+
+test("空白会话不生成追问，匹配进行中也不生成", () => {
+  const session = Core.createDraftSession({ memberId: "m10009" }, "2026-08-27");
+  assert.equal(Core.resolveAssistantStage(session), "empty");
+  assert.deepEqual(Core.buildFollowUpChips(session), []);
+  assert.deepEqual(Core.buildFollowUpChips(session, { matching: true }), []);
+});
+
+test("分析回答后追问为跟进/匹配两条底盘加一条贴上一句", () => {
+  const session = Core.createDraftSession({ memberId: "m10009" }, "2026-08-27");
+  Core.addMessage(session, "user", "亲子方向", "2026-08-27T01:00:00Z", {
+    intent: "free",
+  });
+  Core.addMessage(session, "ai", "已记录", "2026-08-27T01:00:01Z");
+  const chips = Core.buildFollowUpChips(session);
+  assert.equal(chips.length, 3);
+  assert.equal(chips[0].text, "学员下一步应该如何跟进？");
+  assert.equal(chips[1].text, "应该推荐什么课程产品比较适合该学员？");
+  assert.match(chips[2].text, /亲子/);
+});
+
+test("检索回答后追问为两条智搜续聊加一条转向匹配或贴上一句", () => {
+  const session = Core.createDraftSession({ memberId: "m10009" }, "2026-08-27");
+  Core.addMessage(
+    session,
+    "user",
+    "广州最近有哪些课程正在开课？",
+    "2026-08-27T01:00:00Z",
+    { intent: "city-sessions" },
+  );
+  Core.addMessage(session, "ai", "已筛选广州期数", "2026-08-27T01:00:01Z");
+  const chips = Core.buildFollowUpChips(session);
+  assert.equal(chips.length, 3);
+  assert.equal(chips[0].text, "南宁站还有吗？");
+  assert.equal(chips[1].text, "总导师最近有哪些期数可以报读？");
+  assert.match(chips[2].text, /广州|匹配/);
+});
+
+test("已有推荐后追问改为产品细节套，补新信息仍不改成重新匹配", () => {
+  const session = Core.createDraftSession({ memberId: "m10009" }, "2026-08-27");
+  Core.addMessage(session, "user", "亲子方向", "2026-08-27T01:00:00Z");
+  Core.createMatchVersion(
+    session,
+    { explicit: [], inferred: [], missing: [], confidence: 80 },
+    [],
+    "2026-08-27T01:02:00Z",
+    "success",
+  );
+  const chips = Core.buildFollowUpChips(session);
+  assert.equal(chips[0].text, "主推课程的介绍是什么？");
+  assert.equal(chips[1].text, "最近一期课务和商品有哪些？");
+  assert.match(chips[2].text, /亲子/);
+  assert.ok(chips.every((chip) => !/重新匹配/.test(chip.text)));
+});
+
+test("发言路由把演示原句和追问映射到意图或检索，不误伤自由补充", () => {
+  assert.deepEqual(Core.routeUtterance("总导师的课程有哪些？"), {
+    type: "retrieval",
+    id: "mentor-courses",
+  });
+  assert.deepEqual(Core.routeUtterance("学员下一步应该如何跟进？"), {
+    type: "intent",
+    id: "followup",
+  });
+  assert.deepEqual(Core.routeUtterance("主推课程的介绍是什么？"), {
+    type: "product-detail",
+    id: "product-intro",
+  });
+  assert.equal(Core.routeUtterance("预算大概 5000").type, "free");
+});
+
+test("空白时演示栏默认展开，发出第一句后默认收起，可被手动展开", () => {
+  assert.equal(Core.isDemoRailExpanded(false, null), true);
+  assert.equal(Core.isDemoRailExpanded(true, null), false);
+  assert.equal(Core.isDemoRailExpanded(true, true), true);
+});

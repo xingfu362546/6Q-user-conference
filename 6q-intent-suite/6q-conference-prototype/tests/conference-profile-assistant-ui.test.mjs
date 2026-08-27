@@ -80,3 +80,29 @@ test("助手包含融合动效、推荐版本、详情和失败兜底", () => {
   }
   assert.doesNotMatch(source, /加入购物车|复制沟通话术/);
 });
+
+test("工作台暴露演示栏、追问条和意图流注释稳定ID", () => {
+  const source = readFileSync(aiChatJs, "utf8");
+  for (const id of ["pfAiDemoRail", "pfAiFollowups", "pfAiFlowNote"]) {
+    assert.match(source, new RegExp(id));
+  }
+  assert.match(source, /演示发言/);
+  assert.match(source, /意图流注释/);
+  assert.match(source, /生产环境以 Dify/);
+});
+
+test("助手样式为外侧演示栏和输入框上方追问留位", () => {
+  const css = readFileSync(profileCss, "utf8");
+  assert.match(css, /\.pf-ai__demo-rail/);
+  assert.match(css, /\.pf-ai__followups/);
+  assert.match(css, /\.pf-ai__flow-note/);
+});
+
+test("Mock 含 AI 智搜检索答案且不提供报读按钮", () => {
+  const source = readFileSync(assistantMockJs, "utf8");
+  assert.match(source, /广州最近有哪些课程正在开课？/);
+  assert.match(source, /总导师的课程有哪些？/);
+  assert.match(source, /一阶和二阶有什么区别？/);
+  assert.match(source, /getRetrievalAnswer/);
+  assert.doesNotMatch(source, />报读</);
+});

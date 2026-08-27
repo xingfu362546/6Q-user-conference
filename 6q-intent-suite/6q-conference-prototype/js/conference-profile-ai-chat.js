@@ -1,6 +1,7 @@
 /**
  * 学员画像 · 大型分析助手工作台（原型）
- * 三大意图：兴趣解读 / 下一步跟进 / 产品智能匹配。
+ * 三大意图 + 课务检索演示；追问条与意图流注释。
+ * 对话/检索/匹配结果均为原型 Mock，生产以 Dify 传输为准。
  */
 (function () {
   "use strict";
@@ -41,6 +42,10 @@
   var forceFailureNext = false;
   var timers = [];
   var panelWasOpened = false;
+  var matchingActive = false;
+  var replyPending = false;
+  var demoRailUserToggle = null;
+  var flowNoteOpen = false;
 
   function esc(value) {
     return String(value == null ? "" : value)
@@ -138,6 +143,10 @@
     Core.addMessage(currentSession, role, text, nowIso(), meta || {});
     persistSessions();
     renderMessages();
+    if (role === "ai") {
+      replyPending = false;
+      renderFollowUps();
+    }
   }
 
   function clearTimers() {
@@ -167,6 +176,7 @@
               </div>
             </div>
             <div class="pf-ai__head-actions">
+              <button type="button" class="pf-ai__head-btn" id="pfAiFlowBtn">意图流注释</button>
               <button type="button" class="pf-ai__head-btn" id="pfAiNew">新会话</button>
               <button type="button" class="pf-ai__head-btn" id="pfAiHistoryBtn">历史记录</button>
               <button type="button" class="pf-ai__close" id="pfAiClose" aria-label="关闭">×</button>
@@ -186,30 +196,34 @@
           </aside>
 
           <div class="pf-ai__workspace">
+            <aside class="pf-ai__demo-rail" id="pfAiDemoRail" aria-label="演示发言"></aside>
             <section class="pf-ai__conversation">
               <div class="pf-ai__snapshot" id="pfAiSnapshot" hidden>
                 已载入历史会话快照；继续提问将读取当前最新画像并生成新版本。
               </div>
               <div class="pf-ai__messages" id="pfAiMessages" role="log" aria-live="polite"></div>
-              <div class="pf-ai__intents" id="pfAiIntents"></div>
+              <div class="pf-ai__followups" id="pfAiFollowups" hidden></div>
               <form class="pf-ai__composer" id="pfAiComposer">
                 <input id="pfAiInput" type="text" autocomplete="off" placeholder="继续补充学员需求，或输入“模拟匹配失败”…" />
                 <button type="submit" class="pf-ai__send">发送</button>
               </form>
-              <p class="pf-ai__foot">原型 Mock 数据 · 分析与产品仅供工作人员参考</p>
+              <p class="pf-ai__foot">原型 Mock 数据，仅供演示。生产环境以 Dify 智能体回传及课务/产品接口为准 · 分析与产品仅供工作人员参考</p>
             </section>
             <section class="pf-ai__result" id="pfAiResult" aria-label="课程推荐结果"></section>
           </div>
+          <aside class="pf-ai__flow-note" id="pfAiFlowNote" hidden aria-label="意图流注释"></aside>
         </section>
       </div>
     `;
     document.body.appendChild(wrap);
 
     bindEvents();
-    renderIntents();
+    renderDemoRail();
     renderMessages();
+    renderFollowUps();
     renderResult();
     renderHistory();
+    renderFlowNote();
     document.getElementById("pfAiSnapshot").hidden = !restored;
     if (restored) open();
   }
@@ -229,6 +243,9 @@
       if (event.key === "Escape" && !backdrop.hidden) close();
     });
     document.getElementById("pfAiNew").addEventListener("click", newSession);
+    document
+      .getElementById("pfAiFlowBtn")
+      .addEventListener("click", toggleFlowNote);
     document
       .getElementById("pfAiHistoryBtn")
       .addEventListener("click", toggleHistory);
@@ -278,17 +295,23 @@
     currentViewVersionId = null;
     latestInput = "";
     forceFailureNext = false;
+    matchingActive = false;
+    replyPending = false;
+    demoRailUserToggle = null;
     document.getElementById("pfAiSnapshot").hidden = true;
     document.getElementById("pfAiHistory").hidden = true;
     renderMessages();
+    renderFollowUps();
+    renderDemoRail();
     renderResult();
-    renderIntents();
   }
 
   function toggleHistory() {
     var history = document.getElementById("pfAiHistory");
     history.hidden = !history.hidden;
     if (!history.hidden) {
+      flowNoteOpen = false;
+      document.getElementById("pfAiFlowNote").hidden = true;
       renderHistory();
       document.getElementById("pfAiHistorySearch").focus();
     }
@@ -349,36 +372,168 @@
     document.getElementById("pfAiSnapshot").hidden = false;
     document.getElementById("pfAiHistory").hidden = true;
     renderMessages();
+    renderFollowUps();
+    renderDemoRail();
     renderResult();
     renderHistory();
   }
 
-  function renderIntents() {
-    var root = document.getElementById("pfAiIntents");
+  function toggleFlowNote() {
+    flowNoteOpen = !flowNoteOpen;
+    var note = document.getElementById("pfAiFlowNote");
+    note.hidden = !flowNoteOpen;
+    if (flowNoteOpen) {
+      document.getElementById("pfAiHistory").hidden = true;
+      renderFlowNote();
+    }
+  }
+
+  function renderFlowNote() {
+    var root = document.getElementById("pfAiFlowNote");
     if (!root) return;
-    root.hidden = !!currentSession.messages.length;
     root.innerHTML = `
-      <div class="pf-ai__welcome">
-        <span class="pf-ai__welcome-mark">AI</span>
-        <div><strong>从哪里开始分析？</strong><p>选择模拟开场，或直接输入你的问题。</p></div>
+      <div class="pf-ai__flow-head">
+        <div>
+          <strong>意图流与数据源</strong>
+          <p>原型 Mock · 生产以 Dify 智能体传输为准</p>
+        </div>
+        <button type="button" class="pf-ai__history-close" id="pfAiFlowClose">关闭</button>
       </div>
-      <div class="pf-ai__intent-grid">
-        ${Mock.intents
-          .map(function (intent, index) {
-            return `
-              <button type="button" class="pf-ai__intent" data-intent="${esc(intent.id)}">
-                <span>0${index + 1}</span><strong>${esc(intent.label)}</strong><small>${esc(intent.hint)}</small>
-              </button>
-            `;
-          })
-          .join("")}
-      </div>
+      <p class="pf-ai__flow-disclaimer">
+        本图只说明演示剧本。正式环境由 Dify 识别意图并组织回答，期数、价格、名额走课务/产品接口，不由模型编造。
+      </p>
+      <div class="pf-ai__flow-chart" id="pfAiFlowChart"></div>
+      <table class="pf-ai__flow-table">
+        <thead><tr><th>意图</th><th>数据源</th><th>产出</th></tr></thead>
+        <tbody>
+          <tr><td>兴趣解读</td><td>用户标签、行为埋点</td><td>左栏兴趣依据</td></tr>
+          <tr><td>下一步跟进</td><td>上课层级、报读购买、跟进</td><td>左栏进阶建议</td></tr>
+          <tr><td>产品匹配</td><td>会话条件 + 标签/埋点/跟进/报读 + 产品SKU/课务</td><td>确认后右栏推荐</td></tr>
+          <tr><td>广州开课 / 南宁续聊</td><td>课务期数（城市、时间窗、状态）</td><td>左栏期数列表</td></tr>
+          <tr><td>总导师课程/期数</td><td>导师词典、课程-导师、课务期数</td><td>左栏课程与期数</td></tr>
+          <tr><td>一阶二阶区别</td><td>课阶知识库 / Dify 提示词</td><td>左栏课阶说明</td></tr>
+          <tr><td>产品细节追问</td><td>当前推荐版本</td><td>左栏介绍/期数/商品，右栏不跳</td></tr>
+        </tbody>
+      </table>
     `;
-    root.querySelectorAll("[data-intent]").forEach(function (button) {
+    var close = document.getElementById("pfAiFlowClose");
+    if (close) close.addEventListener("click", toggleFlowNote);
+    var chart = document.getElementById("pfAiFlowChart");
+    if (chart && window.mermaid) {
+      var pre = document.createElement("pre");
+      pre.className = "mermaid";
+      pre.textContent = Core.INTENT_FLOW_MERMAID;
+      chart.innerHTML = "";
+      chart.appendChild(pre);
+      window.mermaid.run({ nodes: [pre] }).catch(function () {});
+    } else if (chart) {
+      chart.textContent = Core.INTENT_FLOW_MERMAID;
+    }
+  }
+
+  function renderDemoRail() {
+    var root = document.getElementById("pfAiDemoRail");
+    if (!root) return;
+    var hasMessages = !!(currentSession.messages && currentSession.messages.length);
+    var expanded = Core.isDemoRailExpanded(hasMessages, demoRailUserToggle);
+    root.classList.toggle("is-collapsed", !expanded);
+    if (!expanded) {
+      root.innerHTML =
+        '<button type="button" class="pf-ai__demo-toggle" id="pfAiDemoExpand">演示发言</button>';
+      document.getElementById("pfAiDemoExpand").addEventListener("click", function () {
+        demoRailUserToggle = true;
+        renderDemoRail();
+      });
+      return;
+    }
+    root.innerHTML =
+      '<div class="pf-ai__demo-head"><strong>演示发言</strong><p>点一句即发出 · Mock 剧本</p>' +
+      (hasMessages
+        ? '<button type="button" class="pf-ai__demo-collapse" id="pfAiDemoCollapse">收起</button>'
+        : "") +
+      "</div>" +
+      Core.DEMO_GROUPS.map(function (group) {
+        return (
+          '<div class="pf-ai__demo-group"><span>' +
+          esc(group.title) +
+          "</span><small>" +
+          esc(group.subtitle) +
+          "</small>" +
+          group.items
+            .map(function (item) {
+              return (
+                '<button type="button" class="pf-ai__intent" data-demo-id="' +
+                esc(item.id) +
+                '"><strong>' +
+                esc(item.label) +
+                "</strong><small>" +
+                esc(item.hint) +
+                "</small></button>"
+              );
+            })
+            .join("") +
+          "</div>"
+        );
+      }).join("");
+    var collapse = document.getElementById("pfAiDemoCollapse");
+    if (collapse) {
+      collapse.addEventListener("click", function () {
+        demoRailUserToggle = false;
+        renderDemoRail();
+      });
+    }
+    root.querySelectorAll("[data-demo-id]").forEach(function (button) {
       button.addEventListener("click", function () {
-        runIntent(button.getAttribute("data-intent"));
+        var id = button.getAttribute("data-demo-id");
+        var item = null;
+        Core.DEMO_GROUPS.forEach(function (group) {
+          group.items.forEach(function (row) {
+            if (row.id === id) item = row;
+          });
+        });
+        if (!item) return;
+        demoRailUserToggle = null;
+        handleWorkerText(item.label);
       });
     });
+  }
+
+  function renderFollowUps() {
+    var root = document.getElementById("pfAiFollowups");
+    if (!root) return;
+    var chips = Core.buildFollowUpChips(currentSession, {
+      matching: matchingActive || replyPending,
+    });
+    if (!chips.length) {
+      root.hidden = true;
+      root.innerHTML = "";
+      return;
+    }
+    root.hidden = false;
+    root.innerHTML =
+      '<p>你可能还会问</p><div class="pf-ai__followup-row">' +
+      chips
+        .map(function (chip) {
+          return (
+            '<button type="button" class="pf-ai__followup" data-followup="' +
+            esc(chip.text) +
+            '">' +
+            esc(chip.text) +
+            "</button>"
+          );
+        })
+        .join("") +
+      "</div>";
+    root.querySelectorAll("[data-followup]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        handleWorkerText(button.getAttribute("data-followup"));
+      });
+    });
+  }
+
+  function renderIntents() {
+    renderDemoRail();
+    renderFollowUps();
   }
 
   function renderMessages() {
@@ -399,6 +554,8 @@
     if (meta.kind === "interest") extra = renderInterest(meta.payload);
     if (meta.kind === "followup") extra = renderFollowup(meta.payload);
     if (meta.kind === "conditions") extra = renderConditions(meta.payload);
+    if (meta.kind === "retrieval") extra = renderRetrieval(meta.payload);
+    if (meta.kind === "product-detail") extra = renderRetrieval(meta.payload);
     return `
       <article class="pf-ai__message pf-ai__message--${esc(message.role)}">
         <div class="pf-ai__bubble">${esc(message.text).replace(/\n/g, "<br>")}</div>
@@ -487,6 +644,60 @@
     `;
   }
 
+  function renderRetrieval(payload) {
+    payload = payload || {};
+    var courses = payload.courses
+      ? "<ul class=\"pf-ai__course-list\">" +
+        payload.courses
+          .map(function (name) {
+            return "<li>" + esc(name) + "</li>";
+          })
+          .join("") +
+        "</ul>"
+      : "";
+    var sessions = (payload.sessions || [])
+      .map(function (row) {
+        return (
+          '<div class="pf-ai__record"><span>' +
+          esc(row.status || "课务") +
+          "</span><div><strong>" +
+          esc(row.title || row.name) +
+          "</strong><p>" +
+          esc(row.city || row.loc || "") +
+          " · " +
+          esc(row.teacher) +
+          "</p><time>" +
+          esc(row.startsAt || row.time || "") +
+          (row.endsAt ? " 至 " + esc(row.endsAt) : "") +
+          "</time></div></div>"
+        );
+      })
+      .join("");
+    var goods = (payload.goods || [])
+      .map(function (row) {
+        return (
+          "<li>" +
+          esc(row.name) +
+          " · " +
+          esc(row.price) +
+          " 元" +
+          (row.budgetStatus === "over" ? "（超出本次预算，仅供了解）" : "") +
+          "</li>"
+        );
+      })
+      .join("");
+    return (
+      (courses || sessions || goods
+        ? '<div class="pf-ai__records">' +
+          sessions +
+          (goods ? "<ul class=\"pf-ai__course-list\">" + goods + "</ul>" : "") +
+          "</div>"
+        : "") +
+      courses +
+      '<p class="pf-ai__mock-hint">以上为演示 Mock，生产由 Dify 智能体回传及课务/产品接口调整。</p>'
+    );
+  }
+
   function renderMatchQuestion() {
     return `
       <div class="pf-ai__match-question">
@@ -550,6 +761,21 @@
   function handleWorkerText(text) {
     latestInput = text;
     if (/模拟匹配失败/.test(text)) forceFailureNext = true;
+    replyPending = true;
+    renderFollowUps();
+    var routed = Core.routeUtterance(text);
+    if (routed.type === "intent") {
+      runIntent(routed.id);
+      return;
+    }
+    if (routed.type === "retrieval") {
+      runRetrieval(routed.id, text);
+      return;
+    }
+    if (routed.type === "product-detail") {
+      runProductDetail(routed.id, text);
+      return;
+    }
     addMessage("user", text, { intent: "free" });
     showTyping();
     var timer = setTimeout(function () {
@@ -564,6 +790,34 @@
         { kind: "conditions", payload: currentConditions },
       );
     }, 540);
+    timers.push(timer);
+  }
+
+  function runRetrieval(id, text) {
+    addMessage("user", text, { intent: id });
+    showTyping();
+    var timer = setTimeout(function () {
+      removeTyping();
+      var answer = Mock.getRetrievalAnswer(id);
+      addMessage("ai", answer.title + "\n" + answer.summary, {
+        kind: "retrieval",
+        payload: answer,
+      });
+    }, 620);
+    timers.push(timer);
+  }
+
+  function runProductDetail(id, text) {
+    addMessage("user", text, { intent: id });
+    showTyping();
+    var timer = setTimeout(function () {
+      removeTyping();
+      var answer = Mock.getProductDetailAnswer(currentSession, id);
+      addMessage("ai", answer.title + "\n" + answer.summary, {
+        kind: "product-detail",
+        payload: answer,
+      });
+    }, 520);
     timers.push(timer);
   }
 
@@ -652,6 +906,8 @@
 
   function runMatching(forceFailure) {
     clearTimers();
+    matchingActive = true;
+    renderFollowUps();
     renderMatchingAnimation();
     var statuses = [
       "正在汇聚多源学员信号",
@@ -686,7 +942,10 @@
       version.label = result.label;
       currentViewVersionId = version.id;
       persistSessions();
+      matchingActive = false;
       renderMessages();
+      renderFollowUps();
+      renderDemoRail();
       renderResultList(version);
       renderHistory();
     }, 8400);

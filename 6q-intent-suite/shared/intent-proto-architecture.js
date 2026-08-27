@@ -170,6 +170,47 @@ window.INTENT_ARCHITECTURE = [
       "  D->>Det: 档位或TOP3",
   },
   {
+    id: "assistant-intents",
+    scope: "pc",
+    flag: "new",
+    title: "画像分析助手 · 意图流与数据源",
+    desc: "演示 Mock 剧本；生产由 Dify 识别意图，期数/价格/名额走课务与产品接口。",
+    mermaid:
+      "flowchart TB\n" +
+      "  subgraph Entry[演示入口]\n" +
+      "    A1[兴趣解读]\n" +
+      "    A2[下一步跟进]\n" +
+      "    A3[推荐产品]\n" +
+      "    R1[广州最近开课]\n" +
+      "    R2[总导师课程]\n" +
+      "    R3[一阶二阶区别]\n" +
+      "  end\n" +
+      "  subgraph Data[数据源]\n" +
+      "    D1[用户标签]\n" +
+      "    D2[行为埋点]\n" +
+      "    D3[跟进记录]\n" +
+      "    D4[报读购买学习]\n" +
+      "    D5[课务期数导师课阶]\n" +
+      "    D6[课程产品SKU]\n" +
+      "    D7[当前会话条件]\n" +
+      "  end\n" +
+      "  A1 --> D1\n" +
+      "  A1 --> D2\n" +
+      "  A2 --> D1\n" +
+      "  A2 --> D4\n" +
+      "  A3 --> Q{工作人员确认匹配?}\n" +
+      "  Q -->|否| Chat[左栏对话]\n" +
+      "  Q -->|是| Match[A+B智能匹配]\n" +
+      "  R1 --> D5\n" +
+      "  R2 --> D5\n" +
+      "  R3 --> D5\n" +
+      "  Chat --> Follow[输入框上方追问]\n" +
+      "  Match --> D6\n" +
+      "  Match --> Right[右栏主推与备选]\n" +
+      "  Right --> Follow\n" +
+      "  Follow --> Chat",
+  },
+  {
     id: "e2e",
     scope: "global",
     title: "端到端数据流",

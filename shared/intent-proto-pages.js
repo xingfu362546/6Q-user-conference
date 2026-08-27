@@ -66,9 +66,9 @@ window.INTENT_PROTO_PAGES = {
   },
   "conference-student-profile.html": {
     title: "画像档案",
-    subtitle: "三栏事实 · 行为/跟进抽屉 · AI chips",
-    notes: [41, 42, 43, 45, 47, 27, 12],
-    diagrams: ["e2e", "modules"],
+    subtitle: "三栏事实 · 字段说明 · 分析助手",
+    notes: [41, 42, 43, 45, 47, 48, 49, 50, 27, 12],
+    diagrams: ["assistant-intents", "e2e", "modules"],
   },
   "conference-detail-basic.html": {
     title: "会务详情 · 跟进记录",
@@ -98,9 +98,9 @@ window.INTENT_PROTO_PAGES = {
   },
   "student-profile.html": {
     title: "面谈官门户 · 画像档案",
-    subtitle: "复用后台口径 · AI 只读",
-    notes: [46, 41, 42, 45, 47],
-    diagrams: ["e2e"],
+    subtitle: "复用后台口径 · 字段说明 · 分析助手",
+    notes: [46, 41, 42, 43, 45, 47, 48, 49, 50],
+    diagrams: ["assistant-intents", "e2e"],
   },
 
   /* —— 会务 APP —— */

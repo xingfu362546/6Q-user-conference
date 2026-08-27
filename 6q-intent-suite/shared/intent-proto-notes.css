@@ -1,6 +1,5 @@
-/* 学员意向分析 · 三端原型页面说明（红色序号收纳 + 右侧抽屉） */
+/* 学员意向分析 · 四端原型页面说明（红点 + 宽抽屉整页打包 + 字段表 + 流程图放大） */
 
-/* —— 右侧红色序号 dock —— */
 .ipn-marker-dock {
   position: fixed;
   right: 0;
@@ -12,12 +11,12 @@
   align-items: stretch;
   gap: 6px;
   padding: 8px 6px 8px 8px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid #fecaca;
   border-right: none;
   border-radius: 12px 0 0 12px;
   box-shadow: -2px 0 12px rgba(220, 38, 38, 0.12);
-  max-height: min(70vh, 520px);
+  max-height: min(72vh, 560px);
   overflow-y: auto;
 }
 
@@ -53,6 +52,14 @@
   flex-shrink: 0;
 }
 
+.ipn-marker-cap {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 10px;
+  color: #b91c1c;
+  letter-spacing: 0.02em;
+}
+
 .ipn-marker {
   width: 28px;
   height: 28px;
@@ -69,13 +76,18 @@
   align-self: center;
 }
 
+.ipn-marker--changed {
+  background: #c2410c;
+  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.35);
+}
+
 .ipn-marker:hover {
   transform: scale(1.08);
   box-shadow: 0 3px 10px rgba(220, 38, 38, 0.45);
 }
 
 .ipn-marker.is-active {
-  background: #991b1b;
+  background: #7f1d1d;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
@@ -101,7 +113,7 @@ body.app-body .ipn-marker-dock {
 }
 
 .ipn-drawer {
-  width: min(480px, 94vw);
+  width: min(1040px, 96vw);
   height: 100%;
   background: #fff;
   display: flex;
@@ -116,7 +128,7 @@ body.app-body .ipn-marker-dock {
 }
 
 .ipn-drawer__head {
-  padding: 16px 18px;
+  padding: 16px 20px;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: flex-start;
@@ -128,13 +140,10 @@ body.app-body .ipn-marker-dock {
 
 .ipn-drawer__title {
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: #0f172a;
   line-height: 1.4;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .ipn-drawer__badge {
@@ -150,6 +159,77 @@ body.app-body .ipn-marker-dock {
   font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
+}
+
+.ipn-drawer__layout {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.ipn-toc {
+  width: 228px;
+  flex-shrink: 0;
+  overflow: auto;
+  padding: 12px 10px 20px;
+  border-right: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.ipn-toc__caption {
+  margin: 0 8px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.ipn-toc__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: #334155;
+}
+
+.ipn-toc__item:hover {
+  background: #fff;
+}
+
+.ipn-toc__item.is-active {
+  background: #fff;
+  box-shadow: inset 2px 0 0 #dc2626;
+}
+
+.ipn-toc__num {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.ipn-toc__item.is-active .ipn-toc__num {
+  background: #dc2626;
+  color: #fff;
+}
+
+.ipn-toc__text {
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .ipn-drawer__foot {
@@ -211,6 +291,7 @@ body.app-body .ipn-marker-dock {
   font-size: 12px;
   color: #64748b;
   font-weight: 400;
+  line-height: 1.5;
 }
 
 .ipn-drawer__close {
@@ -233,10 +314,127 @@ body.app-body .ipn-marker-dock {
 .ipn-drawer__body {
   flex: 1;
   overflow: auto;
-  padding: 16px 18px 28px;
-  font-size: 13px;
-  line-height: 1.65;
+  padding: 8px 22px 36px;
+  font-size: 14px;
+  line-height: 1.7;
   color: #334155;
+}
+
+.ipn-article {
+  scroll-margin-top: 12px;
+  padding: 18px 6px 22px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ipn-article:last-child {
+  border-bottom: none;
+}
+
+.ipn-article.is-active {
+  background: linear-gradient(90deg, #fff7ed 0, transparent 28px);
+}
+
+.ipn-article__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ipn-article__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.45;
+}
+
+.ipn-article__kind {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ipn-lead {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border-left: 3px solid #64748b;
+  color: #0f172a;
+  font-size: 13px;
+}
+
+.ipn-flag {
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ipn-flag--new {
+  color: #2563eb;
+}
+
+.ipn-flag--changed {
+  color: #c2410c;
+}
+
+.ipn-flag--removed {
+  color: #dc2626;
+}
+
+.ipn-ver-bar {
+  margin: 14px 0 10px;
+  padding: 8px 12px;
+  background: #e6f4b2;
+  color: #3f4d16;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.ipn-field-intro {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.ipn-field-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 0 0 16px;
+  background: #fff;
+}
+
+.ipn-field-table th,
+.ipn-field-table td {
+  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ipn-field-table th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.ipn-field-table__group {
+  background: #f3f4f6 !important;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ipn-field-table__desc ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ipn-field-table__desc li {
+  margin-bottom: 4px;
 }
 
 .ipn-section {
@@ -285,7 +483,7 @@ body.app-body .ipn-marker-dock {
   border-radius: 8px;
   background: #eff6ff;
   border-left: 3px solid #3b82f6;
-  font-size: 12px;
+  font-size: 13px;
   color: #1e3a5f;
 }
 
@@ -306,11 +504,39 @@ body.app-body .ipn-marker-dock {
 
 .ipn-mermaid {
   margin-top: 12px;
-  padding: 12px;
   border-radius: 8px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   overflow: auto;
+}
+
+.ipn-mermaid__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ipn-mermaid__zoom {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.ipn-mermaid__zoom:hover {
+  background: #f1f5f9;
+}
+
+.ipn-mermaid__canvas {
+  padding: 12px;
 }
 
 .ipn-mermaid svg {
@@ -326,6 +552,69 @@ body.app-body .ipn-marker-dock {
   color: #94a3b8;
 }
 
+.ipn-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  background: rgba(15, 23, 42, 0.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.ipn-lightbox.is-open {
+  display: flex;
+}
+
+.ipn-lightbox__panel {
+  width: min(1200px, 96vw);
+  max-height: 92vh;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ipn-lightbox__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ipn-lightbox__canvas {
+  padding: 16px 20px 8px;
+  overflow: auto;
+  min-height: 280px;
+}
+
+.ipn-lightbox__hint {
+  margin: 0;
+  padding: 8px 16px 14px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+@media (max-width: 860px) {
+  .ipn-drawer {
+    width: 100vw;
+  }
+
+  .ipn-drawer__layout {
+    flex-direction: column;
+  }
+
+  .ipn-toc {
+    width: 100%;
+    max-height: 28vh;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
 @media (max-width: 480px) {
   .ipn-marker-dock {
     padding: 6px 4px 6px 6px;
@@ -336,9 +625,5 @@ body.app-body .ipn-marker-dock {
     width: 24px;
     height: 24px;
     font-size: 11px;
-  }
-
-  .ipn-drawer {
-    width: 100vw;
   }
 }

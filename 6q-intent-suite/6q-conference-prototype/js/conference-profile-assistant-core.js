@@ -214,6 +214,235 @@
       .slice(0, context.limit || 3);
   }
 
+  var DEMO_GROUPS = [
+    {
+      id: "analysis",
+      title: "分析学员",
+      subtitle: "解读画像、跟进与产品匹配",
+      items: [
+        {
+          id: "interest",
+          type: "intent",
+          label: "学员在系统中对什么类型的课程感兴趣？",
+          hint: "解读用户标签与行为埋点",
+        },
+        {
+          id: "followup",
+          type: "intent",
+          label: "学员下一步应该如何跟进？",
+          hint: "结合上课层级和报读会务记录",
+        },
+        {
+          id: "product",
+          type: "intent",
+          label: "应该推荐什么课程产品比较适合该学员？",
+          hint: "补充条件或直接智能匹配",
+        },
+      ],
+    },
+    {
+      id: "retrieval",
+      title: "课务检索",
+      subtitle: "AI 智搜原句 · 仅演示",
+      items: [
+        {
+          id: "city-sessions",
+          type: "retrieval",
+          label: "广州最近有哪些课程正在开课？",
+          hint: "城市 × 近期期数",
+        },
+        {
+          id: "mentor-courses",
+          type: "retrieval",
+          label: "总导师的课程有哪些？",
+          hint: "导师 × 相关课程",
+        },
+        {
+          id: "level-diff",
+          type: "retrieval",
+          label: "一阶和二阶有什么区别？",
+          hint: "课阶说明",
+        },
+      ],
+    },
+  ];
+
+  var FOLLOWUP_ROUTES = [
+    { id: "nanning-more", type: "retrieval", label: "南宁站还有吗？" },
+    {
+      id: "mentor-sessions",
+      type: "retrieval",
+      label: "总导师最近有哪些期数可以报读？",
+    },
+    {
+      id: "product-intro",
+      type: "product-detail",
+      label: "主推课程的介绍是什么？",
+    },
+    {
+      id: "product-sessions",
+      type: "product-detail",
+      label: "最近一期课务和商品有哪些？",
+    },
+    {
+      id: "product-goods",
+      type: "product-detail",
+      label: "预算内有哪些商品套餐？",
+    },
+    {
+      id: "product",
+      type: "intent",
+      label: "要不要按当前信息匹配产品？",
+    },
+  ];
+
+  function demoCatalog() {
+    return DEMO_GROUPS.reduce(function (rows, group) {
+      return rows.concat(group.items);
+    }, []).concat(FOLLOWUP_ROUTES);
+  }
+
+  function lastUserMessage(session) {
+    var messages = (session && session.messages) || [];
+    for (var i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") return messages[i];
+    }
+    return null;
+  }
+
+  function resolveAssistantStage(session, options) {
+    options = options || {};
+    if (options.matching) return "matching";
+    if (!session || !session.messages || !session.messages.length) return "empty";
+    if (session.matchVersions && session.matchVersions.length) return "matched";
+    var last = lastUserMessage(session);
+    var intent = last && last.meta && last.meta.intent;
+    if (
+      intent === "city-sessions" ||
+      intent === "mentor-courses" ||
+      intent === "level-diff" ||
+      intent === "nanning-more" ||
+      intent === "mentor-sessions" ||
+      intent === "retrieval"
+    ) {
+      return "retrieval";
+    }
+    var routed = routeUtterance(last && last.text);
+    if (routed.type === "retrieval") return "retrieval";
+    return "analysis";
+  }
+
+  function buildContextualFollowUp(stage, lastText) {
+    var text = String(lastText || "");
+    if (/亲子/.test(text)) return "亲子方向这门课和分享会有什么区别？";
+    if (/广州/.test(text)) return "广州最近还有其他可报读期数吗？";
+    if (/导师/.test(text)) return "总导师最近有哪些期数可以报读？";
+    if (/预算|元/.test(text)) return "预算内有哪些商品套餐？";
+    if (stage === "matched") return "主推课程和分享会有什么区别？";
+    if (stage === "retrieval") return "要不要按当前信息匹配产品？";
+    return "结合刚才的问题，还需要补充哪些跟进信息？";
+  }
+
+  function buildFollowUpChips(session, options) {
+    var stage = resolveAssistantStage(session, options);
+    if (stage === "empty" || stage === "matching") return [];
+    var last = lastUserMessage(session);
+    var lastText = last ? last.text : "";
+    var base;
+    if (stage === "matched") {
+      base = [
+        { id: "product-intro", text: "主推课程的介绍是什么？" },
+        { id: "product-sessions", text: "最近一期课务和商品有哪些？" },
+      ];
+    } else if (stage === "retrieval") {
+      base = [
+        { id: "nanning-more", text: "南宁站还有吗？" },
+        { id: "mentor-sessions", text: "总导师最近有哪些期数可以报读？" },
+      ];
+    } else {
+      base = [
+        { id: "followup", text: "学员下一步应该如何跟进？" },
+        { id: "product", text: "应该推荐什么课程产品比较适合该学员？" },
+      ];
+    }
+    var contextual = buildContextualFollowUp(stage, lastText);
+    if (
+      base.some(function (row) {
+        return row.text === contextual;
+      })
+    ) {
+      contextual =
+        stage === "retrieval"
+          ? "要不要按当前信息匹配产品？"
+          : "结合刚才的问题，学员还缺哪些关键信息？";
+    }
+    return base.concat([{ id: "contextual", text: contextual }]);
+  }
+
+  function isDemoRailExpanded(hasMessages, userToggled) {
+    if (userToggled === true) return true;
+    if (userToggled === false) return false;
+    return !hasMessages;
+  }
+
+  function routeUtterance(text) {
+    var t = String(text || "").trim();
+    if (!t) return { type: "free", id: "free" };
+    var hit = demoCatalog().find(function (item) {
+      return item.label === t;
+    });
+    if (hit) return { type: hit.type, id: hit.id };
+    if (/亲子方向这门课和分享会有什么区别/.test(t)) {
+      return { type: "product-detail", id: "topic-diff" };
+    }
+    if (/广州最近还有其他可报读期数/.test(t)) {
+      return { type: "retrieval", id: "city-sessions" };
+    }
+    if (/主推课程和分享会有什么区别/.test(t)) {
+      return { type: "product-detail", id: "topic-diff" };
+    }
+    if (/还需要补充哪些跟进信息|还缺哪些关键信息/.test(t)) {
+      return { type: "intent", id: "followup" };
+    }
+    return { type: "free", id: "free" };
+  }
+
+  var INTENT_FLOW_MERMAID =
+    "flowchart TB\n" +
+    "  subgraph Entry[演示入口]\n" +
+    "    A1[兴趣解读]\n" +
+    "    A2[下一步跟进]\n" +
+    "    A3[推荐产品]\n" +
+    "    R1[广州最近开课]\n" +
+    "    R2[总导师课程]\n" +
+    "    R3[一阶二阶区别]\n" +
+    "  end\n" +
+    "  subgraph Data[数据源]\n" +
+    "    D1[用户标签]\n" +
+    "    D2[行为埋点]\n" +
+    "    D3[跟进记录]\n" +
+    "    D4[报读购买学习]\n" +
+    "    D5[课务期数导师课阶]\n" +
+    "    D6[课程产品SKU]\n" +
+    "    D7[当前会话条件]\n" +
+    "  end\n" +
+    "  A1 --> D1\n" +
+    "  A1 --> D2\n" +
+    "  A2 --> D1\n" +
+    "  A2 --> D4\n" +
+    "  A3 --> Q{工作人员确认匹配?}\n" +
+    "  Q -->|否| Chat[左栏对话]\n" +
+    "  Q -->|是| Match[A+B智能匹配]\n" +
+    "  R1 --> D5\n" +
+    "  R2 --> D5\n" +
+    "  R3 --> D5\n" +
+    "  Chat --> Follow[输入框上方追问]\n" +
+    "  Match --> D6\n" +
+    "  Match --> D7\n" +
+    "  Match --> Right[右栏主推与备选]\n" +
+    "  Right --> Follow\n" +
+    "  Follow --> Chat";
+
   function createMatchVersion(session, conditions, products, now, status) {
     var version = {
       id: "match-" + (session.matchVersions.length + 1),
@@ -237,6 +466,8 @@
 
   return {
     LEVELS: LEVELS,
+    DEMO_GROUPS: DEMO_GROUPS,
+    INTENT_FLOW_MERMAID: INTENT_FLOW_MERMAID,
     createDraftSession: createDraftSession,
     addMessage: addMessage,
     searchSessions: searchSessions,
@@ -249,5 +480,10 @@
     conditionValue: conditionValue,
     matchProducts: matchProducts,
     createMatchVersion: createMatchVersion,
+    lastUserMessage: lastUserMessage,
+    resolveAssistantStage: resolveAssistantStage,
+    buildFollowUpChips: buildFollowUpChips,
+    isDemoRailExpanded: isDemoRailExpanded,
+    routeUtterance: routeUtterance,
   };
 });

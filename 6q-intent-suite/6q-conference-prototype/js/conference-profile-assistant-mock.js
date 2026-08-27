@@ -351,6 +351,160 @@
     };
   }
 
+  var retrievalSessions = {
+    guangzhou: [
+      {
+        city: "广州市",
+        title: "第555期《智慧父母一阶课程》（广州站）",
+        teacher: "6Q张三",
+        startsAt: "2026-09-05 09:00",
+        endsAt: "2026-09-07 18:00",
+        status: "报读中",
+      },
+      {
+        city: "广州市",
+        title: "第188期《高EQ智慧父母分享会》（广州站）",
+        teacher: "总导师",
+        startsAt: "2026-08-28 09:00",
+        endsAt: "2026-08-28 17:30",
+        status: "正在开课中",
+      },
+      {
+        city: "广州市",
+        title: "第534期《家庭沟通工作坊》（广州站）",
+        teacher: "6Q陈老师",
+        startsAt: "2026-09-12 09:00",
+        endsAt: "2026-09-14 18:00",
+        status: "报读中",
+      },
+    ],
+    nanning: [
+      {
+        city: "南宁市",
+        title: "第531期《高EQ智慧父母一阶》（南宁站）",
+        teacher: "6Q张三",
+        startsAt: "2026-09-02 09:00",
+        endsAt: "2026-09-04 18:00",
+        status: "报读中",
+      },
+      {
+        city: "南宁市",
+        title: "第532期《智慧父母一阶课程》（南宁站）",
+        teacher: "6Q李四",
+        startsAt: "2026-09-19 09:00",
+        endsAt: "2026-09-21 18:00",
+        status: "报读中",
+      },
+    ],
+    mentor: [
+      {
+        city: "广州市",
+        title: "第533期《智慧父母一阶课程》（广州站）",
+        teacher: "总导师",
+        startsAt: "2026-09-05 09:00",
+        endsAt: "2026-09-07 18:00",
+        status: "报读中",
+      },
+      {
+        city: "南宁市",
+        title: "第530期《智慧父母二阶课程》（南宁站）",
+        teacher: "总导师",
+        startsAt: "2026-09-26 09:00",
+        endsAt: "2026-09-28 18:00",
+        status: "报读中",
+      },
+    ],
+  };
+
+  function getRetrievalAnswer(id) {
+    if (id === "nanning-more") {
+      return {
+        title: "南宁站仍有可报读期数",
+        summary:
+          "按 AI 智搜续聊「南宁站还有吗？」筛选。以下为演示 Mock，生产由课务期数接口按继承课名 + 城市返回。",
+        sessions: retrievalSessions.nanning,
+      };
+    }
+    if (id === "mentor-courses") {
+      return {
+        title: "总导师的课程有哪些？",
+        summary:
+          "命中导师槽位 instructor_name=总导师。以下为演示 Mock，生产由课程-导师关系 + 期数接口返回。",
+        courses: [
+          "《智慧父母一阶课程》",
+          "《智慧父母二阶课程》",
+          "《高EQ恩爱夫妻分享会》",
+        ],
+        sessions: retrievalSessions.mentor,
+      };
+    }
+    if (id === "mentor-sessions") {
+      return {
+        title: "总导师最近可报读期数",
+        summary:
+          "在导师课程基础上按近期开课窗口展开期数。以下为演示 Mock，生产不由模型编造日期。",
+        sessions: retrievalSessions.mentor,
+      };
+    }
+    if (id === "level-diff") {
+      return {
+        title: "一阶和二阶有什么区别？",
+        summary:
+          "一阶建立情绪识别、沟通回应和冲突修复的基础框架；二阶在已有一阶经验上练习更深的家庭系统和长期习惯。具体课纲以课程知识库为准，本段为演示 Mock。",
+        sessions: [],
+      };
+    }
+    return {
+      title: "广州最近有哪些课程正在开课？",
+      summary:
+        "已按城市=广州、时间窗约 30 天筛选正在开课中 / 报读中期数。以下为演示 Mock，生产由课务 HTTP 返回。",
+      sessions: retrievalSessions.guangzhou,
+    };
+  }
+
+  function latestMatchedProduct(session) {
+    var versions = (session && session.matchVersions) || [];
+    var latest = versions[versions.length - 1];
+    return latest && latest.products && latest.products[0]
+      ? latest.products[0]
+      : null;
+  }
+
+  function getProductDetailAnswer(session, id) {
+    var product = latestMatchedProduct(session);
+    if (!product) {
+      return {
+        title: "当前还没有智能匹配结果",
+        summary:
+          "产品介绍、课务和商品要等工作人员确认匹配后才会生成。右侧推荐区保持不变。",
+      };
+    }
+    if (id === "product-sessions") {
+      return {
+        title: product.productName + " · 近期课务与商品",
+        summary:
+          "以下摘自当前推荐版本，供左栏参考；右侧列表不自动跳转。",
+        sessions: product.sessions || [],
+        goods: product.goods || [],
+      };
+    }
+    if (id === "product-goods") {
+      return {
+        title: product.productName + " · 预算内商品",
+        summary: "只列出当前推荐版本中的商品/SKU，超预算项仅供了解。",
+        goods: product.goods || [],
+      };
+    }
+    return {
+      title: product.productName + " · 课程介绍",
+      summary:
+        (product.description || "") +
+        (id === "topic-diff"
+          ? " 与分享会相比，正课更强调连续方法和课务期数，而不是单场体验。"
+          : ""),
+    };
+  }
+
   function parseBudget(text) {
     var match = String(text || "").match(/(?:预算|以内|不超过|上限)[^\d]{0,4}(\d{3,6})|(\d{3,6})\s*元/);
     return match ? Number(match[1] || match[2]) : null;
@@ -536,6 +690,8 @@
     getProgression: getProgression,
     getInterestAnalysis: getInterestAnalysis,
     getFollowupAnalysis: getFollowupAnalysis,
+    getRetrievalAnswer: getRetrievalAnswer,
+    getProductDetailAnswer: getProductDetailAnswer,
     buildConditions: buildConditions,
     match: match,
     seedSessions: seedSessions,

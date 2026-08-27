@@ -774,7 +774,216 @@
   display: grid;
   min-height: 0;
   flex: 1;
-  grid-template-columns: minmax(380px, 0.82fr) minmax(620px, 1.45fr);
+  grid-template-columns: auto minmax(340px, 0.82fr) minmax(520px, 1.45fr);
+}
+
+.pf-ai__demo-rail {
+  width: 276px;
+  min-height: 0;
+  padding: 12px 10px;
+  border-right: 1px solid #e4ebf1;
+  background: #f3f8fa;
+  overflow: auto;
+}
+
+.pf-ai__demo-rail.is-collapsed {
+  width: 46px;
+  padding: 10px 6px;
+}
+
+.pf-ai__demo-head {
+  position: relative;
+  margin: 0 4px 10px;
+}
+
+.pf-ai__demo-head strong {
+  display: block;
+  color: #0f766e;
+  font-size: 12px;
+}
+
+.pf-ai__demo-head p {
+  margin: 3px 0 0;
+  color: #7a8999;
+  font-size: 10px;
+}
+
+.pf-ai__demo-collapse {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px 6px;
+  border: 1px solid #dbe4ec;
+  border-radius: 6px;
+  color: #536477;
+  background: #fff;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.pf-ai__demo-group {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.pf-ai__demo-group > span {
+  color: #0f766e;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.pf-ai__demo-group > small {
+  margin-top: -4px;
+  color: #8a98a7;
+  font-size: 9px;
+}
+
+.pf-ai__demo-rail .pf-ai__intent {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+}
+
+.pf-ai__demo-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  border: 1px dashed #9ad0d6;
+  border-radius: 10px;
+  color: #0f766e;
+  background: #fff;
+  writing-mode: vertical-rl;
+  letter-spacing: 0.18em;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pf-ai__followups {
+  padding: 8px 14px 0;
+  border-top: 1px solid #e4ebf1;
+  background: #fff;
+}
+
+.pf-ai__followups[hidden] {
+  display: none !important;
+}
+
+.pf-ai__followups > p {
+  margin: 0 0 6px;
+  color: #7a8999;
+  font-size: 10px;
+}
+
+.pf-ai__followup-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pf-ai__followup {
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #c5e4e8;
+  border-radius: 999px;
+  color: #0f5f68;
+  background: #f3fbfc;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pf-ai__followup:hover {
+  border-color: #1597a6;
+  background: #e7f7f8;
+}
+
+.pf-ai__mock-hint {
+  margin: 6px 0 0;
+  color: #8a98a7;
+  font-size: 10px;
+}
+
+.pf-ai__course-list {
+  margin: 0;
+  padding-left: 16px;
+  color: #334155;
+  font-size: 11px;
+}
+
+.pf-ai__flow-note {
+  position: absolute;
+  z-index: 9;
+  top: 66px;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 92vw);
+  padding: 16px;
+  border-left: 1px solid #dce5ed;
+  background: #fff;
+  box-shadow: -18px 0 44px rgba(15, 23, 42, 0.16);
+  overflow: auto;
+}
+
+.pf-ai__flow-note[hidden] {
+  display: none !important;
+}
+
+.pf-ai__flow-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pf-ai__flow-head strong {
+  font-size: 14px;
+}
+
+.pf-ai__flow-head p,
+.pf-ai__flow-disclaimer {
+  margin: 4px 0 12px;
+  color: #8a5b00;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.pf-ai__flow-chart {
+  min-height: 180px;
+  margin-bottom: 14px;
+  padding: 8px;
+  border: 1px solid #e4ebf1;
+  border-radius: 10px;
+  background: #f8fafc;
+  overflow: auto;
+}
+
+.pf-ai__flow-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.pf-ai__flow-table th,
+.pf-ai__flow-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid #e8eef3;
+  text-align: left;
+  vertical-align: top;
+}
+
+.pf-ai__flow-table th {
+  color: #64748b;
+  font-weight: 700;
 }
 
 .pf-ai__conversation {
