@@ -304,7 +304,9 @@
       var spec = window.INTENT_FEATURE_SPEC;
       if (!spec) return;
 
-      mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose" });
+      if (window.mermaid) {
+        mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose" });
+      }
 
       var backdrop = document.getElementById("drawer-backdrop");
       var bodyEl = document.getElementById("drawer-body");

@@ -20,9 +20,17 @@
     removed: "removed",
   };
 
+  function normalizePageFile(pathname) {
+    var path = String(pathname || "").replace(/\\/g, "/");
+    var file = path.split("/").pop() || "index.html";
+    if (!file || file === "/") return "index.html";
+    // Cloudflare Pages pretty URL: /foo.html 会显示成 /foo
+    if (!/\.html$/i.test(file)) file += ".html";
+    return file;
+  }
+
   function pageFile() {
-    var path = (location.pathname || "").replace(/\\/g, "/");
-    return path.split("/").pop() || "index.html";
+    return normalizePageFile(location.pathname);
   }
 
   function getPageConfig() {
@@ -556,5 +564,6 @@
     },
     renderFieldSpec: renderFieldSpec,
     isHighlight: isHighlight,
+    normalizePageFile: normalizePageFile,
   };
 })();

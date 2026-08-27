@@ -58,6 +58,7 @@ test("会务套件与根目录注释运行时保持同步关键能力", () => {
     assert.match(source, /ipn-lightbox/);
     assert.match(source, /scrollIntoView/);
     assert.match(source, /data-ipn-zoom/);
+    assert.match(source, /normalizePageFile/);
   }
   for (const file of [suiteNotesCss, rootNotesCss]) {
     const css = readFileSync(file, "utf8");
@@ -67,6 +68,20 @@ test("会务套件与根目录注释运行时保持同步关键能力", () => {
     assert.match(css, /\.ipn-lightbox/);
     assert.match(css, /\.ipn-toc/);
   }
+});
+
+test("Cloudflare 去掉 html 后缀后仍能对应到页面注释", () => {
+  const api = loadNotesRuntime();
+  assert.equal(
+    api.normalizePageFile(
+      "/6q-intent-suite/6q-conference-prototype/conference-student-profile",
+    ),
+    "conference-student-profile.html",
+  );
+  assert.equal(
+    api.normalizePageFile("/user-tag-admin/tag-list.html"),
+    "tag-list.html",
+  );
 });
 
 test("注释运行时把本页全部注释打成一篇并可渲染字段表", () => {

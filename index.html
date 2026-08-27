@@ -267,7 +267,9 @@
         return "6q-intent-suite/" + href;
       }
 
-      mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose" });
+      if (window.mermaid) {
+        mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose" });
+      }
 
       var backdrop = document.getElementById("drawer-backdrop");
       var bodyEl = document.getElementById("drawer-body");
