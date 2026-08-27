@@ -13,9 +13,9 @@
 
 | 端 | 版本 | 目录 | 原型入口 |
 |----|------|------|----------|
-| 功能清单总页 | **v1.0.3 封版**（含 v1.0.0～v1.0.2） | `6q-intent-suite/` | `index.html` |
-| 面谈官门户 | **v1.0.3** | `6q-intent-suite/6q-interviewer-portal/` | `login.html`（引导 `hub.html`） |
-| 会务后台 PC | **v1.0.0～v1.0.3** | `6q-intent-suite/6q-conference-prototype/` | `versions.html` |
+| 功能清单总页 | **v1.0.4 当前封版** | `6q-intent-suite/` | `index.html` |
+| 面谈官门户 | **v1.0.4**（大型分析助手增量） | `6q-intent-suite/6q-interviewer-portal/` | `login.html`（引导 `hub.html`） |
+| 会务后台 PC | **v1.0.0～v1.0.4** | `6q-intent-suite/6q-conference-prototype/` | `versions.html` |
 | 会务 APP | **v1.0.0+** | `6q-intent-suite/6q-conference-app-prototype/` | `home.html` |
 | 用户标签平台 | **v1.1**（NL→SQL） | `6q-intent-suite/user-tag-admin/` | `tag-list.html`（导航 `home.html`） |
 

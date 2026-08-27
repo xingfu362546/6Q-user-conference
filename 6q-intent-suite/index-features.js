@@ -140,7 +140,7 @@ window.INTENT_FEATURE_SPEC = {
     },
     44: {
       title: "会务后台版本封版",
-      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：家庭组/关系图谱/基础信息/AI；行为与跟进归画像；意向列表精简</li><li><strong>v1.0.3</strong>（当前）：6Q 面谈官独立门户（会员登录、选进行中会务、只读意向/画像）</li></ul><p>套件入口：<code>6q-intent-suite/index.html</code>；开发交接：<code>docs/course-student-intent/HANDOFF-DEV-v1.0.0-v1.0.3.md</code></p>",
+      body: "<ul><li><strong>v1.0.0</strong>：策略模板 + 本期策略 + 意向分析列表基线</li><li><strong>v1.0.1</strong>：学员信息入口 + 画像档案三栏首版</li><li><strong>v1.0.2</strong>：画像增强与列表精简</li><li><strong>v1.0.3</strong>：6Q 面谈官独立门户</li><li><strong>v1.0.4</strong>（当前）：画像分析助手大型双栏工作台、三大意图、课程智能匹配与个人历史</li></ul><p>套件入口：<code>6q-intent-suite/index.html</code>；v1.0.4 设计：<code>docs/superpowers/specs/2026-08-27-student-analysis-assistant-design.md</code></p>",
     },
     45: {
       title: "画像档案 · 行为与跟进抽屉（v1.0.2）",
@@ -153,6 +153,10 @@ window.INTENT_FEATURE_SPEC = {
     47: {
       title: "画像 AI 对话 · 四预设 chips（v1.0.2/v1.0.3）",
       body: "<p>右下角「问学员」弹窗；输出=档案事实归纳 + 轻建议（非正式商机诊断）。</p><ul><li><strong>分析跟进</strong>：跨会务跟进全量归纳</li><li><strong>沟通话术</strong>：基于标签/跟进/购课生成开场与追问</li><li><strong>近期消费能力</strong>：近 12 个月已支付粗估；分档 &lt;5千 / 5千–2万 / ≥2万</li><li><strong>课程购买建议</strong>：按消费力分档建议路径（低档偏免费直播·社区·免费课；高档可谈高客单），不绑定意向列表推荐课</li></ul><p>支持自由输入；命中关键词可路由到对应预设逻辑。</p>",
+    },
+    48: {
+      title: "画像分析助手大型工作台（v1.0.4）",
+      body: "<p>原画像小弹窗升级为约 90vw × 88vh 双栏工作台，会务后台与面谈官门户复用。</p><ul><li><strong>三大意图</strong>：兴趣解读 / 下一步跟进 / 课程产品匹配</li><li><strong>综合依据</strong>：标签、埋点、跟进、报读购买与学习历史</li><li><strong>A+B 动效</strong>：数据汇聚 + 五阶段可解释匹配</li><li><strong>产品详情</strong>：主推+备选、产品介绍、3个课务期数、全部商品/SKU</li><li><strong>个人历史</strong>：搜索、匹配版本、数据快照与失败兜底</li></ul><p>只读参考，不下单、不加入购物车、不复制话术。</p>",
     },
     30: {
       title: "搜索与导出",
@@ -209,7 +213,7 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "portal",
       name: "面谈官门户",
-      tag: "v1.0.3 · 只读查档",
+      tag: "v1.0.4 · 只读查档+分析助手",
       color: "#ea580c",
       entry: "6q-interviewer-portal/login.html",
       archIds: [
@@ -269,6 +273,10 @@ window.INTENT_FEATURE_SPEC = {
             {
               text: "[v1.0.2+] AI 4 chips：跟进/话术/消费力/购课建议",
               notes: [47, 41, 45]
+            },
+            {
+              text: "[v1.0.4] 大型双栏分析助手：三大意图、个人历史、课程智能匹配",
+              notes: [48]
             }
           ]
         }
@@ -401,7 +409,7 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "pc",
       name: "会务后台",
-      tag: "v1.0.3 · 策略+档案+分析",
+      tag: "v1.0.4 · 策略+档案+分析助手",
       color: "#4f46e5",
       entry: "6q-conference-prototype/versions.html",
       modules: [
@@ -554,6 +562,10 @@ window.INTENT_FEATURE_SPEC = {
             {
               text: "[v1.0.2] AI 分析对话：4 chips（跟进/话术/消费力/购课建议）+ 自由洞察",
               notes: [47, 41, 45]
+            },
+            {
+              text: "[v1.0.4] 大型双栏分析助手：三大意图 / A+B 匹配动效 / 产品课务商品详情",
+              notes: [48]
             }
           ]
         },
@@ -624,7 +636,7 @@ window.INTENT_FEATURE_SPEC = {
         },
         {
           title: "会务后台版本封版说明",
-          notes: [44, 46, 41, 42, 43, 45]
+          notes: [44, 48, 46, 41, 42, 43, 45]
         }
       ]
     },
@@ -776,10 +788,38 @@ window.INTENT_FEATURE_SPEC = {
   /** 会务后台 PC · 按版本追溯（供根清单与原型导航对齐） */
   conferenceVersions: [
     {
+      id: "v104",
+      version: "v1.0.4",
+      date: "2026-08-27",
+      current: true,
+      theme: "学员画像分析助手大型工作台",
+      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+      modules: [
+        {
+          name: "画像档案 · 学员分析助手",
+          href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+          changes: [
+            "小弹窗升级为大型双栏工作台，保留画像上下文",
+            "三大意图：兴趣解读、下一步跟进、课程产品智能匹配",
+            "A+B 融合动效；主推+备选；产品介绍、3个课务期数与全部商品",
+            "个人历史搜索、推荐版本、数据快照及失败兜底",
+          ],
+        },
+        {
+          name: "面谈官门户 · 分析助手复用",
+          href: "6q-interviewer-portal/student-profile.html?id=m10009",
+          changes: [
+            "面谈官与会务后台使用同一助手",
+            "个人会话按 user_id 私有隔离，结果只读参考",
+          ],
+        },
+      ],
+    },
+    {
       id: "v103",
       version: "v1.0.3",
       date: "2026-08-05",
-      current: true,
+      current: false,
       theme: "6Q 面谈官独立门户（只读查档）",
       href: "6q-interviewer-portal/login.html",
       modules: [

@@ -22,4 +22,9 @@ test("Cloudflare 根首页直接展示含用户标签平台的总功能清单", 
         terminal.id === "tag" && terminal.name === "用户标签平台",
     ),
   );
+  assert.equal(
+    sandbox.window.INTENT_FEATURE_SPEC.conferenceVersions[0].version,
+    "v1.0.4",
+  );
+  assert.match(html, /当前 v1\.0\.4/);
 });

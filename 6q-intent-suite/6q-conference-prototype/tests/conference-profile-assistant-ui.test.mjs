@@ -24,6 +24,12 @@ test("两个画像页按 core → mock → UI 顺序加载助手", () => {
   }
 });
 
+test("会务后台与面谈官画像均标注 v1.0.4", () => {
+  for (const file of [pcProfileHtml, portalProfileHtml]) {
+    assert.match(readFileSync(file, "utf8"), /pf-ver">v1\.0\.4</);
+  }
+});
+
 test("助手源码包含三个批准的模拟开场按钮", () => {
   const source = readFileSync(assistantMockJs, "utf8");
   assert.match(source, /学员在系统中对什么类型的课程感兴趣？/);

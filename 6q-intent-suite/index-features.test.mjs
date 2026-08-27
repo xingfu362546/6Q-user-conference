@@ -22,6 +22,8 @@ test("总功能清单脚本可加载四端与完整版本数据", () => {
   );
   assert.deepEqual(
     Array.from(spec.conferenceVersions, (item) => item.version),
-    ["v1.0.3", "v1.0.2", "v1.0.1", "v1.0.0"],
+    ["v1.0.4", "v1.0.3", "v1.0.2", "v1.0.1", "v1.0.0"],
   );
+  assert.equal(spec.conferenceVersions[0].current, true);
+  assert.match(spec.conferenceVersions[0].theme, /分析助手/);
 });
