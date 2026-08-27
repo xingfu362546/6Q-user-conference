@@ -1,0 +1,76 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+const pcProfileHtml = new URL("../conference-student-profile.html", import.meta.url);
+const portalProfileHtml = new URL(
+  "../../6q-interviewer-portal/student-profile.html",
+  import.meta.url,
+);
+const aiChatJs = new URL("../js/conference-profile-ai-chat.js", import.meta.url);
+const assistantMockJs = new URL(
+  "../js/conference-profile-assistant-mock.js",
+  import.meta.url,
+);
+const profileCss = new URL("../css/6q-profile.css", import.meta.url);
+
+test("两个画像页按 core → mock → UI 顺序加载助手", () => {
+  for (const file of [pcProfileHtml, portalProfileHtml]) {
+    const html = readFileSync(file, "utf8");
+    const coreAt = html.indexOf("conference-profile-assistant-core.js");
+    const mockAt = html.indexOf("conference-profile-assistant-mock.js");
+    const uiAt = html.indexOf("conference-profile-ai-chat.js");
+    assert.ok(coreAt > -1 && coreAt < mockAt && mockAt < uiAt);
+  }
+});
+
+test("助手源码包含三个批准的模拟开场按钮", () => {
+  const source = readFileSync(assistantMockJs, "utf8");
+  assert.match(source, /学员在系统中对什么类型的课程感兴趣？/);
+  assert.match(source, /学员下一步应该如何跟进？/);
+  assert.match(source, /应该推荐什么课程产品比较适合该学员？/);
+});
+
+test("大型助手保留既有打开ID并暴露工作台稳定ID", () => {
+  const source = readFileSync(aiChatJs, "utf8");
+  for (const id of [
+    "pfAiFab",
+    "pfAiPanel",
+    "pfAiHistory",
+    "pfAiMessages",
+    "pfAiResult",
+    "pfAiComposer",
+  ]) {
+    assert.match(source, new RegExp(id));
+  }
+});
+
+test("助手样式使用大型双栏工作台并支持降低动态效果", () => {
+  const css = readFileSync(profileCss, "utf8");
+  assert.match(css, /width:\s*min\(90vw,\s*1480px\)/);
+  assert.match(css, /height:\s*88vh/);
+  assert.match(css, /\.pf-ai__workspace/);
+  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+});
+
+test("助手包含融合动效、推荐版本、详情和失败兜底", () => {
+  const source = readFileSync(aiChatJs, "utf8");
+  for (const label of [
+    "用户标签",
+    "过往跟进",
+    "行为埋点",
+    "报读购买",
+    "理解当前需求",
+    "归纳学员画像",
+    "检索产品与课务",
+    "预算与SKU硬校验",
+    "综合排序生成依据",
+    "兜底参考 · 非智能匹配",
+    "matchVersions",
+    "查看完整资料",
+    "超出本次预算，仅供了解",
+  ]) {
+    assert.match(source, new RegExp(label));
+  }
+  assert.doesNotMatch(source, /加入购物车|复制沟通话术/);
+});
