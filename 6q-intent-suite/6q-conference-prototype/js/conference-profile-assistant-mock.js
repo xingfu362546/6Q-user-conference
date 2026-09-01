@@ -87,6 +87,16 @@
       relations: {
         prod_parent_relation: "qualified",
       },
+      careerPresentation: {
+        intendedDirection: "天使",
+        interviewSlot: "课程结束后",
+        assistantName: "黄翠梅",
+        group: "2组",
+        qualification: "复训",
+        retrainCount: 2,
+        enrolledAt: "2026-08-18 09:20",
+        checkinNo: 1,
+      },
     },
     m10001: {
       memberId: "m10001",
@@ -120,6 +130,16 @@
         },
       ],
       relations: {},
+      careerPresentation: {
+        intendedDirection: "",
+        interviewSlot: "课间休息时",
+        assistantName: "丁秀芳",
+        group: "1组",
+        qualification: "复训",
+        retrainCount: 0,
+        enrolledAt: "2026-08-02 09:00",
+        checkinNo: 3,
+      },
     },
     m10003: {
       memberId: "m10003",
@@ -154,6 +174,16 @@
       relations: {
         prod_parent_relation: "enrolled",
         prod_family_communication: "enrolled",
+      },
+      careerPresentation: {
+        intendedDirection: "导师&天使",
+        interviewSlot: "随时都可以",
+        assistantName: "黄翠梅",
+        group: "2组",
+        qualification: "复训",
+        retrainCount: 7,
+        enrolledAt: "2026-06-10 09:00",
+        checkinNo: 2,
       },
     },
   };
@@ -304,6 +334,212 @@
     },
   ];
 
+  function giftCourse(name, code, category, marketPrice, settlementPrice, validity) {
+    return {
+      name: name,
+      code: code,
+      category: category,
+      voucherType: "一类券",
+      quantity: 1,
+      marketPrice: marketPrice,
+      settlementPrice: settlementPrice,
+      validity: validity || "永久",
+    };
+  }
+
+  var OTHER_BENEFITS = [
+    { name: "课程权益", createdAt: "2022-05-18 16:32:08" },
+    { name: "课程券权益", createdAt: "2022-05-18 16:32:08" },
+    { name: "其他权益", createdAt: "2022-05-18 16:32:08" },
+  ];
+
+  var QUAL_MENTOR_B = {
+    offline: [
+      giftCourse("《聆听发问进阶班》", "GDPDID000108", "导师进阶", 14800, 10000),
+      giftCourse("《聆听发问基础班》", "GDPDID000107", "导师进阶", 9800, 6000),
+      giftCourse("《高效表达训练课》", "GDPDID000110", "导师进阶", 16800, 11000),
+      giftCourse("《宝山探索进阶班》", "GDPDID000111", "高EQ二阶", 12800, 8000),
+      giftCourse("《<青少年6Q领袖营>导师集训班》", "GDPDID000112", "导师进阶", 14800, 9000),
+      giftCourse(
+        "《高EQ系列课程》课程卡-导师权益专享",
+        "GDPDID000113",
+        "高EQ二阶",
+        9400,
+        6000,
+        "2年",
+      ),
+    ],
+    online: [],
+    camp: [],
+  };
+
+  var QUAL_MENTOR_A = {
+    offline: [
+      giftCourse("《聆听发问进阶班》", "GDPDID000108", "导师进阶", 14800, 10000),
+      giftCourse("《高效表达训练课》", "GDPDID000110", "导师进阶", 16800, 11000),
+      giftCourse("《宝山探索进阶班》", "GDPDID000111", "高EQ二阶", 12800, 8000),
+      giftCourse("《<青少年6Q领袖营>导师集训班》", "GDPDID000112", "导师进阶", 14800, 9000),
+      giftCourse(
+        "《高EQ系列课程》课程卡-导师权益专享",
+        "GDPDID000113",
+        "高EQ二阶",
+        9400,
+        6000,
+        "2年",
+      ),
+      giftCourse("《高EQ智慧父母一阶》导师复训资格", "GDPDID000120", "高EQ一阶", 9800, 6000),
+    ],
+    online: [
+      giftCourse("《高EQ导师线上复盘课》", "GDPDID000201", "导师进阶", 1980, 0, "1年"),
+    ],
+    camp: [],
+  };
+
+  var QUAL_ANGEL_L1 = {
+    offline: [
+      giftCourse("《聆听发问基础班》", "GDPDID000107", "导师进阶", 9800, 8000),
+      giftCourse("《高效表达训练课》", "GDPDID000110", "导师进阶", 16800, 12000),
+      giftCourse("《宝山探索进阶班》", "GDPDID000111", "高EQ二阶", 12800, 10000),
+      giftCourse(
+        "《高EQ系列课程》课程卡-导师权益专享",
+        "GDPDID000113",
+        "高EQ二阶",
+        9400,
+        10000,
+        "2年",
+      ),
+    ],
+    online: [],
+    camp: [],
+  };
+
+  function attachGiftDetail(row, qualifications, extra) {
+    extra = extra || {};
+    row.activityStart = extra.activityStart || "2022-07-01";
+    row.activityEnd = extra.activityEnd || "2025-12-31";
+    row.activityRange = row.activityStart + " 至 " + row.activityEnd;
+    row.levelFullName =
+      extra.levelFullName || "2022年《高EQ导师》" + row.levelName;
+    row.depositAmount = row.deposit ? extra.depositAmount || 6000 : 0;
+    row.qualifications = JSON.parse(JSON.stringify(qualifications));
+    row.topPublicWelfare = 0;
+    row.otherBenefits = OTHER_BENEFITS.slice();
+    return row;
+  }
+
+  var giftPackages = [
+    attachGiftDetail(
+      {
+        giftId: "gift-angel-l2-b",
+        productType: "gift",
+        giftName: "二级传播天使进阶报读「高EQ导师」进阶版B",
+        upgradeMethod: "首次升级购买",
+        type: "高EQ导师",
+        levelName: "进阶版B",
+        price: 50000,
+        installment: false,
+        deposit: true,
+        audience: "angel",
+        offlineOnly: false,
+        description:
+          "面向事业说明会登记「天使」意向的学员，对应二级传播天使进阶报读路径。",
+      },
+      QUAL_MENTOR_B,
+    ),
+    attachGiftDetail(
+      {
+        giftId: "gift-angel-l2-a",
+        productType: "gift",
+        giftName: "二级传播天使进阶报读「高EQ导师」进阶版A",
+        upgradeMethod: "首次升级购买",
+        type: "高EQ导师",
+        levelName: "进阶版A",
+        price: 50000,
+        installment: false,
+        deposit: true,
+        audience: "angel",
+        offlineOnly: false,
+        description:
+          "二级传播天使进阶版A，适合已明确传播天使方向、需导师进阶礼包的学员。",
+      },
+      QUAL_MENTOR_A,
+    ),
+    attachGiftDetail(
+      {
+        giftId: "gift-angel-l2-b-offline",
+        productType: "gift",
+        giftName: "二级传播天使进阶报读「高EQ导师」进阶版B（仅线下课程）",
+        upgradeMethod: "首次升级购买",
+        type: "高EQ导师",
+        levelName: "进阶版B",
+        price: 50000,
+        installment: false,
+        deposit: true,
+        audience: "angel",
+        offlineOnly: true,
+        description: "仅线下课程可用的二级传播天使进阶礼包。",
+      },
+      QUAL_MENTOR_B,
+    ),
+    attachGiftDetail(
+      {
+        giftId: "gift-angel-l1-b",
+        productType: "gift",
+        giftName: "一级传播天使进阶报读「高EQ导师」进阶版B",
+        upgradeMethod: "首次升级购买",
+        type: "高EQ导师",
+        levelName: "进阶版B",
+        price: 40000,
+        installment: false,
+        deposit: true,
+        audience: "angel",
+        offlineOnly: false,
+        description: "一级传播天使进阶路径，客单价低于二级礼包。",
+      },
+      QUAL_ANGEL_L1,
+      { depositAmount: 5000 },
+    ),
+    attachGiftDetail(
+      {
+        giftId: "gift-mentor-l2-a-v2",
+        productType: "gift",
+        giftName: "二级传播天使进阶报读导师A V2.0",
+        upgradeMethod: "首次升级购买",
+        type: "高EQ导师",
+        levelName: "进阶版A",
+        price: 50000,
+        installment: false,
+        deposit: true,
+        audience: "both",
+        offlineOnly: false,
+        description:
+          "导师与传播天使进阶共用的 V2.0 礼包，适合意向了解方向为「导师」或「导师&天使」。",
+      },
+      QUAL_MENTOR_A,
+      {
+        activityStart: "2023-01-01",
+        levelFullName: "V2.0《高EQ导师》进阶版A",
+      },
+    ),
+    attachGiftDetail(
+      {
+        giftId: "gift-mentor-l2-a",
+        productType: "gift",
+        giftName: "高EQ导师进阶版A（首次升级购买）",
+        upgradeMethod: "首次升级购买",
+        type: "高EQ导师",
+        levelName: "进阶版A",
+        price: 50000,
+        installment: false,
+        deposit: true,
+        audience: "mentor",
+        offlineOnly: false,
+        description: "面向事业说明会登记「导师」意向的学员，与课程产品分区推荐。",
+      },
+      QUAL_MENTOR_A,
+    ),
+  ];
+
   function getLearner(memberId) {
     return learners[memberId] || learners.m10009;
   }
@@ -339,15 +575,26 @@
     var nextText = progression.nextLevel
       ? "建议下一步重点沟通「" + progression.nextLevel + "」课程。"
       : "学员已到当前最高阶，可结合未来课务建议复训。";
+    var career = learner.careerPresentation || {};
+    var direction = career.intendedDirection || "";
+    var giftLine = Core.hasCareerGiftIntent(direction)
+      ? " 事业说明会已登记意向了解方向「" +
+        direction +
+        "」，可约谈讲解时间「" +
+        (career.interviewSlot || "未填") +
+        "」；讲解前请核对画像，匹配确认后礼包权益与课程产品分区展示。"
+      : " 事业说明会未登记导师/天使意向，分析助手不展示礼包权益区域。";
     return {
       title: nextText,
       summary:
         "系统核对了“上课层级”标签和真实报读记录，当前最高有效层级为「" +
         progression.level +
-        "」。",
+        "」。" +
+        giftLine,
       progression: progression,
       records: learner.enrollments,
       follows: learner.follows,
+      careerPresentation: career,
     };
   }
 
@@ -611,6 +858,19 @@
       row.relationAdvice = Core.relationAdvice(row.relationStatus);
     });
 
+    var career = learner.careerPresentation || {};
+    var direction = career.intendedDirection || "";
+    var gifts = Core.matchGiftPackages(giftPackages, direction, 3);
+    gifts.forEach(function (row, index) {
+      row.rank = index + 1;
+      row.reasons = [
+        "事业说明会意向了解方向「" + direction + "」",
+        "礼包权益与课程产品分区，不参与本次课程预算门槛",
+        row.deposit ? "支持定金" : "不支持定金",
+        row.installment ? "支持分期支付" : "不支持分期支付",
+      ];
+    });
+
     return {
       isFallback: !!(options && options.forceFailure),
       label:
@@ -619,6 +879,15 @@
           : "智能匹配",
       conditions: conditions,
       products: result,
+      giftPackages: gifts,
+      careerIntent: {
+        intendedDirection: direction,
+        interviewSlot: career.interviewSlot || "",
+        assistantName: career.assistantName || "",
+        group: career.group || "",
+        retrainCount: career.retrainCount,
+        qualification: career.qualification || "",
+      },
     };
   }
 
@@ -686,6 +955,7 @@
     learners: learners,
     products: products,
     fallbackProducts: fallbackProducts,
+    giftPackages: giftPackages,
     getLearner: getLearner,
     getProgression: getProgression,
     getInterestAnalysis: getInterestAnalysis,

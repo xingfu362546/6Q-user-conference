@@ -157,6 +157,33 @@
     timers = [];
   }
 
+  function careerBriefingText() {
+    var learner = Mock.getLearner(memberId);
+    var career = (learner && learner.careerPresentation) || {};
+    var direction = career.intendedDirection || "未登记";
+    var giftHint = Core.hasCareerGiftIntent(career.intendedDirection)
+      ? "匹配后可展示礼包权益"
+      : "无导师/天使意向，不展示礼包权益";
+    return (
+      "事业说明会：意向了解方向 " +
+      direction +
+      " · 可约谈 " +
+      (career.interviewSlot || "—") +
+      " · 助教 " +
+      (career.assistantName || "—") +
+      " · " +
+      (career.group || "—") +
+      " · " +
+      giftHint
+    );
+  }
+
+  function formatGiftPrice(price) {
+    var n = Number(price);
+    if (!isFinite(n)) return "—";
+    return "¥" + n.toLocaleString("zh-CN");
+  }
+
   function mount() {
     var restored = resolveInitialSession();
     var wrap = document.createElement("div");
@@ -173,6 +200,7 @@
               <div>
                 <strong id="pfAiTitle">学员分析助手</strong>
                 <p class="pf-ai__sub">当前学员：<em>${esc(student.name6q)}</em> · ${esc(conferenceName)}</p>
+                <p class="pf-ai__briefing">${esc(careerBriefingText())}</p>
               </div>
             </div>
             <div class="pf-ai__head-actions">
@@ -209,7 +237,7 @@
               </form>
               <p class="pf-ai__foot">原型 Mock 数据，仅供演示。生产环境以 Dify 智能体回传及课务/产品接口为准 · 分析与产品仅供工作人员参考</p>
             </section>
-            <section class="pf-ai__result" id="pfAiResult" aria-label="课程推荐结果"></section>
+            <section class="pf-ai__result" id="pfAiResult" aria-label="课程与礼包推荐结果"></section>
           </div>
           <aside class="pf-ai__flow-note" id="pfAiFlowNote" hidden aria-label="意图流注释"></aside>
         </section>
@@ -413,6 +441,7 @@
           <tr><td>总导师课程/期数</td><td>导师词典、课程-导师、课务期数</td><td>左栏课程与期数</td></tr>
           <tr><td>一阶二阶区别</td><td>课阶知识库 / Dify 提示词</td><td>左栏课阶说明</td></tr>
           <tr><td>产品细节追问</td><td>当前推荐版本</td><td>左栏介绍/期数/商品，右栏不跳</td></tr>
+          <tr><td>礼包权益</td><td>事业说明会意向了解方向 + 礼包目录</td><td>有导师/天使意向才出右栏礼包区；与课程产品分区</td></tr>
         </tbody>
       </table>
     `;
@@ -887,7 +916,8 @@
               ["02", "归纳学员画像"],
               ["03", "检索产品与课务"],
               ["04", "预算与SKU硬校验"],
-              ["05", "综合排序生成依据"],
+              ["05", "核对事业说明会意向"],
+              ["06", "综合排序生成依据"],
             ]
               .map(function (row) {
                 return `<div class="pf-ai__step"><b>${row[0]}</b><span>${row[1]}</span></div>`;
@@ -915,6 +945,7 @@
       "正在归纳用户标签与历史跟进",
       "正在检索课程产品、课务和商品",
       "正在执行预算硬校验",
+      "正在核对事业说明会意向登记",
       "正在生成推荐依据",
     ];
     var stage = 0;
@@ -938,6 +969,10 @@
         result.products,
         nowIso(),
         status,
+        {
+          giftPackages: result.giftPackages || [],
+          careerIntent: result.careerIntent || { intendedDirection: "" },
+        },
       );
       version.label = result.label;
       currentViewVersionId = version.id;
@@ -975,6 +1010,61 @@
     return "未购买未报读";
   }
 
+  function renderGiftSection(version) {
+    var gifts = version.giftPackages || [];
+    if (!gifts.length) return "";
+    var direction =
+      (version.careerIntent && version.careerIntent.intendedDirection) || "";
+    return `
+      <div class="pf-ai__gift">
+        <div class="pf-ai__results-head pf-ai__results-head--gift">
+          <div><span>GIFT PACKAGE</span><h2>礼包权益推荐</h2></div>
+          <strong>依据意向了解方向：${esc(direction)}</strong>
+        </div>
+        <p class="pf-ai__gift-note">与上方课程产品分区；仅当事业说明会登记导师或天使意向时展示。无礼包意向不出现本区域。</p>
+        <div class="pf-ai__gift-list">
+          ${gifts
+            .map(function (gift, index) {
+              var offline =
+                (gift.qualifications && gift.qualifications.offline) || [];
+              var marketTotal = offline.reduce(function (sum, row) {
+                return sum + (Number(row.marketPrice) || 0);
+              }, 0);
+              return `
+                <article class="pf-ai__product pf-ai__product--gift">
+                  <span class="pf-ai__rank pf-ai__rank--gift">礼包 ${index + 1}</span>
+                  <div class="pf-ai__product-cover pf-ai__product-cover--gift" role="img" aria-label="礼包权益">礼包</div>
+                  <div class="pf-ai__product-main">
+                    <div class="pf-ai__product-title"><h3>${esc(
+                      gift.giftName,
+                    )}</h3><strong>${esc(formatGiftPrice(gift.price))}</strong></div>
+                    <p>${esc(gift.description || "")}</p>
+                    <div class="pf-ai__product-tags">
+                      <span>${esc(gift.upgradeMethod)}</span>
+                      <span>${esc(gift.type)} · ${esc(gift.levelName)}</span>
+                      <span>线下课 ${offline.length} 门</span>
+                      <span>市场价 ${esc(formatGiftPrice(marketTotal))}</span>
+                      <span>${gift.deposit ? "定金 " + formatGiftPrice(gift.depositAmount) : "不支持定金"}</span>
+                      <span>${gift.installment ? "支持分期" : "不支持分期"}</span>
+                    </div>
+                    <ul>${(gift.reasons || [])
+                      .map(function (reason) {
+                        return "<li>" + esc(reason) + "</li>";
+                      })
+                      .join("")}</ul>
+                  </div>
+                  <button type="button" class="pf-ai__detail-btn" data-gift-id="${esc(
+                    gift.giftId,
+                  )}">查看礼包资料</button>
+                </article>
+              `;
+            })
+            .join("")}
+        </div>
+      </div>
+    `;
+  }
+
   function renderResultList(version) {
     var root = document.getElementById("pfAiResult");
     var fallback =
@@ -998,7 +1088,7 @@
               return `
                 <article class="pf-ai__product">
                   <span class="pf-ai__rank">TOP ${index + 1}</span>
-                  <div class="pf-ai__product-cover">${esc(product.series.slice(0, 2))}</div>
+                  <div class="pf-ai__product-cover" role="img" aria-label="课程封面"></div>
                   <div class="pf-ai__product-main">
                     <div class="pf-ai__product-title"><h3>${esc(
                       product.productName,
@@ -1023,6 +1113,7 @@
             })
             .join("")}
         </div>
+        ${renderGiftSection(version)}
       </div>
     `;
   }
@@ -1042,7 +1133,7 @@
       <div class="pf-ai__detail">
         <button type="button" class="pf-ai__back" data-result-action="back">← 返回推荐列表</button>
         <header class="pf-ai__detail-head">
-          <div class="pf-ai__detail-cover">${esc(product.series.slice(0, 2))}</div>
+          <div class="pf-ai__detail-cover" role="img" aria-label="课程封面"></div>
           <div><span>${esc(product.series)}</span><h2>${esc(
             product.productName,
           )}</h2><p>${esc(relationLabel(product.relationStatus))}</p></div>
@@ -1058,7 +1149,9 @@
               .map(function (row) {
                 return `
                   <article class="pf-ai__session-card">
-                    <div class="pf-ai__session-city">${esc(row.city.replace("市", ""))}</div>
+                    <div class="pf-ai__session-cover" role="img" aria-label="会务期数封面">
+                      <span class="pf-ai__session-city">${esc(row.city.replace("市", ""))}</span>
+                    </div>
                     <div><strong>${esc(row.title)}</strong><p>授课导师：${esc(
                       row.teacher,
                     )}</p><time>开课时间：${esc(
@@ -1099,7 +1192,175 @@
     `;
   }
 
+  function giftCourseSum(rows) {
+    var market = 0;
+    var settlement = 0;
+    (rows || []).forEach(function (row) {
+      market += Number(row.marketPrice) || 0;
+      settlement += Number(row.settlementPrice) || 0;
+    });
+    return { market: market, settlement: settlement, count: (rows || []).length };
+  }
+
+  function renderGiftCourseTable(rows) {
+    if (!rows || !rows.length) {
+      return '<p class="pf-ai__gift-empty">该分类暂无课程权益</p>';
+    }
+    var sum = giftCourseSum(rows);
+    return `
+      <div class="pf-ai__gift-table-wrap">
+        <table class="pf-ai__gift-table">
+          <thead>
+            <tr>
+              <th>产品名称</th>
+              <th>产品编码</th>
+              <th>类别</th>
+              <th>券类型</th>
+              <th>数量</th>
+              <th>市场价/原价</th>
+              <th>核算价格</th>
+              <th>有效期</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows
+              .map(function (row) {
+                return `
+                  <tr>
+                    <td>${esc(row.name)}</td>
+                    <td>${esc(row.code)}</td>
+                    <td>${esc(row.category)}</td>
+                    <td>${esc(row.voucherType)}</td>
+                    <td>${esc(String(row.quantity))}</td>
+                    <td>${esc(formatGiftPrice(row.marketPrice))}</td>
+                    <td>${esc(formatGiftPrice(row.settlementPrice))}</td>
+                    <td>${esc(row.validity)}</td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5">合计</td>
+              <td>${esc(formatGiftPrice(sum.market))}</td>
+              <td>${esc(formatGiftPrice(sum.settlement))}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderGiftDetail(giftId, tab) {
+    var versions = currentSession.matchVersions || [];
+    var active =
+      versions.find(function (row) {
+        return row.id === currentViewVersionId;
+      }) || versions[versions.length - 1];
+    var gift = (active.giftPackages || []).find(function (row) {
+      return row.giftId === giftId;
+    });
+    if (!gift) return;
+    var quals = gift.qualifications || { offline: [], online: [], camp: [] };
+    var activeTab = tab || "offline";
+    if (!quals[activeTab]) activeTab = "offline";
+    var tabRows = quals[activeTab] || [];
+    var tabs = [
+      { id: "offline", label: "线下课", count: (quals.offline || []).length },
+      { id: "online", label: "线上课", count: (quals.online || []).length },
+      { id: "camp", label: "领袖营课程", count: (quals.camp || []).length },
+    ];
+    var root = document.getElementById("pfAiResult");
+    root.innerHTML = `
+      <div class="pf-ai__detail pf-ai__detail--gift">
+        <button type="button" class="pf-ai__back" data-result-action="back">← 返回推荐列表</button>
+        <header class="pf-ai__detail-head">
+          <div class="pf-ai__product-cover pf-ai__product-cover--gift" role="img" aria-label="礼包权益">礼包</div>
+          <div><span>礼包权益 · ${esc(gift.type)}</span><h2>${esc(
+            gift.giftName,
+          )}</h2><p>意向了解方向：${esc(
+            (active.careerIntent && active.careerIntent.intendedDirection) || "—",
+          )}</p></div>
+          <strong>${esc(formatGiftPrice(gift.price))}</strong>
+        </header>
+        <section class="pf-ai__detail-section">
+          <h3>礼包说明</h3><p>${esc(gift.description || "")}</p>
+        </section>
+        <section class="pf-ai__detail-section">
+          <h3>基础信息</h3>
+          <dl class="pf-ai__gift-meta">
+            <div><dt>活动时间</dt><dd>${esc(gift.activityStart || "—")} 至 ${esc(
+              gift.activityEnd || "—",
+            )}</dd></div>
+            <div><dt>类型</dt><dd>${esc(gift.type)}</dd></div>
+            <div><dt>级别</dt><dd>${esc(gift.levelFullName || gift.levelName)}</dd></div>
+            <div><dt>购买金额</dt><dd>${esc(formatGiftPrice(gift.price))}</dd></div>
+            <div><dt>是否支持分期</dt><dd>${gift.installment ? "支持" : "不支持"}</dd></div>
+            <div><dt>是否支持定金</dt><dd>${gift.deposit ? "支持" : "不支持"}</dd></div>
+            <div><dt>定金金额</dt><dd>${
+              gift.deposit ? esc(formatGiftPrice(gift.depositAmount)) : "—"
+            }</dd></div>
+            <div><dt>升级方式</dt><dd>${esc(gift.upgradeMethod)}</dd></div>
+          </dl>
+        </section>
+        <section class="pf-ai__detail-section">
+          <div class="pf-ai__section-head"><h3>资格权益</h3><span>与课程产品 SKU 区分</span></div>
+          <div class="pf-ai__gift-tabs" role="tablist">
+            ${tabs
+              .map(function (row) {
+                return `<button type="button" role="tab" class="pf-ai__gift-tab${
+                  row.id === activeTab ? " is-active" : ""
+                }" data-gift-tab="${esc(row.id)}" data-gift-detail-id="${esc(
+                  gift.giftId,
+                )}" aria-selected="${row.id === activeTab ? "true" : "false"}">${esc(
+                  row.label,
+                )} (${row.count})</button>`;
+              })
+              .join("")}
+          </div>
+          ${renderGiftCourseTable(tabRows)}
+        </section>
+        <section class="pf-ai__detail-section">
+          <div class="pf-ai__section-head"><h3>TOP公益项目</h3><span>${esc(
+            String(gift.topPublicWelfare == null ? 0 : gift.topPublicWelfare),
+          )} 项</span></div>
+          <p class="pf-ai__gift-empty">当前礼包未配置公益项目</p>
+        </section>
+        <section class="pf-ai__detail-section">
+          <h3>其他权益</h3>
+          <div class="pf-ai__gift-extras">
+            ${(gift.otherBenefits || [])
+              .map(function (row) {
+                return `
+                  <article class="pf-ai__gift-extra">
+                    <strong>${esc(row.name)}</strong>
+                    <time>创建时间 ${esc(row.createdAt || "—")}</time>
+                  </article>
+                `;
+              })
+              .join("")}
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
   function handleResultAction(event) {
+    var tabButton = event.target.closest("[data-gift-tab]");
+    if (tabButton) {
+      renderGiftDetail(
+        tabButton.getAttribute("data-gift-detail-id"),
+        tabButton.getAttribute("data-gift-tab"),
+      );
+      return;
+    }
+    var giftButton = event.target.closest("[data-gift-id]");
+    if (giftButton) {
+      renderGiftDetail(giftButton.getAttribute("data-gift-id"));
+      return;
+    }
     var productButton = event.target.closest("[data-product-id]");
     if (productButton) {
       renderProductDetail(productButton.getAttribute("data-product-id"));

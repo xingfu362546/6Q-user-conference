@@ -17,10 +17,12 @@
 | 进阶与权益 | 标签与报读记录取最高层级；已购买=有资格，已报读=资格已核销，可建议复训 |
 | 失败兜底 | 保留会话和条件，展示预算内 Mock 兜底产品并明确标识 |
 | 两端复用 | 会务后台与已授权面谈官门户共用；会务 APP 不承载大型工作台 |
+| 礼包权益（增补） | 匹配时读取事业说明会「意向了解方向」；含导师/天使才展示礼包区，与课程产品分区；无意向不渲染该区域 |
+| 意向分析洞察快照（增补） | 抽屉 AI 固定「结论 / 依据 / 下一步」；列表推荐列=课程一行 + 有方向才礼包一行；闸门同源、可约谈时间不单独出礼包。**不改画像分析助手** |
 
 **入口：** [会务后台画像](../conference-student-profile.html?id=m10009) · [面谈官门户画像](../../6q-interviewer-portal/student-profile.html?id=m10009)
 
-**设计：** [`docs/superpowers/specs/2026-08-27-student-analysis-assistant-design.md`](../../../docs/superpowers/specs/2026-08-27-student-analysis-assistant-design.md)
+**设计：** [`docs/superpowers/specs/2026-08-27-student-analysis-assistant-design.md`](../../../docs/superpowers/specs/2026-08-27-student-analysis-assistant-design.md) · [《导学师场景结构》](../../../docs/course-student-intent/导学师场景结构.md)
 
 ---
 

@@ -214,6 +214,38 @@
       .slice(0, context.limit || 3);
   }
 
+  function hasCareerGiftIntent(direction) {
+    var text = String(direction == null ? "" : direction).trim();
+    if (!text || text === "无" || text === "暂无" || text === "—") return false;
+    return /导师/.test(text) || /天使/.test(text);
+  }
+
+  function matchGiftPackages(packages, direction, limit) {
+    if (!hasCareerGiftIntent(direction)) return [];
+    var wantMentor = /导师/.test(String(direction));
+    var wantAngel = /天使/.test(String(direction));
+    var rows = (packages || []).filter(function (row) {
+      var aud = row.audience || "both";
+      if (aud === "both") return true;
+      if (aud === "mentor") return wantMentor;
+      if (aud === "angel") return wantAngel;
+      return true;
+    });
+    if (!rows.length) rows = (packages || []).slice();
+    rows.sort(function (a, b) {
+      function score(row) {
+        var aud = row.audience || "both";
+        if (aud === "both") return 0;
+        if (wantMentor && wantAngel) return aud === "mentor" ? 1 : 2;
+        return 1;
+      }
+      return score(a) - score(b);
+    });
+    return rows.slice(0, limit || 3).map(function (row) {
+      return clone(row);
+    });
+  }
+
   var DEMO_GROUPS = [
     {
       id: "analysis",
@@ -425,6 +457,8 @@
     "    D5[课务期数导师课阶]\n" +
     "    D6[课程产品SKU]\n" +
     "    D7[当前会话条件]\n" +
+    "    D8[事业说明会意向登记]\n" +
+    "    D9[礼包权益目录]\n" +
     "  end\n" +
     "  A1 --> D1\n" +
     "  A1 --> D2\n" +
@@ -439,11 +473,18 @@
     "  Chat --> Follow[输入框上方追问]\n" +
     "  Match --> D6\n" +
     "  Match --> D7\n" +
-    "  Match --> Right[右栏主推与备选]\n" +
+    "  Match --> Right[右栏课程产品]\n" +
+    "  Match --> D8\n" +
+    "  D8 --> Gift{意向含导师或天使?}\n" +
+    "  Gift -->|否| Hide[不展示礼包区]\n" +
+    "  Gift -->|是| D9\n" +
+    "  D9 --> RightGift[右栏礼包权益]\n" +
     "  Right --> Follow\n" +
+    "  RightGift --> Follow\n" +
     "  Follow --> Chat";
 
-  function createMatchVersion(session, conditions, products, now, status) {
+  function createMatchVersion(session, conditions, products, now, status, extras) {
+    extras = extras || {};
     var version = {
       id: "match-" + (session.matchVersions.length + 1),
       createdAt: now,
@@ -454,6 +495,10 @@
       confidence: conditions.confidence || 0,
       status: status,
       products: clone(products || []),
+      giftPackages: clone(extras.giftPackages || []),
+      careerIntent: extras.careerIntent
+        ? clone(extras.careerIntent)
+        : { intendedDirection: "" },
     };
     session.matchVersions.push(version);
     session.updatedAt = now;
@@ -479,6 +524,8 @@
     buildConditions: buildConditions,
     conditionValue: conditionValue,
     matchProducts: matchProducts,
+    hasCareerGiftIntent: hasCareerGiftIntent,
+    matchGiftPackages: matchGiftPackages,
     createMatchVersion: createMatchVersion,
     lastUserMessage: lastUserMessage,
     resolveAssistantStage: resolveAssistantStage,

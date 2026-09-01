@@ -23,6 +23,9 @@
       trainTag: "复训",
       roleTag: "导师&天使",
       hits: ["tag_1233", "tag_3301", "tag_4402", "tag_5503"],
+      courseLevel: "一阶",
+      intendedDirection: "",
+      interviewSlot: "课程结束后",
       follow: {
         tag: "有意向用户",
         content: "学员今天找我了解了进阶班，预算在 8k 左右。",
@@ -53,6 +56,9 @@
       trainTag: "新训",
       roleTag: "导师",
       hits: ["tag_1233", "tag_3301"],
+      courseLevel: "沙龙",
+      intendedDirection: "",
+      interviewSlot: "课间休息时",
       follow: {
         tag: "待回访",
         content: "电话沟通提到价格敏感，希望了解分期与优惠政策。",
@@ -74,6 +80,9 @@
       trainTag: "复训",
       roleTag: "",
       hits: ["tag_1233", "tag_3301", "tag_4402", "tag_6604", "tag_7705"],
+      courseLevel: "二阶",
+      intendedDirection: "导师&天使",
+      interviewSlot: "随时都可以",
       follow: {
         tag: "高意向",
         content: "明确要买本期配套课程包，希望当天签约。",
@@ -104,6 +113,9 @@
       trainTag: "新训",
       roleTag: "",
       hits: ["tag_5503"],
+      courseLevel: "沙龙",
+      intendedDirection: "",
+      interviewSlot: "",
       follow: { tag: "—", content: "—", time: "—" },
       ai: {
         score: 8,
@@ -121,6 +133,9 @@
       trainTag: "复训",
       roleTag: "导师",
       hits: ["tag_4402", "tag_6604"],
+      courseLevel: "一阶",
+      intendedDirection: "",
+      interviewSlot: "",
       follow: { tag: "—", content: "—", time: "—" },
       ai: {
         score: 8,
@@ -147,6 +162,9 @@
       trainTag: "新训",
       roleTag: "",
       hits: ["tag_2201"],
+      courseLevel: "无",
+      intendedDirection: "",
+      interviewSlot: "",
       follow: { tag: "—", content: "—", time: "—" },
       ai: {
         score: 3,
@@ -164,6 +182,9 @@
       trainTag: "复训",
       roleTag: "导师&天使",
       hits: ["tag_1233", "tag_5503"],
+      courseLevel: "沙龙",
+      intendedDirection: "导师",
+      interviewSlot: "课间休息时",
       follow: {
         tag: "有意向用户",
         content: "已添加企微，约定本周试听线上课。",
@@ -194,6 +215,9 @@
       trainTag: "新训",
       roleTag: "",
       hits: ["tag_1233", "tag_3301", "tag_4402"],
+      courseLevel: "分享会",
+      intendedDirection: "天使",
+      interviewSlot: "课程结束后",
       follow: {
         tag: "有意向用户",
         content: "希望开课前电话沟通。",

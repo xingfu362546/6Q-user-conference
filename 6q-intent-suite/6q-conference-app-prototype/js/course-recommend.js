@@ -109,6 +109,88 @@
     ],
   };
 
+  /**
+   * 礼包目录（意向分析列表 / 抽屉 / APP 卡片专用副本）。
+   * 闸门与画像助手一致：事业说明会「意向了解方向」含导师或天使。
+   * 本地实现，不引用助手 core。
+   */
+  var GIFT_CATALOG = [
+    {
+      giftId: "gift-angel-l2-b",
+      giftName: "二级传播天使进阶报读「高EQ导师」进阶版B",
+      audience: "angel",
+      price: "50,000",
+      description: "面向事业说明会登记「天使」意向的学员。",
+    },
+    {
+      giftId: "gift-mentor-l2-a",
+      giftName: "高EQ导师进阶版A（首次升级购买）",
+      audience: "mentor",
+      price: "50,000",
+      description: "面向事业说明会登记「导师」意向的学员。",
+    },
+    {
+      giftId: "gift-mentor-l2-a-v2",
+      giftName: "二级传播天使进阶报读导师A V2.0",
+      audience: "both",
+      price: "50,000",
+      description: "导师与传播天使进阶共用礼包。",
+    },
+  ];
+
+  function hasCareerGiftIntent(direction) {
+    var text = String(direction == null ? "" : direction).trim();
+    if (!text || text === "无" || text === "暂无" || text === "—") return false;
+    return /导师/.test(text) || /天使/.test(text);
+  }
+
+  function directionIntentLabel(direction) {
+    var text = String(direction || "");
+    var wantMentor = /导师/.test(text);
+    var wantAngel = /天使/.test(text);
+    if (wantMentor && wantAngel) return "导师与传播天使";
+    if (wantMentor) return "导师";
+    if (wantAngel) return "传播天使";
+    return "";
+  }
+
+  function pickGiftPackage(direction) {
+    if (!hasCareerGiftIntent(direction)) return null;
+    var wantMentor = /导师/.test(String(direction));
+    var wantAngel = /天使/.test(String(direction));
+    var pref = wantMentor && wantAngel ? "both" : wantMentor ? "mentor" : "angel";
+    var i;
+    for (i = 0; i < GIFT_CATALOG.length; i++) {
+      if (GIFT_CATALOG[i].audience === pref) return GIFT_CATALOG[i];
+    }
+    return GIFT_CATALOG[0];
+  }
+
+  function enrichStudent(student) {
+    if (!student) return null;
+    if (student.intentLevel) return student;
+    if (global.AppIntent && global.AppIntent.getById) {
+      return global.AppIntent.getById(student.id) || student;
+    }
+    return student;
+  }
+
+  function getGiftRecommendation(student) {
+    var enriched = enrichStudent(student);
+    if (!enriched) return null;
+    var gift = pickGiftPackage(enriched.intendedDirection);
+    if (!gift) return null;
+    return {
+      giftId: gift.giftId,
+      giftName: gift.giftName,
+      audience: gift.audience,
+      price: gift.price,
+      description: gift.description,
+      intendedDirection: String(enriched.intendedDirection || "").trim(),
+      directionLabel: directionIntentLabel(enriched.intendedDirection),
+    };
+  }
+
   function tagByCode(code) {
     return (global.INTENT_TAG_FLAT || []).find(function (t) {
       return t.code === code;
@@ -293,11 +375,7 @@
 
   function getRecommendations(student) {
     if (!student) return null;
-    var enriched = student.intentLevel
-      ? student
-      : global.AppIntent && global.AppIntent.getById
-        ? global.AppIntent.getById(student.id) || student
-        : student;
+    var enriched = enrichStudent(student);
 
     var scored = PRODUCT_CATALOG.map(function (p) {
       return buildItem(p, enriched);
@@ -428,13 +506,40 @@
     );
   }
 
+  function renderGiftBlock(student) {
+    var gift = getGiftRecommendation(student);
+    if (!gift) return "";
+    return (
+      '<section class="course-gift-block">' +
+      '<div class="course-gift-block__head">' +
+      '<h3 class="course-gift-block__title">礼包权益</h3>' +
+      '<span class="course-gift-block__badge">意向了解方向 · ' +
+      escapeHtml(gift.directionLabel) +
+      "</span></div>" +
+      '<p class="course-gift-block__direction">事业说明会登记了对' +
+      escapeHtml(gift.directionLabel) +
+      "的意向，与课程产品分区展示。</p>" +
+      '<div class="course-gift-card">' +
+      '<div class="course-gift-card__name">' +
+      escapeHtml(gift.giftName) +
+      "</div>" +
+      '<div class="course-gift-card__meta">参考价 ¥' +
+      escapeHtml(gift.price) +
+      "</div>" +
+      '<p class="course-gift-card__desc">' +
+      escapeHtml(gift.description) +
+      "</p></div></section>"
+    );
+  }
+
   function renderDetailBlock(student) {
     var rec = getRecommendations(student);
     if (!rec || !rec.primary) {
       return (
         '<section class="detail-block course-recommend">' +
         '<h3 class="detail-block__title">AI 产品推荐</h3>' +
-        '<p class="course-recommend__empty">暂无推荐，请完成意向分析或补充跟进后重试。</p></section>'
+        '<p class="course-recommend__empty">暂无推荐，请完成意向分析或补充跟进后重试。</p></section>' +
+        renderGiftBlock(student)
       );
     }
 
@@ -447,7 +552,7 @@
     return (
       '<section class="detail-block detail-block--recommend course-recommend">' +
       '<div class="course-recommend__head">' +
-      '<h3 class="detail-block__title">AI 产品推荐</h3>' +
+      '<h3 class="detail-block__title">课程产品</h3>' +
       '<span class="course-recommend__badge">知识库 · 智能体</span>' +
       "</div>" +
       '<p class="course-recommend__hint">推荐对象为<strong>课程产品</strong>（非单一商品）。已报读/已购买的产品仍会推荐，并提示复训与使用资格，供工作人员现场判断。</p>' +
@@ -459,7 +564,8 @@
           altHtml +
           "</details>"
         : "") +
-      '<p class="course-recommend__disclaimer">AI 建议不可人工改推荐结果；话术与是否成交由工作人员现场决定。</p>' +
+      renderGiftBlock(student) +
+      '<p class="course-recommend__disclaimer">AI 建议不可人工改推荐结果；是否讲解由工作人员现场决定。</p>' +
       "</section>"
     );
   }
@@ -472,14 +578,19 @@
       rel.status !== "none"
         ? ' <span class="intent-card__course-flag">' + escapeHtml(rel.label) + "</span>"
         : "";
+    var gift = getGiftRecommendation(student);
+    var giftRow = gift
+      ? '<div class="intent-card__gift">礼包 · ' + escapeHtml(gift.giftName) + "</div>"
+      : "";
     return (
-      '<div class="intent-card__course">📚 推荐产品：' +
+      '<div class="intent-card__course">课 · ' +
       escapeHtml(rec.primary.product.product_name) +
       ' <span class="intent-card__course-match">' +
       rec.primary.match_percent +
       "%</span>" +
       flag +
-      "</div>"
+      "</div>" +
+      giftRow
     );
   }
 
@@ -493,10 +604,17 @@
       item.relation.label +
       "】" +
       item.relation.staff_reminder;
+    var gift = getGiftRecommendation(student);
+    var giftRow = gift
+      ? '<span class="intent-course-cell__gift">礼包 · ' +
+        escapeHtml(gift.giftName) +
+        "</span>"
+      : "";
     return (
-      '<span class="intent-course-cell intent-tip" tabindex="0" data-tip="' +
+      '<span class="intent-course-cell">' +
+      '<span class="intent-course-cell__course intent-tip" tabindex="0" data-tip="' +
       escapeAttr(tip) +
-      '">' +
+      '"><span class="intent-course-cell__text">' +
       escapeHtml(item.product.product_name) +
       ' <em class="intent-course-cell__pct">' +
       item.match_percent +
@@ -504,9 +622,11 @@
       (item.relation.status !== "none"
         ? ' <span class="intent-course-cell__rel">' + escapeHtml(item.relation.label) + "</span>"
         : "") +
-      '<span class="intent-tip__popup" role="tooltip">' +
+      '</span><span class="intent-tip__popup" role="tooltip">' +
       escapeHtml(tip) +
-      "</span></span>"
+      "</span></span>" +
+      giftRow +
+      "</span>"
     );
   }
 
@@ -536,6 +656,7 @@
     });
   }
 
+  /** 中控「本期高频」只计课程产品，礼包客单价不进榜。 */
   function getConferenceTopProducts(students, limit) {
     limit = limit || 3;
     var count = {};
@@ -562,10 +683,15 @@
   global.CourseRecommend = {
     PRODUCT_CATALOG: PRODUCT_CATALOG,
     CATALOG: PRODUCT_CATALOG,
+    GIFT_CATALOG: GIFT_CATALOG,
+    hasCareerGiftIntent: hasCareerGiftIntent,
+    directionIntentLabel: directionIntentLabel,
+    getGiftRecommendation: getGiftRecommendation,
     getProductHistory: getProductHistory,
     getProductRelation: getProductRelation,
     getRecommendations: getRecommendations,
     renderDetailBlock: renderDetailBlock,
+    renderGiftBlock: renderGiftBlock,
     renderListHint: renderListHint,
     renderTableCell: renderTableCell,
     renderDrawerPanel: renderDrawerPanel,

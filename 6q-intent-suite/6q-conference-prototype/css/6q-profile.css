@@ -740,6 +740,14 @@
   font-weight: 700;
 }
 
+.pf-ai__briefing {
+  margin: 4px 0 0;
+  color: #9a6b24;
+  font-size: 10px;
+  line-height: 1.45;
+  max-width: 760px;
+}
+
 .pf-ai__head-btn,
 .pf-ai__close,
 .pf-ai__history-close {
@@ -1885,10 +1893,44 @@
   gap: 10px;
 }
 
+.pf-ai__gift {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed #e8d2a8;
+}
+
+.pf-ai__results-head--gift h2 {
+  color: #9a5b12;
+}
+
+.pf-ai__results-head--gift > strong {
+  color: #b45309;
+}
+
+.pf-ai__gift-note {
+  margin: 0 0 10px;
+  color: #8a7048;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.pf-ai__gift-list {
+  display: grid;
+  gap: 10px;
+}
+
+.pf-ai__rank--gift {
+  background: #c2410c;
+}
+
+.pf-ai__detail--gift .pf-ai__detail-head {
+  background: #fff7ed;
+}
+
 .pf-ai__product {
   position: relative;
   display: grid;
-  grid-template-columns: 74px 1fr auto;
+  grid-template-columns: 74px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
   padding: 14px;
@@ -1896,6 +1938,27 @@
   border-radius: 13px;
   background: #fff;
   box-shadow: 0 4px 14px rgba(22, 34, 53, 0.04);
+}
+
+.pf-ai__product--gift {
+  border-color: #f0d4a8;
+  background: #fffdf8;
+}
+
+.pf-ai__product-cover--gift {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 74px;
+  color: #fff;
+  background: linear-gradient(160deg, #f59e0b, #c2410c);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.pf-ai__product-main {
+  min-width: 0;
 }
 
 .pf-ai__rank {
@@ -1911,14 +1974,11 @@
 }
 
 .pf-ai__product-cover,
-.pf-ai__detail-cover {
-  display: grid;
-  place-items: center;
+.pf-ai__detail-cover,
+.pf-ai__session-cover {
+  overflow: hidden;
   border-radius: 11px;
-  color: #fff;
-  background: linear-gradient(135deg, #1597a6, #2585cf);
-  font-size: 16px;
-  font-weight: 700;
+  background: #ff8a3d url("../img/course-cover-parenting.png") center / cover no-repeat;
 }
 
 .pf-ai__product-cover {
@@ -1933,14 +1993,19 @@
 }
 
 .pf-ai__product-title h3 {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   color: #1b2a3b;
   font-size: 13px;
+  line-height: 1.4;
 }
 
 .pf-ai__product-title > strong {
+  flex: none;
   color: #1597a6;
   font-size: 10px;
+  white-space: nowrap;
 }
 
 .pf-ai__product-main > p {
@@ -2053,6 +2118,128 @@
   line-height: 1.7;
 }
 
+.pf-ai__gift-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  margin: 8px 0 0;
+}
+
+.pf-ai__gift-meta > div {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff7ed;
+}
+
+.pf-ai__gift-meta dt {
+  color: #8a7048;
+  font-size: 8px;
+}
+
+.pf-ai__gift-meta dd {
+  margin: 0;
+  color: #1b2a3b;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pf-ai__gift-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+
+.pf-ai__gift-tab {
+  padding: 5px 10px;
+  border: 1px solid #f0d4a8;
+  border-radius: 999px;
+  color: #9a5b12;
+  background: #fff;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.pf-ai__gift-tab.is-active {
+  color: #fff;
+  background: #c2410c;
+  border-color: #c2410c;
+}
+
+.pf-ai__gift-table-wrap {
+  overflow-x: auto;
+}
+
+.pf-ai__gift-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 9px;
+}
+
+.pf-ai__gift-table th,
+.pf-ai__gift-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid #f0e4cc;
+  text-align: left;
+  vertical-align: top;
+  color: #3d4f61;
+  white-space: nowrap;
+}
+
+.pf-ai__gift-table th {
+  color: #8a7048;
+  background: #fff7ed;
+  font-weight: 700;
+}
+
+.pf-ai__gift-table td:first-child {
+  white-space: normal;
+  min-width: 148px;
+}
+
+.pf-ai__gift-table tfoot td {
+  color: #9a5b12;
+  font-weight: 700;
+  background: #fffdf8;
+}
+
+.pf-ai__gift-empty {
+  margin: 8px 0 0;
+  color: #8a98a7;
+  font-size: 10px;
+}
+
+.pf-ai__gift-extras {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pf-ai__gift-extra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid #f0d4a8;
+  border-radius: 9px;
+  background: #fffdf8;
+}
+
+.pf-ai__gift-extra strong {
+  color: #1b2a3b;
+  font-size: 11px;
+}
+
+.pf-ai__gift-extra time {
+  color: #8a7048;
+  font-size: 8px;
+}
+
 .pf-ai__section-head {
   margin-bottom: 9px;
 }
@@ -2070,7 +2257,7 @@
 
 .pf-ai__session-card {
   display: grid;
-  grid-template-columns: 54px 1fr auto;
+  grid-template-columns: 72px 1fr auto;
   gap: 10px;
   align-items: center;
   padding: 10px;
@@ -2078,14 +2265,24 @@
   background: #f5f7f9;
 }
 
-.pf-ai__session-city {
-  display: grid;
+.pf-ai__session-cover {
+  position: relative;
   height: 54px;
-  place-items: center;
   border-radius: 9px;
+}
+
+.pf-ai__session-city {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  min-width: 28px;
+  padding: 2px 5px;
+  place-items: center;
+  border-radius: 5px;
   color: #fff;
-  background: #ff7a2f;
-  font-size: 10px;
+  background: rgba(20, 24, 32, 0.55);
+  font-size: 9px;
   font-weight: 700;
 }
 
@@ -2269,7 +2466,11 @@
 
   .pf-ai__product,
   .pf-ai__detail-head {
-    grid-template-columns: 58px 1fr;
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+
+  .pf-ai__product--gift {
+    grid-template-columns: 58px minmax(0, 1fr);
   }
 
   .pf-ai__detail-btn,

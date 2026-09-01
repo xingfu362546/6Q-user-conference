@@ -57,6 +57,7 @@ test("助手样式使用大型双栏工作台并支持降低动态效果", () =>
   assert.match(css, /height:\s*88vh/);
   assert.match(css, /\.pf-ai__workspace/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(css, /course-cover-parenting\.png/);
 });
 
 test("助手包含融合动效、推荐版本、详情和失败兜底", () => {
@@ -105,4 +106,34 @@ test("Mock 含 AI 智搜检索答案且不提供报读按钮", () => {
   assert.match(source, /一阶和二阶有什么区别？/);
   assert.match(source, /getRetrievalAnswer/);
   assert.doesNotMatch(source, />报读</);
+});
+
+test("Mock 按事业说明会意向了解方向区分礼包与课程产品", () => {
+  const source = readFileSync(assistantMockJs, "utf8");
+  assert.match(source, /intendedDirection/);
+  assert.match(source, /礼包权益/);
+  assert.match(source, /二级传播天使/);
+  assert.match(source, /productType:\s*"gift"/);
+  assert.match(source, /聆听发问进阶班/);
+  assert.match(source, /depositAmount/);
+});
+
+test("右栏礼包区与课程推荐分区，无意向时不渲染礼包区块", () => {
+  const source = readFileSync(aiChatJs, "utf8");
+  const css = readFileSync(profileCss, "utf8");
+  assert.match(source, /礼包权益推荐/);
+  assert.match(source, /giftPackages/);
+  assert.match(source, /renderGiftSection/);
+  assert.match(source, /意向了解方向/);
+  assert.match(source, /pf-ai__product-cover--gift/);
+  assert.match(source, /资格权益/);
+  assert.match(source, /核算价格/);
+  assert.match(source, /定金金额/);
+  assert.match(source, /data-gift-tab/);
+  assert.match(source, /其他权益/);
+  assert.match(css, /\.pf-ai__gift/);
+  assert.match(css, /minmax\(0,\s*1fr\)/);
+  assert.match(css, /\.pf-ai__gift-table/);
+  assert.match(css, /\.pf-ai__gift-tabs/);
+  assert.doesNotMatch(source, /加入购物车/);
 });

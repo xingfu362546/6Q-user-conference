@@ -93,7 +93,7 @@ window.INTENT_PROTO_PAGES = {
   "student-intent.html": {
     title: "面谈官门户 · 意向列表",
     subtitle: "只读对齐后台 · 无策略/导出",
-    notes: [46, 29, 22, 25, 26],
+    notes: [46, 29, 28, 22, 25, 26],
     diagrams: ["pc-strategy", "e2e"],
   },
   "student-profile.html": {
@@ -137,7 +137,7 @@ window.INTENT_PROTO_PAGES = {
   "app-intent-list.html": {
     title: "意向学员列表",
     subtitle: "高/中/低 Tab · 快捷进入详情",
-    notes: [36, 22, 24, 18],
+    notes: [36, 28, 22, 24, 18],
     diagrams: ["app-flow"],
   },
   "app-student-detail.html": {

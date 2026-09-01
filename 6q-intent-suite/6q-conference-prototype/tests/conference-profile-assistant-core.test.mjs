@@ -344,3 +344,128 @@ test("空白时演示栏默认展开，发出第一句后默认收起，可被�
   assert.equal(Core.isDemoRailExpanded(true, null), false);
   assert.equal(Core.isDemoRailExpanded(true, true), true);
 });
+
+const GIFT_FIXTURES = [
+  {
+    giftId: "gift-angel-l2-b",
+    giftName: "二级传播天使进阶报读「高EQ导师」进阶版B",
+    audience: "angel",
+    price: 50000,
+  },
+  {
+    giftId: "gift-mentor-l2-a",
+    giftName: "高EQ导师进阶版A（首次升级购买）",
+    audience: "mentor",
+    price: 50000,
+  },
+  {
+    giftId: "gift-both-v2",
+    giftName: "二级传播天使进阶报读导师A V2.0",
+    audience: "both",
+    price: 50000,
+  },
+];
+
+test("事业说明会意向了解方向含导师或天使才构成礼包推荐资格", () => {
+  assert.equal(Core.hasCareerGiftIntent(""), false);
+  assert.equal(Core.hasCareerGiftIntent(null), false);
+  assert.equal(Core.hasCareerGiftIntent("无"), false);
+  assert.equal(Core.hasCareerGiftIntent("—"), false);
+  assert.equal(Core.hasCareerGiftIntent("导师"), true);
+  assert.equal(Core.hasCareerGiftIntent("天使"), true);
+  assert.equal(Core.hasCareerGiftIntent("导师&天使"), true);
+});
+
+test("无礼包意向时礼包匹配结果为空，不混入课程产品", () => {
+  assert.deepEqual(Core.matchGiftPackages(GIFT_FIXTURES, "", 3), []);
+  assert.deepEqual(Core.matchGiftPackages(GIFT_FIXTURES, "无", 3), []);
+  const angelRows = Core.matchGiftPackages(GIFT_FIXTURES, "天使", 3);
+  assert.ok(angelRows.every((row) => row.audience !== "mentor"));
+  assert.ok(angelRows.some((row) => row.giftId === "gift-angel-l2-b"));
+});
+
+test("匹配版本可单独挂礼包权益，与课程产品分区存储", () => {
+  const session = Core.createDraftSession({ memberId: "m10009" }, "2026-08-27");
+  const version = Core.createMatchVersion(
+    session,
+    { explicit: [], inferred: [], missing: [], confidence: 80 },
+    [{ productId: "course-1" }],
+    "2026-08-27T01:02:00Z",
+    "success",
+    {
+      giftPackages: [{ giftId: "gift-angel-l2-b" }],
+      careerIntent: { intendedDirection: "天使" },
+    },
+  );
+  assert.equal(version.products[0].productId, "course-1");
+  assert.equal(version.giftPackages[0].giftId, "gift-angel-l2-b");
+  assert.equal(version.careerIntent.intendedDirection, "天使");
+});
+
+test("项琳琳有天使意向时匹配出礼包，夏兰无意向时礼包为空且课程仍在", () => {
+  const xiang = Mock.match("m10009", {
+    budget: 5000,
+    topic: "亲子关系",
+    city: "广州市",
+    now: "2026-08-27",
+  });
+  const xia = Mock.match("m10001", {
+    budget: 8000,
+    topic: "亲子沟通",
+    city: "广州市",
+    now: "2026-08-27",
+  });
+  const zhang = Mock.match("m10003", {
+    budget: 10000,
+    topic: "家庭成长",
+    city: "佛山市",
+    now: "2026-08-27",
+    allowRetrain: true,
+  });
+
+  assert.ok(xiang.giftPackages.length >= 1);
+  assert.ok(
+    xiang.giftPackages.every((row) => row.productType === "gift"),
+  );
+  assert.equal(xiang.careerIntent.intendedDirection, "天使");
+  assert.ok(xiang.products.length >= 1);
+  assert.ok(xiang.products.every((row) => row.productType !== "gift"));
+
+  assert.deepEqual(xia.giftPackages, []);
+  assert.equal(xia.careerIntent.intendedDirection, "");
+  assert.ok(xia.products.length >= 1);
+
+  assert.ok(zhang.giftPackages.length >= 1);
+  assert.match(zhang.careerIntent.intendedDirection, /导师/);
+});
+
+test("进阶版B礼包带资格权益明细：6门线下课、市场价与核算价、定金6000", () => {
+  const result = Mock.match("m10009", {
+    budget: 5000,
+    topic: "亲子关系",
+    city: "广州市",
+    now: "2026-08-27",
+  });
+  const gift = result.giftPackages.find((row) => /进阶版B/.test(row.levelName));
+  assert.ok(gift);
+  assert.equal(gift.depositAmount, 6000);
+  assert.equal(gift.qualifications.offline.length, 6);
+  const market = gift.qualifications.offline.reduce(
+    (sum, row) => sum + row.marketPrice,
+    0,
+  );
+  const settlement = gift.qualifications.offline.reduce(
+    (sum, row) => sum + row.settlementPrice,
+    0,
+  );
+  assert.equal(market, 78400);
+  assert.equal(settlement, 50000);
+  assert.ok(
+    gift.qualifications.offline.some((row) =>
+      /聆听发问进阶班/.test(row.name),
+    ),
+  );
+  assert.ok(gift.otherBenefits.some((row) => row.name === "课程权益"));
+  assert.equal(gift.topPublicWelfare, 0);
+});
+

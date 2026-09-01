@@ -23,6 +23,10 @@
       learnStatus: "已完成",
       writeoff: "已核销",
       contactStatus: "已联系",
+      intendedDirection: "天使",
+      interviewSlot: "课程结束后",
+      assistantName: "黄翠梅",
+      retrainCount: 2,
     },
     {
       id: "m10001",
@@ -42,6 +46,10 @@
       learnStatus: "已完成",
       writeoff: "已核销",
       contactStatus: "已联系",
+      intendedDirection: "",
+      interviewSlot: "课间休息时",
+      assistantName: "丁秀芳",
+      retrainCount: 0,
     },
     {
       id: "m10003",
@@ -61,6 +69,10 @@
       learnStatus: "学习中",
       writeoff: "未核销",
       contactStatus: "未联系",
+      intendedDirection: "导师&天使",
+      interviewSlot: "随时都可以",
+      assistantName: "黄翠梅",
+      retrainCount: 7,
     },
   ];
 

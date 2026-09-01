@@ -55,6 +55,9 @@
       name: "陈晓明",
       phone: "138****2201",
       hits: ["tag_1233", "tag_3301", "tag_4402", "tag_5503"],
+      courseLevel: "一阶",
+      intendedDirection: "天使",
+      interviewSlot: "课程结束后",
       follow: {
         tag: "有意向用户",
         content: "学员今天找我了解了《如何说孩子》进阶班，希望开课前电话沟通，预算在 8k 左右。",
@@ -63,6 +66,12 @@
       ai: {
         score: 22,
         summary: "意向明确，匹配本期亲子课程",
+        conclusion: "亲子进阶意向明确，当前一阶，可推进二阶并介绍传播天使礼包。",
+        evidence: [
+          { source: "跟进", text: "主动咨询进阶班并给出约 8k 预算" },
+          { source: "学习", text: "已学《高EQ智慧父母》一阶 8 次" },
+          { source: "标签", text: "亲子偏好、近期消费高" },
+        ],
         full: "结合亲子偏好、近期消费高与跟进内容：学员主动咨询进阶班并给出预算，建议优先安排会销席位。",
       },
       communityRecords: [
@@ -138,6 +147,9 @@
       name: "李美琳",
       phone: "139****8832",
       hits: ["tag_1233", "tag_3301"],
+      courseLevel: "沙龙",
+      intendedDirection: "",
+      interviewSlot: "课程结束后",
       follow: {
         tag: "待回访",
         content: "电话沟通提到价格敏感，希望了解分期与优惠政策，暂未承诺到课。",
@@ -146,6 +158,11 @@
       ai: {
         score: 14,
         summary: "有需求但价格敏感",
+        conclusion: "有亲子需求但价格敏感，当前沙龙，下一步邀约分享会。",
+        evidence: [
+          { source: "跟进", text: "强调分期与优惠，暂未承诺到课" },
+          { source: "学习", text: "已学《如何说孩子才会听》基础班 2 次" },
+        ],
         full: "标签显示亲子与消费潜力；跟进强调分期诉求，建议推送优惠方案后再判高意向。",
       },
       communityRecords: [
@@ -186,10 +203,18 @@
       name: "王建国",
       phone: "136****0091",
       hits: ["tag_4402", "tag_6604"],
+      courseLevel: "一阶",
+      intendedDirection: "",
+      interviewSlot: "",
       follow: { tag: "—", content: "—", time: "—" },
       ai: {
         score: 8,
         summary: "行为标签尚可，缺跟进",
+        conclusion: "行为标签尚可但缺跟进，当前一阶，下一步推进二阶前需补跟进。",
+        evidence: [
+          { source: "标签", text: "命中课程浏览与高价值分层" },
+          { source: "学习", text: "已学《高EQ智慧父母》一阶 5 次" },
+        ],
         full: "命中课程浏览与高价值分层，暂无会务跟进记录，AI 分偏低；建议补跟进后重新分析。",
       },
       communityRecords: [
@@ -242,7 +267,10 @@
       id: "m10004",
       name: "赵雅琴",
       phone: "137****5560",
-      hits: ["tag_5503"],
+      hits: ["tag_5503", "tag_1233"],
+      courseLevel: "沙龙",
+      intendedDirection: "导师",
+      interviewSlot: "课间休息时",
       follow: {
         tag: "有意向用户",
         content: "已添加企微，约定本周试听线上课，对导师风格比较在意。",
@@ -251,6 +279,11 @@
       ai: {
         score: 18,
         summary: "跟进积极，待试听转化",
+        conclusion: "已建联并约试听，当前沙龙，可邀约分享会并介绍导师礼包。",
+        evidence: [
+          { source: "跟进", text: "已加企微，约定本周试听，在意导师风格" },
+          { source: "学习", text: "主题沙龙学习 3 次" },
+        ],
         full: "社区活跃+跟进显示已建联并约试听；标签单一，需试听结果提升意向分。",
       },
       communityRecords: [
@@ -301,6 +334,9 @@
       name: "张志远",
       phone: "135****7712",
       hits: ["tag_1233", "tag_3301", "tag_4402", "tag_6604", "tag_7705"],
+      courseLevel: "二阶",
+      intendedDirection: "导师&天使",
+      interviewSlot: "随时都可以",
       follow: {
         tag: "高意向",
         content: "明确要买本期配套课程包，需确认席位与发票抬头，希望当天签约。",
@@ -309,6 +345,12 @@
       ai: {
         score: 25,
         summary: "强意向，建议立即锁席",
+        conclusion: "购课意向明确，当前二阶，可推进三阶并介绍导师与传播天使礼包。",
+        evidence: [
+          { source: "跟进", text: "明确要买配套课程包，希望当天确认席位" },
+          { source: "学习", text: "一阶 8 次，进阶班 4 次" },
+          { source: "标签", text: "多标签命中含高价值分层" },
+        ],
         full: "多标签命中+跟进确认购课意向；AI 分顶格，建议会务优先接待并推进签约。",
       },
       communityRecords: [
@@ -393,11 +435,16 @@
       id: "m10006",
       name: "刘慧敏",
       phone: "158****3344",
-      hits: ["tag_2201"],
+      hits: ["tag_2201", "tag_1233"],
+      courseLevel: "无",
+      intendedDirection: "",
+      interviewSlot: "",
       follow: { tag: "—", content: "—", time: "—" },
       ai: {
         score: 3,
         summary: "新学员，数据不足",
+        conclusion: "新学员数据不足，当前无课阶，下一步邀约分享会。",
+        evidence: [{ source: "标签", text: "仅基础渠道标签，暂无跟进与学习沉淀" }],
         full: "仅基础渠道标签，无跟进与行为沉淀，暂维持低分观察。",
       },
       communityRecords: [],
@@ -1008,11 +1055,11 @@
       return '<span class="intent-summary">' + escapeHtml(short) + "</span>";
     }
     return (
-      '<span class="intent-tip" tabindex="0" data-tip="' +
+      '<span class="intent-tip intent-tip--cell" tabindex="0" data-tip="' +
       escapeAttr(f) +
-      '">' +
+      '"><span class="intent-tip__text">' +
       escapeHtml(truncate(short)) +
-      '<span class="intent-tip__popup" role="tooltip">' +
+      '</span><span class="intent-tip__popup" role="tooltip">' +
       escapeHtml(f) +
       "</span></span>"
     );
@@ -1265,18 +1312,38 @@
         var aiSc = aiScoreOf(s);
         var initial = s.name.charAt(0);
         var grad = avatarStyle(s.id);
-        var chips = s.hits
+        var hitTags = s.hits
           .map(function (c) {
-            var t = tagByCode(c);
-            return t
-              ? '<span class="intent-chip intent-chip--hit intent-chip--compact" title="' +
-                escapeAttr(t.parentName + " / " + t.name) +
-                '">' +
-                escapeHtml(t.name) +
-                "</span>"
-              : "";
+            return tagByCode(c);
+          })
+          .filter(Boolean);
+        var TAG_CHIP_MAX = 2;
+        var chips = hitTags
+          .slice(0, TAG_CHIP_MAX)
+          .map(function (t) {
+            return (
+              '<span class="intent-chip intent-chip--hit intent-chip--compact" title="' +
+              escapeAttr(t.parentName + " / " + t.name) +
+              '">' +
+              escapeHtml(t.name) +
+              "</span>"
+            );
           })
           .join("");
+        if (hitTags.length > TAG_CHIP_MAX) {
+          var restNames = hitTags
+            .slice(TAG_CHIP_MAX)
+            .map(function (t) {
+              return t.name;
+            })
+            .join("、");
+          chips +=
+            '<span class="intent-chip intent-chip--more" title="' +
+            escapeAttr(restNames) +
+            '">+' +
+            (hitTags.length - TAG_CHIP_MAX) +
+            "</span>";
+        }
         var followShort =
           s.follow.content === "—" ? "—" : truncate(s.follow.content, 24);
         var aiShort = s.ai && s.ai.summary ? s.ai.summary : "—";
@@ -1327,7 +1394,7 @@
           '">' +
           lv.label +
           "</span></td>" +
-          "<td>" +
+          "<td class=\"intent-table__col-tags\">" +
           (chips
             ? '<div class="intent-hit-tags">' + chips + "</div>"
             : "—") +
@@ -1336,7 +1403,7 @@
           tipCell(followShort, s.follow.content) +
           "</td>" +
           "<td>" +
-          tipCell(aiShort, s.ai ? s.ai.full : "") +
+          tipCell(aiShort, s.ai ? s.ai.conclusion || s.ai.full : "") +
           "</td>" +
           "<td>" +
           (window.CourseRecommend
@@ -1438,6 +1505,65 @@
     }
   }
 
+  var COURSE_LEVEL_NEXT = {
+    无: "分享会",
+    沙龙: "分享会",
+    分享会: "一阶",
+    一阶: "二阶",
+    二阶: "三阶",
+  };
+
+  function hasGiftDirection(direction) {
+    return window.CourseRecommend && window.CourseRecommend.hasCareerGiftIntent
+      ? window.CourseRecommend.hasCareerGiftIntent(direction)
+      : /导师/.test(String(direction || "")) || /天使/.test(String(direction || ""));
+  }
+
+  function giftDirectionLabel(direction) {
+    if (window.CourseRecommend && window.CourseRecommend.directionIntentLabel) {
+      return window.CourseRecommend.directionIntentLabel(direction);
+    }
+    var text = String(direction || "");
+    if (/导师/.test(text) && /天使/.test(text)) return "导师与传播天使";
+    if (/导师/.test(text)) return "导师";
+    if (/天使/.test(text)) return "传播天使";
+    return "";
+  }
+
+  function buildNextStep(s) {
+    var level = s.courseLevel || "无";
+    var parts = [];
+    if (level === "三阶") {
+      parts.push("当前已到终阶，下一步谈复训。");
+    } else {
+      var next = COURSE_LEVEL_NEXT[level] || "分享会";
+      var action = level === "无" || level === "沙龙" ? "邀约参加" : "推进报读";
+      parts.push("当前上课层级为「" + level + "」，下一步" + action + "「" + next + "」。");
+    }
+    if (s.interviewSlot) {
+      parts.push("可约谈时间：" + s.interviewSlot + "。");
+    }
+    if (hasGiftDirection(s.intendedDirection)) {
+      parts.push(
+        "意向了解方向为「" +
+          giftDirectionLabel(s.intendedDirection) +
+          "」，可介绍对应礼包权益。",
+      );
+    }
+    return parts.join("");
+  }
+
+  function defaultEvidence(s) {
+    var items = [];
+    if (s.follow && s.follow.content && s.follow.content !== "—") {
+      items.push({ source: "跟进", text: s.follow.content });
+    }
+    if (s.learnRecords && s.learnRecords[0]) {
+      items.push({ source: "学习", text: s.learnRecords[0].course });
+    }
+    return items;
+  }
+
   function renderFollowBlock(s) {
     if (s.follow.time === "—") {
       return (
@@ -1466,18 +1592,37 @@
         " 分）。</p>"
       );
     }
+    var conclusion = s.ai.conclusion || s.ai.summary;
+    var evidence =
+      s.ai.evidence && s.ai.evidence.length ? s.ai.evidence : defaultEvidence(s);
+    var next = s.ai.nextStep || buildNextStep(s);
+    var evidenceHtml = evidence
+      .map(function (item) {
+        return (
+          "<li><span class=\"intent-ai-card__source\">" +
+          escapeHtml(item.source) +
+          "</span>" +
+          escapeHtml(item.text) +
+          "</li>"
+        );
+      })
+      .join("");
     return (
       '<div class="intent-ai-card">' +
-      '<div class="intent-ai-card__score">AI 权重分 <strong>' +
+      '<span class="intent-ai-card__badge">AI</span>' +
+      '<div class="intent-ai-card__score">权重 <strong>' +
       s.ai.score +
-      "</strong> / " +
+      "</strong>/" +
       AI_SCORE_MAX +
       "</div>" +
-      '<p class="intent-ai-card__summary">' +
-      escapeHtml(s.ai.summary) +
+      '<p class="intent-ai-card__conclusion">' +
+      escapeHtml(conclusion) +
       "</p>" +
-      '<p class="intent-ai-card__full">' +
-      escapeHtml(s.ai.full) +
+      (evidenceHtml
+        ? '<ul class="intent-ai-card__evidence">' + evidenceHtml + "</ul>"
+        : "") +
+      '<p class="intent-ai-card__next"><span class="intent-ai-card__next-label">下一步</span> ' +
+      escapeHtml(next) +
       '</p><button type="button" class="q-btn q-btn--sm" id="btn-reanalyze">重新分析</button></div>'
     );
   }

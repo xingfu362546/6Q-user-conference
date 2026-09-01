@@ -982,6 +982,14 @@
   line-height: 1.4;
 }
 
+.intent-card__gift {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7c3aed;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
 .intent-card__course-match {
   font-weight: 700;
 }
@@ -1134,4 +1142,47 @@
   font-size: 10px;
   color: var(--intent-orange);
   margin-left: 2px;
+}
+
+.course-gift-block {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  background: linear-gradient(180deg, #faf5ff, #fff);
+}
+
+.course-gift-block__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6d28d9;
+}
+
+.course-gift-block__badge {
+  font-size: 10px;
+  color: #6d28d9;
+}
+
+.course-gift-block__direction {
+  margin: 6px 0 8px;
+  font-size: 11px;
+  color: #6b21a8;
+}
+
+.course-gift-card__name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.course-gift-card__meta {
+  font-size: 11px;
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.course-gift-card__desc {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--intent-sub);
 }
