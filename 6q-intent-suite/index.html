@@ -250,14 +250,32 @@
     .terminal--app .terminal__chev { background: rgba(234,88,12,0.12); color: #ea580c; }
     .terminal--pc .terminal__chev { background: rgba(79,70,229,0.12); color: #4f46e5; }
     .terminal--tag .terminal__chev { background: rgba(5,150,105,0.12); color: #059669; }
+    .scope-intro { font-size: 12px; color: #475569; margin: 0 0 14px; }
+    .scope-intro p { margin: 0 0 6px; }
+    .scope-block { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 16px; overflow: hidden; }
+    .scope-block__head {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 12px 14px; background: #eef2ff; border-bottom: 1px solid var(--line);
+    }
+    .scope-block__head strong { font-size: 14px; }
+    .scope-block__date { font-size: 12px; color: var(--muted); margin-left: auto; }
+    .scope-table-wrap { overflow-x: auto; }
+    .scope-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .scope-table th, .scope-table td { padding: 10px 12px; border: 1px solid #dbe3ec; vertical-align: top; text-align: left; }
+    .scope-table th { background: #e8eef5; font-weight: 700; color: #334155; white-space: nowrap; }
+    .scope-table tbody tr:nth-child(even) td { background: #f8fafc; }
+    .scope-table ol, .scope-table ul { margin: 0; padding-left: 18px; }
+    .scope-table li { margin-bottom: 4px; }
+    .scope-pages a { display: block; color: #2563eb; text-decoration: none; font-weight: 600; margin-bottom: 4px; }
+    .scope-pages a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <header class="top">
     <div class="top__inner">
-      <p class="top__eyebrow">Feature Spec · 当前封版 v1.0.4 · 标签平台 v1.1</p>
+      <p class="top__eyebrow">Feature Spec · v1.1.0 标签 · v1.2.0 档案/策略/意向/APP · v1.3.0 AI 助手</p>
       <h1>课程会务 · 学员意向分析 · 功能清单</h1>
-      <p>本页为<strong>套件总入口</strong>。四端平级：面谈官门户 <strong>v1.0.4</strong> → 会务 APP <strong>v1.0.0+</strong> → 会务后台 <strong>v1.0.0～v1.0.4</strong> → 标签系统 <strong>v1.1</strong>。默认折叠各端；版本区默认只展开当前封版。</p>
+      <p>开发按版本号拆范围。三条产品线各自封 <strong>.0</strong>，之后只在第三个小数点递增（如 v1.2.1）。需求部门市场部，产品负责人姜玲玲。下方「版本范围」按图 1 颗粒度列出每版需求与实现方案。</p>
       <nav class="top__links" id="jump-nav"></nav>
     </div>
   </header>
@@ -277,15 +295,15 @@
     </section>
 
     <section class="flows" id="conference-versions">
-      <h2>功能清单（版本一览）</h2>
-      <p style="font-size:12px;color:#64748b;margin:0 0 12px">默认展开当前封版；旧版本点击展开。完整导航：<a href="6q-conference-prototype/versions.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
+      <h2>版本范围（开发拆分依据）</h2>
+      <p style="font-size:12px;color:#64748b;margin:0 0 12px">v1.1.0 标签管理系统 · v1.2.0 学员档案/分析策略/意向分析/会务 APP · v1.3.0 AI 分析助手。历史原型编号 v1.0.0～v1.0.4 仅作追溯，不再作为拆分依据。</p>
       <div id="versions-mount"></div>
     </section>
 
     <div id="terminals-mount"></div>
   </div>
 
-  <p class="foot">v1.0.4 设计：<code>docs/superpowers/specs/2026-08-27-student-analysis-assistant-design.md</code> · 方案：<code>CONFIRMATION.md</code> · 标签交接：<code>HANDOFF-v1.1.md</code></p>
+  <p class="foot">版本规范：v1.1.0 / v1.2.0 / v1.3.0 · 后续只加第三个小数点 · 方案：<code>CONFIRMATION.md</code></p>
 
   <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true">
     <aside class="drawer" role="dialog" aria-labelledby="drawer-title">
@@ -469,7 +487,7 @@
       [
         { href: "#architecture", text: "全局结构" },
         { href: "#global-flows-section", text: "全局流程" },
-        { href: "#conference-versions", text: "版本变更" },
+        { href: "#conference-versions", text: "版本范围" },
       ].forEach(function (j) {
         var a = document.createElement("a");
         a.href = j.href;
@@ -507,64 +525,12 @@
         flowsEl.appendChild(btn);
       });
 
-      /* 版本变更：默认仅当前展开 */
       var versionsMount = document.getElementById("versions-mount");
-      (spec.conferenceVersions || []).forEach(function (v) {
-        var block = document.createElement("div");
-        block.className = "ver-block" + (v.current ? " is-open" : "");
-        block.id = "feat-" + v.id;
-
-        var toggle = document.createElement("button");
-        toggle.type = "button";
-        toggle.className = "ver-block__toggle";
-        toggle.setAttribute("aria-expanded", v.current ? "true" : "false");
-        toggle.innerHTML =
-          "<div><span class=\"ver-pill" +
-          (v.current ? "" : " ver-pill--old") +
-          "\">" +
-          v.version +
-          (v.current ? " 当前" : "") +
-          "</span> <strong style=\"margin-left:6px\">" +
-          v.date +
-          "</strong><p class=\"ver-block__theme\" style=\"margin:4px 0 0\">" +
-          v.theme +
-          "</p></div><span class=\"ver-block__chev\">›</span>";
-
-        var body = document.createElement("div");
-        body.className = "ver-block__body";
-        body.innerHTML =
-          '<p style="font-size:12px;margin:10px 0 8px"><a href="' +
-          v.href +
-          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开入口 →</a></p>';
-
-        (v.modules || []).forEach(function (m) {
-          var mod = document.createElement("div");
-          mod.className = "ver-block__mod";
-          mod.innerHTML =
-            "<strong>" +
-            m.name +
-            "</strong>" +
-            (m.href ? '<a href="' + m.href + '">打开 →</a>' : "") +
-            "<ul>" +
-            (m.changes || [])
-              .map(function (c) {
-                return "<li>" + c + "</li>";
-              })
-              .join("") +
-            "</ul>";
-          body.appendChild(mod);
+      if (window.renderIntentVersionScopes) {
+        window.renderIntentVersionScopes(versionsMount, function (href) {
+          return href;
         });
-
-        toggle.addEventListener("click", function () {
-          var open = !block.classList.contains("is-open");
-          block.classList.toggle("is-open", open);
-          toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-
-        block.appendChild(toggle);
-        block.appendChild(body);
-        versionsMount.appendChild(block);
-      });
+      }
 
       /* 四端折叠（默认全收起） */
       var mount = document.getElementById("terminals-mount");

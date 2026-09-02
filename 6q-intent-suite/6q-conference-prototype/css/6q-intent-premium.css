@@ -1304,6 +1304,60 @@
   font-size: 13px;
 }
 
+.q-drawer-panel .course-goods--sku {
+  margin: 6px 0 8px;
+}
+
+.q-drawer-panel .course-goods__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: var(--intent-text-muted, #8c9bab);
+}
+
+.q-drawer-panel .course-goods__head small {
+  font-size: 10px;
+  font-weight: 600;
+  color: #e05d27;
+}
+
+.q-drawer-panel .course-goods__rows {
+  display: grid;
+  gap: 4px;
+}
+
+.q-drawer-panel .course-good {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 8px;
+  border: 1px solid var(--intent-border, #eee);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.q-drawer-panel .course-good strong {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.q-drawer-panel .course-good span {
+  margin-left: 6px;
+  color: #8c9bab;
+  font-size: 10px;
+}
+
+.q-drawer-panel .course-good b {
+  color: #e05d27;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .course-gift-block {
   margin-top: 16px;
   padding: 14px;

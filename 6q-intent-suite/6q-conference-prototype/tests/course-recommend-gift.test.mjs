@@ -122,3 +122,20 @@ test("中控高频榜只计课程产品，礼包不进榜", () => {
     assert.doesNotMatch(row.product.product_id, /^gift/);
   });
 });
+
+test("主推商品用紧凑 SKU 行，价位收在商品区标题", () => {
+  const CR = loadCourseRecommend();
+  const html = CR.renderDetailBlock(
+    student({
+      hits: ["tag_1233", "tag_4402", "tag_3301"],
+      intentLevel: "high",
+      follow: { content: "了解进阶班", tag: "有意向用户", time: "2025-04-02" },
+    }),
+  );
+  assert.match(html, /course-goods--sku/);
+  assert.match(html, /course-good/);
+  assert.match(html, /课程商品/);
+  assert.match(html, /<b>¥/);
+  assert.doesNotMatch(html, /商品价位参考/);
+  assert.doesNotMatch(html, /<ul class="course-goods">/);
+});

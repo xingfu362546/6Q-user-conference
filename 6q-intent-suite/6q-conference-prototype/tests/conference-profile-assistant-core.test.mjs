@@ -469,3 +469,83 @@ test("进阶版B礼包带资格权益明细：6门线下课、市场价与核算
   assert.equal(gift.topPublicWelfare, 0);
 });
 
+test("开场 Hi 答疑/分析映射到模式，不误伤自由补充", () => {
+  assert.equal(Core.detectStartMode("Hi，答疑助手"), "qa");
+  assert.equal(Core.detectStartMode("Hi，分析助手"), "analysis");
+  assert.deepEqual(Core.routeUtterance("Hi，答疑助手"), {
+    type: "mode",
+    id: "qa",
+  });
+  assert.equal(Core.routeUtterance("预算大概 5000").type, "free");
+});
+
+test("答疑四步问完才出纪要", () => {
+  let next = Core.advanceQaState(
+    { step: "scene" },
+    "青春期叛逆、亲子沟通障碍",
+  );
+  assert.equal(next.state.step, "pain");
+  next = Core.advanceQaState(next.state, "情绪疏导：对抗、爆发");
+  assert.equal(next.state.step, "tried");
+  next = Core.advanceQaState(next.state, "现场比较焦虑");
+  assert.equal(next.state.step, "done");
+  assert.equal(next.reply.kind, "qa-script");
+});
+
+test("学员检索按姓名或会员 ID", () => {
+  const rows = Core.learnerIndex(Mock.learners);
+  assert.equal(Core.searchLearnerIndex(rows, "夏兰")[0].memberId, "m10001");
+  assert.equal(Core.searchLearnerIndex(rows, "m10003")[0].memberName, "张志远");
+  assert.equal(Core.searchLearnerIndex(rows, "不存在的人").length, 0);
+});
+
+test("匹配完成后的面谈提示按维度列出，不含报价数字稿", () => {
+  const matched = Mock.match("m10009", {
+    budget: 5000,
+    topic: "亲子关系",
+    city: "广州市",
+    now: "2026-08-27",
+  });
+  assert.match(Core.buildMatchCompleteCopy(matched.products, false), /匹配完成/);
+  const coach = Core.buildSalesCoach({
+    learner: Mock.getLearner("m10009"),
+    products: matched.products,
+    progression: Mock.getProgression("m10009"),
+  });
+  assert.deepEqual(
+    coach.items.map((row) => row.dim),
+    ["兴趣信号", "上课进度", "报读关系", "事业说明会", "主推产品", "跟进缺口"],
+  );
+  assert.match(coach.opening, /亲子/);
+  assert.doesNotMatch(JSON.stringify(coach), /8600|25800/);
+});
+
+test("答疑路径追问为预输入，不含产品匹配", () => {
+  const session = Core.createDraftSession({ memberId: "m10009" }, "2026-08-27");
+  session.assistantMode = "qa";
+  Core.addMessage(session, "user", "Hi，答疑助手", "2026-08-27T01:00:00Z");
+  assert.equal(Core.resolveAssistantStage(session), "qa");
+  const chips = Core.buildFollowUpChips(session);
+  assert.equal(chips.length, 3);
+  assert.match(chips[0].text, /如何有方法的答疑/);
+  assert.ok(chips.every((chip) => !/匹配产品/.test(chip.text)));
+});
+
+test("答疑导师预输入映射到五步法演示稿", () => {
+  assert.equal(
+    Core.detectQaPreset("你能教我一下如何有方法的答疑吗"),
+    "method",
+  );
+  assert.equal(Core.detectQaPreset("我连接了，下一步呢？"), "step2");
+  const method = Mock.getQaMentorReply("method");
+  assert.match(method.title, /6Q答疑导师/);
+  assert.ok(method.blocks.some((row) => row.type === "h" && /第一步：听/.test(row.text)));
+  const step1 = Mock.getQaMentorReply("step1");
+  assert.ok(step1.blocks.some((row) => row.type === "quote"));
+  assert.match(JSON.stringify(step1.blocks), /先共情，再归位|听到您这么说/);
+  assert.match(step1.next.text, /我连接了/);
+  const step2 = Mock.getQaMentorReply("step2");
+  assert.match(JSON.stringify(step2.blocks), /孩子老是顶嘴/);
+  assert.match(step2.next.text, /第三步/);
+});
+

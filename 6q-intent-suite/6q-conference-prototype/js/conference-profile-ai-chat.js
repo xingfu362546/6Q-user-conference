@@ -184,6 +184,24 @@
     return "¥" + n.toLocaleString("zh-CN");
   }
 
+  function activeMemberId() {
+    return (
+      (currentSession &&
+        currentSession.analysisState &&
+        currentSession.analysisState.targetMemberId) ||
+      memberId
+    );
+  }
+
+  function delayReply(fn, ms) {
+    showTyping();
+    var timer = setTimeout(function () {
+      removeTyping();
+      fn();
+    }, ms || 520);
+    timers.push(timer);
+  }
+
   function mount() {
     var restored = resolveInitialSession();
     var wrap = document.createElement("div");
@@ -568,13 +586,68 @@
   function renderMessages() {
     var root = document.getElementById("pfAiMessages");
     if (!root) return;
-    root.innerHTML = currentSession.messages
+    var body = currentSession.messages
       .map(function (message) {
         return renderMessage(message);
       })
       .join("");
+    if (!currentSession.messages.length) body = renderWelcome() + body;
+    root.innerHTML = body;
     root.scrollTop = root.scrollHeight;
     renderIntents();
+  }
+
+  function renderWelcome() {
+    return (
+      '<div class="pf-ai__welcome">' +
+      '<p class="pf-ai__welcome-hi">Hi~ 我是现场助手，可以帮你答疑或分析学员。</p>' +
+      '<div class="pf-ai__welcome-grid">' +
+      Core.START_MODES.map(function (row) {
+        return (
+          '<button type="button" class="pf-ai__start-card" data-message-action="start-mode" data-mode="' +
+          esc(row.id) +
+          '"><span class="pf-ai__start-icon pf-ai__start-icon--' +
+          esc(row.id) +
+          '">' +
+          (row.id === "qa" ? "答" : "析") +
+          "</span><div><strong>" +
+          esc(row.title) +
+          " <i>›</i></strong><small>" +
+          esc(row.hint) +
+          "</small></div></button>"
+        );
+      }).join("") +
+      "</div></div>"
+    );
+  }
+
+  function renderActionButtons(actions, extraClass) {
+    return (
+      '<div class="pf-ai__choices' +
+      (extraClass ? " " + extraClass : "") +
+      '">' +
+      (actions || [])
+        .map(function (row) {
+          var attrs = Object.keys(row.attrs || {})
+            .map(function (key) {
+              return " " + key + '="' + esc(row.attrs[key]) + '"';
+            })
+            .join("");
+          return (
+            '<button type="button"' +
+            (row.primary ? ' class="is-primary"' : "") +
+            ' data-message-action="' +
+            esc(row.action) +
+            '"' +
+            attrs +
+            ">" +
+            esc(row.label) +
+            "</button>"
+          );
+        })
+        .join("") +
+      "</div>"
+    );
   }
 
   function renderMessage(message) {
@@ -585,13 +658,253 @@
     if (meta.kind === "conditions") extra = renderConditions(meta.payload);
     if (meta.kind === "retrieval") extra = renderRetrieval(meta.payload);
     if (meta.kind === "product-detail") extra = renderRetrieval(meta.payload);
+    if (meta.kind === "qa-presets") extra = renderQaPresets();
+    if (meta.kind === "qa-mentor") extra = renderQaMentor(meta.payload);
+    if (meta.kind === "qa-scene") extra = renderQaSceneChoices();
+    if (meta.kind === "qa-pain" || meta.kind === "qa-tried") {
+      extra = renderOptionChips(meta.payload);
+    }
+    if (meta.kind === "qa-script") extra = renderQaScript(meta.payload);
+    if (meta.kind === "student-confirm") extra = renderStudentConfirm(meta.payload);
+    if (meta.kind === "dimension-pick") extra = renderDimensionPick();
+    if (meta.kind === "student-hits") extra = renderStudentHits(meta.payload);
+    if (meta.kind === "match-complete") extra = renderMatchCompleteActions();
+    if (meta.kind === "sales-coach") extra = renderSalesCoach(meta.payload);
+    var bubble =
+      meta.kind === "qa-mentor" || !message.text
+        ? ""
+        : '<div class="pf-ai__bubble">' +
+          esc(message.text).replace(/\n/g, "<br>") +
+          "</div>";
     return `
       <article class="pf-ai__message pf-ai__message--${esc(message.role)}">
-        <div class="pf-ai__bubble">${esc(message.text).replace(/\n/g, "<br>")}</div>
+        ${bubble}
         ${extra}
         <time>${esc(formatTime(message.createdAt))}</time>
       </article>
     `;
+  }
+
+  function formatRich(text) {
+    return esc(text).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  }
+
+  function renderQaPresets() {
+    return (
+      '<p class="pf-ai__confirm-id">预输入 · 复刻答疑导师智能体演示</p>' +
+      renderActionButtons(
+        Core.QA_PRESETS.slice(0, 3).map(function (row) {
+          return {
+            action: "send-text",
+            label: row.label,
+            attrs: { "data-text": row.label },
+          };
+        }),
+        "pf-ai__choices--wrap",
+      )
+    );
+  }
+
+  function renderQaMentor(payload) {
+    payload = payload || {};
+    var blocks = (payload.blocks || [])
+      .map(function (block) {
+        if (block.type === "h") {
+          return "<h4>" + formatRich(block.text) + "</h4>";
+        }
+        if (block.type === "p") {
+          return "<p>" + formatRich(block.text) + "</p>";
+        }
+        if (block.type === "aside") {
+          return (
+            '<p class="pf-ai__mentor-aside">（' +
+            formatRich(block.text) +
+            "）</p>"
+          );
+        }
+        if (block.type === "quote") {
+          return (
+            '<blockquote class="pf-ai__mentor-quote">' +
+            formatRich(block.text) +
+            "</blockquote>"
+          );
+        }
+        if (block.type === "ul" || block.type === "ol") {
+          var tag = block.type;
+          return (
+            "<" +
+            tag +
+            ">" +
+            (block.items || [])
+              .map(function (item) {
+                return "<li>" + formatRich(item) + "</li>";
+              })
+              .join("") +
+            "</" +
+            tag +
+            ">"
+          );
+        }
+        return "";
+      })
+      .join("");
+    var next = payload.next
+      ? renderActionButtons([
+          {
+            action: "send-text",
+            label: payload.next.label,
+            primary: true,
+            attrs: { "data-text": payload.next.text },
+          },
+        ])
+      : "";
+    var heading = payload.title
+      ? payload.id === "method"
+        ? "<p>" + formatRich(payload.title) + "</p>"
+        : "<h4>" + formatRich(payload.title) + "</h4>"
+      : "";
+    return (
+      '<div class="pf-ai__mentor">' +
+      '<div class="pf-ai__think"><b>直接回复 ›</b><span>已深度思考 (' +
+      esc(String(payload.thinkMs || "2.0")) +
+      "s)</span></div>" +
+      (payload.note
+        ? '<p class="pf-ai__mentor-note">（' + formatRich(payload.note) + "）</p>"
+        : "") +
+      heading +
+      (payload.lead ? "<p>" + formatRich(payload.lead) + "</p>" : "") +
+      blocks +
+      next +
+      "</div>"
+    );
+  }
+
+  function renderQaSceneChoices() {
+    return renderActionButtons(
+      Core.QA_SCENES.map(function (row) {
+        return {
+          action: "qa-scene",
+          label: row.label,
+          attrs: { "data-scene": row.id },
+        };
+      }),
+      "pf-ai__choices--wrap",
+    );
+  }
+
+  function renderOptionChips(payload) {
+    return renderActionButtons(
+      ((payload && payload.options) || []).map(function (label) {
+        return {
+          action: "send-text",
+          label: label,
+          attrs: { "data-text": label },
+        };
+      }),
+      "pf-ai__choices--wrap",
+    );
+  }
+
+  function renderQaScript(payload) {
+    payload = payload || {};
+    return (
+      '<div class="pf-ai__coach">' +
+      '<p class="pf-ai__coach-meta">场景：<strong>' +
+      esc(payload.scene || "") +
+      "</strong> · 困扰：<strong>" +
+      esc(payload.pain || "") +
+      "</strong></p>" +
+      "<ul>" +
+      (payload.steps || [])
+        .map(function (row) {
+          return (
+            "<li><strong>" +
+            esc(row.name) +
+            "</strong>：" +
+            esc(row.line) +
+            "</li>"
+          );
+        })
+        .join("") +
+      "</ul>" +
+      '<p class="pf-ai__coach-note">' +
+      esc(payload.note || "") +
+      "</p></div>"
+    );
+  }
+
+  function renderStudentConfirm(payload) {
+    payload = payload || {};
+    return (
+      '<p class="pf-ai__confirm-id">默认会员：<strong>' +
+      esc(payload.memberName || "") +
+      "</strong> · " +
+      esc(payload.memberId || "") +
+      "</p>" +
+      renderActionButtons([
+        { action: "analyze-current", label: "是，分析当前学员", primary: true },
+        { action: "analyze-other", label: "其它学员" },
+      ])
+    );
+  }
+
+  function renderDimensionPick() {
+    return renderActionButtons(
+      Mock.intents.map(function (row) {
+        return {
+          action: "pick-intent",
+          label: row.label,
+          attrs: { "data-intent": row.id },
+        };
+      }),
+      "pf-ai__choices--wrap",
+    );
+  }
+
+  function renderStudentHits(payload) {
+    return renderActionButtons(
+      ((payload && payload.hits) || []).map(function (row) {
+        return {
+          action: "pick-student",
+          label: row.memberName + " · " + row.memberId,
+          attrs: {
+            "data-member-id": row.memberId,
+            "data-member-name": row.memberName,
+          },
+        };
+      }),
+      "pf-ai__choices--wrap",
+    );
+  }
+
+  function renderMatchCompleteActions() {
+    return renderActionButtons([
+      { action: "sales-prompt", label: "需要，按学员数据给提示", primary: true },
+      { action: "sales-skip", label: "暂不需要" },
+    ]);
+  }
+
+  function renderSalesCoach(payload) {
+    payload = payload || {};
+    return (
+      '<div class="pf-ai__coach">' +
+      "<ul>" +
+      (payload.items || [])
+        .map(function (row) {
+          return (
+            "<li><strong>" +
+            esc(row.dim) +
+            "</strong>：" +
+            esc(row.text) +
+            "</li>"
+          );
+        })
+        .join("") +
+      "</ul>" +
+      '<p class="pf-ai__coach-line">建议开口：' +
+      esc(payload.opening || "") +
+      "</p></div>"
+    );
   }
 
   function renderInterest(payload) {
@@ -747,21 +1060,21 @@
     var timer = setTimeout(function () {
       removeTyping();
       if (intentId === "interest") {
-        var interest = Mock.getInterestAnalysis(memberId);
+        var interest = Mock.getInterestAnalysis(activeMemberId());
         addMessage(
           "ai",
           interest.title + "\n" + interest.summary,
           { kind: "interest", payload: interest },
         );
       } else if (intentId === "followup") {
-        var followup = Mock.getFollowupAnalysis(memberId);
+        var followup = Mock.getFollowupAnalysis(activeMemberId());
         addMessage(
           "ai",
           followup.title + "\n" + followup.summary,
           { kind: "followup", payload: followup },
         );
       } else {
-        currentConditions = Mock.buildConditions(memberId, { text: "" });
+        currentConditions = Mock.buildConditions(activeMemberId(), { text: "" });
         addMessage(
           "ai",
           "我可以先继续了解预算、课程方向和地点，也可以直接结合现有画像开始匹配。",
@@ -792,7 +1105,27 @@
     if (/模拟匹配失败/.test(text)) forceFailureNext = true;
     replyPending = true;
     renderFollowUps();
+    var startMode = Core.detectStartMode(text);
+    if (startMode) {
+      startAssistantMode(startMode, text);
+      return;
+    }
+    if (currentSession.assistantMode === "qa") {
+      runQaTurn(text);
+      return;
+    }
+    var gate =
+      currentSession.analysisState && currentSession.analysisState.gate;
+    if (currentSession.assistantMode === "analysis" && gate && gate !== "ready") {
+      runAnalysisGate(text);
+      return;
+    }
     var routed = Core.routeUtterance(text);
+    if (routed.type === "sales-coach") {
+      addMessage("user", text, { intent: "sales-coach" });
+      emitSalesCoach();
+      return;
+    }
     if (routed.type === "intent") {
       runIntent(routed.id);
       return;
@@ -809,7 +1142,7 @@
     showTyping();
     var timer = setTimeout(function () {
       removeTyping();
-      currentConditions = Mock.buildConditions(memberId, { text: text });
+      currentConditions = Mock.buildConditions(activeMemberId(), { text: text });
       var hasVersions = currentSession.matchVersions.length > 0;
       addMessage(
         "ai",
@@ -820,6 +1153,215 @@
       );
     }, 540);
     timers.push(timer);
+  }
+
+  function startAssistantMode(mode, text) {
+    currentSession.assistantMode = mode;
+    if (mode === "qa") currentSession.qaState = { step: "scene" };
+    if (mode === "analysis") {
+      currentSession.analysisState = {
+        gate: "confirm",
+        targetMemberId: memberId,
+      };
+    }
+    addMessage("user", text, { intent: "mode", mode: mode });
+    delayReply(function () {
+      if (mode === "qa") {
+        addMessage(
+          "ai",
+          "我是6Q答疑导师。可以先点下面的预输入，按智能体里那三条演示走一遍。",
+          { kind: "qa-presets" },
+        );
+        persistSessions();
+        return;
+      }
+      addMessage("ai", "Hi，分析助手来了。是否先分析当前页面这位学员？", {
+        kind: "student-confirm",
+        payload: { memberId: memberId, memberName: student.name6q },
+      });
+      persistSessions();
+    });
+  }
+
+  function runQaTurn(text) {
+    addMessage("user", text, { intent: "qa" });
+    var preset = Core.detectQaPreset(text);
+    if (preset) {
+      currentSession.qaState = { step: "mentor", preset: preset };
+      delayReply(function () {
+        var article = Mock.getQaMentorReply(preset);
+        addMessage("ai", article.title, {
+          kind: "qa-mentor",
+          payload: article,
+        });
+        persistSessions();
+      });
+      return;
+    }
+    var next = Core.advanceQaState(currentSession.qaState, text);
+    currentSession.qaState = next.state;
+    delayReply(function () {
+      var reply = next.reply;
+      var meta = { kind: reply.kind, payload: reply };
+      if (reply.kind === "qa-script") {
+        meta.payload = Mock.getQaScript(reply.sceneId, {
+          pain: reply.pain,
+          tried: reply.tried,
+        });
+      } else if (reply.kind === "qa-pain" || reply.kind === "qa-tried") {
+        meta.payload = { options: reply.options };
+      }
+      addMessage("ai", reply.text, meta);
+      persistSessions();
+    });
+  }
+
+  function runAnalysisGate(text) {
+    var state = currentSession.analysisState || { gate: "confirm" };
+    var routed = Core.routeUtterance(text);
+    if (state.gate === "confirm") {
+      if (routed.type === "intent" || routed.type === "retrieval") {
+        state.gate = "ready";
+        state.targetMemberId = memberId;
+        currentSession.analysisState = state;
+        if (routed.type === "intent") runIntent(routed.id);
+        else runRetrieval(routed.id, text);
+        return;
+      }
+      if (Core.isOtherStudent(text)) {
+        addMessage("user", text, { intent: "analyze-other" });
+        state.gate = "search";
+        currentSession.analysisState = state;
+        delayReply(function () {
+          addMessage(
+            "ai",
+            "请输入会员 ID 或姓名检索。可试：项琳琳、夏兰、张志远，或 m10009。",
+          );
+        });
+        return;
+      }
+      if (Core.isAffirmative(text) || text === "是，分析当前学员") {
+        addMessage("user", text, { intent: "analyze-current" });
+        state.gate = "pick-dimension";
+        state.targetMemberId = memberId;
+        currentSession.analysisState = state;
+        delayReply(function () {
+          addMessage(
+            "ai",
+            "好，当前学员是「" +
+              student.name6q +
+              "」（" +
+              memberId +
+              "）。你想了解哪方面？",
+            { kind: "dimension-pick" },
+          );
+        });
+        return;
+      }
+      addMessage("user", text, { intent: "analyze-confirm" });
+      delayReply(function () {
+        addMessage("ai", "请先确认：分析当前页面学员，还是换其他学员？", {
+          kind: "student-confirm",
+          payload: { memberId: memberId, memberName: student.name6q },
+        });
+      });
+      return;
+    }
+    if (state.gate === "search") {
+      addMessage("user", text, { intent: "student-search" });
+      var hits = Mock.searchLearners(text);
+      delayReply(function () {
+        if (!hits.length) {
+          addMessage("ai", "没有找到匹配学员。请再输入会员 ID 或姓名。");
+          return;
+        }
+        if (hits.length === 1) {
+          state.gate = "pick-dimension";
+          state.targetMemberId = hits[0].memberId;
+          state.targetMemberName = hits[0].memberName;
+          currentSession.analysisState = state;
+          addMessage(
+            "ai",
+            "已定位「" +
+              hits[0].memberName +
+              "」（" +
+              hits[0].memberId +
+              "）。你想了解哪方面？",
+            { kind: "dimension-pick" },
+          );
+          return;
+        }
+        addMessage("ai", "检索到 " + hits.length + " 位学员，请点选：", {
+          kind: "student-hits",
+          payload: { hits: hits },
+        });
+      });
+      return;
+    }
+    if (state.gate === "pick-dimension") {
+      if (routed.type === "intent") {
+        state.gate = "ready";
+        currentSession.analysisState = state;
+        runIntent(routed.id);
+        return;
+      }
+      if (routed.type === "retrieval") {
+        state.gate = "ready";
+        currentSession.analysisState = state;
+        runRetrieval(routed.id, text);
+        return;
+      }
+      addMessage("user", text, { intent: "free" });
+      delayReply(function () {
+        addMessage("ai", "请从下面选一个了解维度，或点左侧演示发言。", {
+          kind: "dimension-pick",
+        });
+      });
+    }
+  }
+
+  function pickAnalyzedStudent(hit) {
+    currentSession.analysisState = {
+      gate: "pick-dimension",
+      targetMemberId: hit.memberId,
+      targetMemberName: hit.memberName,
+    };
+    addMessage("user", hit.memberName + " · " + hit.memberId, {
+      intent: "pick-student",
+    });
+    delayReply(function () {
+      addMessage(
+        "ai",
+        "已定位「" +
+          hit.memberName +
+          "」（" +
+          hit.memberId +
+          "）。你想了解哪方面？",
+        { kind: "dimension-pick" },
+      );
+    });
+  }
+
+  function emitSalesCoach() {
+    var versions = currentSession.matchVersions || [];
+    if (!versions.length) {
+      delayReply(function () {
+        addMessage("ai", "还没有匹配结果。请先完成产品匹配，再生成面谈提示。");
+      });
+      return;
+    }
+    delayReply(function () {
+      var id = activeMemberId();
+      var coach = Core.buildSalesCoach({
+        learner: Mock.getLearner(id),
+        products: versions[versions.length - 1].products || [],
+        progression: Mock.getProgression(id),
+      });
+      addMessage("ai", coach.title + "\n" + coach.lead, {
+        kind: "sales-coach",
+        payload: coach,
+      });
+    });
   }
 
   function runRetrieval(id, text) {
@@ -851,19 +1393,72 @@
   }
 
   function handleMessageAction(event) {
-    var action = event.target.closest("[data-message-action]");
-    if (!action) return;
-    if (action.getAttribute("data-message-action") === "continue") {
+    var button = event.target.closest("[data-message-action]");
+    if (!button) return;
+    var action = button.getAttribute("data-message-action");
+    if (action === "continue") {
       document.getElementById("pfAiInput").focus();
       return;
     }
-    if (!currentConditions) {
-      currentConditions = Mock.buildConditions(memberId, {
-        text: latestInput,
+    if (action === "match") {
+      if (!currentConditions) {
+        currentConditions = Mock.buildConditions(activeMemberId(), {
+          text: latestInput,
+        });
+      }
+      runMatching(forceFailureNext);
+      forceFailureNext = false;
+      return;
+    }
+    if (action === "start-mode") {
+      var mode = button.getAttribute("data-mode");
+      var item = Core.START_MODES.find(function (row) {
+        return row.id === mode;
+      });
+      if (item) handleWorkerText(item.userText);
+      return;
+    }
+    if (action === "analyze-current") {
+      handleWorkerText("是，分析当前学员");
+      return;
+    }
+    if (action === "analyze-other") {
+      handleWorkerText("其它学员");
+      return;
+    }
+    if (action === "pick-intent") {
+      var intent = Mock.intents.find(function (row) {
+        return row.id === button.getAttribute("data-intent");
+      });
+      if (intent) handleWorkerText(intent.label);
+      return;
+    }
+    if (action === "qa-scene") {
+      var scene = Core.findQaScene(button.getAttribute("data-scene"));
+      if (scene) handleWorkerText(scene.label);
+      return;
+    }
+    if (action === "send-text") {
+      handleWorkerText(button.getAttribute("data-text") || button.textContent);
+      return;
+    }
+    if (action === "pick-student") {
+      pickAnalyzedStudent({
+        memberId: button.getAttribute("data-member-id"),
+        memberName: button.getAttribute("data-member-name"),
+      });
+      return;
+    }
+    if (action === "sales-prompt") {
+      handleWorkerText("需要，按学员数据给提示");
+      return;
+    }
+    if (action === "sales-skip") {
+      addMessage("user", "暂不需要", { intent: "sales-skip" });
+      delayReply(function () {
+        addMessage("ai", "好。右侧产品结果仍可继续看介绍、期数和商品。");
       });
     }
-    runMatching(forceFailureNext);
-    forceFailureNext = false;
   }
 
   function renderResult() {
@@ -958,7 +1553,7 @@
     var finishTimer = setTimeout(function () {
       clearInterval(statusTimer);
       var result = Mock.match(
-        memberId,
+        activeMemberId(),
         currentConditions || { text: latestInput },
         { forceFailure: !!forceFailure },
       );
@@ -978,8 +1573,11 @@
       currentViewVersionId = version.id;
       persistSessions();
       matchingActive = false;
-      renderMessages();
-      renderFollowUps();
+      addMessage(
+        "ai",
+        Core.buildMatchCompleteCopy(version.products, status === "fallback"),
+        { kind: "match-complete" },
+      );
       renderDemoRail();
       renderResultList(version);
       renderHistory();
@@ -1378,7 +1976,7 @@
     if (value === "back") renderResult();
     if (value === "retry") runMatching(false);
     if (value === "demo-failure") {
-      currentConditions = Mock.buildConditions(memberId, { text: "" });
+      currentConditions = Mock.buildConditions(activeMemberId(), { text: "" });
       runMatching(true);
     }
   }

@@ -199,22 +199,40 @@
     .ver-block__mod a { color: var(--pc); text-decoration: none; font-weight: 600; margin-left: 8px; }
     .ver-block__mod ul { margin: 4px 0 0 16px; color: var(--ink); }
     .ver-block__mod li { margin-bottom: 2px; }
+    .scope-intro { font-size: 12px; color: #475569; margin: 0 0 14px; }
+    .scope-intro p { margin: 0 0 6px; }
+    .scope-block { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 16px; overflow: hidden; }
+    .scope-block__head {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 12px 14px; background: #eef2ff; border-bottom: 1px solid var(--line);
+    }
+    .scope-block__head strong { font-size: 14px; }
+    .scope-block__date { font-size: 12px; color: var(--muted); margin-left: auto; }
+    .scope-table-wrap { overflow-x: auto; }
+    .scope-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .scope-table th, .scope-table td { padding: 10px 12px; border: 1px solid #dbe3ec; vertical-align: top; text-align: left; }
+    .scope-table th { background: #e8eef5; font-weight: 700; color: #334155; white-space: nowrap; }
+    .scope-table tbody tr:nth-child(even) td { background: #f8fafc; }
+    .scope-table ol, .scope-table ul { margin: 0; padding-left: 18px; }
+    .scope-table li { margin-bottom: 4px; }
+    .scope-pages a { display: block; color: #2563eb; text-decoration: none; font-weight: 600; margin-bottom: 4px; }
+    .scope-pages a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <header class="top">
     <div class="top__inner">
-      <p class="top__eyebrow">Feature Spec · 标签平台 v1.1 · 会务后台 v1.0.4</p>
-      <h1>课程会务 · 学员意向分析 · 三端功能清单</h1>
-      <p>功能清单按三端列出；会务后台按<strong>版本</strong>追溯变更（当前封版 v1.0.4，含画像大型分析助手）。系统结构图可展开；模块点「查看说明」打开注释。</p>
+      <p class="top__eyebrow">Feature Spec · v1.1.0 标签 · v1.2.0 档案/策略/意向/APP · v1.3.0 AI 助手</p>
+      <h1>课程会务 · 学员意向分析 · 功能清单</h1>
+      <p>开发按版本号拆范围。三条产品线各自封 <strong>.0</strong>，之后只在第三个小数点递增（如 v1.2.1）。需求部门市场部，产品负责人姜玲玲。下方「版本范围」按需求描述 / 实现方案 / 页面链接列出每版要做的事。</p>
       <nav class="top__links" id="jump-nav"></nav>
     </div>
   </header>
 
   <div class="container">
     <section class="flows" id="conference-versions">
-      <h2>会务后台 · 版本变更（当前 v1.0.4）</h2>
-      <p style="font-size:12px;color:#64748b;margin:0 0 12px">按版本罗列模块与功能，便于追溯。面谈官门户：<a href="6q-intent-suite/6q-interviewer-portal/login.html" style="color:#f39800;font-weight:600">打开入口 →</a> · 完整导航：<a href="6q-intent-suite/6q-conference-prototype/versions.html" style="color:#4f46e5;font-weight:600">课程会务版本清单 →</a></p>
+      <h2>版本范围（开发拆分依据）</h2>
+      <p style="font-size:12px;color:#64748b;margin:0 0 12px">v1.1.0 标签管理系统 · v1.2.0 学员档案/分析策略/意向分析/会务 APP · v1.3.0 AI 分析助手。面谈官门户：<a href="6q-intent-suite/6q-interviewer-portal/login.html" style="color:#f39800;font-weight:600">打开入口 →</a></p>
       <div id="versions-mount"></div>
     </section>
 
@@ -353,12 +371,7 @@
       var jump = document.getElementById("jump-nav");
       var verJump = document.createElement("a");
       verJump.href = "#conference-versions";
-      var curVer = (spec.conferenceVersions || []).find(function (v) {
-        return v.current;
-      });
-      verJump.textContent = curVer
-        ? "会务版本 " + curVer.version
-        : "会务版本";
+      verJump.textContent = "版本范围";
       jump.appendChild(verJump);
       var portalJump = document.createElement("a");
       portalJump.href = prototypeHref("6q-interviewer-portal/login.html");
@@ -376,47 +389,9 @@
       });
 
       var versionsMount = document.getElementById("versions-mount");
-      (spec.conferenceVersions || []).forEach(function (v) {
-        var block = document.createElement("div");
-        block.className = "ver-block";
-        block.id = "feat-" + v.id;
-        var head = document.createElement("div");
-        head.className = "ver-block__head";
-        head.innerHTML =
-          "<h3><span class=\"ver-pill" +
-          (v.current ? "" : " ver-pill--old") +
-          "\">" +
-          v.version +
-          (v.current ? " 当前" : "") +
-          "</span> " +
-          v.date +
-          '</h3><p class="ver-block__theme">' +
-          v.theme +
-          ' · <a href="' +
-          prototypeHref(v.href) +
-          '" style="color:#4f46e5;font-weight:600;text-decoration:none">打开版本页</a></p>';
-        block.appendChild(head);
-        (v.modules || []).forEach(function (m) {
-          var mod = document.createElement("div");
-          mod.className = "ver-block__mod";
-          mod.innerHTML =
-            "<strong>" +
-            m.name +
-            "</strong>" +
-            (m.href
-              ? '<a href="' + prototypeHref(m.href) + '">打开 →</a>'
-              : "") +
-            "<ul>" +
-            (m.changes || [])
-              .map(function (c) {
-                return "<li>" + c + "</li>";
-              })
-              .join("") +
-            "</ul>";
-          block.appendChild(mod);
-        });
-        versionsMount.appendChild(block);
-      });
+      if (window.renderIntentVersionScopes) {
+        window.renderIntentVersionScopes(versionsMount, prototypeHref);
+      }
 
       var flowsEl = document.getElementById("global-flows");
       spec.globalFlows.forEach(function (f) {

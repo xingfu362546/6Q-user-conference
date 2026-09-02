@@ -8,6 +8,10 @@ const portalProfileHtml = new URL(
   import.meta.url,
 );
 const aiChatJs = new URL("../js/conference-profile-ai-chat.js", import.meta.url);
+const assistantCoreJs = new URL(
+  "../js/conference-profile-assistant-core.js",
+  import.meta.url,
+);
 const assistantMockJs = new URL(
   "../js/conference-profile-assistant-mock.js",
   import.meta.url,
@@ -82,6 +86,23 @@ test("助手包含融合动效、推荐版本、详情和失败兜底", () => {
   assert.doesNotMatch(source, /加入购物车|复制沟通话术/);
 });
 
+test("开场含答疑/分析入口，匹配完成后询问面谈提示", () => {
+  const chat = readFileSync(aiChatJs, "utf8");
+  const core = readFileSync(assistantCoreJs, "utf8");
+  assert.match(core, /我要答疑/);
+  assert.match(core, /Hi，答疑助手/);
+  assert.match(core, /Hi，分析助手/);
+  assert.match(core, /匹配完成/);
+  assert.match(chat, /start-mode/);
+  assert.match(chat, /按学员数据给提示/);
+  assert.match(chat, /是，分析当前学员/);
+  assert.match(chat, /其它学员/);
+  assert.match(chat, /qa-mentor/);
+  assert.match(chat, /直接回复/);
+  assert.doesNotMatch(chat, /8600|25800/);
+  assert.doesNotMatch(core, /8600|25800/);
+});
+
 test("工作台暴露演示栏、追问条和意图流注释稳定ID", () => {
   const source = readFileSync(aiChatJs, "utf8");
   for (const id of ["pfAiDemoRail", "pfAiFollowups", "pfAiFlowNote"]) {
@@ -97,6 +118,9 @@ test("助手样式为外侧演示栏和输入框上方追问留位", () => {
   assert.match(css, /\.pf-ai__demo-rail/);
   assert.match(css, /\.pf-ai__followups/);
   assert.match(css, /\.pf-ai__flow-note/);
+  assert.match(css, /\.pf-ai__start-card/);
+  assert.match(css, /\.pf-ai__coach/);
+  assert.match(css, /\.pf-ai__mentor-quote/);
 });
 
 test("Mock 含 AI 智搜检索答案且不提供报读按钮", () => {

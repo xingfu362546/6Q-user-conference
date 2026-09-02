@@ -262,22 +262,38 @@
     return prices[0] + " ~ " + prices[prices.length - 1];
   }
 
-  function renderGoodsList(product, max) {
-    max = max || 3;
-    return (product.goods || [])
-      .slice(0, max)
+  function renderGoodsList(product, options) {
+    options = options || {};
+    var goods = (product.goods || []).slice(0, options.max || 3);
+    if (!goods.length) return "";
+    var rows = goods
       .map(function (g) {
+        var formHtml =
+          g.form && String(g.name).indexOf(g.form) === -1
+            ? "<span>" + escapeHtml(g.form) + "</span>"
+            : "";
         return (
-          '<li><span class="course-goods__name">' +
+          '<div class="course-good">' +
+          "<div><strong>" +
           escapeHtml(g.name) +
-          '</span><span class="course-goods__meta">' +
-          escapeHtml(g.form) +
-          " · ¥" +
+          "</strong>" +
+          formHtml +
+          "</div>" +
+          "<b>¥" +
           escapeHtml(g.price) +
-          "</span></li>"
+          "</b></div>"
         );
       })
       .join("");
+    return (
+      '<div class="course-goods course-goods--sku">' +
+      '<div class="course-goods__head"><span>课程商品</span><small>' +
+      escapeHtml(goodsPriceRange(product)) +
+      "</small></div>" +
+      '<div class="course-goods__rows">' +
+      rows +
+      "</div></div>"
+    );
   }
 
   function scoreProduct(product, student) {
@@ -472,12 +488,7 @@
           "%</span>") +
       "</div>" +
       renderRelationBlock(rel, p) +
-      '<div class="course-card__price">商品价位参考：' +
-      escapeHtml(item.goods_price_range) +
-      "</div>" +
-      '<ul class="course-goods">' +
-      renderGoodsList(p) +
-      "</ul>" +
+      renderGoodsList(p, { max: isPrimary ? 3 : 2 }) +
       '<p class="course-card__summary">' +
       escapeHtml(p.summary) +
       "</p>" +

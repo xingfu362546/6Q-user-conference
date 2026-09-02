@@ -37,6 +37,9 @@
         persisted: false,
         messages: [],
         matchVersions: [],
+        assistantMode: null,
+        qaState: null,
+        analysisState: null,
       },
       clone(context || {}),
     );
@@ -346,6 +349,14 @@
     options = options || {};
     if (options.matching) return "matching";
     if (!session || !session.messages || !session.messages.length) return "empty";
+    if (session.assistantMode === "qa") return "qa";
+    if (
+      session.analysisState &&
+      session.analysisState.gate &&
+      session.analysisState.gate !== "ready"
+    ) {
+      return "analysis-gate";
+    }
     if (session.matchVersions && session.matchVersions.length) return "matched";
     var last = lastUserMessage(session);
     var intent = last && last.meta && last.meta.intent;
@@ -377,7 +388,10 @@
 
   function buildFollowUpChips(session, options) {
     var stage = resolveAssistantStage(session, options);
-    if (stage === "empty" || stage === "matching") return [];
+    if (stage === "empty" || stage === "matching" || stage === "analysis-gate") {
+      return [];
+    }
+    if (stage === "qa") return qaFollowUpChips(session);
     var last = lastUserMessage(session);
     var lastText = last ? last.text : "";
     var base;
@@ -417,9 +431,344 @@
     return !hasMessages;
   }
 
+  var START_MODES = [
+    {
+      id: "qa",
+      title: "我要答疑",
+      hint: "按五步法教练现场答疑",
+      userText: "Hi，答疑助手",
+    },
+    {
+      id: "analysis",
+      title: "分析学员",
+      hint: "解读画像、跟进与产品匹配",
+      userText: "Hi，分析助手",
+    },
+  ];
+
+  var QA_SCENES = [
+    {
+      id: "teen",
+      label: "青春期叛逆、亲子沟通障碍",
+      family: "亲子教育",
+      pains: [
+        "情绪疏导：对抗、爆发",
+        "沟通技巧：不知道怎么开口",
+        "关系修复：长期冷战",
+      ],
+    },
+    {
+      id: "phone",
+      label: "手机沉迷与电子产品依赖",
+      family: "亲子教育",
+      pains: ["先摸清沉迷程度", "想分析管教方式", "要可执行的管控方法"],
+    },
+    {
+      id: "study",
+      label: "学习内驱力不足 / 厌学",
+      family: "亲子教育",
+      pains: ["想看清不愿意学的原因", "不知道怎么走进内心", "希望提升主动学习"],
+    },
+    {
+      id: "couple",
+      label: "夫妻教育理念冲突",
+      family: "家庭关系",
+      pains: ["一个严一个松、常争吵", "想统一教育口径"],
+    },
+    {
+      id: "emotion",
+      label: "孩子情绪管理",
+      family: "亲子教育",
+      pains: ["情绪波动大、易怒", "敏感或出现异常行为"],
+    },
+  ];
+
+  var QA_TRIED_OPTIONS = [
+    "现场比较焦虑",
+    "有点无力、不知从何开口",
+    "说教过但没什么用",
+    "刚接住，还没细聊",
+  ];
+
+  var QA_PRESETS = [
+    {
+      id: "method",
+      label: "你能教我一下如何有方法的答疑吗",
+    },
+    {
+      id: "step1",
+      label:
+        "有个家长的孩子非常叛逆，老是不听我的话怎么办，我第一步应该怎么回答",
+    },
+    {
+      id: "step2",
+      label: "我连接了，下一步呢？",
+    },
+    {
+      id: "step3",
+      label: "想继续看第三步（转向资源）吗？",
+    },
+  ];
+
+  function detectQaPreset(text) {
+    var t = String(text || "").trim();
+    if (!t) return null;
+    var exact = QA_PRESETS.find(function (row) {
+      return row.label === t;
+    });
+    if (exact) return exact.id;
+    if (/如何有方法的答疑/.test(t)) return "method";
+    if (/叛逆/.test(t) && /第一步/.test(t)) return "step1";
+    if (/我连接了|第二步怎么接|看第二步/.test(t)) return "step2";
+    if (/第三步|转向资源|继续演示/.test(t)) return "step3";
+    return null;
+  }
+
+  function qaFollowUpChips(session) {
+    var last = lastUserMessage(session);
+    var preset = detectQaPreset(last && last.text);
+    if (preset === "method") {
+      return [{ id: "qa-step1", text: QA_PRESETS[1].label }];
+    }
+    if (preset === "step1") {
+      return [{ id: "qa-step2", text: QA_PRESETS[2].label }];
+    }
+    if (preset === "step2") {
+      return [{ id: "qa-step3", text: QA_PRESETS[3].label }];
+    }
+    return QA_PRESETS.slice(0, 3).map(function (row) {
+      return { id: "qa-" + row.id, text: row.label };
+    });
+  }
+
+  function detectStartMode(text) {
+    var t = String(text || "").trim();
+    if (!t) return null;
+    if (t === "我要答疑" || /^Hi[，,]\s*答疑助手/.test(t)) return "qa";
+    if (t === "分析学员" || /^Hi[，,]\s*分析助手/.test(t)) return "analysis";
+    return null;
+  }
+
+  function findQaScene(text) {
+    var t = String(text || "").trim();
+    return (
+      QA_SCENES.find(function (row) {
+        return row.id === t || row.label === t;
+      }) ||
+      QA_SCENES.find(function (row) {
+        return t && row.label.indexOf(t) !== -1;
+      }) ||
+      null
+    );
+  }
+
+  function advanceQaState(state, text) {
+    state = state || { step: "scene" };
+    var t = String(text || "").trim();
+    if (state.step === "scene") {
+      var scene = findQaScene(t);
+      if (!scene) {
+        return {
+          state: { step: "scene" },
+          reply: {
+            kind: "qa-scene",
+            text: "先选一个最贴近现场的场景，我按手册四步往下问。",
+            scenes: QA_SCENES.slice(),
+          },
+        };
+      }
+      return {
+        state: { step: "pain", sceneId: scene.id },
+        reply: {
+          kind: "qa-pain",
+          text: "这一类里，家长当下最想解决的是哪一块？",
+          options: scene.pains.slice(),
+        },
+      };
+    }
+    if (state.step === "pain") {
+      return {
+        state: { step: "tried", sceneId: state.sceneId, pain: t },
+        reply: {
+          kind: "qa-tried",
+          text: "现场家长情绪怎么样？之前试过哪些方法？",
+          options: QA_TRIED_OPTIONS.slice(),
+        },
+      };
+    }
+    if (state.step === "tried") {
+      return {
+        state: {
+          step: "done",
+          sceneId: state.sceneId,
+          pain: state.pain,
+          tried: t,
+        },
+        reply: {
+          kind: "qa-script",
+          text: "本轮答疑纪要已按四步整理，可直接给现场参考。",
+          sceneId: state.sceneId,
+          pain: state.pain,
+          tried: t,
+        },
+      };
+    }
+    if (findQaScene(t)) return advanceQaState({ step: "scene" }, t);
+    return {
+      state: state,
+      reply: {
+        kind: "qa-done",
+        text: "本轮已经有纪要。若要换场景，再点一个场景，或开新会话。",
+      },
+    };
+  }
+
+  function isAffirmative(text) {
+    var t = String(text || "").trim();
+    return /^(是|好的?|对|可以|分析当前|当前学员|是，分析当前学员)/.test(t);
+  }
+
+  function isOtherStudent(text) {
+    var t = String(text || "").trim();
+    return /其它学员|其他学员|^否$|^不是$|换一个|换学员/.test(t);
+  }
+
+  function searchLearnerIndex(rows, query) {
+    var q = String(query || "")
+      .trim()
+      .toLowerCase();
+    if (!q) return [];
+    return (rows || []).filter(function (row) {
+      return (
+        String(row.memberId || "")
+          .toLowerCase()
+          .indexOf(q) !== -1 ||
+        String(row.memberName || "")
+          .toLowerCase()
+          .indexOf(q) !== -1
+      );
+    });
+  }
+
+  function learnerIndex(learnersMap) {
+    return Object.keys(learnersMap || {}).map(function (id) {
+      var row = learnersMap[id] || {};
+      return {
+        memberId: row.memberId || id,
+        memberName: row.memberName || id,
+        city: row.city || "",
+      };
+    });
+  }
+
+  function buildMatchCompleteCopy(products, isFallback) {
+    var names = (products || [])
+      .slice(0, 3)
+      .map(function (row) {
+        return row.productName || row.name;
+      })
+      .filter(Boolean);
+    if (isFallback) {
+      return "本次未能完成智能匹配，右侧为兜底参考。仍可按学员数据生成面谈提示。";
+    }
+    return (
+      "匹配完成。" +
+      (names.length ? "主推与备选：" + names.join("、") + "。" : "") +
+      "右侧是产品结果。下一步要不要为相关产品生成面谈提示？"
+    );
+  }
+
+  function buildSalesCoach(input) {
+    input = input || {};
+    var learner = input.learner || {};
+    var products = input.products || [];
+    var progression = input.progression || {};
+    var primary = products[0] || {};
+    var career = learner.careerPresentation || {};
+    var follow = (learner.follows && learner.follows[0]) || {};
+    var tracking = (learner.tracking && learner.tracking[0]) || {};
+    var relation =
+      (learner.relations || {})[primary.productId] ||
+      primary.relationStatus ||
+      "none";
+    var goods = (primary.goods || []).filter(function (row) {
+      return row.budgetStatus === "fit";
+    });
+    var goodHint = goods.length
+      ? goods
+          .slice(0, 2)
+          .map(function (row) {
+            return row.name + (row.price != null ? " ¥" + row.price : "");
+          })
+          .join("、")
+      : "先核对预算内商品";
+    return {
+      title: "面谈提示已按学员数据整理",
+      lead: "不要背长稿。按下面加粗维度对齐现场，再落到主推产品。",
+      items: [
+        {
+          dim: "兴趣信号",
+          text:
+            (learner.tags && learner.tags[0]
+              ? learner.tags[0]
+              : "兴趣标签待核对") +
+            (tracking.detail ? "；" + tracking.detail : ""),
+        },
+        {
+          dim: "上课进度",
+          text:
+            "当前有效层级「" +
+            (progression.level || "未核") +
+            "」" +
+            (progression.nextLevel
+              ? "，下一步可谈「" + progression.nextLevel + "」"
+              : "，已到最高阶可谈复训"),
+        },
+        {
+          dim: "报读关系",
+          text: relationAdvice(relation) + "（相对主推产品）",
+        },
+        {
+          dim: "事业说明会",
+          text: hasCareerGiftIntent(career.intendedDirection)
+            ? "意向了解方向「" +
+              career.intendedDirection +
+              "」，可约谈「" +
+              (career.interviewSlot || "未填") +
+              "」"
+            : "未登记导师/天使意向，沟通时不主动展开礼包",
+        },
+        {
+          dim: "主推产品",
+          text: (primary.productName || "当前主推") + " · " + goodHint,
+        },
+        {
+          dim: "跟进缺口",
+          text: follow.content || "近期无跟进，开口前先补一句现场观察",
+        },
+      ],
+      opening:
+        "先接住「" +
+        (learner.inferredTopic || "当前诉求") +
+        "」，再核「" +
+        (progression.level || "上课层级") +
+        "」和下一步，最后才落到「" +
+        (primary.productName || "主推产品") +
+        "」。",
+    };
+  }
+
   function routeUtterance(text) {
     var t = String(text || "").trim();
     if (!t) return { type: "free", id: "free" };
+    var startMode = detectStartMode(t);
+    if (startMode) return { type: "mode", id: startMode };
+    if (
+      t === "按学员数据生成面谈提示" ||
+      t === "需要，按学员数据给提示"
+    ) {
+      return { type: "sales-coach", id: "sales-coach" };
+    }
     var hit = demoCatalog().find(function (item) {
       return item.label === t;
     });
@@ -532,5 +881,20 @@
     buildFollowUpChips: buildFollowUpChips,
     isDemoRailExpanded: isDemoRailExpanded,
     routeUtterance: routeUtterance,
+    START_MODES: START_MODES,
+    QA_SCENES: QA_SCENES,
+    QA_TRIED_OPTIONS: QA_TRIED_OPTIONS,
+    QA_PRESETS: QA_PRESETS,
+    detectQaPreset: detectQaPreset,
+    qaFollowUpChips: qaFollowUpChips,
+    detectStartMode: detectStartMode,
+    findQaScene: findQaScene,
+    advanceQaState: advanceQaState,
+    isAffirmative: isAffirmative,
+    isOtherStudent: isOtherStudent,
+    searchLearnerIndex: searchLearnerIndex,
+    learnerIndex: learnerIndex,
+    buildMatchCompleteCopy: buildMatchCompleteCopy,
+    buildSalesCoach: buildSalesCoach,
   };
 });
