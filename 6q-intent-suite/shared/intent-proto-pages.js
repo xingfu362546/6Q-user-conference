@@ -67,7 +67,7 @@ window.INTENT_PROTO_PAGES = {
   "conference-student-profile.html": {
     title: "画像档案",
     subtitle: "三栏事实 · 字段说明 · 分析助手",
-    notes: [41, 42, 43, 45, 47, 48, 49, 50, 27, 12],
+    notes: [41, 42, 52, 43, 45, 47, 48, 49, 50, 51, 27, 12],
     diagrams: ["assistant-intents", "e2e", "modules"],
   },
   "conference-detail-basic.html": {
@@ -99,7 +99,7 @@ window.INTENT_PROTO_PAGES = {
   "student-profile.html": {
     title: "面谈官门户 · 画像档案",
     subtitle: "复用后台口径 · 字段说明 · 分析助手",
-    notes: [46, 41, 42, 43, 45, 47, 48, 49, 50],
+    notes: [46, 41, 42, 52, 43, 45, 47, 48, 49, 50, 51],
     diagrams: ["assistant-intents", "e2e"],
   },
 

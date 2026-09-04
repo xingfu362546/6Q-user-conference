@@ -187,7 +187,19 @@ window.INTENT_FEATURE_SPEC = {
       flag: "new",
       title: "画像档案 · 全模块字段说明（v1.2.0）",
       lead: "下面用列表把画像页每个模块的元素名称、元素类型、是否必填和说明写清。点左侧目录可跳到对应模块注释。",
-      body: "<p>阅读顺序建议：左栏入口 → 基础信息 → 家庭/关系 → 购课退款 → 跟进行为 → 分析助手。</p><p><span style='color:#2563eb;font-weight:700'>(new)</span> 表示本版新增；<span style='color:#c2410c;font-weight:700'>(changed)</span> 表示本次注明调整。生产字段以会员中心 / 课务接口为准，原型仅对齐口径。</p>",
+      body: "<p>阅读顺序建议：左栏入口 → 基础信息 → 家庭/关系 → 购课退款 → 跟进行为 → 分析助手。</p><p><span style='color:#2563eb;font-weight:700'>(new)</span> 表示本版新增；<span style='color:#c2410c;font-weight:700'>(changed)</span> 表示本次注明调整；<span style='color:#b91c1c;font-weight:700'>(removed)</span> 表示已从表中删除。生产字段以会员中心 / 课务接口为准，原型仅对齐口径。</p>",
+    },
+    51: {
+      flag: "changed",
+      title: "画像档案 · 购买课程（v1.2.1）",
+      lead: "购买课程按课程产品一行汇总；表内字段都读资格中心线下产品，不读订单 SKU。",
+      body: "<p>数据来源：<strong>资格中心 · 线下产品</strong> https://www.6qedu.cn/admin/qualificationCentre/offLineProduct</p><ul><li><strong>课程产品</strong>：资格中心按课程产品汇总后的产品名</li><li><strong>核销次数</strong>：该产品已核销 / 已报读次数；无核销为 0</li><li><strong>待使用的资格</strong>：尚未核销、仍可报读的次数，展示为「2次」「3次」；无为「0次」</li><li><strong>累计消费金额</strong>：该产品在所有会务已支付合计，人民币展示</li><li><strong>最近报读核销时间</strong>：最近一次核销时间；无核销为 —</li></ul>",
+    },
+    52: {
+      flag: "new",
+      title: "画像档案 · 家庭组未使用资格（v1.2.2）",
+      lead: "家庭组给每位成员统计未使用资格；点「查看」弹窗看该人未使用的产品、次数和最近报读核销时间。",
+      body: "<p>次数与弹窗明细都来自<strong>资格中心 · 线下产品</strong> https://www.6qedu.cn/admin/qualificationCentre/offLineProduct</p><ul><li><strong>未使用资格</strong>：该成员尚未核销的资格次数合计，展示为「2次」；点「查看」打开弹窗</li><li><strong>本人</strong>与购买课程「待使用的资格」同源；其他家庭成员按各自会员读资格中心</li><li><strong>弹窗列</strong>：课程产品、资格数量（N次）、最近报读核销时间（无核销为 —）</li><li>无未使用资格时弹窗空态「暂无未使用资格」</li></ul>",
     },
     30: {
       title: "搜索与导出",
@@ -569,12 +581,20 @@ window.INTENT_FEATURE_SPEC = {
               notes: [41]
             },
             {
+              text: "[v1.2.1] 购买课程读资格中心：核销次数、待使用的资格（N次）、累计消费金额、最近报读核销时间；去掉商品与最近购买",
+              notes: [51]
+            },
+            {
               text: "[v1.2.0] 图表：购课条形 + 近30天行为折线（无商机诊断）",
               notes: [41]
             },
             {
               text: "[v1.2.0] 家庭组：家庭ID + 成员表，高亮本人",
               notes: [42]
+            },
+            {
+              text: "[v1.2.2] 家庭组增加「未使用资格」：合计 N次，点查看弹窗列出未使用产品、资格数量、最近报读核销时间",
+              notes: [52]
             },
             {
               text: "[v1.2.0] 关系图谱：推荐/归属双边·1跳·当前生效·环形交互图",
@@ -829,7 +849,7 @@ window.INTENT_FEATURE_SPEC = {
     rule: "三条产品线各自封 .0；之后只在第三个小数点递增（v1.1.1 / v1.2.1 / v1.3.1）。历史原型编号 v1.0.0～v1.0.4 不再作为开发拆分依据。",
     lines: [
       { version: "v1.1.0", name: "标签管理系统", next: "v1.1.1" },
-      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.1" },
+      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.3" },
       { version: "v1.3.0", name: "AI 分析助手", next: "v1.3.1" },
     ],
   },
@@ -1137,6 +1157,63 @@ window.INTENT_FEATURE_SPEC = {
             { name: "意向中控", href: "6q-conference-app-prototype/app-intent-dashboard.html" },
             { name: "意向列表", href: "6q-conference-app-prototype/app-intent-list.html" },
             { name: "学员详情", href: "6q-conference-app-prototype/app-student-detail.html" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "v121",
+      version: "v1.2.1",
+      date: "2026.09.02",
+      current: true,
+      theme: "学员档案 · 购买课程按产品汇总",
+      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+      rows: [
+        {
+          req: [
+            "1. 画像档案「购买课程」按课程产品汇总，不再按订单拆商品 SKU",
+            "2. 删除字段：商品、最近购买",
+            "3. 新增字段：核销次数、待使用的资格（展示为 2次/3次）、累计消费金额（该产品所有会务已支付合计）、最近报读核销时间",
+            "4. 购买课程表字段一律读资格中心 · 线下产品；每列注释写明来源与口径",
+            "5. 无核销时次数为 0、时间为 —；无待使用资格为 0次；会务后台与面谈官门户同一套档案页",
+          ],
+          impl: [
+            "前端：购买课程读 purchaseByProduct（writeoffCount / pendingQualCount / amount / lastWriteoffAt）",
+            "前端：待使用的资格展示 N次；复购记录去掉「最近购买」列；订单笔数仍按 purchases 计",
+            "注释：note 51 字段表每列第一条说明均为资格中心 URL",
+            "Mock：项琳琳「如何说」待使用 2次；张志远「如何说」待使用 3次、核销 0 作对照",
+          ],
+          pages: [
+            { name: "会务后台画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
+            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "v122",
+      version: "v1.2.2",
+      date: "2026.09.03",
+      current: true,
+      theme: "学员档案 · 家庭组未使用资格",
+      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+      rows: [
+        {
+          req: [
+            "1. 画像档案家庭组为每位成员增加「未使用资格」字段，展示合计次数如 2次、3次",
+            "2. 点「查看」打开弹窗列表：该成员未使用的课程产品、对应资格数量、该人对该产品的最近报读核销时间",
+            "3. 本人未使用资格与购买课程「待使用的资格」同源；其他家庭成员按各自会员读资格中心",
+            "4. 无未使用资格时次数为 0次，弹窗空态「暂无未使用资格」",
+            "5. 数据来源：资格中心 · 线下产品；会务后台与面谈官门户同一套档案页",
+          ],
+          impl: [
+            "前端：家庭组成员列未使用资格合计；本人从 purchaseByProduct.pendingQualCount 汇总，其他人读 member.unusedQuals",
+            "前端：弹窗列课程产品 / 资格数量（N次）/ 最近报读核销时间；无核销时间为 —",
+            "Mock：项琳琳本人 2次（如何说）；陈志强 3次（如何说 1次 + 高EQ 2次）；陈予安 0次",
+          ],
+          pages: [
+            { name: "会务后台画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
+            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
           ],
         },
       ],

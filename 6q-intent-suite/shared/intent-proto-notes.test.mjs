@@ -138,6 +138,10 @@ test("画像页挂上全模块字段说明且新功能带 flag", () => {
     assert.equal(spec.notes[49].flag, "new");
     assert.equal(spec.notes[50].flag, "new");
     assert.match(spec.notes[50].title, /字段说明/);
+    assert.equal(spec.notes[51].flag, "changed");
+    assert.match(spec.notes[51].title, /购买课程/);
+    assert.equal(spec.notes[52].flag, "new");
+    assert.match(spec.notes[52].title, /家庭组未使用资格/);
     assert.equal(spec.notes[41].flag, "changed");
     assert.equal(spec.notes[43].flag, "changed");
   }
@@ -148,8 +152,17 @@ test("画像页挂上全模块字段说明且新功能带 flag", () => {
     "utf8",
   );
   assert.match(enrich, /50:/);
+  assert.match(enrich, /51:/);
+  assert.match(enrich, /52:/);
   assert.match(fields, /INTENT_PROTO_FIELD_SPECS|fields/);
   assert.match(fields, /6Q姓名/);
   assert.match(fields, /购课概览/);
+  assert.match(fields, /核销次数/);
+  assert.match(fields, /待使用的资格/);
+  assert.match(fields, /未使用资格/);
+  assert.match(fields, /累计消费金额/);
+  assert.match(fields, /最近报读核销时间/);
+  assert.match(fields, /资格中心/);
+  assert.match(fields, /offLineProduct/);
   assert.match(fields, /跟进记录/);
 });

@@ -137,6 +137,18 @@
             role: "父亲",
             phone: "13725118862",
             isSelf: false,
+            unusedQuals: [
+              {
+                product: "如何说孩子才会听",
+                count: 1,
+                lastWriteoffAt: "2025-06-18 10:00:00",
+              },
+              {
+                product: "高EQ智慧父母",
+                count: 2,
+                lastWriteoffAt: "",
+              },
+            ],
           },
           {
             code: "1HRG1B",
@@ -145,13 +157,35 @@
             role: "儿子",
             phone: "—",
             isSelf: false,
+            unusedQuals: [],
           },
         ],
       },
       purchaseByProduct: [
-        { product: "如何说孩子才会听", count: 2, amount: 13600 },
-        { product: "高EQ智慧父母", count: 1, amount: 8600 },
-        { product: "青少年6Q训练营", count: 1, amount: 300 },
+        {
+          product: "如何说孩子才会听",
+          count: 2,
+          amount: 13600,
+          writeoffCount: 2,
+          pendingQualCount: 2,
+          lastWriteoffAt: "2026-01-08 09:30:00",
+        },
+        {
+          product: "高EQ智慧父母",
+          count: 1,
+          amount: 8600,
+          writeoffCount: 1,
+          pendingQualCount: 0,
+          lastWriteoffAt: "2024-09-20 10:00:00",
+        },
+        {
+          product: "青少年6Q训练营",
+          count: 1,
+          amount: 300,
+          writeoffCount: 1,
+          pendingQualCount: 0,
+          lastWriteoffAt: "2024-11-02 14:20:00",
+        },
       ],
       purchases: [
         {
@@ -571,6 +605,13 @@
         role: "父亲",
         phone: "13725117757",
         isSelf: false,
+        unusedQuals: [
+          {
+            product: "如何说孩子才会听",
+            count: 1,
+            lastWriteoffAt: "2024-11-02 14:20:00",
+          },
+        ],
       },
       {
         code: "YSX2Q7",
@@ -579,15 +620,44 @@
         role: "女儿",
         phone: "15920568551",
         isSelf: false,
+        unusedQuals: [],
       },
     ],
   };
   PROFILES.m10003 = JSON.parse(JSON.stringify(PROFILES.m10009));
   PROFILES.m10003.basic.remark = "强购课意向，建议锁席。";
   PROFILES.m10003.repurchase = [];
+  PROFILES.m10003.purchases = [
+    {
+      product: "如何说孩子才会听",
+      goods: "第12551期·广州站（新训席）",
+      time: "2025-03-12",
+      status: "已完成",
+    },
+    {
+      product: "高EQ智慧父母",
+      goods: "基础班",
+      time: "2024-09-20",
+      status: "已完成",
+    },
+  ];
   PROFILES.m10003.purchaseByProduct = [
-    { product: "如何说孩子才会听", count: 1, amount: 6800 },
-    { product: "高EQ智慧父母", count: 1, amount: 8600 },
+    {
+      product: "如何说孩子才会听",
+      count: 1,
+      amount: 6800,
+      writeoffCount: 0,
+      pendingQualCount: 3,
+      lastWriteoffAt: "",
+    },
+    {
+      product: "高EQ智慧父母",
+      count: 1,
+      amount: 8600,
+      writeoffCount: 1,
+      pendingQualCount: 0,
+      lastWriteoffAt: "2024-09-20 10:00:00",
+    },
   ];
   PROFILES.m10003.familyGroup = {
     familyId: "39250112",
@@ -607,6 +677,13 @@
         role: "母亲",
         phone: "13660098821",
         isSelf: false,
+        unusedQuals: [
+          {
+            product: "高EQ智慧父母",
+            count: 1,
+            lastWriteoffAt: "2024-09-20 10:00:00",
+          },
+        ],
       },
       {
         code: "1HRG2E",

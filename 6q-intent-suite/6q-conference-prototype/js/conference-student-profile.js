@@ -30,6 +30,43 @@
       .replace(/>/g, "&gt;");
   }
 
+  function formatYuan(n) {
+    return "¥" + Number(n || 0).toLocaleString("zh-CN");
+  }
+
+  function formatTimes(n) {
+    return (n != null ? Number(n) : 0) + "次";
+  }
+
+  function renderPurchaseCourseTable(rows) {
+    if (!rows || !rows.length) {
+      return '<p class="pf-muted">暂无购买课程</p>';
+    }
+    return (
+      '<table class="pf-table"><thead><tr><th>课程产品</th><th class="pf-table__num">核销次数</th><th class="pf-table__num">待使用的资格</th><th class="pf-table__num">累计消费金额</th><th>最近报读核销时间</th></tr></thead><tbody>' +
+      rows
+        .map(function (p) {
+          var writeoffCount = p.writeoffCount != null ? p.writeoffCount : 0;
+          var last = p.lastWriteoffAt ? esc(p.lastWriteoffAt) : "—";
+          return (
+            "<tr><td>" +
+            esc(p.product) +
+            '</td><td class="pf-table__num">' +
+            writeoffCount +
+            '</td><td class="pf-table__num">' +
+            formatTimes(p.pendingQualCount) +
+            '</td><td class="pf-table__num">' +
+            formatYuan(p.amount) +
+            "</td><td>" +
+            last +
+            "</td></tr>"
+          );
+        })
+        .join("") +
+      "</tbody></table>"
+    );
+  }
+
   function groupTags(tags) {
     var map = {};
     (tags || []).forEach(function (t) {
@@ -499,6 +536,98 @@
   }
 
   /** 家庭组：字段对齐会员详情·家庭组列表；档案内嵌紧凑表 + 高亮本人 */
+  function unusedQualsOf(member) {
+    if (member && member.isSelf) {
+      return (d.purchaseByProduct || [])
+        .filter(function (p) {
+          return Number(p.pendingQualCount || 0) > 0;
+        })
+        .map(function (p) {
+          return {
+            product: p.product,
+            count: Number(p.pendingQualCount || 0),
+            lastWriteoffAt: p.lastWriteoffAt || "",
+          };
+        });
+    }
+    return ((member && member.unusedQuals) || []).filter(function (p) {
+      return Number(p.count || 0) > 0;
+    });
+  }
+
+  function unusedQualTotal(member) {
+    return unusedQualsOf(member).reduce(function (sum, p) {
+      return sum + Number(p.count || 0);
+    }, 0);
+  }
+
+  function renderUnusedQualModalRows(member) {
+    var list = unusedQualsOf(member);
+    if (!list.length) {
+      return '<p class="pf-muted">暂无未使用资格</p>';
+    }
+    return (
+      '<table class="pf-table"><thead><tr><th>课程产品</th><th class="pf-table__num">资格数量</th><th>最近报读核销时间</th></tr></thead><tbody>' +
+      list
+        .map(function (p) {
+          return (
+            "<tr><td>" +
+            esc(p.product) +
+            '</td><td class="pf-table__num">' +
+            formatTimes(p.count) +
+            "</td><td>" +
+            (p.lastWriteoffAt ? esc(p.lastWriteoffAt) : "—") +
+            "</td></tr>"
+          );
+        })
+        .join("") +
+      "</tbody></table>"
+    );
+  }
+
+  function ensureUnusedQualModal() {
+    var el = document.getElementById("pfUnusedQualModal");
+    if (el) return el;
+    el = document.createElement("div");
+    el.id = "pfUnusedQualModal";
+    el.className = "pf-modal-backdrop";
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML =
+      '<div class="pf-modal" role="dialog" aria-modal="true" aria-labelledby="pfUnusedQualTitle">' +
+      '<div class="pf-modal__head"><div><h2 class="pf-modal__title" id="pfUnusedQualTitle">未使用资格</h2>' +
+      '<p class="pf-muted pf-modal__src">来源：资格中心 · 线下产品</p></div>' +
+      '<button type="button" class="pf-drawer__close" id="pfUnusedQualClose" aria-label="关闭">×</button></div>' +
+      '<div class="pf-modal__body" id="pfUnusedQualBody"></div></div>';
+    document.body.appendChild(el);
+    function closeModal() {
+      el.classList.remove("is-open");
+      el.setAttribute("aria-hidden", "true");
+    }
+    el.addEventListener("click", function (e) {
+      if (e.target.id === "pfUnusedQualModal") closeModal();
+    });
+    document.getElementById("pfUnusedQualClose").addEventListener("click", closeModal);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && el.classList.contains("is-open")) closeModal();
+    });
+    return el;
+  }
+
+  function openUnusedQualModal(code) {
+    var fg = d.familyGroup;
+    var member = ((fg && fg.members) || []).find(function (m) {
+      return m.code === code;
+    });
+    if (!member) return;
+    var modal = ensureUnusedQualModal();
+    document.getElementById("pfUnusedQualTitle").textContent =
+      "未使用资格 · " + member.name + (member.isSelf ? "（本人）" : "");
+    document.getElementById("pfUnusedQualBody").innerHTML =
+      renderUnusedQualModalRows(member);
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+  }
+
   function renderFamilyCard(fg) {
     if (!fg || !fg.members || !fg.members.length) {
       return (
@@ -545,6 +674,12 @@
           "<td>" +
           esc(m.phone || "—") +
           "</td>" +
+          '<td class="pf-table__num">' +
+          formatTimes(unusedQualTotal(m)) +
+          ' <button type="button" class="q-btn q-btn--link q-btn--sm" data-unused-qual="' +
+          esc(m.code) +
+          '">查看</button>' +
+          "</td>" +
           "</tr>"
         );
       })
@@ -565,7 +700,7 @@
       roles +
       "</div></div>" +
       '<table class="pf-table pf-family-table"><thead><tr>' +
-      "<th>序号</th><th>编号</th><th>姓名</th><th>性别</th><th>身份</th><th>手机号码</th>" +
+      "<th>序号</th><th>编号</th><th>姓名</th><th>性别</th><th>身份</th><th>手机号码</th><th class=\"pf-table__num\">未使用资格</th>" +
       "</tr></thead><tbody>" +
       rows +
       "</tbody></table></div></section>"
@@ -676,37 +811,20 @@
     '<div class="pf-chart-box"><canvas id="chartPurchase"></canvas></div>' +
     "</div></section>" +
     '<section class="pf-card"><div class="pf-card__head">购买课程<a href="#">查看全部</a></div><div class="pf-card__body" style="padding-top:0">' +
-    '<table class="pf-table"><thead><tr><th>课程产品</th><th>商品</th><th>购买时间</th><th>状态</th></tr></thead><tbody>' +
-    d.purchases
-      .map(function (p) {
-        return (
-          "<tr><td>" +
-          esc(p.product) +
-          "</td><td>" +
-          esc(p.goods) +
-          "</td><td>" +
-          esc(p.time) +
-          "</td><td>" +
-          esc(p.status) +
-          "</td></tr>"
-        );
-      })
-      .join("") +
-    "</tbody></table></div></section>" +
+    renderPurchaseCourseTable(d.purchaseByProduct) +
+    "</div></section>" +
     '<section class="pf-card"><div class="pf-card__head">复购记录<span class="pf-muted" style="font-weight:400;font-size:12px">同产品次数≥2</span></div><div class="pf-card__body" style="padding-top:0">' +
     (d.repurchase.length
-      ? '<table class="pf-table"><thead><tr><th>课程产品</th><th>次数</th><th>最近购买</th><th>累计金额</th></tr></thead><tbody>' +
+      ? '<table class="pf-table"><thead><tr><th>课程产品</th><th class="pf-table__num">次数</th><th class="pf-table__num">累计金额</th></tr></thead><tbody>' +
         d.repurchase
           .map(function (r) {
             return (
               "<tr><td>" +
               esc(r.product) +
-              "</td><td>" +
+              '</td><td class="pf-table__num">' +
               r.count +
-              "</td><td>" +
-              esc(r.lastTime) +
-              "</td><td>¥" +
-              r.amount +
+              '</td><td class="pf-table__num">' +
+              formatYuan(r.amount) +
               "</td></tr>"
             );
           })
@@ -879,4 +997,10 @@
   if (window.ProfileBehaviorUI) {
     window.ProfileBehaviorUI.init(d, s);
   }
+  root.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-unused-qual]");
+    if (!btn) return;
+    e.preventDefault();
+    openUnusedQualModal(btn.getAttribute("data-unused-qual"));
+  });
 })();
