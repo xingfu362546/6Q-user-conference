@@ -9,6 +9,13 @@
   var pack = window.ConferenceProfileData.getProfile(id);
   var s = pack.student;
   var d = pack.detail;
+  var fromConference =
+    params.get("from") === "conference" ||
+    document.body.classList.contains("portal-app");
+  var conferenceKey =
+    (window.ConferenceProfileData &&
+      window.ConferenceProfileData.CURRENT_CONFERENCE_KEY) ||
+    "12551";
   /* 意向分析跳转可带 name，保证名单姓名与档案一致展示 */
   var nameOverride = params.get("name");
   if (nameOverride) {
@@ -17,11 +24,12 @@
   var root = document.getElementById("profileRoot");
   var charts = [];
 
-  document.getElementById("ctxLine").textContent =
-    "会员全局档案 · 当前会务：第12551期 · 签到号 " +
-    s.checkinNo +
-    " · " +
-    s.group;
+  document.getElementById("ctxLine").textContent = fromConference
+    ? "会员全局档案 · 本期会务信息：第12551期 · 签到号 " +
+      s.checkinNo +
+      " · " +
+      s.group
+    : "会员全局档案";
 
   function esc(t) {
     return String(t == null ? "" : t)
@@ -95,7 +103,7 @@
   function renderRelationGraph(rg) {
     if (!rg) {
       return (
-        '<section class="pf-card"><div class="pf-card__head">关系图谱</div>' +
+        '<section class="pf-card pf-card--tbd"><div class="pf-card__head">关系图谱<span class="pf-tbd-badge">待定 · 本期可能不做</span></div>' +
         '<div class="pf-card__body"><p class="pf-muted">暂无关系数据</p></div></section>'
       );
     }
@@ -118,8 +126,8 @@
       })
       .join("");
     return (
-      '<section class="pf-card">' +
-      '<div class="pf-card__head">关系图谱<a href="#rg-history">查看历史</a></div>' +
+      '<section class="pf-card pf-card--tbd">' +
+      '<div class="pf-card__head">关系图谱<span class="pf-tbd-badge">待定 · 本期可能不做</span><a href="#rg-history">查看历史</a></div>' +
       '<div class="pf-card__body">' +
       '<p class="pf-muted" style="margin:0 0 8px">上区推荐 · 下区归属 · 可拖拽/缩放；悬停查看途径与时间</p>' +
       '<div class="pf-rg-chart" id="relationGraphChart"></div>' +
@@ -628,6 +636,204 @@
     modal.setAttribute("aria-hidden", "false");
   }
 
+  function sortReviews(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+    });
+  }
+
+  function reviewStars(n) {
+    var html = "";
+    for (var i = 1; i <= 5; i++) {
+      html += i <= n ? "★" : '<span class="is-off">★</span>';
+    }
+    return '<div class="pf-rev-stars">' + html + "</div>";
+  }
+
+  function reviewThumbs(count, seed) {
+    var n = Number(count || 0);
+    if (n <= 0) return "";
+    var hues = [22, 32, 14, 200];
+    var html = "";
+    for (var i = 0; i < n; i++) {
+      html +=
+        '<span class="pf-rev-thumb" style="background:hsl(' +
+        ((hues[i % 4] + (seed || 0) * 11) % 360) +
+        ',48%,70%)"></span>';
+    }
+    return '<div class="pf-rev-thumbs">' + html + "</div>";
+  }
+
+  function renderReviewItem(r, name, index) {
+    return (
+      '<article class="pf-rev-item">' +
+      '<div class="pf-rev-item__top">' +
+      '<div class="pf-rev-avatar">' +
+      esc(name.charAt(0)) +
+      "</div>" +
+      '<div class="pf-rev-item__who">' +
+      '<div class="pf-rev-item__name">' +
+      esc(name) +
+      "</div>" +
+      reviewStars(Number(r.rating || 0)) +
+      "</div>" +
+      '<span class="pf-rev-item__date">' +
+      esc(r.createdAt) +
+      "</span></div>" +
+      '<div class="pf-rev-course"><strong>报读课程：</strong>' +
+      esc(r.courseLine) +
+      "</div>" +
+      '<div class="pf-rev-item__body">' +
+      esc(r.content) +
+      "</div>" +
+      reviewThumbs(r.imageCount, index) +
+      "</article>"
+    );
+  }
+
+  function renderReviewsCard(list, name) {
+    var sorted = sortReviews(list);
+    var previewN = 2;
+    var preview = sorted.slice(0, previewN);
+    var more =
+      sorted.length > previewN
+        ? '<a href="#" id="pfReviewMore">查看更多 &gt;</a>'
+        : "";
+    var body = preview.length
+      ? preview
+          .map(function (r, i) {
+            return renderReviewItem(r, name, i);
+          })
+          .join("")
+      : '<p class="pf-muted">暂无课程评价</p>';
+    return (
+      '<section class="pf-card" id="pfReviewCard">' +
+      '<div class="pf-card__head">评价（' +
+      sorted.length +
+      "）" +
+      more +
+      "</div>" +
+      '<div class="pf-card__body">' +
+      body +
+      "</div></section>"
+    );
+  }
+
+  function uniqueReviewProducts(list) {
+    var seen = {};
+    var out = [];
+    (list || []).forEach(function (r) {
+      if (r.product && !seen[r.product]) {
+        seen[r.product] = true;
+        out.push(r.product);
+      }
+    });
+    return out;
+  }
+
+  function filterReviews(list, product, dateFrom, dateTo) {
+    return sortReviews(list).filter(function (r) {
+      if (product && r.product !== product) return false;
+      var day = String(r.createdAt || "").slice(0, 10);
+      if (dateFrom && day < dateFrom) return false;
+      if (dateTo && day > dateTo) return false;
+      return true;
+    });
+  }
+
+  function ensureReviewModal() {
+    var el = document.getElementById("pfReviewModal");
+    if (el) return el;
+    el = document.createElement("div");
+    el.id = "pfReviewModal";
+    el.className = "pf-modal-backdrop";
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML =
+      '<div class="pf-modal pf-modal--wide" role="dialog" aria-modal="true" aria-labelledby="pfReviewTitle">' +
+      '<div class="pf-modal__head"><div><h2 class="pf-modal__title" id="pfReviewTitle">更多评价</h2>' +
+      '<p class="pf-muted pf-modal__src">按创建时间倒序；可筛课程产品或创建时间</p></div>' +
+      '<button type="button" class="pf-drawer__close" id="pfReviewClose" aria-label="关闭">×</button></div>' +
+      '<div class="pf-modal__body">' +
+      '<div class="pf-modal__filters">' +
+      '<label>课程产品<select id="pfReviewProduct"><option value="">全部课程产品</option></select></label>' +
+      '<label>创建时间起<input type="date" id="pfReviewFrom" /></label>' +
+      '<label>创建时间止<input type="date" id="pfReviewTo" /></label>' +
+      "</div>" +
+      '<div id="pfReviewList"></div></div></div>';
+    document.body.appendChild(el);
+    function closeModal() {
+      el.classList.remove("is-open");
+      el.setAttribute("aria-hidden", "true");
+    }
+    el.addEventListener("click", function (e) {
+      if (e.target.id === "pfReviewModal") closeModal();
+    });
+    document.getElementById("pfReviewClose").addEventListener("click", closeModal);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && el.classList.contains("is-open")) closeModal();
+    });
+    ["pfReviewProduct", "pfReviewFrom", "pfReviewTo"].forEach(function (fid) {
+      document.getElementById(fid).addEventListener("change", paintReviewModalList);
+    });
+    return el;
+  }
+
+  function paintReviewModalList() {
+    var product = document.getElementById("pfReviewProduct").value;
+    var dateFrom = document.getElementById("pfReviewFrom").value;
+    var dateTo = document.getElementById("pfReviewTo").value;
+    var rows = filterReviews(d.reviews, product, dateFrom, dateTo);
+    var box = document.getElementById("pfReviewList");
+    box.innerHTML = rows.length
+      ? rows
+          .map(function (r, i) {
+            return renderReviewItem(r, s.name6q, i);
+          })
+          .join("")
+      : '<p class="pf-muted">没有符合筛选的评价</p>';
+  }
+
+  function openReviewModal() {
+    var modal = ensureReviewModal();
+    var sel = document.getElementById("pfReviewProduct");
+    var current = sel.value;
+    sel.innerHTML =
+      '<option value="">全部课程产品</option>' +
+      uniqueReviewProducts(d.reviews)
+        .map(function (p) {
+          return "<option value=\"" + esc(p) + "\">" + esc(p) + "</option>";
+        })
+        .join("");
+    sel.value = current;
+    paintReviewModalList();
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+  }
+
+  function renderConferenceCard() {
+    if (!fromConference) return "";
+    return (
+      '<section class="pf-card"><div class="pf-card__head">本期会务信息</div><div class="pf-card__body">' +
+      '<ul class="pf-kv">' +
+      "<li><span class='pf-kv__k'>签到号</span><span class='pf-kv__v'>" +
+      esc(s.checkinNo) +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>小组</span><span class='pf-kv__v'>" +
+      esc(s.group) +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>通关</span><span class='pf-kv__v'>" +
+      esc(s.clearance) +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>签到</span><span class='pf-kv__v'>" +
+      esc(s.checkinRatio) +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>核销</span><span class='pf-kv__v'>" +
+      esc(s.writeoff) +
+      "</span></li>" +
+      "</ul></div></section>"
+    );
+  }
+
   function renderFamilyCard(fg) {
     if (!fg || !fg.members || !fg.members.length) {
       return (
@@ -770,24 +976,7 @@
     esc(d.basic.registeredAt || d.basic.createdAt) +
     "</span></li>" +
     "</ul></div></section>" +
-    '<section class="pf-card"><div class="pf-card__head">本期会务上下文</div><div class="pf-card__body">' +
-    '<ul class="pf-kv">' +
-    "<li><span class='pf-kv__k'>签到号</span><span class='pf-kv__v'>" +
-    esc(s.checkinNo) +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>小组</span><span class='pf-kv__v'>" +
-    esc(s.group) +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>通关</span><span class='pf-kv__v'>" +
-    esc(s.clearance) +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>签到</span><span class='pf-kv__v'>" +
-    esc(s.checkinRatio) +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>核销</span><span class='pf-kv__v'>" +
-    esc(s.writeoff) +
-    "</span></li>" +
-    "</ul></div></section>" +
+    renderConferenceCard() +
     '<section class="pf-card"><div class="pf-card__head">系统标签<span class="pf-muted" style="font-weight:400;font-size:12px">仅命中</span></div><div class="pf-card__body">' +
     groupTags(d.systemTags) +
     "</div></section>" +
@@ -832,12 +1021,16 @@
         "</tbody></table>"
       : '<p class="pf-muted">暂无复购（同课程产品支付订单不足 2 笔）</p>') +
     "</div></section>" +
+    renderReviewsCard(d.reviews, s.name6q) +
     "</div>" +
     // RIGHT
     '<div class="pf-col pf-col--right">' +
     renderRelationGraph(d.relationGraph) +
     (window.ProfileBehaviorUI
-      ? window.ProfileBehaviorUI.renderFollowCard(d)
+      ? window.ProfileBehaviorUI.renderFollowCard(d, {
+          fromConference: fromConference,
+          conferenceKey: conferenceKey,
+        })
       : "") +
     '<section class="pf-card"><div class="pf-card__head">课程退款订单<a href="#">查看全部</a></div><div class="pf-card__body" style="padding-top:0">' +
     '<table class="pf-table"><thead><tr><th>商品</th><th>实退</th><th>状态</th><th>创建</th></tr></thead><tbody>' +
@@ -995,9 +1188,18 @@
   makeCharts();
   initRelationChart(d.relationGraph, s);
   if (window.ProfileBehaviorUI) {
-    window.ProfileBehaviorUI.init(d, s);
+    window.ProfileBehaviorUI.init(d, s, {
+      fromConference: fromConference,
+      conferenceKey: conferenceKey,
+    });
   }
   root.addEventListener("click", function (e) {
+    var more = e.target.closest("#pfReviewMore");
+    if (more) {
+      e.preventDefault();
+      openReviewModal();
+      return;
+    }
     var btn = e.target.closest("[data-unused-qual]");
     if (!btn) return;
     e.preventDefault();

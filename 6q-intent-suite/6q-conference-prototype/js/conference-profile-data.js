@@ -311,6 +311,71 @@
           time: "2026-07-26 18:06:12",
         },
       ],
+      reviews: [
+        {
+          product: "如何说孩子才会听",
+          courseLine: "第12551期《如何说孩子才会听》（广州站）| 罗欢",
+          rating: 5,
+          createdAt: "2026-08-12",
+          content:
+            "现场练习比线上课好落地。回家当晚就试了「先连接再纠正」，孩子愿意把学校的事说完，比以前顶牛少很多。",
+          imageCount: 4,
+        },
+        {
+          product: "高EQ智慧父母",
+          courseLine: "第997期《高EQ智慧父母》一阶（厦门站）| 罗燕",
+          rating: 5,
+          createdAt: "2024-10-10",
+          content:
+            "之前也学过一些家庭教育的线上课程，但是没有这个课程来的好落地实践，老师的讲解非常细致，通过学习我学会了更好的控制自己的情绪，改善了家庭关系，开启了美好的人生旅途。",
+          imageCount: 4,
+        },
+        {
+          product: "高EQ智慧父母",
+          courseLine: "第1469期《高EQ智慧父母》一阶（广州站）| 邓琪姗",
+          rating: 4,
+          createdAt: "2026-01-18",
+          content:
+            "一阶把情绪命名和暂停按钮讲清楚了，回家练习两周，和爱人吵架能先停 10 秒。希望二阶多给亲子对话的现场演示。",
+          imageCount: 3,
+        },
+        {
+          product: "青少年6Q训练营",
+          courseLine: "第802期《青少年6Q训练营》（深圳站）| 黄翠梅",
+          rating: 5,
+          createdAt: "2025-07-06",
+          content:
+            "孩子自己写了目标卡，回来愿意复盘考试，不再只报分数。训练营节奏紧，但小组教练跟得上。",
+          imageCount: 2,
+        },
+        {
+          product: "如何说孩子才会听",
+          courseLine: "第11880期《如何说孩子才会听》（杭州站）| 刘佳",
+          rating: 4,
+          createdAt: "2025-03-22",
+          content:
+            "话术能用，但现场练习时间略短。带回家庭作业后，周末复盘才真正记住「描述事实、不贴标签」。",
+          imageCount: 1,
+        },
+        {
+          product: "高EQ智慧父母",
+          courseLine: "第880期《高EQ智慧父母》一阶（成都站）| 罗燕",
+          rating: 5,
+          createdAt: "2024-05-18",
+          content:
+            "第一次系统理解自己的情绪触发点。课程作业有同伴监督，比自己看视频坚持得住。",
+          imageCount: 4,
+        },
+        {
+          product: "青少年6Q训练营",
+          courseLine: "第760期《青少年6Q训练营》（广州站）| 洪振午",
+          rating: 3,
+          createdAt: "2024-01-09",
+          content:
+            "内容扎实，但孩子第一天有点抗拒。第二天适应后能参与游戏关。建议会前给家长一份预热说明。",
+          imageCount: 0,
+        },
+      ],
       /* 关系图谱：仅当前生效、1跳；箭头业务方向；active=主动实线 / passive=被动虚线 */
       relationGraph: {
         recommend: {
@@ -709,7 +774,20 @@
     return { student: stu, detail: detail };
   }
 
+  PROFILES.m10003.reviews = [
+    {
+      product: "如何说孩子才会听",
+      courseLine: "第12551期《如何说孩子才会听》（广州站）| 罗欢",
+      rating: 5,
+      createdAt: "2026-08-20",
+      content: "课程结构清楚，现场示范多，回去就能用。",
+      imageCount: 2,
+    },
+  ];
+
   global.ConferenceProfileData = {
+    CURRENT_CONFERENCE: "第12551期《如何说孩子才会听》（广州站）",
+    CURRENT_CONFERENCE_KEY: "12551",
     listStudents: listStudents,
     getProfile: getProfile,
   };

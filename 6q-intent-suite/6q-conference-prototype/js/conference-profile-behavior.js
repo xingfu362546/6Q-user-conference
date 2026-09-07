@@ -102,7 +102,24 @@
       .join("");
   }
 
-  function followRows(list) {
+  function sortFollows(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return String(b.time || "").localeCompare(String(a.time || ""));
+    });
+  }
+
+  function isThisConference(follow, key) {
+    return key && String((follow && follow.conference) || "").indexOf(key) >= 0;
+  }
+
+  function conferenceMark(follow, opts) {
+    if (opts && opts.fromConference && isThisConference(follow, opts.conferenceKey)) {
+      return '<span class="pf-follow-badge">来自于本场会务</span>';
+    }
+    return "";
+  }
+
+  function followRows(list, opts) {
     return (list || [])
       .map(function (r, i) {
         var tags = (r.tags || [])
@@ -135,6 +152,7 @@
           esc(r.follower) +
           "</td><td>" +
           esc(r.conference) +
+          conferenceMark(r, opts) +
           "</td><td>" +
           esc(r.visible || "是") +
           "</td><td>" +
@@ -188,8 +206,8 @@
     },
   ];
 
-  function renderFollowCard(detail) {
-    var list = detail.follows || [];
+  function renderFollowCard(detail, opts) {
+    var list = sortFollows(detail.follows || []);
     var preview = list.slice(0, PREVIEW_N);
     var body = preview.length
       ? preview
@@ -199,6 +217,7 @@
               '<div class="pf-follow-item__head">' +
               '<span class="pf-follow-item__type">' +
               esc(f.type) +
+              conferenceMark(f, opts) +
               "</span>" +
               '<span class="pf-muted">' +
               esc(f.time) +
@@ -342,9 +361,10 @@
       tableWrap(tab.headers, tab.rows(list), tab.empty);
   }
 
-  function init(detail, student) {
+  function init(detail, student, opts) {
     ensureDrawers();
     var name = student && student.name6q ? student.name6q : "学员";
+    opts = opts || {};
 
     document.querySelectorAll("[data-pf-beh-tab]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -382,11 +402,11 @@
     if (moreFollow) {
       moreFollow.addEventListener("click", function (e) {
         e.preventDefault();
-        var list = detail.follows || [];
+        var list = sortFollows(detail.follows || []);
         document.getElementById("pfFollowDrawerBody").innerHTML =
           '<p class="pf-muted" style="margin:0 0 10px">共 ' +
           list.length +
-          " 条</p>" +
+          " 条 · 按创建时间倒序</p>" +
           tableWrap(
             [
               "序号",
@@ -402,7 +422,7 @@
               "是否显示",
               "创建时间",
             ],
-            followRows(list),
+            followRows(list, opts),
             "暂无跟进记录"
           );
         openBackdrop("pfFollowDrawer");

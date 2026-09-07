@@ -142,6 +142,10 @@ test("画像页挂上全模块字段说明且新功能带 flag", () => {
     assert.match(spec.notes[51].title, /购买课程/);
     assert.equal(spec.notes[52].flag, "new");
     assert.match(spec.notes[52].title, /家庭组未使用资格/);
+    assert.equal(spec.notes[53].flag, "new");
+    assert.match(spec.notes[53].title, /总评价/);
+    assert.equal(spec.notes[54].flag, "new");
+    assert.match(spec.notes[54].title, /本期会务信息/);
     assert.equal(spec.notes[41].flag, "changed");
     assert.equal(spec.notes[43].flag, "changed");
   }
@@ -154,6 +158,8 @@ test("画像页挂上全模块字段说明且新功能带 flag", () => {
   assert.match(enrich, /50:/);
   assert.match(enrich, /51:/);
   assert.match(enrich, /52:/);
+  assert.match(enrich, /53:/);
+  assert.match(enrich, /54:/);
   assert.match(fields, /INTENT_PROTO_FIELD_SPECS|fields/);
   assert.match(fields, /6Q姓名/);
   assert.match(fields, /购课概览/);
@@ -165,4 +171,8 @@ test("画像页挂上全模块字段说明且新功能带 flag", () => {
   assert.match(fields, /资格中心/);
   assert.match(fields, /offLineProduct/);
   assert.match(fields, /跟进记录/);
+  assert.match(fields, /课程产品总评价/);
+  assert.match(fields, /本期会务信息/);
+  assert.match(fields, /来自于本场会务/);
+  assert.match(fields, /待定 · 本期可能不做/);
 });

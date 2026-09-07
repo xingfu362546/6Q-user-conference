@@ -136,13 +136,13 @@ window.INTENT_FEATURE_SPEC = {
       flag: "changed",
       title: "画像档案 · 定位与左栏（v1.2.0）",
       lead: "画像是会员全局档案，不是某一期会务的临时页。会务名单只负责带入入口上下文。",
-      body: "<p>主键是 <code>member_id</code>，与标签快照、报读、跟进使用同一 ID，不做映射表。</p><ul><li><strong>打开方式</strong>：学员信息操作列「画像档案」，独立页打开，页顶保留本期会务上下文。</li><li><strong>左栏</strong>：身份条、本期签到/小组/通关、系统标签（只展示命中的二级标签）。</li><li><strong>不含</strong>商机漏斗或正式诊断结论；分析助手是辅助，不改档案事实。</li></ul>",
+      body: "<p>主键是 <code>member_id</code>，与标签快照、报读、跟进使用同一 ID，不做映射表。</p><ul><li><strong>打开方式</strong>：学员信息 / 意向列表点进画像时带 <code>from=conference</code>，左栏才出现「本期会务信息」。</li><li><strong>左栏</strong>：身份条、系统标签；从会务进入时才展示本期签到/小组/通关/核销。</li><li><strong>不含</strong>商机漏斗或正式诊断结论；分析助手是辅助，不改档案事实。</li></ul>",
     },
     42: {
       flag: "changed",
       title: "画像档案 · 家庭组与关系图谱（v1.2.0）",
       lead: "家庭组看「谁和我同一家庭」；关系图谱看「当前生效的推荐/归属」，两者不要混用。",
-      body: "<ul><li><strong>家庭组</strong>：家庭ID、人数、角色 chips；成员表含编号/姓名/性别/身份/手机，高亮本人。</li><li><strong>关系图谱</strong>：上区推荐、下区归属；仅当前生效、1 跳；实线=主动、虚线=被动。</li><li>图谱可拖拽缩放；最近变更旁侧预览途径与时间。「会员详情查看」为原型占位。</li></ul>",
+      body: "<ul><li><strong>家庭组</strong>：家庭ID、人数、角色 chips；成员表含编号/姓名/性别/身份/手机，高亮本人。</li><li><strong>关系图谱</strong>：浅灰「待定 · 本期可能不做」，本轮不作为交付范围。</li><li>图谱交互仍可看，但不纳入本期验收。</li></ul>",
     },
     43: {
       flag: "changed",
@@ -158,7 +158,7 @@ window.INTENT_FEATURE_SPEC = {
       flag: "changed",
       title: "画像档案 · 行为与跟进（v1.2.0）",
       lead: "意向列表不再放行为列和历史跟进。现场要翻明细，一律进画像右栏。",
-      body: "<ul><li><strong>跟进记录</strong>：卡片预览最近 5 条（类型/时间/标签/内容/跟进人/会务）；「查看更多」展开会员详情全字段表。</li><li><strong>近期行为明细</strong>：社区 / 学习 / 视频 / 直播四 Tab，各预览 5 条，查看更多按类型看全量。</li><li><strong>近 30 天趋势</strong>与<strong>社区话题活跃</strong>是聚合图，不等于明细表。</li></ul>",
+      body: "<ul><li><strong>跟进记录</strong>：一律按创建时间倒序；卡片预览最近 5 条，「查看更多」展开会员详情全字段表。</li><li><strong>从会务进入</strong>：本场会务的跟进明细旁标注「来自于本场会务」。</li><li><strong>近期行为明细</strong>：社区 / 学习 / 视频 / 直播四 Tab，各预览 5 条，查看更多按类型看全量。</li></ul>",
     },
     46: {
       title: "6Q 面谈官门户（v1.2.0）",
@@ -200,6 +200,18 @@ window.INTENT_FEATURE_SPEC = {
       title: "画像档案 · 家庭组未使用资格（v1.2.2）",
       lead: "家庭组给每位成员统计未使用资格；点「查看」弹窗看该人未使用的产品、次数和最近报读核销时间。",
       body: "<p>次数与弹窗明细都来自<strong>资格中心 · 线下产品</strong> https://www.6qedu.cn/admin/qualificationCentre/offLineProduct</p><ul><li><strong>未使用资格</strong>：该成员尚未核销的资格次数合计，展示为「2次」；点「查看」打开弹窗</li><li><strong>本人</strong>与购买课程「待使用的资格」同源；其他家庭成员按各自会员读资格中心</li><li><strong>弹窗列</strong>：课程产品、资格数量（N次）、最近报读核销时间（无核销为 —）</li><li>无未使用资格时弹窗空态「暂无未使用资格」</li></ul>",
+    },
+    53: {
+      flag: "new",
+      title: "画像档案 · 课程产品总评价（v1.2.3）",
+      lead: "学员对各课程产品的评价按创建时间倒序铺在中栏；条数多时进弹窗按产品或时间筛。",
+      body: "<ul><li><strong>卡片</strong>：评价（条数）+ 预览最近 2 条：头像、姓名、星级、日期、报读课程、正文、图片</li><li><strong>报读课程</strong>：期次 + 产品名 + 站次 + 导师，底色浅橙对齐评价中心</li><li><strong>查看更多</strong>：弹窗可筛课程产品、创建时间起止；结果仍倒序</li><li>无评价空态「暂无课程评价」；筛不到「没有符合筛选的评价」</li></ul>",
+    },
+    54: {
+      flag: "new",
+      title: "画像档案 · 本期会务信息与跟进标注（v1.2.3）",
+      lead: "只有从会务点进档案才出示本期会务信息和「来自于本场会务」；其它入口只看全局档案。",
+      body: "<ul><li><strong>从会务进入</strong>：学员信息 / 意向列表带 <code>from=conference</code>，或面谈官门户已选会务</li><li><strong>本期会务信息</strong>：签到号、小组、通关、签到、核销；不从会务进入则整块不渲染</li><li><strong>跟进</strong>：默认时间倒序；从会务进入时，关联本期的明细标注「来自于本场会务」</li></ul>",
     },
     30: {
       title: "搜索与导出",
@@ -623,6 +635,22 @@ window.INTENT_FEATURE_SPEC = {
             {
               text: "[v1.3.0] 大型双栏分析助手：三大意图 / A+B 匹配动效 / 产品课务商品详情",
               notes: [48, 49, 50]
+            },
+            {
+              text: "[v1.2.3] 课程产品总评价：倒序预览 + 更多评价弹窗（课程产品 / 创建时间筛选）",
+              notes: [53]
+            },
+            {
+              text: "[v1.2.3] 关系图谱浅灰标注「待定 · 本期可能不做」",
+              notes: [42]
+            },
+            {
+              text: "[v1.2.3] 「本期会务上下文」改名为「本期会务信息」；仅从会务点进才展示",
+              notes: [54, 41]
+            },
+            {
+              text: "[v1.2.3] 从会务进入时跟进明细标注「来自于本场会务」，其它入口按时间倒序",
+              notes: [54, 45]
             }
           ]
         },
@@ -849,7 +877,7 @@ window.INTENT_FEATURE_SPEC = {
     rule: "三条产品线各自封 .0；之后只在第三个小数点递增（v1.1.1 / v1.2.1 / v1.3.1）。历史原型编号 v1.0.0～v1.0.4 不再作为开发拆分依据。",
     lines: [
       { version: "v1.1.0", name: "标签管理系统", next: "v1.1.1" },
-      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.3" },
+      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.4" },
       { version: "v1.3.0", name: "AI 分析助手", next: "v1.3.1" },
     ],
   },
@@ -1219,6 +1247,37 @@ window.INTENT_FEATURE_SPEC = {
       ],
     },
     {
+      id: "v123",
+      version: "v1.2.3",
+      date: "2026.09.07",
+      current: true,
+      theme: "学员档案 · 课程评价 / 会务信息 / 图谱待定",
+      href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference",
+      rows: [
+        {
+          req: [
+            "1. 画像增加学员对各课程产品的总评价区块，字段对齐评价中心：姓名、星级、日期、报读课程、正文、图片",
+            "2. 评价按创建时间倒序；预览最近 2 条，条数多时「查看更多」打开弹窗",
+            "3. 更多评价弹窗可按课程产品、创建时间起止筛选，结果仍倒序",
+            "4. 关系图谱浅灰标注「待定 · 本期可能不做」",
+            "5. 「本期会务上下文」改名为「本期会务信息」；仅从会务点进档案时展示",
+            "6. 从会务进入时，跟进历史里属于本场会务的明细标注「来自于本场会务」；其它入口只按时间倒序",
+          ],
+          impl: [
+            "前端：中栏评价读 reviews，倒序预览 2 条；弹窗筛 product / createdAt",
+            "前端：from=conference 或面谈官门户才渲染本期会务信息；跟进按 time 倒序并打本场徽章",
+            "前端：关系图谱卡片 pf-card--tbd + 待定徽章",
+            "Mock：项琳琳 7 条跨产品评价；张志远 1 条（无查看更多）",
+          ],
+          pages: [
+            { name: "会务进入画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference" },
+            { name: "全局进入画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
+            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
+          ],
+        },
+      ],
+    },
+    {
       id: "v130",
       version: "v1.3.0",
       date: "2026.09.02",
@@ -1358,7 +1417,26 @@ window.INTENT_FEATURE_SPEC = {
 (function () {
   var spec = window.INTENT_FEATURE_SPEC;
   if (!spec || !spec.versionScopes) return;
-  spec.conferenceVersions = spec.versionScopes.map(function (scope) {
+
+  function versionKey(ver) {
+    var m = String(ver || "").match(/(\d+)\.(\d+)\.(\d+)/);
+    if (!m) return 0;
+    return Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]);
+  }
+
+  spec.sortScopesByVersionDesc = function (scopes) {
+    return (scopes || []).slice().sort(function (a, b) {
+      return versionKey(b.version) - versionKey(a.version);
+    });
+  };
+
+  spec.sortItemsByVersionDesc = function (items) {
+    return (items || []).slice().sort(function (a, b) {
+      return versionKey(b.text) - versionKey(a.text);
+    });
+  };
+
+  spec.conferenceVersions = spec.sortScopesByVersionDesc(spec.versionScopes).map(function (scope) {
     return {
       id: scope.id,
       version: scope.version,
@@ -1423,7 +1501,7 @@ window.INTENT_FEATURE_SPEC = {
       "</p>";
     mount.appendChild(intro);
 
-    spec.versionScopes.forEach(function (scope) {
+    spec.sortScopesByVersionDesc(spec.versionScopes).forEach(function (scope) {
       var block = document.createElement("div");
       block.className = "scope-block is-open";
       block.id = "feat-" + scope.id;

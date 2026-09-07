@@ -621,7 +621,10 @@
         t.modules.forEach(function (mod) {
           var modEl = document.createElement("div");
           modEl.className = "module";
-          var noteIds = collectNoteIds(mod.items);
+          var items = spec.sortItemsByVersionDesc
+            ? spec.sortItemsByVersionDesc(mod.items)
+            : mod.items;
+          var noteIds = collectNoteIds(items);
           var head = document.createElement("div");
           head.className = "module__head";
           head.innerHTML = "<h3>" + mod.name + "</h3>";
@@ -647,7 +650,7 @@
           modEl.appendChild(head);
           var ul = document.createElement("ul");
           ul.className = "feat-list";
-          mod.items.forEach(function (item) {
+          items.forEach(function (item) {
             var li = document.createElement("li");
             li.textContent = item.text;
             ul.appendChild(li);

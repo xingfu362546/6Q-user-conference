@@ -1375,7 +1375,7 @@
           encodeURIComponent(s.id) +
           "&name=" +
           encodeURIComponent(s.name) +
-          '">' +
+          "&from=conference\">" +
           escapeHtml(s.name) +
           '</a></div><div class="intent-student__meta">' +
           escapeHtml(s.id) +
