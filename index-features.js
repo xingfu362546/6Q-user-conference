@@ -213,6 +213,12 @@ window.INTENT_FEATURE_SPEC = {
       lead: "只有从会务点进档案才出示本期会务信息和「来自于本场会务」；其它入口只看全局档案。",
       body: "<ul><li><strong>从会务进入</strong>：学员信息 / 意向列表带 <code>from=conference</code>，或面谈官门户已选会务</li><li><strong>本期会务信息</strong>：签到号、小组、通关、签到、核销；不从会务进入则整块不渲染</li><li><strong>跟进</strong>：默认时间倒序；从会务进入时，关联本期的明细标注「来自于本场会务」</li></ul>",
     },
+    55: {
+      flag: "new",
+      title: "画像档案 · 客服工单（v1.2.4）",
+      lead: "档案只读该学员在客服系统提交的工单。页面不复刻整张工单详情，只拿出分类、描述、状态。",
+      body: "<ul><li><strong>分类</strong>：一级 / 二级 / 三级，对齐工单详情「工单分类」</li><li><strong>描述</strong>：问题描述原文</li><li><strong>状态</strong>：用工单状态（如未处理）；内容状态（等待回复）作辅助</li><li>按创建时间倒序；超过 2 条「查看更多」</li></ul>",
+    },
     30: {
       title: "搜索与导出",
       body: "<p>搜索：姓名 / 手机号 / 会员 ID 模糊过滤（前端或接口）。</p><p>导出：原型占位；二期 Excel/PDF。</p>",
@@ -649,8 +655,8 @@ window.INTENT_FEATURE_SPEC = {
               notes: [54, 41]
             },
             {
-              text: "[v1.2.3] 从会务进入时跟进明细标注「来自于本场会务」，其它入口按时间倒序",
-              notes: [54, 45]
+              text: "[v1.2.4] 客服工单：只展示分类、问题描述、工单状态；倒序预览，多条进查看更多",
+              notes: [55]
             }
           ]
         },
@@ -877,7 +883,7 @@ window.INTENT_FEATURE_SPEC = {
     rule: "三条产品线各自封 .0；之后只在第三个小数点递增（v1.1.1 / v1.2.1 / v1.3.1）。历史原型编号 v1.0.0～v1.0.4 不再作为开发拆分依据。",
     lines: [
       { version: "v1.1.0", name: "标签管理系统", next: "v1.1.1" },
-      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.4" },
+      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.5" },
       { version: "v1.3.0", name: "AI 分析助手", next: "v1.3.1" },
     ],
   },
@@ -1272,6 +1278,32 @@ window.INTENT_FEATURE_SPEC = {
           pages: [
             { name: "会务进入画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference" },
             { name: "全局进入画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
+            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "v124",
+      version: "v1.2.4",
+      date: "2026.09.09",
+      current: true,
+      theme: "学员档案 · 客服工单",
+      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+      rows: [
+        {
+          req: [
+            "1. 画像增加该学员在客服系统提交的工单区块",
+            "2. 不复刻整张工单后台详情，只展示：工单分类（一级/二级/三级）、问题描述、工单状态",
+            "3. 工单按创建时间倒序；超过 2 条提供查看更多",
+            "4. 会务后台与面谈官门户同一套档案页",
+          ],
+          impl: [
+            "前端：右栏客服工单读 tickets（category1/2/3、description、status）",
+            "Mock：项琳琳 3 条（含图1退费工单口径）；张志远 0 条空态",
+          ],
+          pages: [
+            { name: "会务后台画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
             { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
           ],
         },

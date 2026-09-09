@@ -458,6 +458,42 @@
   display: block;
 }
 
+.pf-chip--danger {
+  border-color: #ffa39e;
+  background: #fff1f0;
+  color: #cf1322;
+}
+
+.pf-ticket-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pf-ticket-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pf-ticket-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.pf-ticket-item__cat {
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.pf-ticket-item__desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #434343;
+}
+
 .pf-follow-badge {
   display: inline-block;
   margin-left: 6px;

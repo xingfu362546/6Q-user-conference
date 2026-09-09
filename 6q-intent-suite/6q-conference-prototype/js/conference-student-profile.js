@@ -810,6 +810,109 @@
     modal.setAttribute("aria-hidden", "false");
   }
 
+  function ticketStatusClass(status) {
+    if (status === "未处理" || status === "等待回复") return "pf-chip--danger";
+    if (status === "已完结") return "pf-chip--ok";
+    return "pf-chip--orange";
+  }
+
+  function sortTickets(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+    });
+  }
+
+  function renderTicketItem(t) {
+    return (
+      '<article class="pf-ticket-item">' +
+      '<div class="pf-ticket-item__top">' +
+      '<div class="pf-ticket-item__cat">' +
+      esc(t.category1) +
+      " / " +
+      esc(t.category2) +
+      " / " +
+      esc(t.category3) +
+      "</div>" +
+      '<span class="pf-chip ' +
+      ticketStatusClass(t.status) +
+      '">' +
+      esc(t.status) +
+      "</span></div>" +
+      '<div class="pf-ticket-item__desc">' +
+      esc(t.description) +
+      "</div>" +
+      (t.contentStatus
+        ? '<div class="pf-muted" style="margin-top:6px">内容状态 ' +
+          esc(t.contentStatus) +
+          (t.createdAt ? " · " + esc(t.createdAt) : "") +
+          "</div>"
+        : "") +
+      "</article>"
+    );
+  }
+
+  function renderTicketsCard(list) {
+    var sorted = sortTickets(list);
+    var previewN = 2;
+    var preview = sorted.slice(0, previewN);
+    var more =
+      sorted.length > previewN
+        ? '<a href="#" id="pfTicketMore">查看更多 &gt;</a>'
+        : "";
+    var body = preview.length
+      ? preview.map(renderTicketItem).join("")
+      : '<p class="pf-muted">暂无客服工单</p>';
+    return (
+      '<section class="pf-card" id="pfTicketCard">' +
+      '<div class="pf-card__head">客服工单（' +
+      sorted.length +
+      "）" +
+      more +
+      "</div>" +
+      '<div class="pf-card__body">' +
+      body +
+      "</div></section>"
+    );
+  }
+
+  function ensureTicketModal() {
+    var el = document.getElementById("pfTicketModal");
+    if (el) return el;
+    el = document.createElement("div");
+    el.id = "pfTicketModal";
+    el.className = "pf-modal-backdrop";
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML =
+      '<div class="pf-modal pf-modal--wide" role="dialog" aria-modal="true" aria-labelledby="pfTicketTitle">' +
+      '<div class="pf-modal__head"><div><h2 class="pf-modal__title" id="pfTicketTitle">客服工单</h2>' +
+      '<p class="pf-muted pf-modal__src">来源：客服系统工单详情 · 只展示分类、描述、状态</p></div>' +
+      '<button type="button" class="pf-drawer__close" id="pfTicketClose" aria-label="关闭">×</button></div>' +
+      '<div class="pf-modal__body" id="pfTicketList"></div></div>';
+    document.body.appendChild(el);
+    function closeModal() {
+      el.classList.remove("is-open");
+      el.setAttribute("aria-hidden", "true");
+    }
+    el.addEventListener("click", function (e) {
+      if (e.target.id === "pfTicketModal") closeModal();
+    });
+    document.getElementById("pfTicketClose").addEventListener("click", closeModal);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && el.classList.contains("is-open")) closeModal();
+    });
+    return el;
+  }
+
+  function openTicketModal() {
+    var modal = ensureTicketModal();
+    var rows = sortTickets(d.tickets);
+    document.getElementById("pfTicketList").innerHTML = rows.length
+      ? rows.map(renderTicketItem).join("")
+      : '<p class="pf-muted">暂无客服工单</p>';
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+  }
+
   function renderConferenceCard() {
     if (!fromConference) return "";
     return (
@@ -1052,6 +1155,7 @@
       })
       .join("") +
     "</tbody></table></div></section>" +
+    renderTicketsCard(d.tickets) +
     '<section class="pf-card"><div class="pf-card__head">近 30 天行为趋势</div><div class="pf-card__body"><div class="pf-chart-box"><canvas id="chartBehavior"></canvas></div></div></section>' +
     '<section class="pf-card"><div class="pf-card__head">社区话题活跃<span class="pf-muted" style="font-weight:400;font-size:12px">按话题名称细拆</span></div><div class="pf-card__body">' +
     '<p class="pf-muted" style="margin:0 0 8px">口径对齐话题管理·话题列表：同一分类下按「话题名称」分别统计，不用分类汇总代替。</p>' +
@@ -1198,6 +1302,12 @@
     if (more) {
       e.preventDefault();
       openReviewModal();
+      return;
+    }
+    var ticketMore = e.target.closest("#pfTicketMore");
+    if (ticketMore) {
+      e.preventDefault();
+      openTicketModal();
       return;
     }
     var btn = e.target.closest("[data-unused-qual]");

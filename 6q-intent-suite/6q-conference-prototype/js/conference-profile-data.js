@@ -221,6 +221,41 @@
           amount: 13600,
         },
       ],
+      tickets: [
+        {
+          id: "ZP2026090300003",
+          category1: "客服业务",
+          category2: "退费",
+          category3: "经管研学费退费",
+          status: "未处理",
+          contentStatus: "等待回复",
+          description:
+            "项琳琳在2022-05-12支付22800元购买3Q套餐，已使用2Q，通用券已过期，剩余1Q未开启，因现在孩子大了，需申请退款，已超过7天犹豫期需扣10%违约金，可退费用（22800-7600-7600）*（1-10%）=6840元 已签署解约，待退费",
+          createdAt: "2026-09-03 14:38:04",
+        },
+        {
+          id: "ZP2026081800012",
+          category1: "客服业务",
+          category2: "咨询",
+          category3: "课程咨询",
+          status: "已完结",
+          contentStatus: "已回复",
+          description:
+            "咨询《如何说孩子才会听》复训资格是否仍有效，以及家庭成员未使用资格能否转给配偶使用。已告知资格记在会员本人，不可转赠。",
+          createdAt: "2026-08-18 10:12:33",
+        },
+        {
+          id: "ZP2026020100008",
+          category1: "客服业务",
+          category2: "退费",
+          category3: "通用券退费",
+          status: "已完结",
+          contentStatus: "已回复",
+          description:
+            "申请《青少年6Q训练营》通用券退费 300 元。审核未通过：券已过使用规则校验，维持原路退回失败结论。",
+          createdAt: "2026-02-01 11:25:00",
+        },
+      ],
       refunds: [
         {
           refundNo: "J2011034599143623",
@@ -784,6 +819,7 @@
       imageCount: 2,
     },
   ];
+  PROFILES.m10003.tickets = [];
 
   global.ConferenceProfileData = {
     CURRENT_CONFERENCE: "第12551期《如何说孩子才会听》（广州站）",
