@@ -6,6 +6,7 @@
 
   var PAGE = document.body.getAttribute("data-cf-page") || "basic";
   var TOOL_PAGE = document.body.getAttribute("data-tool-page") || "";
+  var SHELL = document.body.getAttribute("data-shell") || "";
 
   var SUB_NAV = [
     { id: "basic", href: "conference-detail-basic.html", label: "基础信息" },
@@ -65,9 +66,32 @@
     },
   ];
 
-  function renderTopbar() {
+  var MEMBER_SUBNAV = [
+    { label: "基础信息", disabled: true },
+    { label: "用户档案", current: true, isNew: true },
+    { label: "学习档案", disabled: true },
+    { label: "家庭组", disabled: true },
+    { label: "课程资格", disabled: true },
+    { label: "订单记录", disabled: true },
+    { label: "关联账号", disabled: true },
+    { label: "关系历史", disabled: true },
+    { label: "反馈记录", disabled: true },
+    { label: "跟进记录", disabled: true },
+  ];
+
+  function renderTopbar(activeModule) {
     var el = document.getElementById("q-topbar-mount");
     if (!el) return;
+    el.classList.add("q-topbar");
+    var mods = [
+      { name: "6Q业务", key: "biz", href: "conference-student-profile.html?id=m10009" },
+      { name: "社区直播", key: "live" },
+      { name: "排课管理", key: "schedule" },
+      { name: "意向导师管理", key: "mentor" },
+      { name: "传播天使管理", key: "angel" },
+      { name: "计划与实施", key: "plan", href: "conference-detail-basic.html" },
+      { name: "积分管理", key: "points" },
+    ];
     el.innerHTML =
       '<div class="q-topbar__brand">' +
       '<span class="q-topbar__logo" aria-hidden="true"></span>' +
@@ -75,13 +99,19 @@
       '<span class="q-topbar__switch">切换系统</span>' +
       "</div>" +
       '<nav class="q-topbar__modules" aria-label="模块">' +
-      '<a href="#">6Q业务</a>' +
-      '<a href="#">社区直播</a>' +
-      '<a href="#">排课管理</a>' +
-      '<a href="#">意向导师管理</a>' +
-      '<a href="#">传播天使管理</a>' +
-      '<a href="#" class="is-active">计划与实施</a>' +
-      '<a href="#">积分管理</a>' +
+      mods
+        .map(function (m) {
+          return (
+            '<a href="' +
+            (m.href || "#") +
+            '"' +
+            (m.key === activeModule ? ' class="is-active"' : "") +
+            ">" +
+            m.name +
+            "</a>"
+          );
+        })
+        .join("") +
       "</nav>" +
       '<div class="q-topbar__right">' +
       '<span aria-hidden="true">⬇</span>' +
@@ -206,15 +236,96 @@
     }).join("");
   }
 
-  var isTools = PAGE === "tools" || TOOL_PAGE;
+  function renderSidenavMember() {
+    var el = document.getElementById("q-sidenav-mount");
+    if (!el) return;
+    var groups = [
+      { label: "工作台", disabled: true },
+      { label: "组织架构管理", disabled: true },
+    ];
+    el.innerHTML =
+      groups
+        .map(function (g) {
+          return '<span class="q-sidenav__item is-disabled-nav">' + g.label + "</span>";
+        })
+        .join("") +
+      '<details class="q-sidenav__details" open>' +
+      '<summary class="q-sidenav__item q-sidenav__summary is-active-group">用户管理</summary>' +
+      '<div class="q-sidenav__sub">' +
+      '<a class="q-sidenav__sub-item is-active" href="#">会员管理</a>' +
+      '<span class="q-sidenav__sub-item is-disabled">会员意愿</span>' +
+      '<span class="q-sidenav__sub-item is-disabled">家庭组</span>' +
+      '<span class="q-sidenav__sub-item is-disabled">关联账号</span>' +
+      '<span class="q-sidenav__sub-item is-disabled">关系图谱</span>' +
+      '<span class="q-sidenav__sub-item is-disabled">跟进记录</span>' +
+      "</div></details>" +
+      [
+        "礼包管理",
+        "部门管理",
+        "线下课程管理",
+        "书籍管理",
+        "线上课程管理",
+        "6Q商城",
+        "订单中心",
+        "资格中心",
+        "营销管理",
+        "运营管理",
+        "反馈管理",
+        "数据管理",
+        "审批管理",
+        "设置",
+      ]
+        .map(function (name) {
+          return '<span class="q-sidenav__item is-disabled-nav">' + name + "</span>";
+        })
+        .join("");
+  }
 
-  renderTopbar();
-  if (isTools) {
-    renderSidenavTools();
-    renderDocTabs(true);
+  function renderDocTabsMember() {
+    var el = document.getElementById("q-doc-tabs-mount");
+    if (!el) return;
+    el.innerHTML =
+      '<a href="#">首页</a>' +
+      '<a href="#" class="is-active">用户管理</a>' +
+      '<a href="#">会员管理</a>';
+  }
+
+  function renderMemberSubnav() {
+    var el = document.getElementById("q-subnav-mount");
+    if (!el) return;
+    el.classList.add("q-subnav--member");
+    el.innerHTML = MEMBER_SUBNAV.map(function (item) {
+      var extra = item.isNew ? " is-new" : "";
+      if (item.current) {
+        return (
+          '<a href="#" class="is-active' +
+          extra +
+          '">' +
+          item.label +
+          "</a>"
+        );
+      }
+      return '<span class="q-subnav__disabled">' + item.label + "</span>";
+    }).join("");
+  }
+
+  var isTools = PAGE === "tools" || TOOL_PAGE;
+  var isMember = SHELL === "member";
+
+  if (isMember) {
+    renderTopbar("biz");
+    renderSidenavMember();
+    renderDocTabsMember();
+    renderMemberSubnav();
   } else {
-    renderSidenavConference();
-    renderDocTabs(false);
-    renderSubnav();
+    renderTopbar("plan");
+    if (isTools) {
+      renderSidenavTools();
+      renderDocTabs(true);
+    } else {
+      renderSidenavConference();
+      renderDocTabs(false);
+      renderSubnav();
+    }
   }
 })();

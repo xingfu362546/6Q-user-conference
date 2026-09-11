@@ -3,7 +3,7 @@
  * 布局参考 CRM 客户详情三栏；视觉延续会务后台 Ant 蓝 + claude-design 卡片节奏
  */
 :root {
-  --pf-gap: 12px;
+  --pf-gap: 16px;
   --pf-radius: 8px;
   --pf-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   --pf-chart-1: #1890ff;
@@ -33,7 +33,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
@@ -55,24 +55,115 @@
   color: var(--q-text-muted);
 }
 
+#profileRoot {
+  display: block;
+  min-width: 0;
+}
+
+.pf-page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-gap);
+}
+
+.pf-page-stack [id] {
+  scroll-margin-top: 12px;
+}
+
+.pf-hero-band {
+  background: #fff;
+  border: 1px solid var(--q-border);
+  border-radius: var(--pf-radius);
+  box-shadow: var(--pf-shadow);
+  padding: 14px 20px;
+}
+
+.pf-hero-band .pf-profile-hero {
+  align-items: flex-start;
+}
+
+.pf-hero-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-hero-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.pf-hero-band .pf-profile-hero__name {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.pf-hero-band .pf-chip-row {
+  margin-top: 0;
+}
+
+.pf-hero-band .pf-profile-hero__meta {
+  margin-top: 4px;
+}
+
+.pf-hero-kv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin: 8px 0 0;
+  padding: 0;
+  border-top: none;
+}
+
+.pf-hero-kv li {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  flex: none;
+  border-bottom: none;
+  padding: 0;
+}
+
+.pf-hero-kv .pf-kv__k {
+  flex: none;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.pf-hero-kv .pf-kv__v {
+  flex: none;
+  word-break: normal;
+}
+
 .pf-layout {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1.35fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--pf-gap);
   align-items: start;
 }
 
 @media (max-width: 1280px) {
   .pf-layout {
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 1fr 1fr;
   }
-  .pf-col--right {
+  .pf-col--left {
     grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--pf-gap);
+    align-items: start;
+  }
+  .pf-col--left > .pf-card {
+    margin-bottom: 0;
   }
 }
 
 @media (max-width: 900px) {
-  .pf-layout {
+  .pf-layout,
+  .pf-col--left {
     grid-template-columns: 1fr;
   }
 }
@@ -90,7 +181,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--q-border);
   font-size: 14px;
   font-weight: 600;
@@ -102,7 +193,19 @@
 }
 
 .pf-card__body {
-  padding: 14px;
+  padding: 16px 18px;
+}
+
+.pf-subblock {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pf-subblock--last {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .pf-profile-hero {
@@ -112,22 +215,22 @@
 }
 
 .pf-avatar {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, #1890ff, #69c0ff);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   flex-shrink: 0;
 }
 
 .pf-profile-hero__name {
   margin: 0 0 6px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 

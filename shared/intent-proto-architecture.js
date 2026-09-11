@@ -67,7 +67,7 @@ window.INTENT_ARCHITECTURE = [
       "    PO1[登录]\n" +
       "    PO2[选会务]\n" +
       "    PO3[意向列表]\n" +
-      "    PO4[画像档案]\n" +
+      "    PO4[用户档案]\n" +
       "    PO1 --> PO2 --> PO3 --> PO4\n" +
       "  end\n" +
       "  subgraph ConfAPP[6q-conference-app-prototype]\n" +
@@ -99,7 +99,7 @@ window.INTENT_ARCHITECTURE = [
       "flowchart LR\n" +
       "  L[登录] --> S[选进行中会务]\n" +
       "  S --> I[学员意向列表]\n" +
-      "  I -->|点姓名| P[画像档案]\n" +
+      "  I -->|点姓名| P[会员信息-用户档案]\n" +
       "  I -->|查看明细| D[标签命中+洞察]\n" +
       "  P --> AI[AI对话chips]",
   },

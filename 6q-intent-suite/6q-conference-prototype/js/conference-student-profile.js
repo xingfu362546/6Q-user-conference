@@ -23,6 +23,8 @@
   }
   var root = document.getElementById("profileRoot");
   var charts = [];
+  /* 关系图谱本期不做，页面不渲染。决定要做时改 true。 */
+  var SHOW_RELATION_GRAPH = false;
 
   document.getElementById("ctxLine").textContent = fromConference
     ? "会员全局档案 · 本期会务信息：第12551期 · 签到号 " +
@@ -473,7 +475,7 @@
       })
       .join(" ");
     return (
-      '<section class="pf-card"><div class="pf-card__head">基础信息<span class="pf-muted" style="font-weight:400;font-size:12px">会员详情口径</span></div>' +
+      '<section class="pf-card" id="pfBasic"><div class="pf-card__head">基础信息<span class="pf-muted" style="font-weight:400;font-size:12px">会员详情口径</span></div>' +
       '<div class="pf-card__body">' +
       '<div class="pf-basic-block">' +
       '<p class="pf-basic-block__title">身份与状态</p>' +
@@ -916,7 +918,7 @@
   function renderConferenceCard() {
     if (!fromConference) return "";
     return (
-      '<section class="pf-card"><div class="pf-card__head">本期会务信息</div><div class="pf-card__body">' +
+      '<section class="pf-card" id="pfConferenceCard"><div class="pf-card__head">本期会务信息</div><div class="pf-card__body">' +
       '<ul class="pf-kv">' +
       "<li><span class='pf-kv__k'>签到号</span><span class='pf-kv__v'>" +
       esc(s.checkinNo) +
@@ -940,7 +942,7 @@
   function renderFamilyCard(fg) {
     if (!fg || !fg.members || !fg.members.length) {
       return (
-        '<section class="pf-card"><div class="pf-card__head">家庭组</div>' +
+        '<section class="pf-card" id="pfFamily"><div class="pf-card__head">家庭组</div>' +
         '<div class="pf-card__body"><p class="pf-muted">暂无家庭组信息</p></div></section>'
       );
     }
@@ -994,7 +996,7 @@
       })
       .join("");
     return (
-      '<section class="pf-card">' +
+      '<section class="pf-card" id="pfFamily">' +
       '<div class="pf-card__head">家庭组<a href="#" title="原型占位">会员详情查看</a></div>' +
       '<div class="pf-card__body">' +
       '<div class="pf-family-head">' +
@@ -1026,116 +1028,113 @@
 
   var topicMax = maxTopicViews();
 
+  function renderHeroBand() {
+    return (
+      '<section class="pf-hero-band" id="pfHero">' +
+      '<div class="pf-profile-hero">' +
+      '<div class="pf-avatar">' +
+      esc(s.name6q.charAt(0)) +
+      "</div>" +
+      '<div class="pf-hero-main">' +
+      '<div class="pf-hero-title-row">' +
+      '<h2 class="pf-profile-hero__name">' +
+      esc(s.name6q) +
+      "</h2>" +
+      '<div class="pf-chip-row">' +
+      '<span class="pf-chip pf-chip--ok">' +
+      esc(d.basic.memberStatusDetail || s.memberStatus) +
+      "</span>" +
+      (d.basic.realnameStatus
+        ? '<span class="pf-chip pf-chip--ok">' + esc(d.basic.realnameStatus) + "</span>"
+        : "") +
+      (s.trainTag
+        ? '<span class="pf-chip pf-chip--orange">' + esc(s.trainTag) + "</span>"
+        : "") +
+      (d.basic.identities || [])
+        .map(function (x) {
+          return '<span class="pf-chip pf-chip--orange">' + esc(x) + "</span>";
+        })
+        .join("") +
+      "</div></div>" +
+      '<p class="pf-profile-hero__meta">手机 ' +
+      esc(s.phone) +
+      " · " +
+      esc(d.basic.cityDetail || s.city) +
+      " · " +
+      esc(d.basic.opsUnit || "—") +
+      "</p>" +
+      "<ul class='pf-kv pf-hero-kv'>" +
+      "<li><span class='pf-kv__k'>会员ID</span><span class='pf-kv__v'>" +
+      esc(s.memberId) +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>所属顾问</span><span class='pf-kv__v'>" +
+      esc(d.basic.consultant) +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>归属天使</span><span class='pf-kv__v'>" +
+      esc(d.basic.belongAngel || "—") +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>推荐人</span><span class='pf-kv__v'>" +
+      esc(d.basic.recommender || "—") +
+      "</span></li>" +
+      "<li><span class='pf-kv__k'>注册时间</span><span class='pf-kv__v'>" +
+      esc(d.basic.registeredAt || d.basic.createdAt) +
+      "</span></li>" +
+      "</ul></div></div></section>"
+    );
+  }
+
+  function renderPurchaseGroup() {
+    return (
+      '<section class="pf-card" id="pfPurchase">' +
+      '<div class="pf-card__head">购课<span class="pf-muted" style="font-weight:400;font-size:12px">按课程产品计次</span></div>' +
+      '<div class="pf-card__body">' +
+      '<div class="pf-subblock">' +
+      '<p class="pf-basic-block__title">购课概览</p>' +
+      '<div class="pf-stat-row">' +
+      '<div class="pf-stat"><div class="pf-stat__n">' +
+      d.purchases.length +
+      '</div><div class="pf-stat__l">订单笔数</div></div>' +
+      '<div class="pf-stat"><div class="pf-stat__n">' +
+      d.purchaseByProduct.length +
+      '</div><div class="pf-stat__l">课程产品数</div></div>' +
+      '<div class="pf-stat"><div class="pf-stat__n">' +
+      d.repurchase.length +
+      '</div><div class="pf-stat__l">复购产品数</div></div>' +
+      "</div>" +
+      '<div class="pf-chart-box"><canvas id="chartPurchase"></canvas></div>' +
+      "</div>" +
+      '<div class="pf-subblock pf-subblock--last">' +
+      '<p class="pf-basic-block__title">购买课程 <a href="#" style="font-weight:400;font-size:12px">查看全部</a></p>' +
+      renderPurchaseCourseTable(d.purchaseByProduct) +
+      "</div></div></section>"
+    );
+  }
+
   root.innerHTML =
-    // LEFT
+    '<div class="pf-page-stack">' +
+    renderHeroBand() +
+    '<div class="pf-layout">' +
     '<div class="pf-col pf-col--left">' +
-    '<section class="pf-card"><div class="pf-card__body">' +
-    '<div class="pf-profile-hero">' +
-    '<div class="pf-avatar">' +
-    esc(s.name6q.charAt(0)) +
-    "</div>" +
-    "<div>" +
-    '<h2 class="pf-profile-hero__name">' +
-    esc(s.name6q) +
-    "</h2>" +
-    '<div class="pf-chip-row">' +
-    '<span class="pf-chip pf-chip--ok">' +
-    esc(d.basic.memberStatusDetail || s.memberStatus) +
-    "</span>" +
-    (d.basic.realnameStatus
-      ? '<span class="pf-chip pf-chip--ok">' + esc(d.basic.realnameStatus) + "</span>"
-      : "") +
-    (s.trainTag
-      ? '<span class="pf-chip pf-chip--orange">' + esc(s.trainTag) + "</span>"
-      : "") +
-    (d.basic.identities || [])
-      .map(function (x) {
-        return '<span class="pf-chip pf-chip--orange">' + esc(x) + "</span>";
-      })
-      .join("") +
-    "</div>" +
-    '<p class="pf-profile-hero__meta">手机 ' +
-    esc(s.phone) +
-    "<br/>" +
-    esc(d.basic.cityDetail || s.city) +
-    " · " +
-    esc(d.basic.opsUnit || "—") +
-    "</p>" +
-    "</div></div>" +
-    '<ul class="pf-kv" style="margin-top:12px">' +
-    "<li><span class='pf-kv__k'>会员ID</span><span class='pf-kv__v'>" +
-    esc(s.memberId) +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>所属顾问</span><span class='pf-kv__v'>" +
-    esc(d.basic.consultant) +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>归属天使</span><span class='pf-kv__v'>" +
-    esc(d.basic.belongAngel || "—") +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>推荐人</span><span class='pf-kv__v'>" +
-    esc(d.basic.recommender || "—") +
-    "</span></li>" +
-    "<li><span class='pf-kv__k'>注册时间</span><span class='pf-kv__v'>" +
-    esc(d.basic.registeredAt || d.basic.createdAt) +
-    "</span></li>" +
-    "</ul></div></section>" +
     renderConferenceCard() +
-    '<section class="pf-card"><div class="pf-card__head">系统标签<span class="pf-muted" style="font-weight:400;font-size:12px">仅命中</span></div><div class="pf-card__body">' +
+    '<section class="pf-card" id="pfTags"><div class="pf-card__head">系统标签<span class="pf-muted" style="font-weight:400;font-size:12px">仅命中</span></div><div class="pf-card__body">' +
     groupTags(d.systemTags) +
     "</div></section>" +
     "</div>" +
-    // MIDDLE
     '<div class="pf-col pf-col--mid">' +
     renderBasicCard(s, d.basic) +
     renderFamilyCard(d.familyGroup) +
-    '<section class="pf-card"><div class="pf-card__head">购课概览（按课程产品计次）</div><div class="pf-card__body">' +
-    '<div class="pf-stat-row">' +
-    '<div class="pf-stat"><div class="pf-stat__n">' +
-    d.purchases.length +
-    '</div><div class="pf-stat__l">订单笔数</div></div>' +
-    '<div class="pf-stat"><div class="pf-stat__n">' +
-    d.purchaseByProduct.length +
-    '</div><div class="pf-stat__l">课程产品数</div></div>' +
-    '<div class="pf-stat"><div class="pf-stat__n">' +
-    d.repurchase.length +
-    '</div><div class="pf-stat__l">复购产品数</div></div>' +
-    "</div>" +
-    '<div class="pf-chart-box"><canvas id="chartPurchase"></canvas></div>' +
-    "</div></section>" +
-    '<section class="pf-card"><div class="pf-card__head">购买课程<a href="#">查看全部</a></div><div class="pf-card__body" style="padding-top:0">' +
-    renderPurchaseCourseTable(d.purchaseByProduct) +
-    "</div></section>" +
-    '<section class="pf-card"><div class="pf-card__head">复购记录<span class="pf-muted" style="font-weight:400;font-size:12px">同产品次数≥2</span></div><div class="pf-card__body" style="padding-top:0">' +
-    (d.repurchase.length
-      ? '<table class="pf-table"><thead><tr><th>课程产品</th><th class="pf-table__num">次数</th><th class="pf-table__num">累计金额</th></tr></thead><tbody>' +
-        d.repurchase
-          .map(function (r) {
-            return (
-              "<tr><td>" +
-              esc(r.product) +
-              '</td><td class="pf-table__num">' +
-              r.count +
-              '</td><td class="pf-table__num">' +
-              formatYuan(r.amount) +
-              "</td></tr>"
-            );
-          })
-          .join("") +
-        "</tbody></table>"
-      : '<p class="pf-muted">暂无复购（同课程产品支付订单不足 2 笔）</p>') +
-    "</div></section>" +
     renderReviewsCard(d.reviews, s.name6q) +
     "</div>" +
-    // RIGHT
     '<div class="pf-col pf-col--right">' +
-    renderRelationGraph(d.relationGraph) +
+    (SHOW_RELATION_GRAPH ? renderRelationGraph(d.relationGraph) : "") +
+    renderPurchaseGroup() +
     (window.ProfileBehaviorUI
       ? window.ProfileBehaviorUI.renderFollowCard(d, {
           fromConference: fromConference,
           conferenceKey: conferenceKey,
         })
       : "") +
-    '<section class="pf-card"><div class="pf-card__head">课程退款订单<a href="#">查看全部</a></div><div class="pf-card__body" style="padding-top:0">' +
+    '<section class="pf-card" id="pfRefunds"><div class="pf-card__head">课程退款订单<a href="#">查看全部</a></div><div class="pf-card__body" style="padding-top:0">' +
     '<table class="pf-table"><thead><tr><th>商品</th><th>实退</th><th>状态</th><th>创建</th></tr></thead><tbody>' +
     d.refunds
       .map(function (r) {
@@ -1201,7 +1200,7 @@
     (window.ProfileBehaviorUI
       ? window.ProfileBehaviorUI.renderBehaviorCard(d)
       : "") +
-    "</div>";
+    "</div></div></div>";
 
   function makeCharts() {
     if (!window.Chart) return;
@@ -1290,7 +1289,7 @@
   }
 
   makeCharts();
-  initRelationChart(d.relationGraph, s);
+  if (SHOW_RELATION_GRAPH) initRelationChart(d.relationGraph, s);
   if (window.ProfileBehaviorUI) {
     window.ProfileBehaviorUI.init(d, s, {
       fromConference: fromConference,

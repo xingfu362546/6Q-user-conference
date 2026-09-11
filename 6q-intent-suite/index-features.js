@@ -129,30 +129,30 @@ window.INTENT_FEATURE_SPEC = {
       flag: "changed",
       title: "学员明细抽屉 · 洞察与推荐",
       lead: "抽屉是跟进保存后异步出的只读快照，不要在这里确认智能匹配。",
-      body: "<ul><li><strong>标签命中</strong>：命中标签、权重明细、意向度徽章</li><li><strong>洞察与推荐</strong>：跟进原文（弱化）+ AI 三块（结论/依据/下一步）+ 课程产品区；有方向才追加礼包权益区</li><li><strong>已迁出</strong>：历史跟进、行为四 Tab → 画像档案；深挖 → 分析助手（本期不改助手）</li><li><strong>姓名点击</strong>：跳转画像档案页</li></ul>",
-      mermaid: "flowchart LR\n  ROW[列表行] --> NAME[点姓名]\n  NAME --> PF[画像档案]\n  ROW --> DR[查看明细]\n  DR --> T1[标签命中]\n  DR --> T2[洞察与推荐]\n  T2 --> AI[结论依据下一步]\n  T2 --> C[课程产品]\n  T2 -->|有导师或天使意向| G[礼包权益]\n  PF --> B[行为四Tab]\n  PF --> F[跟进查看更多]",
+      body: "<ul><li><strong>标签命中</strong>：命中标签、权重明细、意向度徽章</li><li><strong>洞察与推荐</strong>：跟进原文（弱化）+ AI 三块（结论/依据/下一步）+ 课程产品区；有方向才追加礼包权益区</li><li><strong>已迁出</strong>：历史跟进、行为四 Tab → 原系统用户档案；深挖 → 分析助手（本期不改助手）</li><li><strong>姓名点击</strong>：跳转原系统用户档案并带会务参</li></ul>",
+      mermaid: "flowchart LR\n  ROW[列表行] --> NAME[点姓名]\n  NAME --> PF[用户档案]\n  ROW --> DR[查看明细]\n  DR --> T1[标签命中]\n  DR --> T2[洞察与推荐]\n  T2 --> AI[结论依据下一步]\n  T2 --> C[课程产品]\n  T2 -->|有导师或天使意向| G[礼包权益]\n  PF --> B[行为四Tab]\n  PF --> F[跟进查看更多]",
     },
     41: {
       flag: "changed",
-      title: "画像档案 · 定位与左栏（v1.2.0）",
-      lead: "画像是会员全局档案，不是某一期会务的临时页。会务名单只负责带入入口上下文。",
-      body: "<p>主键是 <code>member_id</code>，与标签快照、报读、跟进使用同一 ID，不做映射表。</p><ul><li><strong>打开方式</strong>：学员信息 / 意向列表点进画像时带 <code>from=conference</code>，左栏才出现「本期会务信息」。</li><li><strong>左栏</strong>：身份条、系统标签；从会务进入时才展示本期签到/小组/通关/核销。</li><li><strong>不含</strong>商机漏斗或正式诊断结论；分析助手是辅助，不改档案事实。</li></ul>",
+      title: "用户档案 · 入口与左栏（v1.2.0）",
+      lead: "生产落地是跳转原系统「会员信息 → 用户档案」。页面壳在 6Q业务 → 用户管理 → 会员管理 → 会员详情，不是课程会务里新开档案页。",
+      body: "<p>主键是 <code>member_id</code>，与标签快照、报读、跟进使用同一 ID，不做映射表。</p><ul><li><strong>打开方式</strong>：学员信息 / 意向列表点姓名，跳转原系统用户档案，并带 <code>from=conference</code> 与本期会务基础信息。</li><li><strong>顶栏模块</strong>：课程会务从「计划与实施」进入（线下课程会务 → 课程会务）；用户档案从「6Q业务」进入（用户管理 → 会员管理 → 会员详情）。两处可切，不要把档案挂在课程会务菜单下。</li><li><strong>会员详情左栏</strong>：沿用原系统 Tab（基础信息、学习档案、家庭组、课程资格、订单记录、关联账号、关系历史、反馈记录、跟进记录），另增「用户档案」；从会务进入默认选中用户档案。不要把本期会务 / 评价 / 工单做成左栏 Tab。</li><li><strong>从会务进入</strong>才出现「本期会务信息」：签到号 / 小组 / 通关 / 签到 / 核销（在用户档案页内，不是左栏）。</li><li><strong>身份条 / 系统标签</strong>是用户档案模块，会务清单体现、会务侧不做。</li><li>分析助手可从档案打开，不改档案事实。关系图谱本期不做、页面不展示。</li></ul>",
     },
     42: {
       flag: "changed",
-      title: "画像档案 · 家庭组与关系图谱（v1.2.0）",
-      lead: "家庭组看「谁和我同一家庭」；关系图谱看「当前生效的推荐/归属」，两者不要混用。",
-      body: "<ul><li><strong>家庭组</strong>：家庭ID、人数、角色 chips；成员表含编号/姓名/性别/身份/手机，高亮本人。</li><li><strong>关系图谱</strong>：浅灰「待定 · 本期可能不做」，本轮不作为交付范围。</li><li>图谱交互仍可看，但不纳入本期验收。</li></ul>",
+      title: "用户档案 · 家庭组（v1.2.0）",
+      lead: "家庭组看「谁和我同一家庭」。关系图谱本期不做，页面已关掉。",
+      body: "<ul><li><strong>家庭组</strong>：家庭ID、人数、角色 chips；成员表含编号/姓名/性别/身份/手机/未使用资格，高亮本人。</li><li><strong>关系图谱</strong>：本期不做，页面不展示。决定要做时再打开。</li></ul>",
     },
     43: {
       flag: "changed",
-      title: "画像档案 · 基础信息（v1.2.0）",
-      lead: "中栏基础信息对齐会员详情口径，分成身份与状态、关系人、认证人口、社会属性四块。",
-      body: "<p>字段名与会员中心保持一致，缺数按数仓映射补齐，不另造别名。</p><ul><li><strong>身份与状态</strong>：会员ID、6Q姓名、手机、邮箱、地区城市、运营服务处、实名/会员状态、身份、角色。</li><li><strong>关系人</strong>：当前生效的归属天使与推荐人；完整边关系看右栏图谱。</li><li><strong>认证 / 社会</strong>：真实姓名、性别年龄生日；职业行业学历微信紧急联系人注册时间备注。</li></ul>",
+      title: "用户档案 · 基础信息（v1.2.0）",
+      lead: "基础信息对齐会员详情口径，分成身份与状态、关系人、认证人口、社会属性四块。",
+      body: "<p>字段名与会员中心保持一致，缺数按数仓映射补齐，不另造别名。会务清单体现，会务侧不做。</p><ul><li><strong>身份与状态</strong>：会员ID、6Q姓名、手机、邮箱、地区城市、运营服务处、实名/会员状态、身份、角色。</li><li><strong>关系人</strong>：当前生效的归属天使与推荐人。</li><li><strong>认证 / 社会</strong>：真实姓名、性别年龄生日；职业行业学历微信紧急联系人注册时间备注。</li></ul>",
     },
     44: {
       title: "版本规范（开发拆分依据）",
-      body: "<p>从本版起按<strong>三条产品线</strong>封 <code>.0</code>，开发按版本号拆范围。历史原型编号 v1.0.0～v1.0.4 不再作为拆分依据。</p><ul><li><strong>v1.1.0</strong> 标签管理系统；后续只加 v1.1.1、v1.1.2…</li><li><strong>v1.2.0</strong> 学员档案 + 分析策略 + 会务后台意向分析 + 会务工作台 APP + 面谈官只读查档</li><li><strong>v1.3.0</strong> AI 分析助手（会务后台与面谈官门户共用工作台）</li></ul><p>需求部门：市场部 · 产品负责人：姜玲玲。完整范围表见总功能清单「版本范围」。</p>",
+      body: "<p>开发按版本号拆范围。每个版本一块清单，内部用编号罗列。历史原型编号 v1.0.0～v1.0.4、原档案补丁号 v1.2.1～v1.2.4 不再作为拆分依据。</p><ul><li><strong>v1.1.0</strong> 标签管理系统</li><li><strong>v1.2.0</strong> 学员档案：跳转原系统用户档案 + 模块对照（会务不做）</li><li><strong>v1.2.1</strong> 分析策略模板 + 会务后台意向分析</li><li><strong>v1.2.2</strong> 面谈官门户 + 会务工作台 APP</li><li><strong>v1.3.0</strong> AI 分析助手</li></ul><p>需求部门：市场部 · 产品负责人：姜玲玲。完整范围表见总功能清单「版本范围」。</p>",
     },
     45: {
       flag: "changed",
@@ -185,37 +185,37 @@ window.INTENT_FEATURE_SPEC = {
     },
     50: {
       flag: "new",
-      title: "画像档案 · 全模块字段说明（v1.2.0）",
-      lead: "下面用列表把画像页每个模块的元素名称、元素类型、是否必填和说明写清。点左侧目录可跳到对应模块注释。",
-      body: "<p>阅读顺序建议：左栏入口 → 基础信息 → 家庭/关系 → 购课退款 → 跟进行为 → 分析助手。</p><p><span style='color:#2563eb;font-weight:700'>(new)</span> 表示本版新增；<span style='color:#c2410c;font-weight:700'>(changed)</span> 表示本次注明调整；<span style='color:#b91c1c;font-weight:700'>(removed)</span> 表示已从表中删除。生产字段以会员中心 / 课务接口为准，原型仅对齐口径。</p>",
+      title: "用户档案 · 全模块字段说明（v1.2.0）",
+      lead: "对照原系统用户档案各模块的元素名称、类型、是否必填。会务只做跳转+带参，模块由原系统承接。",
+      body: "<p>阅读顺序：入口带参 → 身份条/会务信息/标签 → 基础信息 → 家庭组 → 购课/评价 → 跟进/退款/工单 → 行为。关系图谱本期不做。</p><p><span style='color:#2563eb;font-weight:700'>(new)</span> 表示本版新增；<span style='color:#c2410c;font-weight:700'>(changed)</span> 表示本次注明调整；<span style='color:#b91c1c;font-weight:700'>(removed)</span> 表示已从表中删除。生产字段以会员中心 / 课务接口为准，原型仅对齐口径。</p>",
     },
     51: {
       flag: "changed",
-      title: "画像档案 · 购买课程（v1.2.1）",
+      title: "用户档案 · 购买课程（v1.2.0）",
       lead: "购买课程按课程产品一行汇总；表内字段都读资格中心线下产品，不读订单 SKU。",
-      body: "<p>数据来源：<strong>资格中心 · 线下产品</strong> https://www.6qedu.cn/admin/qualificationCentre/offLineProduct</p><ul><li><strong>课程产品</strong>：资格中心按课程产品汇总后的产品名</li><li><strong>核销次数</strong>：该产品已核销 / 已报读次数；无核销为 0</li><li><strong>待使用的资格</strong>：尚未核销、仍可报读的次数，展示为「2次」「3次」；无为「0次」</li><li><strong>累计消费金额</strong>：该产品在所有会务已支付合计，人民币展示</li><li><strong>最近报读核销时间</strong>：最近一次核销时间；无核销为 —</li></ul>",
+      body: "<p>数据来源：<strong>资格中心 · 线下产品</strong> https://www.6qedu.cn/admin/qualificationCentre/offLineProduct</p><ul><li><strong>课程产品</strong>：资格中心按课程产品汇总后的产品名</li><li><strong>核销次数</strong>：该产品已核销 / 已报读次数；无核销为 0</li><li><strong>待使用的资格</strong>：尚未核销、仍可报读的次数，展示为「2次」「3次」；无为「0次」</li><li><strong>累计消费金额</strong>：该产品在所有会务已支付合计，人民币展示</li><li><strong>最近报读核销时间</strong>：最近一次核销时间；无核销为 —</li><li><strong>复购记录</strong>：已从用户档案删除，不再单独列表。</li></ul>",
     },
     52: {
       flag: "new",
-      title: "画像档案 · 家庭组未使用资格（v1.2.2）",
+      title: "用户档案 · 家庭组未使用资格（v1.2.0）",
       lead: "家庭组给每位成员统计未使用资格；点「查看」弹窗看该人未使用的产品、次数和最近报读核销时间。",
       body: "<p>次数与弹窗明细都来自<strong>资格中心 · 线下产品</strong> https://www.6qedu.cn/admin/qualificationCentre/offLineProduct</p><ul><li><strong>未使用资格</strong>：该成员尚未核销的资格次数合计，展示为「2次」；点「查看」打开弹窗</li><li><strong>本人</strong>与购买课程「待使用的资格」同源；其他家庭成员按各自会员读资格中心</li><li><strong>弹窗列</strong>：课程产品、资格数量（N次）、最近报读核销时间（无核销为 —）</li><li>无未使用资格时弹窗空态「暂无未使用资格」</li></ul>",
     },
     53: {
       flag: "new",
-      title: "画像档案 · 课程产品总评价（v1.2.3）",
+      title: "用户档案 · 课程产品总评价（v1.2.0）",
       lead: "学员对各课程产品的评价按创建时间倒序铺在中栏；条数多时进弹窗按产品或时间筛。",
       body: "<ul><li><strong>卡片</strong>：评价（条数）+ 预览最近 2 条：头像、姓名、星级、日期、报读课程、正文、图片</li><li><strong>报读课程</strong>：期次 + 产品名 + 站次 + 导师，底色浅橙对齐评价中心</li><li><strong>查看更多</strong>：弹窗可筛课程产品、创建时间起止；结果仍倒序</li><li>无评价空态「暂无课程评价」；筛不到「没有符合筛选的评价」</li></ul>",
     },
     54: {
       flag: "new",
-      title: "画像档案 · 本期会务信息与跟进标注（v1.2.3）",
-      lead: "只有从会务点进档案才出示本期会务信息和「来自于本场会务」；其它入口只看全局档案。",
-      body: "<ul><li><strong>从会务进入</strong>：学员信息 / 意向列表带 <code>from=conference</code>，或面谈官门户已选会务</li><li><strong>本期会务信息</strong>：签到号、小组、通关、签到、核销；不从会务进入则整块不渲染</li><li><strong>跟进</strong>：默认时间倒序；从会务进入时，关联本期的明细标注「来自于本场会务」</li></ul>",
+      title: "用户档案 · 本期会务信息与跟进标注（v1.2.0）",
+      lead: "只有从会务点进用户档案才出示本期会务信息和「来自于本场会务」；其它入口只看全局档案。",
+      body: "<ul><li><strong>从会务进入</strong>：学员信息 / 意向列表跳转原系统用户档案，并带 <code>from=conference</code> 与会务基础信息</li><li><strong>本期会务信息</strong>：签到号、小组、通关、签到、核销；不从会务进入则整块不渲染</li><li><strong>跟进</strong>：默认时间倒序；从会务进入时，关联本期的明细标注「来自于本场会务」</li></ul>",
     },
     55: {
       flag: "new",
-      title: "画像档案 · 客服工单（v1.2.4）",
+      title: "用户档案 · 客服工单（v1.2.0）",
       lead: "档案只读该学员在客服系统提交的工单。页面不复刻整张工单详情，只拿出分类、描述、状态。",
       body: "<ul><li><strong>分类</strong>：一级 / 二级 / 三级，对齐工单详情「工单分类」</li><li><strong>描述</strong>：问题描述原文</li><li><strong>状态</strong>：用工单状态（如未处理）；内容状态（等待回复）作辅助</li><li>按创建时间倒序；超过 2 条「查看更多」</li></ul>",
     },
@@ -581,7 +581,7 @@ window.INTENT_FEATURE_SPEC = {
               notes: [41]
             },
             {
-              text: "[v1.2.0] 操作列「画像档案」入口",
+              text: "[v1.2.0] 点姓名跳转原系统用户档案",
               notes: [41]
             }
           ]
@@ -591,11 +591,11 @@ window.INTENT_FEATURE_SPEC = {
           href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
           items: [
             {
-              text: "[v1.2.0] 三栏事实档案：系统标签 / 购课复购 / 跟进退款行为",
+              text: "[v1.2.0] 三栏事实档案：系统标签 / 购课 / 跟进退款行为",
               notes: [41]
             },
             {
-              text: "[v1.2.0] 购课按课程产品计次；复购=同产品≥2；退款订单口径",
+              text: "[v1.2.0] 购课按课程产品计次；复购记录已删；退款订单口径",
               notes: [41]
             },
             {
@@ -643,19 +643,19 @@ window.INTENT_FEATURE_SPEC = {
               notes: [48, 49, 50]
             },
             {
-              text: "[v1.2.3] 课程产品总评价：倒序预览 + 更多评价弹窗（课程产品 / 创建时间筛选）",
+              text: "[v1.2.0] 课程产品总评价：倒序预览 + 更多评价弹窗（课程产品 / 创建时间筛选）",
               notes: [53]
             },
             {
-              text: "[v1.2.3] 关系图谱浅灰标注「待定 · 本期可能不做」",
+              text: "[v1.2.0] 关系图谱本期不做，页面不展示",
               notes: [42]
             },
             {
-              text: "[v1.2.3] 「本期会务上下文」改名为「本期会务信息」；仅从会务点进才展示",
+              text: "[v1.2.0] 「本期会务信息」仅从会务点进才展示；跟进打本场标识",
               notes: [54, 41]
             },
             {
-              text: "[v1.2.4] 客服工单：只展示分类、问题描述、工单状态；倒序预览，多条进查看更多",
+              text: "[v1.2.0] 客服工单：只展示分类、问题描述、工单状态；倒序预览，多条进查看更多",
               notes: [55]
             }
           ]
@@ -677,7 +677,7 @@ window.INTENT_FEATURE_SPEC = {
               notes: [25]
             },
             {
-              text: "[v1.2.0] 行为列/历史跟进已迁出 → 画像档案",
+              text: "[v1.2.0] 行为列/历史跟进已迁出 → 原系统用户档案",
               notes: [27, 45]
             },
             {
@@ -685,7 +685,7 @@ window.INTENT_FEATURE_SPEC = {
               notes: [29]
             },
             {
-              text: "[v1.2.0] 点击学员姓名 → 画像档案",
+              text: "[v1.2.0] 点击学员姓名 → 原系统用户档案（带会务参）",
               notes: [29]
             },
             {
@@ -879,11 +879,13 @@ window.INTENT_FEATURE_SPEC = {
   versionPolicy: {
     dept: "市场部",
     owner: "姜玲玲",
-    date: "2026-09-02",
-    rule: "三条产品线各自封 .0；之后只在第三个小数点递增（v1.1.1 / v1.2.1 / v1.3.1）。历史原型编号 v1.0.0～v1.0.4 不再作为开发拆分依据。",
+    date: "2026-09-11",
+    rule: "v1.1.0 标签管理；v1.2.0 学员档案（跳转原系统用户档案，模块对照只体现）；v1.2.1 分析策略+会务后台意向分析；v1.2.2 面谈官门户+会务工作台 APP；v1.3.0 AI 分析助手。每个版本一块清单，内部用编号罗列。历史 v1.0.0～v1.0.4 与原档案补丁号 v1.2.1～v1.2.4 不再作为开发拆分依据。",
     lines: [
       { version: "v1.1.0", name: "标签管理系统", next: "v1.1.1" },
-      { version: "v1.2.0", name: "学员档案 / 分析策略 / 会务后台意向分析 / 会务工作台 APP / 面谈官只读查档", next: "v1.2.5" },
+      { version: "v1.2.0", name: "学员档案（跳转原系统用户档案）", next: "v1.2.3" },
+      { version: "v1.2.1", name: "分析策略 + 会务后台意向分析", next: "v1.2.3" },
+      { version: "v1.2.2", name: "面谈官门户 + 会务工作台 APP", next: "v1.2.3" },
       { version: "v1.3.0", name: "AI 分析助手", next: "v1.3.1" },
     ],
   },
@@ -1025,172 +1027,43 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "v120",
       version: "v1.2.0",
-      date: "2026.09.02",
+      date: "2026.09.11",
       current: true,
-      theme: "学员档案 + 分析策略 + 会务后台意向分析 / 会务工作台 APP",
-      href: "6q-conference-prototype/conference-student-intent.html",
+      theme: "学员档案（跳转原系统用户档案）",
+      href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference",
       rows: [
         {
           req: [
-            "1. 路径：会务工具 → 分析策略模板（与具体期次无关）",
-            "2. 列表展示：名称、说明、关注标签数、意向度方式、更新时间",
-            "3. 可新建 / 编辑 / 删除；若本期已选用该模板，删除须二次确认，已保存策略快照不受影响",
-            "4. 权限：会务统筹配置角色可增删改；其他人不可见或只读",
-            "5. 「本期已选用」角标：当前期 templateId 命中时显示",
+            "1. 从会务「学员意向分析 / 学员信息」点姓名，跳转原系统「会员信息 → 用户档案」（member_id）。落地页=6Q业务 → 用户管理 → 会员管理 → 会员详情；左栏沿用原系统 Tab（基础信息、学习档案、家庭组、课程资格、订单记录、关联账号、关系历史、反馈记录、跟进记录），另增「用户档案」，从会务进入默认选中。会务不新开档案页；现有三栏原型仅示意。课程会务入口仍是顶栏「计划与实施」→ 线下课程会务 → 课程会务。",
+            "2. 跳转带本期会务基础信息：期次、签到号、小组、通关、签到、核销。档案仅从会务进入时展示「本期会务信息」。",
+            "3. 跟进写入带本会务标识；从会务进入时，跟进记录标「来自于本场会务」。",
+            "4. 身份条：6Q姓名、会员状态/实名/身份、手机、城市/运营服务处、会员ID、顾问、归属天使、推荐人、注册时间。",
+            "5. 本期会务信息：签到号、小组、通关、签到、核销（只在从会务带参进入时出现）。",
+            "6. 系统标签：只展示命中的一级分类 + 二级标签。",
+            "7. 基础信息：身份与状态、关系人、认证与人口属性、社会属性与联系。",
+            "8. 家庭组：家庭ID、成员表；每人「未使用资格」次数，可查看产品/数量/最近核销时间。",
+            "9. 购课概览：订单笔数、课程产品数、复购产品数 + 条形图。",
+            "10. 购买课程：按课程产品一行（资格中心）：核销次数、待使用的资格、累计消费金额、最近报读核销时间。",
+            "11. 复购记录：已从用户档案删除，不再单独列表。",
+            "12. 评价：课程产品评价倒序；预览 2 条，多条可筛产品/时间。",
+            "13. 跟进记录：跨会务倒序；从会务进入打本场标识。",
+            "14. 课程退款订单：商品、退款单号、实退、状态、创建时间。",
+            "15. 客服工单：只展示分类（一/二/三级）、问题描述、工单状态；倒序预览，多条查看更多。",
+            "16. 近 30 天行为趋势 / 社区话题活跃：社区·直播·学习趋势；话题按名称细拆浏览/点击/发帖。",
+            "17. 近期行为明细：社区 / 学习 / 视频 / 直播四 Tab。",
+            "18. 以上 4～17 为用户档案模块对照，会务侧不做，由原系统用户档案承接。关系图谱本期不做、页面不展示。",
+            "19. v1.2.1 意向列表点姓名复用本版跳转+带参；v1.2.2 面谈官只读打开同一用户档案，APP 详情不跳 PC 档案；v1.3.0 分析助手可从档案打开，不写回档案事实。",
           ],
           impl: [
-            "后台：模板存完整 JSON（关注标签+权重+意向度方式）；删除只禁新选用，不改已保存本期快照",
-            "后台：权限点 conference_intent_config",
-            "前端：列表角标读本期 config.templateId",
-          ],
-          pages: [{ name: "分析策略模板", href: "6q-conference-prototype/tools-intent-strategy-template.html" }],
-        },
-        {
-          req: [
-            "1. 路径：分析策略模板 → 编辑模板",
-            "2. 关注标签：系统标签树多选二级；逻辑二选一「命中任一 / 命中全部」",
-            "3. 关注集合同时用于缩小列表 + 挂策略权重计分；未关注的命中标签可展示但不计分",
-            "4. 意向度每期只能选一种：A 按权重分（高/中/低三个阈值）或 B 按命中标签（高/中/低三组+组内任一/全部）",
-            "5. A 判定顺序：高 → 中 → 低 → 未分级；输入=意向分（关注权重和 + AI 0~25）",
-            "6. B 允许同一标签出现在多档，展示取最高档；B 不用分数切档，但列表仍展示意向分供排序",
-            "7. 策略权重配在模板/本期策略的关注标签上，不在标签平台",
-          ],
-          impl: [
-            "后台：intent_score = Σ(关注∩命中 的策略权重) + ai_score(0~25)",
-            "后台：方式 A 用阈值切档；方式 B 用标签组合判定，分数仍落库供排序",
-            "前端：标签树先一级再二级；方式 A/B 互斥表单，保存前校验阈值或组合非空",
-          ],
-          pages: [{ name: "编辑模板", href: "6q-conference-prototype/tools-intent-strategy-template-edit.html" }],
-        },
-        {
-          req: [
-            "1. 路径：会务详情 → 本期分析策略；每期独立实例",
-            "2. 可下拉选用模板（带规则预览）或复制上期策略",
-            "3. 「保存本期策略并重算」后：策略版本号递增、意向列表立即重算、APP 清除已分析缓存并强制重跑分析动效",
-            "4. 已保存策略预览含高/中/低人数分布；可跳转意向分析 / 管理模板",
-            "5. 本期未保存策略时，意向分析页必须空态引导，禁止静默用系统默认策略出数",
-          ],
-          impl: [
-            "后台：biz_conference_intent_config 按 conference_id 存；保存写 intent_strategy_version++",
-            "后台：保存后同步重算名单筛/分/档，并通知 APP 版本不一致",
-            "前端：未配置出引导条+跳转按钮；已配置顶部只读策略摘要，本页不可改规则",
+            "会务只做跳转 + 带参（from=conference / 会务基础信息 / conference_id）。",
+            "落地页壳：6Q业务 / 用户管理 / 会员管理；左栏原系统 Tab + 用户档案（默认选中）。课程会务仍走计划与实施。",
+            "原型页仅示意模块口径；购课读资格中心，工单只展示分类/描述/状态；复购记录不做。",
+            "关系图谱代码保留、SHOW_RELATION_GRAPH=false，本期不渲染。",
           ],
           pages: [
-            { name: "本期分析策略", href: "6q-conference-prototype/conference-intent-strategy.html" },
-            { name: "学员意向分析", href: "6q-conference-prototype/conference-student-intent.html" },
-          ],
-        },
-        {
-          req: [
-            "1. 路径：会务详情 → 学员意向分析",
-            "2. 列：学员（姓名/会员ID/手机脱敏）、意向分、意向度、命中标签、跟进内容（当前会务）、AI 短摘要、推荐产品",
-            "3. 跟进内容只取本期会务该学员最新/汇总人工原文；过长截断 + tooltip 全文",
-            "4. 社区/学习/视频/直播列与历史跟进不在本列表；点姓名进画像档案",
-            "5. 默认排序：意向分降序 → AI 降序 → 数据更新时间倒序",
-            "6. 搜索：姓名 / 手机号 / 会员 ID；导出二期占位",
-          ],
-          impl: [
-            "后台：列表读本期名单 ∩ 策略筛；跟进只查当前 conference_id",
-            "后台：AI 短摘要来自 insight 表，跟进保存后异步写入",
-            "前端：行为列不渲染；姓名链到画像；导出按钮占位",
-          ],
-          pages: [{ name: "学员意向分析", href: "6q-conference-prototype/conference-student-intent.html" }],
-        },
-        {
-          req: [
-            "1. 推荐产品列两行：主推课程一行（课名+匹配度）；有事业说明会「意向了解方向」且含导师或天使时，才出现礼包名称一行",
-            "2. 无方向则不存在礼包行，不是显示「无」或破折号",
-            "3. 可约谈时间不能单独触发出礼包",
-            "4. 查看明细抽屉：标签命中 + 洞察与推荐（结论一句 / 依据若干 / 下一步）；不在抽屉确认智能匹配、不写成交话术",
-            "5. 下一步按上课层级（标签与报读取高）给下一跳课阶；终阶谈复训",
-          ],
-          impl: [
-            "后台：礼包闸门=careerPresentation.intendedDirection 非空且匹配导师或天使；不读角色标签",
-            "后台：抽屉 insight 结构化三块；课程产品与礼包分区，无礼包意向不返回礼包对象",
-            "前端：推荐列按行渲染；无礼包不占位；抽屉无匹配确认按钮",
-          ],
-          pages: [
-            { name: "学员意向分析", href: "6q-conference-prototype/conference-student-intent.html" },
-            { name: "面谈官意向列表", href: "6q-interviewer-portal/student-intent.html" },
-          ],
-        },
-        {
-          req: [
-            "1. 路径：会务详情 → 学员信息 → 操作列「画像档案」，独立页打开",
-            "2. 画像是会员全局档案，主键 member_id，与标签/报读/跟进同一 ID",
-            "3. 左栏：身份条、本期签到/小组/通关、命中的二级系统标签",
-            "4. 中栏基础信息对齐会员详情：身份与状态 / 关系人 / 认证人口 / 社会属性",
-            "5. 家庭组看同一家庭成员；关系图谱看当前生效推荐/归属（1 跳，实线主动/虚线被动）",
-            "6. 购课按课程产品计次；复购=同产品≥2；退款按订单口径",
-            "7. 不含商机漏斗或正式诊断结论；助手不改档案事实",
-          ],
-          impl: [
-            "后台：档案聚合会员中心+数仓映射，缺数不另造别名",
-            "后台：图谱只返回当前生效 1 跳边；家庭组高亮本人",
-            "前端：三栏布局；页顶保留本期会务上下文；「会员详情查看」原型占位",
-          ],
-          pages: [
-            { name: "学员信息", href: "6q-conference-prototype/conference-students.html" },
-            { name: "画像档案", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-          ],
-        },
-        {
-          req: [
-            "1. 跟进记录卡片预览最近 5 条（类型/时间/标签/内容/跟进人/会务）；查看更多展开会员详情全字段",
-            "2. 近期行为四 Tab：社区 / 学习 / 视频 / 直播，各预览 5 条，查看更多按类型看全量",
-            "3. 近 30 天趋势与社区话题活跃是聚合图，不等于明细表；话题按话题名称细拆，不用分类汇总代替",
-            "4. 跟进入录在会务跟进菜单：内容、标签、图片；范围=本期会务×该学员；保存后异步触发 AI",
-          ],
-          impl: [
-            "后台：跟进写 conference_follow；保存后异步调 AI，回写 insight（分/短摘要/结构化三块）",
-            "后台：行为四类分接口或分 type 查询，预览 limit=5",
-            "前端：意向列表不渲染行为列；明细进画像右栏抽屉",
-          ],
-          pages: [
-            { name: "画像档案", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-            { name: "会务跟进", href: "6q-conference-prototype/conference-detail-basic.html" },
-          ],
-        },
-        {
-          req: [
-            "1. 面谈官独立 PC 门户：手机/邮箱+密码+图形验证码登录",
-            "2. 选择进行中会务；无会务空态「当前无正在进行中的会务」",
-            "3. 只读意向列表 + 查看明细 + 画像；点姓名进画像",
-            "4. 不包含策略配置、跟进入录、导出",
-            "5. 角色来自会务内「面谈官」赋权，看该会务全部学员",
-          ],
-          impl: [
-            "后台：门户账号与会务面谈官赋权校验；接口只读",
-            "前端：不渲染策略/跟进/导出入口；列表呈现对齐后台",
-          ],
-          pages: [
-            { name: "面谈官登录", href: "6q-interviewer-portal/login.html" },
-            { name: "面谈官意向列表", href: "6q-interviewer-portal/student-intent.html" },
-            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
-          ],
-        },
-        {
-          req: [
-            "1. 路径：会务 APP → 本期学员列表 → AI 意向洞察横幅",
-            "2. 后台保存本期策略后 APP 对比本地已分析版本，不一致则强制重跑分析动效，禁止展示旧策略结果",
-            "3. 分析动效结束后进入意向洞察中控：高/中/低/未分级环形图、KPI、优先跟进 TOP3",
-            "4. 中控「本期高频产品」只统计课程主推，礼包客单价不进榜",
-            "5. 意向学员列表按档位 Tab；卡片与 PC 对齐：课一行，有方向才礼包一行",
-            "6. 学员详情：意向度/分/命中标签、AI 一句话、跟进只读；课程产品与礼包分区，无礼包意向整块不渲染",
-            "7. 主推产品展示匹配度+备选 1~2；商品用紧凑 SKU 行（名称左、价格右）；不可在 APP 改排序",
-            "8. 会务 APP 不承载大型分析助手工作台",
-          ],
-          impl: [
-            "后台：APP 读同一套 intent_strategy_version 与名单结果",
-            "后台：高频榜聚合课程主推次数，排除礼包",
-            "前端：版本不一致进扫描页；推荐区两行/礼包闸门与 PC 同源；SKU 行不重复「线下/线上」form",
-          ],
-          pages: [
-            { name: "学员列表", href: "6q-conference-app-prototype/app-students.html" },
-            { name: "分析动效", href: "6q-conference-app-prototype/app-intent-scan.html" },
-            { name: "意向中控", href: "6q-conference-app-prototype/app-intent-dashboard.html" },
-            { name: "意向列表", href: "6q-conference-app-prototype/app-intent-list.html" },
-            { name: "学员详情", href: "6q-conference-app-prototype/app-student-detail.html" },
+            { name: "会务进入档案（示意）", href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference" },
+            { name: "全局进入档案（示意）", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
+            { name: "面谈官档案（示意）", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
           ],
         },
       ],
@@ -1198,28 +1071,32 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "v121",
       version: "v1.2.1",
-      date: "2026.09.02",
+      date: "2026.09.11",
       current: true,
-      theme: "学员档案 · 购买课程按产品汇总",
-      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+      theme: "分析策略 + 会务后台意向分析",
+      href: "6q-conference-prototype/conference-student-intent.html",
       rows: [
         {
           req: [
-            "1. 画像档案「购买课程」按课程产品汇总，不再按订单拆商品 SKU",
-            "2. 删除字段：商品、最近购买",
-            "3. 新增字段：核销次数、待使用的资格（展示为 2次/3次）、累计消费金额（该产品所有会务已支付合计）、最近报读核销时间",
-            "4. 购买课程表字段一律读资格中心 · 线下产品；每列注释写明来源与口径",
-            "5. 无核销时次数为 0、时间为 —；无待使用资格为 0次；会务后台与面谈官门户同一套档案页",
+            "1. 分析策略模板：列表 / 编辑 / 删除 / 本期已选用角标（与具体期次无关）。",
+            "2. 模板规则：系统标签树多选二级；关注集合同时用于缩小列表 + 策略权重计分；意向度每期只选 A 按权重分 或 B 按命中标签。",
+            "3. 本期分析策略：每期独立实例；可选用模板或复制上期；「保存本期策略并重算」后版本号递增、列表重算、APP 强制重跑。",
+            "4. 本期未保存策略时，意向分析必须空态引导，禁止静默用默认策略出数。",
+            "5. 学员意向分析列表：学员、意向分、意向度、命中标签、跟进内容（当前会务）、AI 短摘要、推荐产品。",
+            "6. 推荐产品课一行；有事业说明会「意向了解方向」且含导师或天使时才出礼包一行。",
+            "7. 查看明细抽屉：标签命中 + 洞察与推荐（结论/依据/下一步）；不在抽屉确认智能匹配。",
+            "8. 点姓名复用 v1.2.0 跳转原系统用户档案并带会务参；本版不改档案字段。",
           ],
           impl: [
-            "前端：购买课程读 purchaseByProduct（writeoffCount / pendingQualCount / amount / lastWriteoffAt）",
-            "前端：待使用的资格展示 N次；复购记录去掉「最近购买」列；订单笔数仍按 purchases 计",
-            "注释：note 51 字段表每列第一条说明均为资格中心 URL",
-            "Mock：项琳琳「如何说」待使用 2次；张志远「如何说」待使用 3次、核销 0 作对照",
+            "后台：模板 JSON + 本期 config.intent_strategy_version；保存后重算并通知 APP。",
+            "后台：礼包闸门=careerPresentation.intendedDirection 含导师或天使。",
+            "前端：未配置引导条；已配置只读摘要；姓名链到用户档案。",
           ],
           pages: [
-            { name: "会务后台画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
+            { name: "分析策略模板", href: "6q-conference-prototype/tools-intent-strategy-template.html" },
+            { name: "编辑模板", href: "6q-conference-prototype/tools-intent-strategy-template-edit.html" },
+            { name: "本期分析策略", href: "6q-conference-prototype/conference-intent-strategy.html" },
+            { name: "学员意向分析", href: "6q-conference-prototype/conference-student-intent.html" },
           ],
         },
       ],
@@ -1227,84 +1104,33 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "v122",
       version: "v1.2.2",
-      date: "2026.09.03",
+      date: "2026.09.11",
       current: true,
-      theme: "学员档案 · 家庭组未使用资格",
-      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
+      theme: "面谈官门户 + 会务工作台 APP",
+      href: "6q-interviewer-portal/login.html",
       rows: [
         {
           req: [
-            "1. 画像档案家庭组为每位成员增加「未使用资格」字段，展示合计次数如 2次、3次",
-            "2. 点「查看」打开弹窗列表：该成员未使用的课程产品、对应资格数量、该人对该产品的最近报读核销时间",
-            "3. 本人未使用资格与购买课程「待使用的资格」同源；其他家庭成员按各自会员读资格中心",
-            "4. 无未使用资格时次数为 0次，弹窗空态「暂无未使用资格」",
-            "5. 数据来源：资格中心 · 线下产品；会务后台与面谈官门户同一套档案页",
+            "1. 面谈官独立 PC 门户：手机/邮箱+密码+图形验证码登录；选择进行中会务；无会务空态。",
+            "2. 只读意向列表 + 查看明细抽屉；不包含策略配置、跟进入录、导出。",
+            "3. 面谈官点姓名只读打开同一原系统用户档案（复用 v1.2.0 跳转）。",
+            "4. 会务 APP：后台保存策略后对比本地版本，不一致则强制重跑分析动效。",
+            "5. 意向洞察中控：高/中/低/未分级、KPI、优先跟进 TOP3；高频榜只计课程主推。",
+            "6. APP 意向列表/详情与 PC 对齐：课一行，有方向才礼包一行。",
+            "7. APP 学员详情不跳 PC 用户档案；会务 APP 不承载大型分析助手工作台。",
           ],
           impl: [
-            "前端：家庭组成员列未使用资格合计；本人从 purchaseByProduct.pendingQualCount 汇总，其他人读 member.unusedQuals",
-            "前端：弹窗列课程产品 / 资格数量（N次）/ 最近报读核销时间；无核销时间为 —",
-            "Mock：项琳琳本人 2次（如何说）；陈志强 3次（如何说 1次 + 高EQ 2次）；陈予安 0次",
+            "后台：门户账号与会务面谈官赋权；接口只读。",
+            "后台：APP 读同一套 intent_strategy_version 与名单结果。",
+            "前端：门户不渲染策略/跟进/导出；APP 版本不一致进扫描页。",
           ],
           pages: [
-            { name: "会务后台画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "v123",
-      version: "v1.2.3",
-      date: "2026.09.07",
-      current: true,
-      theme: "学员档案 · 课程评价 / 会务信息 / 图谱待定",
-      href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference",
-      rows: [
-        {
-          req: [
-            "1. 画像增加学员对各课程产品的总评价区块，字段对齐评价中心：姓名、星级、日期、报读课程、正文、图片",
-            "2. 评价按创建时间倒序；预览最近 2 条，条数多时「查看更多」打开弹窗",
-            "3. 更多评价弹窗可按课程产品、创建时间起止筛选，结果仍倒序",
-            "4. 关系图谱浅灰标注「待定 · 本期可能不做」",
-            "5. 「本期会务上下文」改名为「本期会务信息」；仅从会务点进档案时展示",
-            "6. 从会务进入时，跟进历史里属于本场会务的明细标注「来自于本场会务」；其它入口只按时间倒序",
-          ],
-          impl: [
-            "前端：中栏评价读 reviews，倒序预览 2 条；弹窗筛 product / createdAt",
-            "前端：from=conference 或面谈官门户才渲染本期会务信息；跟进按 time 倒序并打本场徽章",
-            "前端：关系图谱卡片 pf-card--tbd + 待定徽章",
-            "Mock：项琳琳 7 条跨产品评价；张志远 1 条（无查看更多）",
-          ],
-          pages: [
-            { name: "会务进入画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009&from=conference" },
-            { name: "全局进入画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "v124",
-      version: "v1.2.4",
-      date: "2026.09.09",
-      current: true,
-      theme: "学员档案 · 客服工单",
-      href: "6q-conference-prototype/conference-student-profile.html?id=m10009",
-      rows: [
-        {
-          req: [
-            "1. 画像增加该学员在客服系统提交的工单区块",
-            "2. 不复刻整张工单后台详情，只展示：工单分类（一级/二级/三级）、问题描述、工单状态",
-            "3. 工单按创建时间倒序；超过 2 条提供查看更多",
-            "4. 会务后台与面谈官门户同一套档案页",
-          ],
-          impl: [
-            "前端：右栏客服工单读 tickets（category1/2/3、description、status）",
-            "Mock：项琳琳 3 条（含图1退费工单口径）；张志远 0 条空态",
-          ],
-          pages: [
-            { name: "会务后台画像", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-            { name: "面谈官画像", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
+            { name: "面谈官登录", href: "6q-interviewer-portal/login.html" },
+            { name: "面谈官意向列表", href: "6q-interviewer-portal/student-intent.html" },
+            { name: "面谈官档案", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
+            { name: "APP 学员列表", href: "6q-conference-app-prototype/app-students.html" },
+            { name: "APP 意向中控", href: "6q-conference-app-prototype/app-intent-dashboard.html" },
+            { name: "APP 学员详情", href: "6q-conference-app-prototype/app-student-detail.html" },
           ],
         },
       ],
@@ -1319,10 +1145,13 @@ window.INTENT_FEATURE_SPEC = {
       rows: [
         {
           req: [
-            "1. 会务后台画像与面谈官门户共用约 90vw × 88vh 双栏工作台，保留画像上下文",
-            "2. 空白时左侧演示栏默认展开，发出第一句后收起，可再展开换剧本",
-            "3. 会话按工作人员 user_id 私有隔离；结果只读参考，不写回档案事实",
-            "4. 输入框上方追问条：2 条阶段底盘 + 1 条贴上一句，点击即发；匹配动效期间隐藏",
+            "1. 会务后台与面谈官门户共用约 90vw × 88vh 双栏工作台；会话按工作人员隔离；结果只读，不写回档案事实。",
+            "2. 演示栏默认展开，发出第一句后收起；开场卡「我要答疑 / 分析学员」；追问条 2 条阶段底盘 + 1 条贴上一句。",
+            "3. 答疑路径复刻智能体三条预输入，不走产品匹配、不打开右栏；公开原型不含报价成交话术。",
+            "4. 分析路径先确认当前页学员或检索其它学员，再选兴趣解读 / 下一步跟进 / 课程产品匹配。",
+            "5. 课务检索只答左栏；产品匹配须工作人员确认后才走 A+B 开右栏。",
+            "6. 礼包闸门与列表一致：意向了解方向含导师或天使才出礼包；匹配完成后可生成面谈提示（六维加粗），禁止「复制沟通话术」。",
+            "7. 个人历史可搜索；本版不做人工改排序、APP 承载大型工作台、公开原型成交/报价。",
           ],
           impl: [
             "前端：同一套 conference-profile-ai-chat.js；门户只读引用",
@@ -1333,113 +1162,6 @@ window.INTENT_FEATURE_SPEC = {
             { name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
             { name: "面谈官画像助手", href: "6q-interviewer-portal/student-profile.html?id=m10009" },
           ],
-        },
-        {
-          req: [
-            "1. 空白会话两张开场卡：「我要答疑」发出「Hi，答疑助手」；「分析学员」发出「Hi，分析助手」",
-            "2. 点演示发言在同一会话追加，不清空右侧已有推荐",
-          ],
-          impl: [
-            "前端：start-mode 卡 data-mode=qa|analysis；handleMessageAction 按 data-message-action 分支，禁止把非 continue 当匹配",
-            "核心：detectStartMode 只认开场原句，不误伤自由补充",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
-        },
-        {
-          req: [
-            "1. 答疑路径复刻智能体三条预输入及回答，不走产品匹配、不打开右栏",
-            "2. 预输入 1：你能教我一下如何有方法的答疑吗 → 五步法总览（听/问/分/转/行）+ 实战小贴士",
-            "3. 预输入 2：叛逆家长第一步怎么回答 → 第一步标准示范（共情蓝条 + 提问蓝条 + 手册第3/5/7章 + 为什么这样答）",
-            "4. 预输入 3：我连接了，下一步呢？ → 第二步标准示范（区分事实与故事）；可续第三步转向资源",
-            "5. 回答顶栏：直接回复 › + 已深度思考（2.0s / 4.2s / 3.7s 标签）；示范话术用左侧蓝条",
-            "6. 公开原型不含复制/点赞条、不含报价成交话术",
-          ],
-          impl: [
-            "核心：QA_PRESETS + detectQaPreset；命中走 getQaMentorReply，未命中才回退旧四步场景",
-            "前端：kind=qa-mentor 渲染文章；右栏匹配结果区保持空态",
-            "测试：预输入映射与「不写复制沟通话术」回归",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
-        },
-        {
-          req: [
-            "1. 分析路径先确认当前页学员（是 / 其它学员）",
-            "2. 其它学员按姓名或会员 ID 检索；演示可检索项琳琳 m10009、夏兰 m10001、张志远 m10003",
-            "3. 确认后再选原演示三维度：兴趣解读 / 下一步跟进 / 课程产品匹配",
-          ],
-          impl: [
-            "核心：analysisState.gate=confirm|search|ready；isOtherStudent / searchLearnerIndex",
-            "前端：student-confirm / student-hits / dimension-pick",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
-        },
-        {
-          req: [
-            "1. 兴趣解读：用户标签 + 行为埋点 → 左栏依据",
-            "2. 下一步跟进：上课层级、报读购买、跟进 → 进阶建议",
-            "3. 课务检索开场用智搜原句：广州最近有哪些课程正在开课？ / 总导师的课程有哪些？ / 一阶和二阶有什么区别？",
-            "4. 检索只答左栏，无 C 端报读按钮，不自动触发右侧匹配",
-            "5. 产品细节追问只改左栏，右侧推荐区不跳转、不滚到卡片、不高亮",
-          ],
-          impl: [
-            "后台/Mock：检索走课务期数词典（城市/导师/课阶），不由模型编造日期",
-            "前端：检索回答 kind=retrieval；追问条按阶段换套",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
-        },
-        {
-          req: [
-            "1. 课程产品匹配必须工作人员确认后才走 A+B，不会自动开右栏",
-            "2. 匹配综合会话条件、标签、埋点、跟进、报读 + 产品/SKU/课务，右栏出主推与备选",
-            "3. 预算是入选硬门槛；超预算商品可留在详情「仅供了解」",
-            "4. 右栏产品匹配结果页（主推/备选/课务/商品）本版范围以现网为准，不另改交互",
-            "5. 失败兜底：明确失败标记 + 预算过滤后的兜底产品",
-          ],
-          impl: [
-            "前端：确认匹配后播 A+B 动效再写 matchVersions；右栏 .pf-ai__result 只读最新版本",
-            "后台/Mock：产品级推荐，不以 SKU 为推荐单位；不可人工改排序",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
-        },
-        {
-          req: [
-            "1. 匹配侧礼包闸门与列表一致：意向了解方向含导师或天使才出礼包权益区",
-            "2. 无方向不渲染礼包区块",
-            "3. 主推商品在助手/APP 用紧凑 SKU 行：标题「课程商品」+ 右侧价位区间；名称已含线下/线上时不重复 form",
-            "4. 主推最多 3 条，备选最多 2 条",
-          ],
-          impl: [
-            "核心：hasCareerGiftIntent；无礼包意向 gifts=[]",
-            "前端：renderGoodsList 紧凑行；公开源码禁止写领袖营报价数字稿（如 8600/25800）",
-          ],
-          pages: [
-            { name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" },
-            { name: "APP 学员详情", href: "6q-conference-app-prototype/app-student-detail.html" },
-          ],
-        },
-        {
-          req: [
-            "1. 匹配完成后左栏提示「匹配完成」，询问是否按学员数据生成面谈提示",
-            "2. 提示六维加粗：兴趣信号 / 上课进度 / 报读关系 / 事业说明会 / 主推产品 / 跟进缺口",
-            "3. 按钮文案「需要，按学员数据给提示」；禁止「复制沟通话术」",
-            "4. 面谈提示不含报价与成交话术",
-          ],
-          impl: [
-            "核心：buildMatchCompleteCopy + buildSalesCoach；coach 项 dim 固定六维",
-            "测试：doesNotMatch 8600|25800|复制沟通话术",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
-        },
-        {
-          req: [
-            "1. 个人历史可搜索学员、会务、标题、日期；空白会话不保存，首次消息后生成",
-            "2. 本版不做：人工修改 AI 推荐排序、APP 承载大型工作台、公开原型成交/报价话术",
-          ],
-          impl: [
-            "前端：历史抽屉按标题/学员/日期过滤；空草稿不 persist",
-            "前端：APP 只保留意向中控与详情，不嵌入双栏工作台",
-          ],
-          pages: [{ name: "会务后台画像助手", href: "6q-conference-prototype/conference-student-profile.html?id=m10009" }],
         },
       ],
     },

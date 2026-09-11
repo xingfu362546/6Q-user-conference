@@ -3,32 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>画像档案 · 课程会务 · 6Q 原型</title>
+  <title>会员详情 · 用户管理 · 6Q 原型</title>
   <link rel="stylesheet" href="css/6q-conference.css" />
   <link rel="stylesheet" href="css/6q-profile.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 </head>
-<body class="q-app" data-cf-page="students">
+<body class="q-app" data-shell="member" data-cf-page="member-detail">
   <header id="q-topbar-mount"></header>
   <div class="q-body">
     <aside id="q-sidenav-mount" class="q-sidenav"></aside>
     <div class="q-main">
       <nav id="q-doc-tabs-mount" class="q-doc-tabs"></nav>
       <div class="q-breadcrumb">
-        线下课程会务 / 课程会务 /
-        <a href="conference-students.html">学员信息</a> /
-        <strong>画像档案</strong>
+        用户管理 /
+        会员管理 /
+        <strong>会员详情</strong>
       </div>
       <div class="q-content-wrap">
-        <nav id="q-subnav-mount" class="q-subnav" aria-label="会务子菜单"></nav>
+        <nav id="q-subnav-mount" class="q-subnav" aria-label="会员详情子菜单"></nav>
         <main class="q-page">
           <div class="pf-toolbar">
             <div class="pf-toolbar__left">
-              <a class="q-btn" href="conference-students.html">← 返回学员信息</a>
+              <a class="q-btn" href="conference-students.html">← 返回会务学员信息</a>
               <h1 class="pf-toolbar__title">
-                画像档案
-                <span class="pf-ver">v1.0.4</span>
+                会员详情
+                <span class="pf-ver">v1.2.0</span>
               </h1>
               <span class="pf-toolbar__ctx" id="ctxLine">会员全局档案</span>
             </div>
@@ -38,7 +38,7 @@
             </div>
           </div>
 
-          <div class="pf-layout" id="profileRoot"></div>
+          <div id="profileRoot"></div>
           <p class="pf-note" style="margin-top:8px">
             v1.0.4 原型：事实画像保持不变；「学员分析助手」含演示按钮、追问条与意图流注释。对话/检索/匹配均为 Mock，生产以 Dify 智能体回传为准。
             <a href="versions.html#v104">版本说明</a>
