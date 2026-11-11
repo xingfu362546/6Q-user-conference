@@ -72,6 +72,15 @@
 
       formType: 'month',
 
+      header: { employee: '王芳', dept: '信息部', role: '产品专员', period: '2026年3月', submittedAt: '2026-03-28 17:32' },
+
+      selfSummary: '本月重点完成绩效模块方案设计，协同 HR 完成两轮需求对齐。\n\n主要成果：PRD 评审通过、HTML 原型入口交付、跨部门字段对照表输出。',
+
+      adjust: {
+        plus: [{ desc: '临时支援考勤数据核对', detail: '3/22 协助考勤组核对 2 月异常数据。', selfScore: 1 }],
+        minus: [],
+      },
+
       form: {
 
         coreKrs: [
@@ -213,6 +222,10 @@
       submittedAt: '2026-02-26 18:10',
 
       formType: 'month',
+
+      header: { employee: '王芳', dept: '信息部', role: '产品专员', period: '2026年2月', submittedAt: '2026-02-26 18:10' },
+
+      selfSummary: '2 月完成绩效模块需求调研与模板字段对照，为 3 月 PRD 评审奠定基础。',
 
       form: {
 
@@ -360,6 +373,88 @@
 
     },
 
+    m202601: {
+
+      id: 'm202601',
+
+      periodLabel: '2026年1月',
+
+      submittedAt: '2026-01-28 16:40',
+
+      formType: 'month',
+
+      header: { employee: '王芳', dept: '信息部', role: '产品专员', period: '2026年1月', submittedAt: '2026-01-28 16:40' },
+
+      selfSummary: '1 月启动绩效信息化专项，完成立项材料与初步需求池梳理。',
+
+      form: {
+
+        coreKrs: [
+
+          {
+
+            block: 'V',
+
+            o: '绩效信息化专项立项与需求池建立',
+
+            smart: '1/31 前完成立项评审；需求池 ≥30 条有效条目',
+
+            weight: '28',
+
+            standardTiers: tierBlock(28),
+
+            m: '立项材料通过部门评审；需求池 34 条，含月/季填表主链路条目。',
+
+            selfScore: 25,
+
+          },
+
+          {
+
+            block: 'V',
+
+            o: '竞品与制度调研',
+
+            smart: '覆盖 3 家对标；输出制度差异摘要',
+
+            weight: '22',
+
+            standardTiers: tierBlock(22),
+
+            m: '完成 3 家竞品走查与制度摘要 1 份。',
+
+            selfScore: 20,
+
+          },
+
+        ],
+
+        regularKrs: [
+
+          {
+
+            block: 'X',
+
+            o: '周会协同与纪要',
+
+            smart: '纪要 24h 内归档',
+
+            weight: '10',
+
+            standardTiers: tierBlock(10),
+
+            m: '周会 4 次，纪要均按时归档。',
+
+            selfScore: 9,
+
+          },
+
+        ],
+
+      },
+
+    },
+
     q2026q1: {
 
       id: 'q2026q1',
@@ -370,7 +465,59 @@
 
       formType: 'quarter',
 
-      form: { coreKrs: [], regularKrs: [] },
+      form: {
+
+        coreKrs: [
+
+          {
+
+            block: 'V',
+
+            o: 'Q1 绩效信息化方案与原型奠基',
+
+            smart: '3/31 前完成 PRD 与 HTML 原型入口；覆盖月/季填表主链路',
+
+            weight: '30',
+
+            standardTiers: tierBlock(30),
+
+          },
+
+          {
+
+            block: 'V',
+
+            o: '跨部门评审与需求对齐',
+
+            smart: '组织 ≥2 轮 HR/信息部联合评审；纪要 24h 内归档',
+
+            weight: '28',
+
+            standardTiers: tierBlock(28),
+
+          },
+
+        ],
+
+        regularKrs: [
+
+          {
+
+            block: 'X',
+
+            o: '文档沉淀与会议协同',
+
+            smart: 'Handoff 与 FEATURE_LIST 同步维护；重要会议提前 1 天备材料',
+
+            weight: '12',
+
+            standardTiers: tierBlock(12),
+
+          },
+
+        ],
+
+      },
 
       nextSeasonKeyObjectives: [
 
@@ -826,6 +973,30 @@
 
 
 
+  /** 季度填表：复制往期 KR + 清空面谈/下季/自评 */
+
+  function applySnapshotToQuarterlyState(state, snapshotId) {
+
+    var r = applySnapshotToMonthlyState(state, snapshotId);
+
+    if (!r) return null;
+
+    state.interview = { highlight: '', improve: '', plan: '', support: '' };
+
+    state.selfSummary = '';
+
+    if (window.PerfKrHierarchy) {
+
+      state.nextSeasonKeyObjectives = [PerfKrHierarchy.emptyKeyObjective('next', false)];
+
+    }
+
+    return state;
+
+  }
+
+
+
   /** 将往期 KR 结构合并进 draft（保留 step、openKr；清空自评相关） */
 
   function applySnapshotToMonthlyState(state, snapshotId) {
@@ -1098,13 +1269,17 @@
 
   function applyWithStorage(opts, applyFn, toastMsg) {
 
-    if (opts.storageKey && typeof loadState === 'function' && typeof saveState === 'function') {
+    var loadFn = opts.loadState || (typeof loadState === 'function' ? loadState : null);
 
-      var state = loadState(opts.storageKey);
+    var saveFn = opts.saveState || (typeof saveState === 'function' ? saveState : null);
+
+    if (opts.storageKey && typeof loadFn === 'function' && typeof saveFn === 'function') {
+
+      var state = loadFn(opts.storageKey);
 
       applyFn(state);
 
-      saveState(opts.storageKey, state);
+      saveFn(opts.storageKey, state);
 
       closeModal();
 
@@ -1182,7 +1357,9 @@
 
 
 
-        var needsConfirm = opts.storageKey && typeof loadState === 'function' && hasCoreContent(loadState(opts.storageKey));
+        var loadFn = opts.loadState || (typeof loadState === 'function' ? loadState : null);
+
+        var needsConfirm = opts.storageKey && typeof loadFn === 'function' && hasCoreContent(loadFn(opts.storageKey));
 
         if (!confirmOverwrite(needsConfirm, '确定从「' + snap.periodLabel + '」复制 KR 结构？\n\n将覆盖当前草稿中的目标与考核标准，自评内容不会复制。')) return;
 
@@ -1190,7 +1367,9 @@
 
         if (applyWithStorage(opts, function (state) {
 
-          applySnapshotToMonthlyState(state, id);
+          if ((opts.formType || 'month') === 'quarter') applySnapshotToQuarterlyState(state, id);
+
+          else applySnapshotToMonthlyState(state, id);
 
         }, '已从往期复制 KR 结构')) return;
 
@@ -1278,7 +1457,9 @@
 
     panel.querySelector('#btn-apply-prev-goals').addEventListener('click', function () {
 
-      var needsConfirm = opts.storageKey && typeof loadState === 'function' && hasCoreContent(loadState(opts.storageKey));
+      var loadFn = opts.loadState || (typeof loadState === 'function' ? loadState : null);
+
+      var needsConfirm = opts.storageKey && typeof loadFn === 'function' && hasCoreContent(loadFn(opts.storageKey));
 
       if (!confirmOverwrite(needsConfirm, '将用「' + snap.periodLabel + '」的' + nextLabel + '目标覆盖本期核心 V（权重 ' + scaleLabel(formType) + '）。\n\n常规 X 与其他步骤不变。确定继续？')) return;
 
@@ -1495,6 +1676,8 @@
     getPrevGoalsAvailability: getPrevGoalsAvailability,
 
     applySnapshotToMonthlyState: applySnapshotToMonthlyState,
+
+    applySnapshotToQuarterlyState: applySnapshotToQuarterlyState,
 
     applyPrevNextGoalsToState: applyPrevNextGoalsToState,
 

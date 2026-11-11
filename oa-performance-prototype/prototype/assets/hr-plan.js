@@ -209,7 +209,7 @@
 
   var LEVELS = ['全部', '总监', '经理', '主管', '职员'];
 
-  var STATUSES = ['全部', '未开始', '填写中', '已提交', '已逾期'];
+  var STATUSES = ['全部', '未开始', '填写中', '已提交', '已逾期', '待上级评价', '已完成', '已失效'];
 
 
 
@@ -240,6 +240,12 @@
       '已提交': 'q-tag q-tag-green',
 
       '已逾期': 'q-tag q-tag-orange',
+
+      '待上级评价': 'q-tag q-tag-blue',
+
+      '已完成': 'q-tag q-tag-green',
+
+      '已失效': 'q-tag q-tag-red',
 
     };
 
@@ -416,6 +422,10 @@
     if (add && idx < 0) scope.memberIds.push(personId);
 
     if (!add && idx >= 0) scope.memberIds.splice(idx, 1);
+
+    if (add && window.PerfHrStore && PerfHrStore.markReassigned && ROSTER[personId]) {
+      PerfHrStore.markReassigned(detailPlanId, ROSTER[personId].no, scope.id, scope.name);
+    }
 
   }
 
@@ -1600,7 +1610,9 @@
 
       if (level !== '全部' && e.level !== level) return false;
 
-      if (status !== '全部' && e.status !== status) return false;
+      var view = window.PerfHrStore ? PerfHrStore.view(detailPlanId, e) : { status: e.status, handler: e.name };
+
+      if (status !== '全部' && view.status !== status) return false;
 
       if (kw && e.name.indexOf(kw) === -1 && e.no.indexOf(kw) === -1) return false;
 
@@ -1636,15 +1648,17 @@
 
       var taskHref = 'hr-task-detail.html?plan=' + encodeURIComponent(detailPlanId) + '&no=' + encodeURIComponent(e.no) + '&from=plan';
 
-      return '<tr><td><input type="checkbox" class="detail-row-cb" data-no="' + e.no + '" ' + (detailSelected[e.no] ? 'checked' : '') + ' /></td><td><a href="' + taskHref + '"><b>' + e.name + '</b></a></td><td>' + e.no + '</td><td>' + e.org + '</td>' +
+      var viewRow = window.PerfHrStore ? PerfHrStore.view(detailPlanId, e) : { status: e.status, handler: e.name };
+
+    return '<tr><td><input type="checkbox" class="detail-row-cb" data-no="' + e.no + '" ' + (detailSelected[e.no] ? 'checked' : '') + ' /></td><td><a href="' + taskHref + '"><b>' + e.name + '</b></a></td><td>' + e.no + '</td><td>' + e.org + '</td>' +
 
         '<td>' + e.role + '</td><td>' + e.level + '</td>' +
 
-        '<td>' + (scopeNameMap[e.scopeId] || '—') + '</td><td>' + e.template + '</td>' +
+        '<td>' + scopeLabelFor(e) + '</td><td>' + e.template + '</td>' +
 
-        '<td>' + statusTag(e.status) + '</td><td>' + (e.handlerName ? '<span class="q-tag q-tag-blue">' + e.handlerName + '</span>' : '<span class="muted">默认上级</span>') + '</td><td>' + e.submit + '</td>' +
+        '<td>' + statusTag(viewRow.status) + '</td><td>' + (viewRow.handler ? '<span class="q-tag q-tag-blue">' + viewRow.handler + '</span>' : '<span class="muted">未指定评价人</span>') + '</td><td>' + e.submit + '</td>' +
 
-        '<td><a href="' + taskHref + '">查看详情</a> · <a href="#">催办</a> · <a href="#">解锁</a> · <a href="#" class="link-return-emp" data-name="' + e.name + '">退回至员工</a></td></tr>';
+        '<td>' + detailActions(e, viewRow, taskHref) + '</td></tr>';
 
     }).join('') || '<tr><td colspan="12" style="text-align:center;color:#999;padding:24px">无匹配数据</td></tr>';
 
@@ -1681,6 +1695,8 @@
     STATUSES.forEach(function (s) { document.getElementById('filter-status').innerHTML += '<option>' + s + '</option>'; });
 
     function refreshAll() {
+
+      applyStoredVoids();
 
       renderDetailScopeSection(DETAIL_SCOPE_PACKS, refreshAll);
 
@@ -1748,16 +1764,249 @@
     });
 
     document.getElementById('detail-tbody').addEventListener('click', function (e) {
-      var link = e.target.closest('.link-return-emp');
+      var link = e.target.closest('a');
       if (!link) return;
-      e.preventDefault();
-      var reason = prompt('退回至员工 · ' + link.dataset.name + '：请输入原因（必填）');
-      if (reason && reason.trim()) alert('已退回至「' + link.dataset.name + '」，员工可在断点续改、数据保留（原型）');
+      var no = link.dataset.no;
+      var emp = null;
+      for (var i = 0; i < MOCK_EMPLOYEES.length; i++) {
+        if (MOCK_EMPLOYEES[i].no === no) emp = MOCK_EMPLOYEES[i];
+      }
+      if (link.classList.contains('link-return-node')) {
+        e.preventDefault();
+        if (!window.PerfHrStore || !emp) return;
+        openReturnModal(emp, refreshAll);
+      } else if (link.classList.contains('link-void')) {
+        e.preventDefault();
+        if (!emp) return;
+        openVoidModal(emp, refreshAll);
+      } else if (link.classList.contains('link-restore')) {
+        e.preventDefault();
+        if (!emp) return;
+        restoreEmployee(emp, refreshAll);
+      } else if (link.classList.contains('link-hr-score')) {
+        e.preventDefault();
+        if (!emp) return;
+        openScoreModal(emp);
+      } else if (link.classList.contains('link-export-img')) {
+        e.preventDefault();
+        exportEmployeeSheet(emp);
+      }
     });
 
   }
 
 
+
+
+  function rosterIdByNo(no) {
+    var found = '';
+    Object.keys(ROSTER).forEach(function (id) {
+      if (ROSTER[id].no === no) found = id;
+    });
+    return found;
+  }
+
+  function scopeOfEmployee(emp) {
+    var pid = rosterIdByNo(emp.no);
+    var hit = null;
+    DETAIL_SCOPE_PACKS.forEach(function (sp) {
+      if (pid && sp.memberIds.indexOf(pid) >= 0) hit = sp;
+    });
+    return hit ? { id: hit.id, name: hit.name, personId: pid } : { id: '', name: '', personId: pid };
+  }
+
+  function scopeLabelFor(emp) {
+    var hit = scopeOfEmployee(emp);
+    if (hit.name) return hit.name;
+    var task = window.PerfHrStore ? PerfHrStore.readTask(detailPlanId, emp.no) : null;
+    if (task && task.voided) return '已移出';
+    return '—';
+  }
+
+  function applyStoredVoids() {
+    if (!window.PerfHrStore) return;
+    var store = PerfHrStore.load();
+    Object.keys(store.tasks).forEach(function (key) {
+      if (key.indexOf(detailPlanId + ':') !== 0) return;
+      var task = store.tasks[key];
+      if (!task.voided || !task.voided.personId) return;
+      DETAIL_SCOPE_PACKS.forEach(function (sp) {
+        if (task.reassignedPackId && sp.id === task.reassignedPackId) return;
+        if (task.voided.scopePackId && sp.id !== task.voided.scopePackId) return;
+        var idx = sp.memberIds.indexOf(task.voided.personId);
+        if (idx >= 0) sp.memberIds.splice(idx, 1);
+      });
+    });
+  }
+
+  function closeActionModal() {
+    var mask = document.getElementById('hr-action-modal');
+    if (mask) mask.remove();
+  }
+
+  function openActionModal(title, body, confirmText, onConfirm) {
+    closeActionModal();
+    var mask = document.createElement('div');
+    mask.id = 'hr-action-modal';
+    mask.className = 'hr-transfer-modal-mask is-open';
+    mask.innerHTML =
+      '<div class="hr-transfer-modal" role="dialog" style="max-width:480px">' +
+      '<div class="hr-transfer-modal__head"><h3>' + title + '</h3>' +
+      '<button type="button" class="hr-transfer-modal__close" aria-label="关闭">×</button></div>' +
+      '<div class="hr-transfer-modal__body" style="min-height:0">' + body +
+      '<p class="hr-modal-error" id="hr-action-error"></p></div>' +
+      '<div class="hr-transfer-modal__foot">' +
+      '<button type="button" class="q-btn" id="hr-action-cancel">取消</button>' +
+      '<button type="button" class="q-btn q-btn-primary" id="hr-action-ok">' + confirmText + '</button></div></div>';
+    document.body.appendChild(mask);
+    function shut() { mask.remove(); }
+    mask.querySelector('.hr-transfer-modal__close').addEventListener('click', shut);
+    mask.querySelector('#hr-action-cancel').addEventListener('click', shut);
+    mask.addEventListener('click', function (ev) { if (ev.target === mask) shut(); });
+    mask.querySelector('#hr-action-ok').addEventListener('click', function () {
+      var error = onConfirm(mask);
+      var box = mask.querySelector('#hr-action-error');
+      if (error) { if (box) box.textContent = error; return; }
+      shut();
+    });
+  }
+
+  function detailActions(emp, viewRow, taskHref) {
+    var voided = viewRow.status === '已失效';
+    var canReturn = window.PerfHrStore && PerfHrStore.returnTargets(detailPlanId, emp).length > 0;
+    var parts = ['<a href="' + taskHref + '">查看详情</a>'];
+    if (!voided && canReturn) {
+      parts.push('<a href="#" class="link-return-node" data-no="' + emp.no + '" data-name="' + emp.name + '">退至</a>');
+    }
+    if (!voided) {
+      parts.push('<a href="#" class="link-void" data-no="' + emp.no + '" data-name="' + emp.name + '">失效</a>');
+    }
+    if (voided) {
+      parts.push('<a href="#" class="link-restore" data-no="' + emp.no + '" data-name="' + emp.name + '">恢复</a>');
+    }
+    parts.push('<a href="#" class="link-hr-score" data-no="' + emp.no + '" data-name="' + emp.name + '">改总分</a>');
+    parts.push('<a href="#" class="link-export-img" data-no="' + emp.no + '" data-name="' + emp.name + '">导出图片</a>');
+    return parts.join(' · ');
+  }
+
+  function openReturnModal(emp, refresh) {
+    var nodes = PerfHrStore.returnTargets(detailPlanId, emp);
+    if (!nodes.length) return;
+    var steps = nodes.map(function (node, i) {
+      return '<button type="button" class="hr-node-step' + (i === 0 ? ' is-on' : '') + '" data-node="' + node + '">' + node + '</button>';
+    }).join('');
+    openActionModal('退至 · ' + emp.name,
+      '<p class="hr-modal-readonly">只能退至已经走过、且不是当前所在的节点。确认后分数和填写内容仍留在原来的输入框。</p>' +
+      '<div class="hr-node-steps" id="hr-return-steps">' + steps + '</div>' +
+      '<div class="hr-modal-field"><label>退至原因</label><textarea id="hr-return-reason" rows="3"></textarea></div>',
+      '确认退至',
+      function (mask) {
+        var picked = mask.querySelector('.hr-node-step.is-on');
+        var reason = (mask.querySelector('#hr-return-reason').value || '').trim();
+        if (!picked) return '请选择退至节点';
+        if (!reason) return '请填写退至原因';
+        var res = PerfHrStore.returnTask(detailPlanId, emp, picked.getAttribute('data-node'), reason);
+        if (!res.ok) return res.error;
+        refresh();
+        return '';
+      });
+    var host = document.getElementById('hr-return-steps');
+    if (!host) return;
+    host.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('.hr-node-step');
+      if (!btn) return;
+      host.querySelectorAll('.hr-node-step').forEach(function (el) { el.classList.remove('is-on'); });
+      btn.classList.add('is-on');
+    });
+  }
+
+  function openVoidModal(emp, refresh) {
+    var scope = scopeOfEmployee(emp);
+    openActionModal('失效 · ' + emp.name,
+      '<p class="hr-modal-readonly">失效后状态标红。员工和领导都看不到这张待办，并从范围包「' + (scope.name || '当前范围包') + '」移除。一个人同时只在一个范围包里。恢复时加回这个已发放的范围包，并重新发放同一张待办，回到未开始。</p>' +
+      '<div class="hr-modal-field"><label>失效原因</label><textarea id="hr-void-reason" rows="3"></textarea></div>',
+      '确认失效',
+      function (mask) {
+        var reason = (mask.querySelector('#hr-void-reason').value || '').trim();
+        if (!reason) return '请填写失效原因';
+        var res = PerfHrStore.voidTask(detailPlanId, emp, reason, scope);
+        if (!res.ok) return res.error;
+        if (scope.personId) {
+          DETAIL_SCOPE_PACKS.forEach(function (sp) {
+            if (scope.id && sp.id !== scope.id) return;
+            var idx = sp.memberIds.indexOf(scope.personId);
+            if (idx >= 0) sp.memberIds.splice(idx, 1);
+          });
+        }
+        refresh();
+        return '';
+      });
+  }
+
+  function restoreEmployee(emp, refresh) {
+    var pid = rosterIdByNo(emp.no);
+    var task = PerfHrStore.readTask(detailPlanId, emp.no);
+    var origin = task && task.voided ? task.voided.scopePackId : '';
+    var other = pid ? findPersonScope(DETAIL_SCOPE_PACKS, pid, origin || null) : null;
+    if (other) {
+      openActionModal('无法恢复 · ' + emp.name,
+        '<p class="hr-modal-readonly">该员工已在范围包「' + other.name + '」中。一个人不能同时在两个范围包。先从「' + other.name + '」去掉，才能加回原来已发放的范围包并重新发放。</p>',
+        '知道了',
+        function () { return ''; });
+      return;
+    }
+    var originPack = null;
+    DETAIL_SCOPE_PACKS.forEach(function (sp) { if (sp.id === origin) originPack = sp; });
+    if (!originPack || originPack.status !== 'issued') {
+      openActionModal('无法恢复 · ' + emp.name,
+        '<p class="hr-modal-readonly">原来发放待办的范围包已经不在，或还没有发放。不能把人加回去重新发放。</p>',
+        '知道了',
+        function () { return ''; });
+      return;
+    }
+    var res = PerfHrStore.restoreTask(detailPlanId, emp);
+    if (!res.ok) {
+      openActionModal('无法恢复 · ' + emp.name, '<p class="hr-modal-readonly">' + res.error + '</p>', '知道了', function () { return ''; });
+      return;
+    }
+    var back = res.restored || {};
+    if (back.personId && back.scopePackId) {
+      DETAIL_SCOPE_PACKS.forEach(function (sp) {
+        if (sp.id === back.scopePackId && sp.memberIds.indexOf(back.personId) < 0) sp.memberIds.push(back.personId);
+      });
+    }
+    refresh();
+  }
+
+  function openScoreModal(emp) {
+    var task = PerfHrStore.readTask(detailPlanId, emp.no);
+    var current = '尚未核定';
+    if (task && task.hrFinal && task.hrFinal.value != null) current = String(task.hrFinal.value);
+    else if (task && task.divisionTotal != null) current = String(task.divisionTotal);
+    else if (task && task.assessedTotal != null) current = String(task.assessedTotal);
+    openActionModal('改总分 · ' + emp.name,
+      '<p class="hr-modal-readonly">当前采用分：<b>' + current + '</b>。保存后确认状态不变。</p>' +
+      '<div class="hr-modal-field"><label>最终总分</label><input id="hr-final-score" type="number" step="0.1" /></div>' +
+      '<div class="hr-modal-field"><label>修改原因</label><textarea id="hr-final-reason" rows="3"></textarea></div>',
+      '保存',
+      function (mask) {
+        var score = mask.querySelector('#hr-final-score').value;
+        var reason = mask.querySelector('#hr-final-reason').value;
+        var res = PerfHrStore.setHrFinal(detailPlanId, emp.no, score, reason);
+        if (!res.ok) return res.error;
+        return '';
+      });
+  }
+
+  function exportEmployeeSheet(emp) {
+    if (!window.PerfSheetPreview) { alert('整表预览未加载'); return; }
+    var plan = window.PerfHrStore ? PerfHrStore.planOf(detailPlanId) : null;
+    PerfSheetPreview.openEmployee(emp, {
+      id: detailPlanId,
+      name: plan ? plan.name : detailPlanId,
+      quarter: isQuarterPlanId(detailPlanId)
+    });
+  }
 
   window.initHrPlanCreate = initCreateWizard;
 

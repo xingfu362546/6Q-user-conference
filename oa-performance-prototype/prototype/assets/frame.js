@@ -26,6 +26,7 @@
     { id: 'recruit', label: '招聘管理', open: false, items: [] },
     { id: 'perf', label: '绩效管理', open: true, items: [
       { label: '计划管理', href: 'hr-plan-list.html', key: 'plan' },
+      { label: '评价人维护', href: 'hr-evaluators.html', key: 'evaluators' },
       { label: '人员绩效结果', href: 'hr-perf-results-list.html', key: 'perf-results' },
       { label: '奖金规则', href: 'hr-bonus-rules-list.html', key: 'bonus' },
       { label: '员工月度绩效', href: '#', key: 'legacy-month', legacy: true },

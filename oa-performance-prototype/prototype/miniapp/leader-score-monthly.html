@@ -1,102 +1,60 @@
 ﻿<!DOCTYPE html>
-
 <html lang="zh-CN">
-
 <head>
-
   <meta charset="UTF-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>月度评分</title>
-
   <link rel="stylesheet" href="../assets/6q-theme.css" />
-
   <link rel="stylesheet" href="../assets/common.css" />
-
   <link rel="stylesheet" href="../assets/mp-perf.css" />
-
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
   <link rel="stylesheet" href="../assets/supervisor-score.css" />
-
   <link rel="stylesheet" href="../assets/proto-notes.css" />
 </head>
-
 <body style="background:#e8e8e8">
-
   <div class="mp-device">
-
     <div class="mp-screen">
-
       <div class="mp-capsule" aria-hidden="true"></div>
-
       <div class="mp-subnav">
-
-        <button class="back" type="button" onclick="tryLeave()">‹</button>
-
-        <div class="title">评分</div>
-
+        <button class="back" type="button" onclick="location.href='task-list.html'">‹</button>
+        <div class="title">月度评分</div>
       </div>
-
-      <div class="mp-body" style="padding-bottom:80px;background:#f5f5f5">
-
-        <div class="mp-banner mp-banner-blue" style="margin-top:12px">
-
-          <span class="mp-banner-icon">📝</span>
-
-          <span>展开指标可查看员工填写的长文本；下月目标仅查看，无需确认。</span>
-
+      <div class="mp-body mp-body--score" style="padding-bottom:88px;background:#f5f5f5">
+        <div class="score-header" id="score-header-info"></div>
+        <div class="perf-tip perf-tip-blue" style="margin:12px;font-size:12px">与 OA 同源组件 · L2→L3 折叠 · 核心≤85 常规≤15 行为≤15</div>
+        <div class="score-section-title" style="padding:0 12px">本月考评 · 打分区</div>
+        <div class="score-kr-list" id="score-kr-list" style="padding:0 12px"></div>
+        <div class="score-summary" id="score-summary" style="margin:12px"></div>
+        <div class="score-section-title" style="padding:0 12px">加减分 · 核定</div>
+        <div style="padding:0 12px;overflow-x:auto">
+          <table class="score-adjust-table"><thead><tr><th>加分</th><th>员工</th><th>核定</th></tr></thead><tbody id="adjust-plus-body"></tbody></table>
+          <table class="score-adjust-table"><thead><tr><th>减分</th><th>员工</th><th>核定</th></tr></thead><tbody id="adjust-minus-body"></tbody></table>
         </div>
-
-        <div id="mp-score-list"></div>
-
-        <div class="mp-score-bar" id="mp-score-bar">工作块合计 —/100</div>
-
-        <div id="mp-employee-readonly" class="mp-readonly-stack"></div>
-
-        <div id="mp-next-month-readonly" class="mp-readonly-stack mp-readonly-stack--next"></div>
-
+        <div class="score-section-title" style="padding:0 12px">下月目标 · 对照（只读）</div>
+        <div id="score-next-month-ref" class="score-next-month-ref" style="padding:0 12px 12px"></div>
       </div>
-
-      <div class="mp-score-footer">
-
-        <button type="button" style="flex:1;padding:12px;border:1px solid #d9d9d9;border-radius:8px;background:#fff" onclick="tryLeave()">返回</button>
-
-        <button type="button" id="mp-btn-submit" style="flex:1;padding:12px;border:none;border-radius:8px;background:var(--mp-green-3);color:#fff;font-weight:600">提交评分</button>
-
+      <div class="mp-score-footer" style="display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid #eee">
+        <a class="q-btn" style="flex:1;text-align:center;padding:12px" href="task-list.html" id="btn-back">返回</a>
+        <button type="button" class="q-btn q-btn-primary" id="btn-submit" style="flex:1;padding:12px" disabled>提交评分</button>
       </div>
-
     </div>
-
   </div>
-
+  <div class="score-leave-modal" id="leave-modal">
+    <div class="score-leave-dialog">
+      <h3>有未保存的评分</h3>
+      <p>是否保存草稿后再离开？</p>
+      <div class="btns">
+        <button class="q-btn" type="button" id="leave-cancel">继续编辑</button>
+        <button class="q-btn" type="button" id="leave-discard">放弃</button>
+        <button class="q-btn q-btn-primary" type="button" id="leave-save">保存草稿</button>
+      </div>
+    </div>
+  </div>
   <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/perf-kr-hierarchy.js"></script>
   <script src="../assets/supervisor-score.js"></script>
-
-  <script>
-
-    var mpDirty = false;
-
-    SupervisorScore.initMpMonthlyScorePage();
-
-    document.querySelectorAll('.mp-score-input').forEach(function (i) {
-
-      i.addEventListener('input', function () { mpDirty = true; });
-
-    });
-
-    function tryLeave() {
-
-      if (mpDirty && !confirm('有未保存改动，确定离开？')) return;
-
-      location.href = 'task-list.html?tab=leader';
-
-    }
-
-  </script>
-
+  <script>SupervisorScore.initMpMonthlyScorePage();</script>
   <script src="../assets/proto-notes-data.js"></script>
   <script src="../assets/proto-notes.js"></script>
 </body>
-
 </html>
-

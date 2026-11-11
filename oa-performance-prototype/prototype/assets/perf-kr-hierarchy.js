@@ -17,7 +17,11 @@
   }
 
   function emptyTarget(block) {
-    return { id: genId('t'), block: block || 'V', smart: '', weight: '', standardTiers: defaultTiers(25), attachRules: '', m: '', selfScore: '', challenge: '' };
+    return { id: genId('t'), block: block || 'V', smart: '', weight: '', standard: '', standardTiers: defaultTiers(25), attachRules: '', m: '', selfScore: '', challenge: '' };
+  }
+
+  function escText(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
   }
 
   function emptyKeyObjective(block, withDemo) {
@@ -325,30 +329,48 @@
       '<span class="perf-del-btn__text">' + label + '</span></button>';
   }
 
-  function renderTargetFields(t, ti, koIdx, opts) {
-    opts = opts || {};
-    var tiers = typeof renderStandardTiersHtml === 'function' ? renderStandardTiersHtml(t, true) : '';
-    var weightChip = t.weight ? t.weight + '%' : '未填权重';
-    var html = '<div class="kr-target-card" data-ko="' + koIdx + '" data-ti="' + ti + '">' +
-      '<div class="kr-target-toolbar">' +
-      levelBadge('l3', 'L3') +
-      '<span class="kr-target-title">考核目标 ' + (ti + 1) + '</span>' +
-      '<span class="kr-target-weight-chip">' + weightChip + '</span>' +
-      (ti > 0 ? delBtn('remove-target', '删除考核目标', { ko: koIdx, ti: ti }) : '<span class="kr-target-toolbar-spacer"></span>') +
-      '</div>' +
-      '<div class="kr-target-body">' +
-      '<div class="field"><label>考核目标 SMART</label><textarea rows="2" data-t="smart" placeholder="具体、可衡量、可达成、相关、有时限">' + (t.smart || '') + '</textarea></div>' +
-      '<div class="field field--weight"><label>KR 权重 %</label><input type="number" min="0" max="100" data-t="weight" value="' + (t.weight || '') + '" />' +
-      '<div class="weight-field-hint" data-weight-hint aria-live="polite"></div></div>' +
-      tiers +
-      '<div class="field"><label>关键成果 M</label><textarea rows="2" data-t="m">' + (t.m || '') + '</textarea></div>';
-    if (!opts.planning) {
-      html += '<div class="field"><label>自评分</label><input type="number" step="0.01" class="perf-score-input" data-perf-score data-t="selfScore" value="' + sIn(t.selfScore) + '" /></div>';
-    } else if (opts.showChallenge) {
-      html += '<div class="field"><label>存在挑战/需求资源</label><textarea rows="2" data-t="challenge">' + (t.challenge || '') + '</textarea></div>';
+  function scoreHead(periodType) {
+    if (periodType === 'quarter') {
+      return '<th class="kr-sheet-score-h kr-sheet-score-h--self">自评分</th>' +
+        '<th class="kr-sheet-score-h kr-sheet-score-h--sup">上级评分</th>' +
+        '<th class="kr-sheet-score-h kr-sheet-score-h--div">分管评分</th>';
     }
-    html += '</div></div>';
-    return html;
+    return '<th class="kr-sheet-score-h kr-sheet-score-h--self">自评分</th>' +
+      '<th class="kr-sheet-score-h kr-sheet-score-h--sup">上级评分</th>';
+  }
+
+  function laterScoreCell(kind) {
+    return '<td class="kr-sheet-score kr-sheet-score--' + kind + '"><span class="kr-sheet-wait">待评</span></td>';
+  }
+
+  function renderTargetRow(t, ti, koIdx, opts, ko, rowCount) {
+    opts = opts || {};
+    var period = opts.periodType || 'month';
+    var oCell = '';
+    if (ti === 0) {
+      oCell = '<td class="kr-sheet-o" rowspan="' + rowCount + '">' +
+        '<textarea data-ko="o" placeholder="描述该关键目标">' + escText(ko.o) + '</textarea></td>';
+    }
+    var tail = '';
+    if (!opts.planning) {
+      tail = '<td class="kr-sheet-m"><textarea data-t="m" placeholder="填写关键成果">' + escText(t.m) + '</textarea></td>' +
+        '<td class="kr-sheet-score kr-sheet-score--self"><input type="number" step="0.01" class="perf-score-input" data-perf-score data-t="selfScore" value="' + sIn(t.selfScore) + '" /></td>' +
+        laterScoreCell('sup') +
+        (period === 'quarter' ? laterScoreCell('div') : '');
+    } else if (opts.showChallenge) {
+      tail = '<td class="kr-sheet-m"><textarea data-t="challenge" placeholder="存在挑战 / 需求资源">' + escText(t.challenge) + '</textarea></td>';
+    }
+    return '<tr class="kr-sheet-row" data-ko="' + koIdx + '" data-ti="' + ti + '">' +
+      oCell +
+      '<td class="kr-sheet-smart"><textarea data-t="smart" placeholder="填入示例">' + escText(t.smart) + '</textarea></td>' +
+      '<td class="kr-sheet-w"><div class="field field--weight">' +
+      '<div class="kr-weight-input"><input type="number" min="0" max="100" data-t="weight" value="' + (t.weight || '') + '" /><span>%</span></div>' +
+      '<span class="kr-target-weight-chip" hidden>' + (t.weight ? t.weight + '%' : '') + '</span>' +
+      '<div class="weight-field-hint" data-weight-hint aria-live="polite"></div></div></td>' +
+      '<td class="kr-sheet-std"><div class="kr-rich" contenteditable="true" data-t="standard" data-placeholder="填写考核标准">' + escText(t.standard || '') + '</div></td>' +
+      tail +
+      '<td class="kr-sheet-op">' + (ti > 0 ? delBtn('remove-target', '删除', { ko: koIdx, ti: ti }) : '') + '</td>' +
+      '</tr>';
   }
 
   function countTargets(list) {
@@ -421,14 +443,32 @@
       }
     }
   }
+  function sheetColgroup(opts) {
+    opts = opts || {};
+    var cols = ['o', 'smart', 'w', 'std'];
+    if (!opts.planning) {
+      cols.push('m', 'score', 'score');
+      if (opts.periodType === 'quarter') cols.push('score');
+    } else if (opts.showChallenge) {
+      cols.push('m');
+    }
+    cols.push('op');
+    return '<colgroup>' + cols.map(function (c) {
+      return '<col class="kr-sheet-' + c + '">';
+    }).join('') + '</colgroup>';
+  }
+
   function renderKeyObjective(ko, koIdx, opts) {
     opts = opts || {};
     var open = opts.isOpen;
     var preview = (ko.o || '').trim().slice(0, 36) || '关键目标 ' + (koIdx + 1);
+    var targetCount = (ko.targets || []).length || 1;
     var targets = (ko.targets || []).map(function (t, ti) {
-      return renderTargetFields(t, ti, koIdx, opts);
+      return renderTargetRow(t, ti, koIdx, opts, ko, targetCount);
     }).join('');
-    var targetCount = (ko.targets || []).length;
+    var headTail = opts.planning
+      ? (opts.showChallenge ? '<th>存在挑战 / 需求资源</th>' : '')
+      : '<th>关键成果 M</th>' + scoreHead(opts.periodType || 'month');
     var koWeightSum = sumKoTargets(ko);
     var weightCap = opts.weightCap;
     var koDel = koIdx > 0 ? delBtn('remove-ko', '删除关键目标', { 'ko-idx': koIdx }) : '';
@@ -447,17 +487,15 @@
       koDel +
       '</div>' +
       '<div class="collapse-body">' +
-      '<div class="ko-section ko-section--l2">' +
-      '<div class="ko-section-head">' + levelBadge('l2', '二级') + '<span>关键目标</span><em>填写 O</em></div>' +
-      '<div class="ko-section-fields">' +
-      '<div class="field"><label>关键目标 O</label><textarea rows="2" data-ko="o" placeholder="描述该关键目标">' + (ko.o || '') + '</textarea></div>' +
-      '</div></div>' +
-      '<div class="ko-section ko-section--l3">' +
-      '<div class="ko-section-head">' + levelBadge('l3', '三级') + '<span>考核目标</span><em>SMART · 权重 · 标准 · 附加规则 · M · 自评</em></div>' +
-      '<div class="kr-target-list">' + targets + '</div>' +
+      '<div class="kr-sheet-wrap">' +
+      '<table class="kr-sheet' + ((opts.periodType === 'quarter') ? ' kr-sheet--quarter' : '') + '">' +
+      sheetColgroup(opts) +
+      '<thead><tr><th class="kr-sheet-o">关键目标 O</th><th class="kr-sheet-smart">考核目标 SMART</th><th class="kr-sheet-w">KR 权重</th><th class="kr-sheet-std">考核标准</th>' +
+      headTail + '<th class="kr-sheet-op-h"></th></tr></thead>' +
+      '<tbody>' + targets + '</tbody></table></div>' +
       renderKoWeightSumBar(ko, koIdx, weightCap) +
       '<button type="button" class="btn btn-sm btn-add-target add-target-btn" data-ko-idx="' + koIdx + '">+ 增加考核目标</button>' +
-      '</div></div></div></div>';
+      '</div></div></div>';
   }
 
   function renderWorkStep(state, listKey, block, opts) {
@@ -478,6 +516,7 @@
           planning: opts.planning,
           showChallenge: opts.showChallenge,
           weightCap: cap,
+          periodType: opts.periodType || 'month',
         });
       }).join('') +
       '</div>' +
@@ -501,6 +540,7 @@
           planning: true,
           showChallenge: true,
           weightCap: cap,
+          periodType: 'next',
         });
       }).join('') +
       '</div>' +
@@ -517,7 +557,7 @@
       var koIdx = +card.dataset.koIdx;
       var ko = list[koIdx];
       if (!ko) return;
-      card.querySelectorAll('.ko-section-fields [data-ko]').forEach(function (inp) {
+      card.querySelectorAll('textarea[data-ko="o"]').forEach(function (inp) {
         inp.addEventListener('input', function () {
           ko[inp.dataset.ko] = inp.value;
           var prev = card.querySelector('.collapse-preview');
@@ -525,13 +565,13 @@
           onChange(false);
         });
       });
-      card.querySelectorAll('.kr-target-card').forEach(function (tc) {
+      card.querySelectorAll('.kr-sheet-row').forEach(function (tc) {
         var ti = +tc.dataset.ti;
         var t = ko.targets[ti];
         if (!t) return;
         tc.querySelectorAll('[data-t]').forEach(function (inp) {
           inp.addEventListener('input', function () {
-            t[inp.dataset.t] = inp.value;
+            t[inp.dataset.t] = inp.getAttribute('contenteditable') != null ? inp.innerText : inp.value;
             if (inp.dataset.t === 'weight') {
               var chip = tc.querySelector('.kr-target-weight-chip');
               if (chip) chip.textContent = inp.value ? inp.value + '%' : '未填权重';
@@ -542,7 +582,7 @@
             onChange(false);
           });
         });
-        if (typeof bindStandardTiers === 'function') bindStandardTiers(tc, t, onChange);
+        if (tc.querySelector('[data-std-tier-field]') && typeof bindStandardTiers === 'function') bindStandardTiers(tc, t, onChange);
       });
       card.querySelector('.add-target-btn')?.addEventListener('click', function (e) {
         e.stopPropagation();

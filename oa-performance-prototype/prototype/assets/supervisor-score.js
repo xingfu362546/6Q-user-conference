@@ -403,6 +403,12 @@
 
   /** 已提交的上级/分管分数（演示：上级已评完的任务） */
   var PRESET_SCORES = {
+    'r-wf-202605': {
+      scores: { v1: 23, v2: 20, v3: 16, v4: 15, x1: 7, x2: 6, b1: 3.5, b2: 3.5, b3: 3, b4: 2.5 },
+      adjustPlus: [2],
+      adjustMinus: [-1],
+      supervisorSubmitted: true,
+    },
     'r-wf-2026q2': {
       scores: { 'q-wf-v1': 25, 'q-wf-v2': 23, 'q-wf-v3': 17, 'q-wf-x1': 8.5, 'q-wf-x2': 5.5 },
       adjustPlus: [2],
@@ -1130,50 +1136,43 @@
         '</div></div></div>';
     }
 
-    function buildKrCards() {
-      var sections = [
-        { key: 'V', title: '核心绩效 V%', cap: BLOCK_LIMITS.V, koKey: 'coreKeyObjectives', items: sub.coreKrs.map(function (k) { return Object.assign({}, k, { block: 'V' }); }) },
-        { key: 'X', title: '常规绩效 X%', cap: BLOCK_LIMITS.X, koKey: 'regularKeyObjectives', items: sub.regularKrs.map(function (k) { return Object.assign({}, k, { block: 'X' }); }) },
-        { key: 'B', title: '行为态度 15%', cap: BLOCK_LIMITS.B, items: sub.behavior.map(function (b) { return { id: b.id, block: 'B', o: b.name, weight: b.weight, m: b.event, selfScore: b.selfScore, standard: b.standard, event: b.event }; }) },
+    /** 横表渲染：与员工填表页同一套列，评分列可编辑 */
+    function buildSheet() {
+      var objectivesSections = [
+        { key: 'V', title: '核心绩效 V%', cap: BLOCK_LIMITS.V, koKey: 'coreKeyObjectives' },
+        { key: 'X', title: '常规绩效 X%', cap: BLOCK_LIMITS.X, koKey: 'regularKeyObjectives' },
       ];
-      listEl.innerHTML = sections.map(function (sec) {
-        var isBehavior = sec.key === 'B';
-        var cards;
-        if (!isBehavior && window.PerfKrHierarchy && sub[sec.koKey] && sub[sec.koKey].length) {
-          var badge = PerfKrHierarchy.levelBadge;
-          cards = sub[sec.koKey].map(function (ko, ki) {
-            var koHead = '<div class="score-ko-group score-ko-group--l2"><div class="score-ko-head">' +
-              (badge ? badge('l2', 'L2') : '') +
-              '<span class="score-ko-label">关键目标 ' + (ki + 1) + '</span>' +
-              '<span class="ko-weight-sum-badge">权重 ' + (window.PerfKrHierarchy ? PerfKrHierarchy.sumKoTargets(ko).toFixed(1) : '0') + '%</span>' +
-              '<div class="score-ko-o">' + (ko.o || '—') + '</div>' +
-              '</div><div class="score-ko-targets">';
-            var targetCards = (ko.targets || []).map(function (t) {
-              return singleKrCard(Object.assign({}, t, { block: sec.key }), sec, false, true);
-            }).join('');
-            return koHead + targetCards + '</div></div>';
-          }).join('');
-        } else {
-          cards = sec.items.map(function (kr) { return singleKrCard(kr, sec, isBehavior); }).join('');
-        }
+      var html = objectivesSections.map(function (sec) {
+        var kos = sub[sec.koKey] || [];
+        if (!kos.length) return '';
         return '<div class="score-block-group" data-block-group="' + sec.key + '">' +
-          '<div class="score-block-head">' + sec.title + ' <span class="score-block-limit">区块上限 ' + sec.cap + ' 分</span></div>' +
+          '<div class="score-block-head">' + sec.title +
+          ' <span class="score-block-limit">区块上限 ' + sec.cap + ' 分</span></div>' +
           '<div class="score-block-cap-line" data-block-cap-line="' + sec.key + '"></div>' +
-          cards + '</div>';
+          window.PerfReviewSheet.renderWorkTable(kos, {
+            periodType: 'month', editable: true, state: state,
+          }) + '</div>';
       }).join('');
 
-      var firstCard = listEl.querySelector('.score-kr-card');
-      if (firstCard) firstCard.classList.add('is-open');
+      if (sub.behavior && sub.behavior.length) {
+        html += '<div class="score-block-group" data-block-group="B">' +
+          '<div class="score-block-head">行为态度 15%' +
+          ' <span class="score-block-limit">区块上限 ' + BLOCK_LIMITS.B + ' 分</span></div>' +
+          '<div class="score-block-cap-line" data-block-cap-line="B"></div>' +
+          window.PerfReviewSheet.renderBehaviorTable(sub.behavior, {
+            periodType: 'month', editable: true, state: state,
+          }) + '</div>';
+      }
 
-      listEl.querySelectorAll('.score-kr-head').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          btn.closest('.score-kr-card').classList.toggle('is-open');
-        });
-      });
+      listEl.innerHTML = html;
       listEl.querySelectorAll('input[data-score-id]').forEach(function (inp) {
         inp.addEventListener('input', function () { markDirty(); refresh(); });
       });
       bindLongTextToggles(listEl);
+    }
+
+    function buildKrCards() {
+      buildSheet();
     }
 
     function updateSubmitButton(supTotals) {
@@ -1207,17 +1206,10 @@
       var totals = calcTotals(sub, state);
       listEl.querySelectorAll('input[data-score-id]').forEach(function (inp) {
         var id = inp.dataset.scoreId;
-        var v = parseFloat(inp.value);
         var err = totals.errors.items[id];
         inp.classList.toggle('is-error', !!err);
-        inp.closest('.score-kr-card').classList.toggle('is-error', !!err);
-        var comp = inp.closest('.score-kr-body').querySelector('.composite-' + id);
-        if (comp && !isNaN(v)) {
-          var self = 0;
-          sub.behavior.forEach(function (b) { if (b.id === id) self = parseFloat(b.selfScore) || 0; });
-          sub.coreKrs.concat(sub.regularKrs).forEach(function (k) { if (k.id === id) self = parseFloat(k.selfScore) || 0; });
-          comp.textContent = sOut(self * 0.2 + v * 0.8);
-        }
+        var row = inp.closest('.kr-sheet-row');
+        if (row) row.classList.toggle('is-error', !!err);
       });
       updateBlockCapLines(totals);
       var hasBlockErr = totals.errors.coreOver || totals.errors.regularOver || totals.errors.behaviorOver || totals.errors.vxOver || totals.errors.workOver;
@@ -1496,36 +1488,36 @@
 
     function buildKrCards() {
       if (!listEl) return;
-      var sections = [
-        { key: 'V', title: '核心绩效 V%', cap: QUARTER_BLOCK_LIMITS.V, koKey: 'coreKeyObjectives', items: sub.coreKrs.map(function (k) { return Object.assign({}, k, { block: 'V' }); }) },
-        { key: 'X', title: '常规绩效 X%', cap: QUARTER_BLOCK_LIMITS.X, koKey: 'regularKeyObjectives', items: sub.regularKrs.map(function (k) { return Object.assign({}, k, { block: 'X' }); }) },
+
+      var objectivesSections = [
+        { key: 'V', title: '核心绩效 V%', cap: QUARTER_BLOCK_LIMITS.V, koKey: 'coreKeyObjectives' },
+        { key: 'X', title: '常规绩效 X%', cap: QUARTER_BLOCK_LIMITS.X, koKey: 'regularKeyObjectives' },
       ];
-      listEl.innerHTML = sections.map(function (sec) {
-        var cards;
-        if (window.PerfKrHierarchy && sub[sec.koKey] && sub[sec.koKey].length) {
-          cards = sub[sec.koKey].map(function (ko, ki) {
-            var koHead = '<div class="score-ko-group score-ko-group--l2"><div class="score-ko-head">' +
-              (PerfKrHierarchy.levelBadge ? PerfKrHierarchy.levelBadge('l2', 'L2') : '') +
-              '<span class="score-ko-label">关键目标 ' + (ki + 1) + '</span>' +
-              '<span class="ko-weight-sum-badge">权重 ' + PerfKrHierarchy.sumKoTargets(ko).toFixed(1) + '%</span>' +
-              '<div class="score-ko-o">' + (ko.o || '—') + '</div></div><div class="score-ko-targets">';
-            return koHead + (ko.targets || []).map(function (t) {
-              return singleQuarterKrCard(Object.assign({}, t, { block: sec.key }), sec, false, true);
-            }).join('') + '</div></div>';
-          }).join('');
-        } else {
-          cards = sec.items.map(function (kr) { return singleQuarterKrCard(kr, sec, false); }).join('');
-        }
+
+      listEl.innerHTML = objectivesSections.map(function (sec) {
+        var kos = sub[sec.koKey] || [];
+        if (!kos.length) return '';
         return '<div class="score-block-group" data-block-group="' + sec.key + '">' +
-          '<div class="score-block-head">' + sec.title + ' <span class="score-block-limit">KR 权重合计 90% · 区块工作分上限 ' + QUARTER_BLOCK_LIMITS.WORK + '</span></div>' +
-          '<div class="score-block-cap-line" data-block-cap-line="' + sec.key + '"></div>' + cards + '</div>';
+          '<div class="score-block-head">' + sec.title +
+          ' <span class="score-block-limit">KR 权重合计 90% · 区块工作分上限 ' + QUARTER_BLOCK_LIMITS.WORK + '</span></div>' +
+          '<div class="score-block-cap-line" data-block-cap-line="' + sec.key + '"></div>' +
+          window.PerfReviewSheet.renderWorkTable(kos, {
+            periodType: 'quarter',
+            editable: canEditSupCol || canEditDivCol,
+            state: state,
+          }) + '</div>';
       }).join('');
 
-      var first = listEl.querySelector('.score-kr-card');
-      if (first) first.classList.add('is-open');
-      listEl.querySelectorAll('.score-kr-head').forEach(function (btn) {
-        btn.addEventListener('click', function () { btn.closest('.score-kr-card').classList.toggle('is-open'); });
+      // 已录入的列按角色只读/可编辑处理：读不到编辑权限的列在这里锁成只读输入框
+      listEl.querySelectorAll('input[data-score-id]').forEach(function (inp) {
+        var col = inp.dataset.scoreCol;
+        var canEdit = col === 'div' ? canEditDivCol : canEditSupCol;
+        if (!canEdit) {
+          inp.setAttribute('disabled', 'disabled');
+          inp.setAttribute('readonly', 'readonly');
+        }
       });
+
       bindScoreInputs();
       bindLongTextToggles(listEl);
     }
@@ -1596,7 +1588,8 @@
         listEl.querySelectorAll('input[data-score-col="' + (idx === 0 ? 'sup' : 'div') + '"]').forEach(function (inp) {
           var err = totals.errors.items[inp.dataset.scoreId];
           inp.classList.toggle('is-error', !!err);
-          inp.closest('.score-kr-card').classList.toggle('is-error', !!err);
+          var row = inp.closest('.kr-sheet-row');
+          if (row) row.classList.toggle('is-error', !!err);
         });
       });
 
@@ -1792,6 +1785,7 @@
     initMpMonthlyScorePage: initMpMonthlyScorePage,
     calcTotals: calcTotals,
     calcSelfTotal: calcSelfTotal,
+    PRESET_SCORES: PRESET_SCORES,
     ADJUST_LIMITS: ADJUST_LIMITS,
     BLOCK_LIMITS: BLOCK_LIMITS,
   };

@@ -19,8 +19,8 @@
 | pending_confirm | 2026年5月 | 确认评分 |
 | filling | 2026年4月 | 继续填写 + 快速带入 |
 | not_started | 2026年6月 | 开始填写 |
-| pending_supervisor | 2026年3月 | 查看进度 |
-| pending_division | 2026 Q2 | 查看进度 |
+| pending_supervisor | 2026年3月 | 查看进度 + **查看自填内容** |
+| pending_division | 2026 Q2 | 查看进度 + **查看自填内容** |
 
 ## 操作映射
 
@@ -28,8 +28,8 @@
 |-------|--------|
 | not_started | 开始填写 → wizard |
 | filling | 继续填写 + 快速带入（月） |
-| pending_supervisor / pending_division | 查看进度 → employee-task-progress.html |
-| pending_confirm | 确认评分 → score-confirm.html |
+| pending_supervisor / pending_division | 查看进度 + **查看自填内容** → past-view |
+| pending_confirm | 确认评分 + **查看自填内容** → score-confirm / past-view |
 | confirmed | 查看自填 → personal-perf-past-view.html |
 
 ## 待决（Grill 议题）
@@ -67,3 +67,13 @@
 ### Q6 · 小程序列表 badge？✅ 同上
 
 小程序卡片与 OA 一致：列表仅「待确认」标签 + 步骤条；点进 `score-confirm.html` 再看确认详情。
+
+### Q7 · 提交后能否回看自填详情？✅ 已定：A（v1.4.2）
+
+**范围**：仅员工自填快照（KR / 行为 / 加减分 / 下月·下季目标 / 自评总结）；**不含**上级/分管分（Q2 不变）。
+
+**载体**：独立页 `personal-perf-past-view.html` / `task-past-view.html`；进度页与待办列表提供入口。
+
+**形态**：L2→L3 折叠卡，与领导 v1.4.1 确认页同源 `renderKrReadonly`；月/季与归档回看**同一渲染器、同一数据源映射**。
+
+**phase**：`pending_supervisor` 起可进入；`filling` 半稿仍走 wizard。

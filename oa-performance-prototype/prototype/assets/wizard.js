@@ -357,9 +357,9 @@ function sumWeight(rows) {
 
 
 
-function renderHeader(el) {
+function renderHeader(el, header) {
 
-  const h = MOCK_HEADER;
+  const h = header || MOCK_HEADER;
 
   el.innerHTML = `
 
@@ -714,7 +714,7 @@ function renderStepContent(state) {
   if (s === 1 && window.PerfKrHierarchy) {
     return PerfKrHierarchy.renderWorkStep(state, 'coreKeyObjectives', 'V', {
       openKey: 'core', periodType: 'month', globalBar: true,
-      desc: '一级 · 核心绩效 V%：可<strong>增加多个关键目标</strong>（各填 O）；其下<strong>考核目标</strong>填 SMART / 权重 / 标准 / M / 自评；顶部为全区权重合计',
+      desc: '月度表按列填写：关键目标、考核目标、权重、考核标准（整段填写）、关键成果、自评分。上级评分在评分阶段填写，此处为占位。',
     });
   }
 
@@ -1111,6 +1111,34 @@ function initMonthlyWizard(opts) {
   const storageKey = opts.storageKey || 'perf-monthly-draft';
 
   let state = loadState(storageKey);
+  window.__mAuto = window.PerfAutosave ? PerfAutosave.bind({
+    save: function () {
+      saveState(storageKey, state);
+      var el = document.getElementById('save-time');
+      if (el) el.textContent = '最新保存时间：' + PerfAutosave.format(new Date());
+      return true;
+    },
+    onFail: function () {
+      var el = document.getElementById('save-time');
+      if (el) el.textContent = '未保存成功';
+    }
+  }) : null;
+  document.addEventListener('input', function (ev) {
+    if (!(ev.target.closest && ev.target.closest('#wizard-content'))) return;
+    saveState(storageKey, state);
+    if (window.__mAuto) window.__mAuto.mark();
+  });
+  var mSave = document.getElementById('btn-save');
+  if (mSave) mSave.addEventListener('click', function () {
+    if (window.__mAuto) window.__mAuto.saveNow();
+  });
+  var mPreview = document.getElementById('btn-preview');
+  if (mPreview) mPreview.addEventListener('click', function () {
+    if (window.PerfQuarterFill && PerfQuarterFill.openMonthly) {
+      PerfQuarterFill.openMonthly(state, typeof BEHAVIOR_ITEMS !== 'undefined' ? BEHAVIOR_ITEMS : []);
+    }
+  });
+
 
   seedDemoGoals(state);
 
@@ -1287,26 +1315,30 @@ function initMonthlyWizard(opts) {
 
 const QUARTERLY_STEPS = [
 
-  { id: 1, title: '核心绩效 V%', phase: 0, subtitle: '【A】本季考评 · 1/7' },
+  { id: 1, title: '核心绩效 V%', phase: 0, subtitle: '【A】本季考评 · 1/9' },
 
-  { id: 2, title: '常规绩效 X%', phase: 0, subtitle: '【A】本季考评 · 2/7' },
+  { id: 2, title: '常规绩效 X%', phase: 0, subtitle: '【A】本季考评 · 2/9' },
 
-  { id: 3, title: '6Q3J 人才评价', phase: 0, subtitle: '【A】本季考评 · 3/7' },
+  { id: 3, title: '6Q3J 人才评价', phase: 0, subtitle: '【A】本季考评 · 3/9' },
 
-  { id: 4, title: '绩效面谈', phase: 0, subtitle: '【A】本季考评 · 4/7' },
+  { id: 4, title: '专项激励', phase: 0, subtitle: '【A】本季考评 · 4/9' },
 
-  { id: 5, title: '自评总结', phase: 0, subtitle: '【A】本季考评 · 5/7' },
+  { id: 5, title: '减分项', phase: 0, subtitle: '【A】本季考评 · 5/9' },
 
-  { id: 6, title: '下季核心目标', phase: 1, subtitle: '【B】下季目标 · 6/7' },
+  { id: 6, title: '绩效面谈', phase: 0, subtitle: '【A】本季考评 · 6/9' },
 
-  { id: 7, title: '确认提交', phase: 2, subtitle: '确认提交 · 7/7' },
+  { id: 7, title: '自评总结', phase: 0, subtitle: '【A】本季考评 · 7/9' },
+
+  { id: 8, title: '下季核心目标', phase: 1, subtitle: '【B】下季目标 · 8/9' },
+
+  { id: 9, title: '确认提交', phase: 2, subtitle: '确认提交 · 9/9' },
 
 ];
 
 const Q_PHASE_BLOCKS = [
-  { id: 0, name: '【A】本季考评', desc: '工作 KR · 6Q3J · 面谈 · 总结', steps: [1, 2, 3, 4, 5] },
-  { id: 1, name: '【B】下季目标', desc: '下季核心 KR 2–3 项', steps: [6] },
-  { id: 2, name: '确认提交', desc: '校验并提交', steps: [7] },
+  { id: 0, name: '【A】本季考评', desc: '工作 KR · 6Q3J · 专项 · 减分 · 面谈 · 总结', steps: [1, 2, 3, 4, 5, 6, 7] },
+  { id: 1, name: '【B】下季目标', desc: '下季核心目标 3–5 条', steps: [8] },
+  { id: 2, name: '确认提交', desc: '预览并提交', steps: [9] },
 ];
 
 const QUARTER_MOCK_HEADER = {
@@ -1369,6 +1401,58 @@ function initQuarterlyWizard(opts) {
 
   if (headerEl) renderHeader(headerEl, opts.header || QUARTER_MOCK_HEADER);
 
+  var qKey = 'perf-quarter-draft-' + qPlanId + '-' + qEmpNo;
+  var qSavedRaw = null;
+  try { qSavedRaw = JSON.parse(localStorage.getItem(qKey) || 'null'); } catch (e1) { qSavedRaw = null; }
+  if (qSavedRaw && qSavedRaw.qState) {
+    Object.keys(qSavedRaw.qState).forEach(function (k) { qState[k] = qSavedRaw.qState[k]; });
+    if (qSavedRaw.interview) Object.keys(qSavedRaw.interview).forEach(function (k) { interview[k] = qSavedRaw.interview[k]; });
+    if (typeof qSavedRaw.selfSummary === 'string') selfSummary = qSavedRaw.selfSummary;
+    if (qSavedRaw.step) step = qSavedRaw.step;
+    if (window.PerfQuarterFill) PerfQuarterFill.restore(qSavedRaw.extra);
+  } else if (qState.nextSeasonKeyObjectives && window.PerfKrHierarchy) {
+    while (qState.nextSeasonKeyObjectives.length < 3) {
+      qState.nextSeasonKeyObjectives.push(PerfKrHierarchy.emptyKeyObjective('next', false));
+    }
+  }
+  function persistQuarter() {
+    try {
+      localStorage.setItem(qKey, JSON.stringify({
+        step: step,
+        qState: qState,
+        interview: interview,
+        selfSummary: selfSummary,
+        extra: window.PerfQuarterFill ? PerfQuarterFill.snapshot() : null,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (e2) {
+      var fail = document.getElementById('save-time');
+      if (fail) fail.textContent = '未保存成功';
+      return false;
+    }
+    var el = document.getElementById('save-time');
+    if (el && window.PerfAutosave) el.textContent = '最新保存时间：' + PerfAutosave.format(new Date());
+    return true;
+  }
+  function quarterCtx() {
+    return {
+      state: qState,
+      interview: interview,
+      summary: function () { return selfSummary; },
+      planId: qPlanId,
+      empNo: qEmpNo,
+      mark: function () { if (window.__qAuto) window.__qAuto.mark(); }
+    };
+  }
+  window.__qAuto = window.PerfAutosave ? PerfAutosave.bind({
+    save: persistQuarter,
+    onFail: function () {
+      var el = document.getElementById('save-time');
+      if (el) el.textContent = '未保存成功';
+    }
+  }) : null;
+
+
 
 
   function renderQStepper() {
@@ -1377,7 +1461,7 @@ function initQuarterlyWizard(opts) {
       step = n;
       refresh();
     }, function (el) {
-      if (window.PerfKrHierarchy) PerfKrHierarchy.markStepperWeightErrors(el, qState, 'quarter', [1, 2], 6);
+      if (window.PerfKrHierarchy) PerfKrHierarchy.markStepperWeightErrors(el, qState, 'quarter', [1, 2], 8);
     });
 
   }
@@ -1394,8 +1478,7 @@ function initQuarterlyWizard(opts) {
         var ws = PerfKrHierarchy.weightStatus(qState, 'quarter');
         bodyEl.innerHTML = PerfKrHierarchy.renderWorkStep(qState, lk, bl, {
           openKey: ok, periodType: 'quarter',
-          desc: '【A】' + (step === 1 ? '核心绩效 V%' : '常规绩效 X%') +
-            ' · 三级结构。核心+常规 KR 权重须 = <b>90%</b>（当前 ' + ws.total.toFixed(1) + '%）',
+          desc: '季度表按列填写。评分列为<strong>自评分 / 上级评分 / 分管评分</strong>，员工只填自评，后两列待评。核心+常规权重须 = <b>90%</b>（当前 ' + ws.total.toFixed(1) + '%）',
         });
         PerfKrHierarchy.bindKeyObjectiveList(bodyEl, qState, lk, ok, bl, function (full) {
           if (full) renderQBody();
@@ -1438,7 +1521,9 @@ function initQuarterlyWizard(opts) {
 
       bindCollapseCards(bodyEl);
 
-    } else if (step === 4) {
+    } else if (step === 4 || step === 5) {
+      if (window.PerfQuarterFill) PerfQuarterFill.render(step, bodyEl, quarterCtx());
+    } else if (step === 6) {
 
       bodyEl.innerHTML = `
 
@@ -1472,16 +1557,16 @@ function initQuarterlyWizard(opts) {
 
       });
 
-    } else if (step === 5) {
+    } else if (step === 7) {
 
       bodyEl.innerHTML = `<div class="field"><label>自评总结</label><textarea rows="6" id="q-summary">${selfSummary}</textarea></div>`;
 
       bodyEl.querySelector('#q-summary').addEventListener('input', e => { selfSummary = e.target.value; });
 
-    } else if (step === 6) {
+    } else if (step === 8) {
       if (window.PerfKrHierarchy) {
         bodyEl.innerHTML = PerfKrHierarchy.renderNextPeriodStep(qState, 'nextSeasonKeyObjectives', {
-          desc: '【B】下季核心目标 · 关键目标 → 考核目标；KR 权重合计 = 100%',
+          desc: '【B】下季核心目标 3–5 条 · 关键目标 → 考核目标；KR 权重合计 = 100%',
         });
         PerfKrHierarchy.bindKeyObjectiveList(bodyEl, qState, 'nextSeasonKeyObjectives', 'next', 'next', function (full) {
           if (full) renderQBody();
@@ -1494,7 +1579,7 @@ function initQuarterlyWizard(opts) {
         return;
       }
       bodyEl.innerHTML =
-        '<p class="section-desc">【B】下季核心目标 2–3 项 · 含考核标准分档。</p>' +
+        '<p class="section-desc">【B】下季核心目标 3–5 条 · 含考核标准分档。</p>' +
         collapseToolbar('next-list') +
         '<div id="next-list">' + (qState.nextSeasonKrs || []).map(function (k, i) {
           return nextMonthFields(k, i, isKrOpen(qState, 'next', i));
@@ -1528,6 +1613,8 @@ function initQuarterlyWizard(opts) {
 
     renderQBody();
 
+    if (step === 8 && window.PerfQuarterFill) PerfQuarterFill.enhanceNext(bodyEl, quarterCtx());
+
     btnPrev.disabled = step === 1;
 
     btnNext.textContent = step === QUARTERLY_STEPS.length ? '确认提交' : '下一步';
@@ -1554,6 +1641,7 @@ function initQuarterlyWizard(opts) {
   btnNext.addEventListener('click', () => {
 
     if (step === QUARTERLY_STEPS.length) {
+      if (window.PerfQuarterFill && !PerfQuarterFill.validate(quarterCtx())) return;
       if (window.PerfKrHierarchy) {
         qState.nextMonthKeyObjectives = qState.nextSeasonKeyObjectives;
         if (!PerfKrHierarchy.validateSubmit(qState, 'quarter', 'nextSeasonKeyObjectives')) return;
@@ -1572,6 +1660,19 @@ function initQuarterlyWizard(opts) {
   window.addEventListener('perf-sixq3j-updated', onSixQ3jUpdated);
   window.addEventListener('storage', function (e) {
     if (e.key === 'perf-sixq3j-' + qPlanId && step === 3) renderQBody();
+  });
+
+  var btnSave = document.getElementById('btn-save');
+  if (btnSave) btnSave.addEventListener('click', function () {
+    if (window.__qAuto) window.__qAuto.saveNow();
+    else persistQuarter();
+  });
+  var btnPreview = document.getElementById('btn-preview');
+  if (btnPreview) btnPreview.addEventListener('click', function () {
+    if (window.PerfQuarterFill) PerfQuarterFill.openPreview(quarterCtx());
+  });
+  document.addEventListener('input', function (ev) {
+    if (ev.target.closest && ev.target.closest('#wizard-content') && window.__qAuto) window.__qAuto.mark();
   });
 
   refresh();

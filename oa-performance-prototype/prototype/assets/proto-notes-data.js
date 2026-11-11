@@ -616,17 +616,23 @@ window.PROTO_NOTE_PAGES = {
         n: 1,
         attach: '#confirm-body',
         title: '员工/上级确认页',
+        ver: 'v1.5.0',
         body:
-          '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">月：上级提交 → 待确认（不等分管）→ 员工+上级确认 → confirmed</div>' +
-          '<div class="proto-flow">季：上级→待分管评→分管提交→待确认→员工+上级+分管确认→confirmed</div>' +
-          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>上级评完 → 分管核定 → 双方确认 → completed</p>' +
-          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>模块<strong>表格</strong>（自评|上级评）+ 底部<strong>折算汇总</strong></p>' +
-          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>三分确认 badge；季度 <code>?type=quarter&role=division</code> 分管可确认；改总分仅清零已 ✓ 方</p>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>URL <code>?role=employee|leader|division</code>；<code>PerfScoreSummary.renderConfirmPage()</code> 与 HR 详情共用。</p>' +
-          '<p class="proto-sec">研发 · 列表 vs 确认页</p>' +
-          '<p>待办<strong>列表</strong>仅 phase 单标签「待确认」；本页才展示 renderConfirmBadges + 模块明细 + 折算汇总。见 DEV-GUIDE-v1.4.0.md。</p>',
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>确认页只对照自评和上级（季度再加分管）的横表，底部是折算汇总。分管改核定总分后，已经点过确认的一方要重新确认。页面正文字号沿用绩效页约 13px。季度没有专项激励档次。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
+          '<p>确认页绩效表正文、表头、分数和页内说明统一为 14px，导航不改。系统汇总、上级/分管核定、HR 最终总分、当前采用分同时出现。有 HR 最终总分时，采用分取它，确认状态保持不变，不要求重确认。季度另显示核定总分（不含专项）、专项得分、建议档次和建议金额。建议金额只展示，不写入奖金发放。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>尚未有 HR 改分：只显示系统汇总和核定分，采用分等于核定分</li>' +
+          '<li>HR 已改分：多一行最终总分，并写出修改前分数、原因和修改人</li>' +
+          '<li>季度专项未评定：档次为「暂不认定（未评定）」</li>' +
+          '<li>当前角色已确认：隐藏确认按钮，保留分数对照</li></ol>' +
+          '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
+          '<tr><td>系统汇总</td><td>只读</td><td>是</td><td>工作成果 + 6Q3J + 减分，样例为 89.2</td></tr>' +
+          '<tr><td>上级 / 分管核定</td><td>只读</td><td>是</td><td>分管改过则带「已调整」</td></tr>' +
+          '<tr><td>HR 最终总分</td><td>只读</td><td>否</td><td>仅在 HR 保存过修改时出现</td></tr>' +
+          '<tr><td>当前采用分</td><td>只读</td><td>是</td><td>有 HR 最终总分时取该值</td></tr>' +
+          '<tr><td>确认评分结果</td><td>按钮</td><td>否</td><td>当前角色未确认时才出现</td></tr></table>',
       },
       {
         n: 2,
@@ -680,21 +686,14 @@ window.PROTO_NOTE_PAGES = {
         n: 1,
         attach: '#stepper',
         title: '向导 · 双栏布局（方案 A）',
+        ver: 'v1.5.0',
         body:
-          '<p class="proto-sec">入口</p>' +
-          '<p>无侧栏菜单项；从绩效待办 / 逾期 Tab「继续填写」进入。提交 onSubmit → 跳回 personal-perf。</p>' +
-          '<p class="proto-sec">业务流程</p>' +
-          '<p>Phase 条：【A】本月考评（1–4）→ 【B】下月目标（5）→ 确认提交（6）；左栏 6 步，右栏进度同步。</p>' +
-          '<p class="proto-sec">v1.3 · 考核目标</p>' +
-          '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>核心/常规各填「指标 KR」，Step1/2 各 1 项为主</p>' +
-          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>统一称<strong>考核目标</strong>，V/X/下月·下季均可<strong>多个目标</strong>；每目标含 O+SMART+权重+标准+M+自评</p>' +
-          '<p class="proto-sec">v1.1 调整</p>' +
-          '<p>核心/常规 KR 在同页填 M+自评；行为步含加减分申报；无独立自评步。</p>' +
-          '<p class="proto-sec">数据流转</p>' +
-          '<ul><li>storageKey=<code>perf-monthly-oa-pc</code> 区分端</li>' +
-          '<li>提交 onSubmit → 跳 personal-perf</li></ul>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>Ant Design 风格组件；字段校验正式环境 Step6 启用（权重/必填/下月目标）。</p>',
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>月度仍是 6 步：核心 V、常规 X、行为态度与加减分、自评总结、下月目标、确认提交。考核目标可以有多条，标准用分档。草稿键与小程序分开。没有整表预览，也没有和提交并排的手动保存。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
+          '<p>月度区块不改，不增加专项激励。新增「保存」和「预览全部」。预览用同一套横表画出核心 V、常规 X、行为态度、加减分、自评总结和下月目标，只读。输入后把草稿标脏，连续 2 分钟没有新的内容变化就保存一次，并显示最新保存时间。滚动和翻页不算新操作。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>尚未保存：时间行显示「尚未保存」</li><li>保存成功：显示到分钟的最新保存时间</li><li>保存失败：时间不更新，并提示未保存成功</li><li>预览打开：大画布，不含专项激励</li></ol>',
       },
       {
         n: 2,
@@ -726,16 +725,21 @@ window.PROTO_NOTE_PAGES = {
         n: 1,
         attach: '#stepper',
         title: 'Phase 步骤条（方案 A）',
+        ver: 'v1.5.0',
         body:
-          '<p class="proto-sec">入口</p>' +
-          '<p>无侧栏菜单项；从绩效待办点季度任务「开始填写」进入。</p>' +
-          '<p class="proto-sec">业务流程</p>' +
-          '<div class="proto-flow">【A】本季考评（1–5）→ 【B】下季目标（6）→ 确认提交（7）</div>' +
-          '<p class="proto-sec">v1.1</p><p>取消独立加减分/自评步；KR 在步1–2 同页填 M+自评。</p>' +
-          '<p class="proto-sec">数据流转</p>' +
-          '<p>v1.0 月/季统一 <code>renderPhaseStepper()</code>，替代旧 stepper-phases 样式。</p>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>提交后进入「上级评 + 分管评」双节点（OA）；小程序仅员工填表。</p>',
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>季度向导是 7 步：核心 V、常规 X、6Q3J、绩效面谈、自评总结、下季目标、确认提交。工作 KR 权重合计 90%。下季目标按 2 到 3 条理解。没有专项激励，也没有独立减分步。提交前没有整表预览，停在同一步时不会按 2 分钟自动保存。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
+          '<p>步骤改为 9 步。在 6Q3J 之后增加专项激励和减分。专项激励替代原来的加分项，最多 3 条，选填；选定超越类型后自评分自动带出且不可改。减分必须小于等于 0，按自评 20%、上级 40%、分管 40% 计入核定总分，未填的一方按 0。专项得分不进核定总分。下季核心目标改为 3 到 5 条，每条要选是否跟上级对标。最后一步和中途都可以点「预览全部」，画布展示核心 V、常规 X 以及后面各区块，只读。内容变脏后连续 2 分钟无新改动自动保存，并显示最新保存时间。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>专项 0 条：可以提交</li><li>已有 3 条：添加按钮禁用</li><li>选了类型但目标和成果为空：提交被拒绝</li><li>减分为正数：当前步提示，提交被拒绝</li><li>预览打开：整页遮罩上的大画布，点返回或遮罩关闭</li></ol>' +
+          '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
+          '<tr><td>关键目标 / 关键成果</td><td>输入</td><td>选了类型后必填</td><td>专项申报，最多 3 条</td></tr>' +
+          '<tr><td>超越类型</td><td>下拉</td><td>否</td><td>20 个员工可选类型，自评分等于该档分值</td></tr>' +
+          '<tr><td>附件</td><td>输入</td><td>否</td><td>不拦截提交</td></tr>' +
+          '<tr><td>减分事件 / 自评分</td><td>输入</td><td>有减分时说明必填</td><td>分数 ≤ 0</td></tr>' +
+          '<tr><td>是否跟上级对标</td><td>下拉</td><td>是</td><td>下季每条为「是」或「否」</td></tr>' +
+          '<tr><td>保存 / 预览全部</td><td>按钮</td><td>否</td><td>保存不提交；预览不能改字</td></tr></table>',
       },
       {
         n: 2,
@@ -931,6 +935,30 @@ window.PROTO_NOTE_PAGES = {
   },
 
   /* ───────────── HR 端 ───────────── */
+  'hr-evaluators': {
+    title: 'HR · 评价人维护',
+    notes: [
+      {
+        n: 1,
+        attach: '.q-toolbar',
+        title: '评价人按工号维护',
+        ver: 'v1.5.0',
+        body:
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>没有独立的评价人名单。计划明细里处理人经常落成「默认上级」。批量转办只能改已经发出的待办，不能作为全员评价关系的主数据。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
+          '<p>绩效管理下新增「评价人维护」，与计划管理并列。一名员工对应一名评价人，双方都用工号识别，评价人就是直接上级。分管领导不在这张表里。可以改单行，也可以下载当前名单后按 CSV 导入。表头必须是员工工号、评价人工号、员工姓名、评价人姓名，后两列可空。先校验全部行：员工工号或评价人工号不存在、文件里员工工号重复、评价人是员工本人、或填写的姓名和主数据不一致，整批一行都不写，并列出失败行号和工号。文件里没出现的员工保持原评价人。变更后，尚未完成上级评分的待办，当前处理人改为新评价人；已经评完的历史评分人不改。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>没有评价人：评价人姓名显示未指定</li><li>单行保存失败：行上不改，页顶写出原因</li><li>导入失败：成功行数为 0，错误列出每一行</li><li>导入成功：只更新文件中的员工，并提示人数</li></ol>' +
+          '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
+          '<tr><td>员工工号</td><td>只读 / 导入列</td><td>是</td><td>人员主数据中必须存在</td></tr>' +
+          '<tr><td>评价人工号</td><td>输入 / 导入列</td><td>有评价人时必填</td><td>必须存在，且不能等于员工工号</td></tr>' +
+          '<tr><td>员工姓名 / 评价人姓名</td><td>导入列</td><td>否</td><td>填写了就必须和工号一致</td></tr>' +
+          '<tr><td>下载当前名单</td><td>按钮</td><td>否</td><td>UTF-8 CSV，可改后再导入</td></tr></table>',
+      },
+    ],
+  },
+
   'hr-plan-list': {
     title: 'HR · 计划列表',
     notes: [
@@ -951,18 +979,20 @@ window.PROTO_NOTE_PAGES = {
         n: 2,
         attach: '.q-table-wrap',
         title: '计划表 · 字段含义',
+        ver: 'v1.5.0',
         body:
-          '<p class="proto-sec">数据流转</p>' +
-          '<dl class="proto-kv">' +
-          '<dt>计划名称</dt><dd>HR 命名，如「2026年5月月度考核」</dd>' +
-          '<dt>考核类型</dt><dd>month | quarter → 决定模板池与奖金规则类型</dd>' +
-          '<dt>周期</dt><dd>2026-05 或 2026-Q2，业务主键之一</dd>' +
-          '<dt>参与范围</dt><dd>已配置范围包数 · 已分配人数；草稿显示「未分配」</dd>' +
-          '<dt>状态</dt><dd>draft / active / closed</dd>' +
-          '<dt>进度</dt><dd>已提交人数 / 应参与人数（已发放包内）</dd>' +
-          '<dt>操作</dt><dd>明细 / 催办 / 编辑(草稿) / 发放(草稿包)</dd></dl>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>closed 后员工不可提交；HR 仍可看明细与结算导出。</p>',
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>计划发出后，列表只能进明细和催办。名称、启动时间、员工填写截止、上级评分截止、确认截止要改，只能重做一张计划。同周期仍然只能有一张计划。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
+          '<p>每一行增加「编辑」。可以改计划名称和四个时间，不能改考核类型、参与范围和奖金规则。名称去掉首尾空格后不能和其他计划相同，和自己原来的名称相同可以保存。四个时间必须满足启动不晚于员工填写截止、员工填写截止不晚于上级评分截止、上级评分截止不晚于确认截止。已发放的计划也可以改。未完成待办按新截止判断逾期，已完成的待办不重新打开。员工打开的仍是原来那张待办，标题用新名称。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>名称冲突：不保存，并指出已有计划</li><li>时间顺序不合法：不保存</li><li>保存成功：列表名称立即换成新名称</li></ol>' +
+          '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
+          '<tr><td>计划名称</td><td>输入</td><td>是</td><td>去首尾空格后全库唯一</td></tr>' +
+          '<tr><td>启动时间</td><td>时间</td><td>是</td><td>四个时间的第一个</td></tr>' +
+          '<tr><td>员工填写截止</td><td>时间</td><td>是</td><td>未提交待办用它判断逾期</td></tr>' +
+          '<tr><td>上级评分截止</td><td>时间</td><td>是</td><td>季度分管评分沿用这个时间</td></tr>' +
+          '<tr><td>确认截止</td><td>时间</td><td>是</td><td>员工和上级共用</td></tr></table>',
       },
     ],
   },
@@ -1230,29 +1260,34 @@ window.PROTO_NOTE_PAGES = {
         n: 4,
         attach: '.perf-filter-panel',
         title: '员工列表 · 筛选',
+        ver: 'v1.5.1',
         body:
-          '<p class="proto-sec">数据流转</p>' +
-          '<p>filter：org / level / status / keyword → 前端过滤 task 行；默认「全部」防误筛空。</p>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>主要组织取花名册 primaryOrg；与范围包组织范围可不同（以 pack 归属为准）。</p>',
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>筛选只有全部、未开始、填写中、已提交、已逾期。处理人没有姓名时显示「默认上级」。退回只有「退回至员工」一条，不能选节点。已全部确认后不能再退，也不能在双方确认后改最终总分。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.1</span>现在的逻辑</h4>' +
+          '<p>筛选增加待上级评价、已完成、已失效，原有筛选项保留。处理人按当前节点显示真实姓名。待办还在初始节点（未开始、填写中、已逾期）时不出现「退至」。已经离开初始节点后，按钮文案是「退至」，用节点步骤选择已经走过、且不是当前所在的节点，不能手输。月度是员工填写、上级评分；季度再加分管评分。原因和节点都必填。已全部确认的待办也可以退至，确认状态作废，已填内容和分数仍留在输入框。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>筛选「待上级评价」：每一行状态都是待上级评价</li><li>初始节点：操作里没有「退至」</li><li>退至未到达的节点：拒绝，状态不变</li><li>原因为空：不退至</li><li>退至成功：处理人变为该节点的责任人，分数格仍显示原值</li></ol>',
       },
       {
         n: 5,
         attach: '.q-table-wrap',
         title: '员工任务表 · 字段',
+        ver: 'v1.5.1',
         body:
-          '<p class="proto-sec">数据流转</p>' +
-          '<dl class="proto-kv">' +
-          '<dt>姓名/工号</dt><dd>花名册</dd>' +
-          '<dt>组织/岗位/职级</dt><dd>主数据；职级参与奖金分组</dd>' +
-          '<dt>所属范围包</dt><dd>scopePack.name（可自定义）</dd>' +
-          '<dt>匹配模板</dt><dd>scopePack.templateName</dd>' +
-          '<dt>任务状态</dt><dd>filling/submitted/scoring/scored/overdue/returned</dd>' +
-          '<dt>处理人</dt><dd>当前待办责任人；批量转办后更新（v1.1.1）</dd>' +
-          '<dt>提交时间</dt><dd>submittedAt</dd>' +
-          '<dt>操作</dt><dd>催办 / 解锁 / 查看详情 / 退回至员工 / <strong>批量转办</strong>（v1.1.1）</dd></dl>' +
-          '<p class="proto-sec">规则说明</p>' +
-          '<p>一行 = 计划×员工 唯一任务；勾选多条 → 批量转办 → 组织架构选人；处理人列展示转办结果。</p>',
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
+          '<p>一行是计划乘员工。操作是催办、解锁、查看详情、退回至员工和批量转办。失效待办没有单独状态。范围包模板和本期名单绑在一起，不能只把一个人从本期拿掉还留着填写记录。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.1</span>现在的逻辑</h4>' +
+          '<p>操作随状态变化。还在初始节点时没有「退至」。离开初始节点后显示「退至」。未失效时显示「失效」，已失效时只显示「恢复」。失效必须填原因，并从当时所在的已发放范围包移除该员工，状态用红色「已失效」。一个人同时只属于一个范围包。失效后可以被新的范围包选中；若已经在另一个范围包里，不能恢复。恢复是把人加回原来那次发放的范围包，并重新发放同一张待办：不新建第二条，节点回到未开始，因此没有「退至」。原填写和分数留在记录里。改总分仍是同一个弹窗。导出仍是先看整表再导出。</p></div>' +
+          '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
+          '<tr><td>处理人</td><td>只读</td><td>是</td><td>按节点显示姓名，禁止「默认上级」</td></tr>' +
+          '<tr><td>退至节点</td><td>节点步骤</td><td>已离开初始节点时必填</td><td>初始节点不出现该按钮；不能手输，也不能选当前节点</td></tr>' +
+          '<tr><td>退至原因</td><td>输入</td><td>是</td><td>和节点在同一个弹窗提交</td></tr>' +
+          '<tr><td>失效状态</td><td>红色标签</td><td>是</td><td>已失效用红色标出</td></tr>' +
+          '<tr><td>失效原因</td><td>输入</td><td>是</td><td>同时移出原已发放范围包</td></tr>' +
+          '<tr><td>恢复</td><td>按钮</td><td>仅已失效</td><td>加回原范围包，并重新发放同一张待办到未开始</td></tr>' +
+          '<tr><td>最终总分 / 原因</td><td>数字 + 输入</td><td>改分时都必填</td><td>同一个弹窗保存</td></tr>' +
+          '<tr><td>导出图片</td><td>先预览再导出</td><td>否</td><td>整表 PNG，不是局部区块</td></tr></table>',
       },
       {
         n: 6,

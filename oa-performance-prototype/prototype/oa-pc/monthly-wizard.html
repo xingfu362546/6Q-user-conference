@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -25,14 +25,11 @@
                 <div id="wizard-content"></div>
                 <div style="display:flex;gap:12px;margin-top:16px">
                   <button type="button" class="q-btn" id="btn-prev">上一步</button>
+                  <button type="button" class="q-btn" id="btn-save">保存</button>
+                  <button type="button" class="q-btn" id="btn-preview">预览全部</button>
                   <button type="button" class="q-btn q-btn-primary" id="btn-next">下一步</button>
                 </div>
-              </div>
-            </div>
-            <div class="oa-wizard-side">
-              <div class="q-card-panel side-panel">
-                <h3 style="margin:0 0 12px;font-size:15px">填写进度</h3>
-                <ul id="side-steps" style="margin:0;padding:0;list-style:none;font-size:13px"></ul>
+                <p id="save-time" class="hr-hint" style="margin-top:8px">尚未保存</p>
               </div>
             </div>
           </div>
@@ -44,6 +41,9 @@
   <script src="../assets/employee-past-copy.js"></script>
   <script src="../assets/perf-score-format.js"></script>
   <script src="../assets/perf-kr-hierarchy.js"></script>
+  <script src="../assets/perf-review-sheet.js"></script>
+  <script src="../assets/perf-autosave.js"></script>
+  <script src="../assets/perf-quarter-fill.js"></script>
   <script src="../assets/wizard.js"></script>
   <script>
     initOaShell({

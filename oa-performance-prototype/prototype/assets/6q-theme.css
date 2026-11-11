@@ -129,6 +129,7 @@ body {
 .q-tag-blue { color: var(--q-primary); background: var(--q-primary-bg); border-color: #91d5ff; }
 .q-tag-green { color: #389e0d; background: #f6ffed; border-color: #b7eb8f; }
 .q-tag-orange { color: #d48806; background: #fff7e6; border-color: #ffd591; }
+.q-tag-red { color: #cf1322; background: #fff1f0; border-color: #ffa39e; }
 .q-card-panel { background: var(--q-surface); border: 1px solid var(--q-border); border-radius: 2px; padding: 16px; margin-bottom: 16px; }
 
 /* HR 计划管理 */

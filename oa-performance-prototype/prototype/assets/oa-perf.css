@@ -283,6 +283,19 @@
   display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 16px; border-top: 1px solid var(--q-border);
 }
 .hr-transfer-modal--wide { max-width: 560px; width: 92vw; }
+.hr-node-steps { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 4px; }
+.hr-node-step {
+  border: 1px solid #d9d9d9; background: #fff; border-radius: 4px;
+  padding: 8px 14px; cursor: pointer; font-size: 13px; color: #262626;
+}
+.hr-node-step.is-on { border-color: #1890ff; background: #e6f7ff; color: #096dd9; font-weight: 600; }
+.hr-modal-field { margin-top: 12px; }
+.hr-modal-field label { display: block; margin-bottom: 6px; font-size: 13px; color: #262626; }
+.hr-modal-field input, .hr-modal-field textarea {
+  width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px;
+}
+.hr-modal-error { min-height: 20px; margin: 8px 0 0; color: #cf1322; font-size: 13px; }
+.hr-modal-readonly { margin: 0 0 8px; font-size: 13px; color: #595959; }
 
 /* 6Q3J 客观分 · v1.2 */
 .sixq-pending { color: #fa8c16; font-weight: 500; }
@@ -307,6 +320,20 @@
 .score-header-panel { margin-bottom: 16px; }
 .score-emp-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 .score-emp-meta { font-size: 13px; color: var(--q-text-secondary); line-height: 1.5; }
+
+body.page-score-confirm #confirm-body,
+body.page-score-confirm #confirm-body .kr-sheet,
+body.page-score-confirm #confirm-body .kr-sheet th,
+body.page-score-confirm #confirm-body .kr-sheet td,
+body.page-score-confirm #confirm-body .score-hint,
+body.page-score-confirm #confirm-body .confirm-copy,
+body.page-score-confirm #confirm-body .proto-kv,
+body.page-score-confirm #confirm-body .proto-kv dt,
+body.page-score-confirm #confirm-body .proto-kv dd,
+body.page-score-confirm #confirm-body h3,
+body.page-score-confirm #confirm-body .score-section-title {
+  font-size: 14px;
+}
 
 /* 三级结构 · 关键目标 → 考核目标 */
 .ko-list { display: flex; flex-direction: column; gap: 14px; }

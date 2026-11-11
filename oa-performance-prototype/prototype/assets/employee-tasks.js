@@ -32,7 +32,7 @@
         employeeConfirmed: false,
         supervisorConfirmed: false,
         divisionAdjusted: true,
-        systemTotal: 84.7,
+        systemTotal: 84.2,
         finalTotal: 84.1,
         submittedAt: '2026-05-28 16:20',
       },
@@ -71,6 +71,18 @@
         id: 'q2026q2',
         title: '2026 Q2 · 季度绩效考核',
         shortTitle: '2026 Q2 季度绩效考核',
+        type: 'quarter',
+        phase: 'filling',
+        stepIndex: 2,
+        totalSteps: QUARTER_STEPS,
+        deadline: '2026-06-30',
+        deadlineLabel: '2026-06-30',
+        quickImportPeriod: 'q2026q2',
+      },
+      {
+        id: 'q2026q2-wait',
+        title: '2026 Q2 · 季度绩效考核',
+        shortTitle: '2026 Q2 · 已提交待分管',
         type: 'quarter',
         phase: 'pending_division',
         mergedReview: false,
@@ -191,6 +203,19 @@
     return 'employee-task-progress.html?id=' + encodeURIComponent(t.id);
   }
 
+  function pastViewHref(t) {
+    return 'personal-perf-past-view.html?id=' + encodeURIComponent(t.id);
+  }
+
+  function canViewSelfFill(phase) {
+    return window.EmployeeSubmitView
+      ? EmployeeSubmitView.canViewSelfFill(phase)
+      : (function (ph) {
+        ph = W() ? W().normalizePhase(ph) : ph;
+        return ph === 'pending_supervisor' || ph === 'pending_division' || ph === 'pending_confirm' || ph === 'confirmed';
+      }(phase));
+  }
+
   function renderActions(t, opts) {
     opts = opts || {};
     var ph = W() ? W().normalizePhase(t.phase) : t.phase;
@@ -206,15 +231,19 @@
       parts.push('<a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px;margin-right:6px" href="' + wizardHref(t) + '">继续填写</a>');
       if (t.type === 'month') {
         parts.push('<button type="button" class="q-btn btn-copy-past-secondary" style="padding:2px 10px;font-size:12px" data-quick-import="month" data-period-id="' + (t.quickImportPeriod || t.id) + '" data-storage-key="perf-monthly-oa-pc" data-wizard-href="monthly-wizard.html">快速带入</button>');
+      } else if (t.type === 'quarter') {
+        parts.push('<button type="button" class="q-btn btn-copy-past-secondary" style="padding:2px 10px;font-size:12px" data-quick-import="quarter" data-period-id="' + (t.quickImportPeriod || t.id) + '" data-storage-key="perf-quarterly-oa-pc" data-wizard-href="quarterly-wizard.html">快速带入</button>');
       }
     } else if (ph === 'pending_supervisor' || ph === 'pending_division') {
+      parts.push('<a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px;margin-right:6px" href="' + pastViewHref(t) + '">查看自填内容</a>');
       parts.push('<a class="q-btn" style="padding:2px 12px;font-size:12px" href="' + progressHref(t) + '">查看进度</a>');
     } else if (ph === 'pending_confirm') {
       if (!t.employeeConfirmed) {
-        parts.push('<a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px" href="score-confirm.html?role=employee&id=' + encodeURIComponent(t.id) + (t.type === 'quarter' ? '&type=quarter' : '') + '">确认评分</a>');
+        parts.push('<a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px;margin-right:6px" href="score-confirm.html?role=employee&id=' + encodeURIComponent(t.id) + (t.type === 'quarter' ? '&type=quarter' : '') + '">确认评分</a>');
       } else {
-        parts.push('<a class="q-btn" style="padding:2px 12px;font-size:12px" href="' + progressHref(t) + '">查看进度</a>');
+        parts.push('<a class="q-btn" style="padding:2px 12px;font-size:12px;margin-right:6px" href="' + progressHref(t) + '">查看进度</a>');
       }
+      parts.push('<a class="q-btn" style="padding:2px 12px;font-size:12px" href="' + pastViewHref(t) + '">查看自填内容</a>');
     } else if (ph === 'confirmed') {
       parts.push('<a class="q-btn q-btn-primary" style="padding:2px 12px;font-size:12px" href="personal-perf-past-view.html?id=' + encodeURIComponent(t.id) + '">查看自填内容</a>');
     }
@@ -326,12 +355,16 @@
     }
     if (actionsEl) {
       var ph = W() ? W().normalizePhase(task.phase) : task.phase;
+      var viewSelf = canViewSelfFill(task.phase)
+        ? '<a class="q-btn q-btn-primary" style="margin-right:8px" href="' + pastViewHref(task) + '">查看自填内容</a>'
+        : '';
       if (ph === 'pending_confirm' && !task.employeeConfirmed) {
-        actionsEl.innerHTML = '<a class="q-btn q-btn-primary" href="score-confirm.html?role=employee&id=' + encodeURIComponent(task.id) + (task.type === 'quarter' ? '&type=quarter' : '') + '">去确认评分</a>';
+        actionsEl.innerHTML = viewSelf +
+          '<a class="q-btn q-btn-primary" href="score-confirm.html?role=employee&id=' + encodeURIComponent(task.id) + (task.type === 'quarter' ? '&type=quarter' : '') + '">去确认评分</a>';
       } else if (ph === 'filling' || ph === 'not_started') {
         actionsEl.innerHTML = '<a class="q-btn q-btn-primary" href="' + wizardHref(task) + '">继续填写</a>';
       } else {
-        actionsEl.innerHTML = '<a class="q-btn" href="personal-perf.html">返回待办</a>';
+        actionsEl.innerHTML = viewSelf + '<a class="q-btn" href="personal-perf.html">返回待办</a>';
       }
     }
   }
@@ -346,6 +379,8 @@
     updateSegmentBadges: updateSegmentBadges,
     findTask: findTask,
     initProgressPage: initProgressPage,
+    pastViewHref: pastViewHref,
+    canViewSelfFill: canViewSelfFill,
     taskSubtitle: taskSubtitle,
   };
 })();

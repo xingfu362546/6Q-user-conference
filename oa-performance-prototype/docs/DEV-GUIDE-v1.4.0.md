@@ -1,8 +1,21 @@
 # 开发指南 · v1.4.0（绩效流转 + 员工待办）
 
 > **读者**：后端 / 前端研发、Task 生成 Agent  
-> **原型版本**：v1.4.0 · **定稿决策**：[GRILL_WORKFLOW.md](./GRILL_WORKFLOW.md) · [GRILL_EMPLOYEE_TODO.md](./GRILL_EMPLOYEE_TODO.md)  
+> **原型版本**：v1.4.1（细项见 [GRILL_MONTHLY_LEADER_DETAIL.md](./GRILL_MONTHLY_LEADER_DETAIL.md)）· **定稿决策**：[GRILL_WORKFLOW.md](./GRILL_WORKFLOW.md) · [GRILL_EMPLOYEE_TODO.md](./GRILL_EMPLOYEE_TODO.md)  
 > **Handoff**：[HANDOFF-v1.4.0.md](./HANDOFF-v1.4.0.md)
+
+---
+
+## v1.4.1 补丁 · 月度评/确认 KR 细项
+
+| 项 | 说明 |
+|----|------|
+| 确认页 | `score-confirm.js` 增加 `renderConfirmKrDetail` 细项区；`?id=` 关联 `SUBMISSIONS` |
+| 评分页 | 月度已与季度共用 L2→L3 卡；李明 `r-lm-202605` 演示数据补齐三级结构 |
+| 算分 | `SupervisorScore.getConfirmContext(taskId)` → `buildConfirmModules` → `PerfScoreSummary.renderConfirmPage` |
+| 验收 | 王芳 `score-confirm.html?id=r-wf-202605&role=employee` 可见 10 项考核目标 + 4 项行为 |
+| 只读 | 已评任务 `supervisor-score-monthly.html?id=r-wf-202605` 整页只读；`?id=r-lm-202605` 可编辑 |
+| 穷举 | [DEMO_DATA_SCENARIOS.md](./DEMO_DATA_SCENARIOS.md) |
 
 ---
 

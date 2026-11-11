@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="季度绩效构成" id="quarter-score">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="季度绩效考核：什么进总分，什么只进专项档次" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontFamily=Microsoft YaHei;fontSize=18;fontStyle=1;fontColor=#1F2933;" vertex="1" parent="1">
+          <mxGeometry x="40" y="24" width="720" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="工作关键结果&#xa;核心 V + 常规 X，权重合计 90%&#xa;行综合分 = 自评×20% + 上级×40% + 分管×40%&#xa;工作成果 = 各行综合分之和" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="400" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="6Q3J 人才评价&#xa;1368 认证 + 文化经句 + AI 实践&#xa;合计 10 分，客观分导入&#xa;员工只核对，不改分" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="500" y="90" width="400" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="减分项&#xa;差错与失误&#xa;综合分 = 自评×20% + 上级×40% + 分管×40%&#xa;未填的一方按 0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="960" y="90" width="400" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="核定总分（不含专项）&#xa;= 工作成果综合得分 + 6Q3J 总分 + 减分综合得分" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Microsoft YaHei;fontSize=14;fontStyle=1;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="250" y="280" width="900" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="专项激励（选填，最多 3 条）&#xa;替代原来的加分项&#xa;自评分由超越类型自动带出&#xa;人才开发部写最终得分&#xa;不加入核定总分" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="专项档次与建议金额&#xa;绩效分数：有 HR 最终总分时用它，否则用核定总分&#xa;专项得分：按维度就高，数量超越可累加后再封顶&#xa;A / B / C / 暂不认定&#xa;金额 = 档位基准 × 职级系数，本期只展示" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="620" y="430" width="740" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="绩效面谈、下季核心目标（3 到 5 条）&#xa;只记录，不进入核定总分，也不进入专项得分" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#455a64;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="250" y="680" width="900" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="计入" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.15;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="计入" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="计入" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="作为绩效分数" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=0.72;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="只提供专项得分" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#d6b656;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="7" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="不参与计分" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#455A64;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="9">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="320" />
+              <mxPoint x="20" y="715" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

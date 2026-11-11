@@ -27,6 +27,7 @@
     'hr-plan-list.html': 'hr-plan-list',
     'hr-plan-create.html': 'hr-plan-create',
     'hr-plan-detail.html': 'hr-plan-detail',
+    'hr-evaluators.html': 'hr-evaluators',
     'hr-bonus-rules-list.html': 'hr-bonus-rules-list',
     'hr-bonus-rule-edit.html': 'hr-bonus-rule-edit',
     'hr-bonus-settlement.html': 'hr-bonus-settlement',
@@ -114,7 +115,10 @@
     currentIndex = idx;
     var note = currentNotes[idx];
     var titleEl = maskEl.querySelector('#proto-drawer-title');
-    titleEl.innerHTML = '<span class="proto-drawer__badge">' + note.n + '</span>' + (note.title || '注释');
+    var verHtml = note.ver
+      ? '<span class="proto-ver-tag proto-ver-tag--new">' + note.ver + '</span>'
+      : '';
+    titleEl.innerHTML = '<span class="proto-drawer__badge">' + note.n + '</span>' + (note.title || '注释') + verHtml;
     maskEl.querySelector('#proto-drawer-body').innerHTML = note.body || '';
     maskEl.querySelector('[data-drawer-index]').textContent = (idx + 1) + ' / ' + currentNotes.length;
     maskEl.querySelector('[data-nav="prev"]').disabled = idx === 0;
@@ -140,10 +144,18 @@
       host.classList.add('proto-note-host');
       var marker = document.createElement('button');
       marker.type = 'button';
-      marker.className = 'proto-note-marker';
+      marker.className = 'proto-note-marker' + (note.ver ? ' proto-note-marker--ver' : '');
       marker.setAttribute('data-note-n', String(note.n));
-      marker.setAttribute('aria-label', '注释' + note.n);
-      marker.textContent = String(note.n);
+      marker.setAttribute('aria-label', '注释' + note.n + (note.ver ? ' ' + note.ver : ''));
+      if (note.ver) {
+        marker.innerHTML = '<span class="proto-note-marker__n">' + note.n + '</span><span class="proto-note-marker__ver">' + note.ver + '</span>';
+      } else {
+        marker.textContent = String(note.n);
+      }
+      var prev = host.querySelectorAll('.proto-note-marker');
+      var right = 4;
+      for (var i = 0; i < prev.length; i++) right += prev[i].offsetWidth + 6;
+      if (prev.length) marker.style.right = right + 'px';
       marker.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -157,7 +169,10 @@
     if (!notes.length || document.querySelector('.proto-notes-legend')) return;
     var legend = document.createElement('div');
     legend.className = 'proto-notes-legend';
-    legend.innerHTML = '<span class="proto-note-marker">i</span><span>本页 ' + notes.length + ' 条注释 · 点击序号查看</span>';
+    var verNote = null;
+    notes.forEach(function (item) { if (item.ver && !verNote) verNote = item; });
+    var verText = verNote ? ' · 绿标 ' + verNote.ver + ' 为本版差异' : '';
+    legend.innerHTML = '<span class="proto-note-marker">i</span><span>本页 ' + notes.length + ' 条注释' + verText + ' · 点击序号查看</span>';
     legend.addEventListener('click', function () { openDrawer(notes[0].n, notes); });
     document.body.appendChild(legend);
   }

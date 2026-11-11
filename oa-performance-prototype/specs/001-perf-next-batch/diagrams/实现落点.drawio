@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="实现落点" id="impl-map">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="860" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="原型落点：规则只算一次，页面只负责填和看" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontFamily=Microsoft YaHei;fontSize=18;fontStyle=1;fontColor=#1F2933;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="640" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="perf-quarter-score.js&#xa;核定总分、专项得分、档次、建议金额&#xa;无页面依赖，可用样例 89.2 自测" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="420" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="perf-autosave.js&#xa;季度、月度、评分页共用&#xa;变脏后 2 分钟保存，手动保存走同一入口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="490" y="80" width="420" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="perf-export-image.js&#xa;计划明细和评分页调用&#xa;先画出整表，再导出图片" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="940" y="80" width="420" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="季度填写向导&#xa;专项激励、减分、下季 3–5 条、提交前预览" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="月度填写向导&#xa;只加预览和自动保存&#xa;不加专项激励" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="370" y="260" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="上级 / 分管评分&#xa;同一张横表&#xa;退回后分数仍留在输入框" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="700" y="260" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="确认页&#xa;正文 14px&#xa;展示 HR 最终总分和专项档次" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="260" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="计划明细&#xa;改时间与名称、选节点退回、失效、改最终总分、处理人、筛选、导出" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="180" y="450" width="480" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="评价人维护&#xa;工号对工号&#xa;整批校验，失败则一行不写" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="720" y="450" width="420" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="浏览器本地草稿&#xa;填写内容、评分、计划名单、评价关系&#xa;失效只改本期名单，不改范围包模板" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#455a64;fontFamily=Microsoft YaHei;fontSize=13;fontColor=#1F2933;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="300" y="630" width="780" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#d6b656;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#d6b656;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="导出整表" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#d6b656;fontFamily=Microsoft YaHei;fontSize=12;fontColor=#1F2933;exitX=0.15;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1003" y="220" />
+              <mxPoint x="955" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#455A64;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8" target="12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#9673a6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.45;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="10" target="12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#9673a6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.8;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="11" target="12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

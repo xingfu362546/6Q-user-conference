@@ -1,80 +1,89 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>季度评分 · 上级/分管</title>
-  <link rel="stylesheet" href="../assets/6q-theme.css" />
-  <link rel="stylesheet" href="../assets/common.css" />
-  <link rel="stylesheet" href="../assets/oa-perf.css" />
-  <link rel="stylesheet" href="../assets/supervisor-score.css" />
-  <link rel="stylesheet" href="../assets/proto-notes.css" />
-</head>
-<body>
-  <div class="q-oa-app">
-    <header id="q-oa-topbar"></header>
-    <div class="q-oa-body">
-      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
-      <div class="q-oa-main">
-        <nav class="q-oa-breadcrumb">个人中心 &gt; <a href="supervisor-review-list.html">待我审核</a> &gt; <strong>季度评分</strong></nav>
-        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
-        <div class="q-oa-page">
-          <div class="q-card-panel">
-            <div class="score-header" id="score-header-info"></div>
-            <div id="score-role-banner" class="perf-tip perf-tip-blue score-role-banner"></div>
-
-            <div id="score-sixq3j" style="margin-bottom:16px"></div>
-
-            <div class="perf-tip" style="margin-bottom:12px">季度 KR 权重合计 90%。上级/分管分列；6Q3J、面谈只读。公式：<strong>自评×20% + 上级×40% + 分管×40%</strong>。</div>
-
-            <div class="score-section-title">本季考评 · 打分区</div>
-            <div class="score-kr-list" id="score-kr-list"></div>
-
-            <div class="score-summary score-summary--quarter" id="score-summary"></div>
-
-            <div class="score-section-title">加减分 · 上级 / 分管核定</div>
-            <table class="score-adjust-table score-adjust-table--quarter">
-              <thead><tr><th>加分事项</th><th>员工申报</th><th>上级核定</th><th>分管核定</th></tr></thead>
-              <tbody id="adjust-plus-body"></tbody>
-            </table>
-            <table class="score-adjust-table score-adjust-table--quarter">
-              <thead><tr><th>减分事项</th><th>员工申报</th><th>上级核定</th><th>分管核定</th></tr></thead>
-              <tbody id="adjust-minus-body"></tbody>
-            </table>
-
-            <div id="division-final-override"></div>
-
-            <div id="score-interview-readonly"></div>
-
-            <div class="score-actions">
-              <a class="q-btn" href="supervisor-review-list.html" id="btn-back">← 返回列表</a>
-              <button class="q-btn q-btn-primary" type="button" id="btn-submit">提交评分</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="../assets/frame.js"></script>
-  <script src="../assets/perf-score-format.js"></script>
-  <script src="../assets/perf-kr-hierarchy.js"></script>
-  <script src="../assets/perf-sixq3j.js"></script>
-  <script src="../assets/supervisor-score.js"></script>
-  <script>
-    initOaShell({
-      topModule: 'personal',
-      sideActive: 'perf-list',
-      pageTabs: [
-        { key: 'review', label: '待我审核', href: 'supervisor-review-list.html', closable: true },
-        { key: 'score', label: '季度评分', href: 'supervisor-score-quarterly.html', closable: true },
-      ],
-      activeTab: 'score',
-    });
-    SupervisorScore.initOaQuarterlyScorePage();
-  </script>
-  <script src="../assets/proto-notes-data.js"></script>
-  <script src="../assets/proto-notes.js"></script>
-</body>
-</html>
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>季度评分 · 上级/分管</title>
+  <link rel="stylesheet" href="../assets/6q-theme.css" />
+  <link rel="stylesheet" href="../assets/common.css" />
+  <link rel="stylesheet" href="../assets/oa-perf.css" />
+  <link rel="stylesheet" href="../assets/supervisor-score.css" />
+  <link rel="stylesheet" href="../assets/proto-notes.css" />
+</head>
+<body>
+  <div class="q-oa-app">
+    <header id="q-oa-topbar"></header>
+    <div class="q-oa-body">
+      <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
+      <div class="q-oa-main">
+        <nav class="q-oa-breadcrumb">个人中心 &gt; <a href="supervisor-review-list.html">待我审核</a> &gt; <strong>季度评分</strong></nav>
+        <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
+        <div class="q-oa-page">
+          <div class="q-card-panel">
+            <div class="score-header" id="score-header-info"></div>
+            <div id="score-role-banner" class="perf-tip perf-tip-blue score-role-banner"></div>
+
+            <div id="score-sixq3j" style="margin-bottom:16px"></div>
+
+            <div class="perf-tip" style="margin-bottom:12px">季度 KR 权重合计 90%。上级/分管分列；6Q3J、面谈只读。公式：<strong>自评×20% + 上级×40% + 分管×40%</strong>。</div>
+
+            <div class="score-section-title">本季考评 · 打分区</div>
+            <div class="score-kr-list" id="score-kr-list"></div>
+
+            <div class="score-summary score-summary--quarter" id="score-summary"></div>
+
+            <div class="score-section-title">加减分 · 上级 / 分管核定</div>
+            <table class="score-adjust-table score-adjust-table--quarter">
+              <thead><tr><th>加分事项</th><th>员工申报</th><th>上级核定</th><th>分管核定</th></tr></thead>
+              <tbody id="adjust-plus-body"></tbody>
+            </table>
+            <table class="score-adjust-table score-adjust-table--quarter">
+              <thead><tr><th>减分事项</th><th>员工申报</th><th>上级核定</th><th>分管核定</th></tr></thead>
+              <tbody id="adjust-minus-body"></tbody>
+            </table>
+
+            <div id="division-final-override"></div>
+
+            <div id="score-interview-readonly"></div>
+
+            <div class="score-actions">
+              <a class="q-btn" href="supervisor-review-list.html" id="btn-back">← 返回列表</a>
+              <button class="q-btn" type="button" id="btn-save-score">保存</button>
+              <button class="q-btn" type="button" id="btn-export-sheet">导出图片</button>
+              <button class="q-btn q-btn-primary" type="button" id="btn-submit">提交评分</button>
+            </div>
+            <p id="save-time" class="hr-hint">尚未保存</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-score-format.js"></script>
+  <script src="../assets/perf-kr-hierarchy.js"></script>
+  <script src="../assets/perf-review-sheet.js"></script>
+  <script src="../assets/perf-sixq3j.js"></script>
+  <script src="../assets/perf-autosave.js"></script>
+  <script src="../assets/vendor/html-to-image.js"></script>
+  <script src="../assets/perf-export-image.js"></script>
+  <script src="../assets/perf-sheet-preview.js"></script>
+  <script src="../assets/supervisor-score.js"></script>
+  <script>
+    initOaShell({
+      topModule: 'personal',
+      sideActive: 'perf-list',
+      pageTabs: [
+        { key: 'review', label: '待我审核', href: 'supervisor-review-list.html', closable: true },
+        { key: 'score', label: '季度评分', href: 'supervisor-score-quarterly.html', closable: true },
+      ],
+      activeTab: 'score',
+    });
+    SupervisorScore.initOaQuarterlyScorePage();
+  </script>
+  <script src="../assets/perf-score-tools.js"></script>
+  <script src="../assets/proto-notes-data.js"></script>
+  <script src="../assets/proto-notes.js"></script>
+</body>
+</html>
+

@@ -13,7 +13,21 @@
 .score-header-meta { font-size: 13px; color: var(--q-text-secondary); line-height: 1.6; }
 .score-header-meta span { margin-right: 16px; }
 
-.score-kr-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.score-kr-list--confirm { margin-top: 8px; }
+.score-kr-card--readonly .score-kr-head { cursor: pointer; }
+.score-kr-card--readonly .score-row input { display: none; }
+.score-page--readonly textarea#score-comment { pointer-events: none; background: #fafafa; }
+.score-readonly-banner {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.score-readonly-tip { background: #f6ffed !important; border-color: #b7eb8f !important; }
+.score-row--readonly { grid-template-columns: 1fr 100px; }
+.mp-score-readonly-val { padding: 8px 0; font-size: 15px; font-weight: 500; }
 
 .score-kr-card {
   border: 1px solid #e8e8e8;

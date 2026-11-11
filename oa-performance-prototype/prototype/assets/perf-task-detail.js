@@ -10,16 +10,16 @@
 
   var TASK_REGISTRY = {
     'E10035': { taskId: 'r-wf-202605', planId: '2026-05', phase: 'pending_confirm', name: '王芳', no: 'E10035', dept: '信息部', role: '产品专员', level: '职员', submitted: true, mergedReview: false, supervisorScore: 84.5, divisionScore: 83.0, totalScore: 84.1, divisionAdjusted: true },
-    'E10021': { taskId: null, planId: '2026-05', phase: 'pending_confirm', name: '张明', no: 'E10021', dept: '信息部', role: '产品经理', level: '主管', submitted: true, mergedReview: false, supervisorScore: 90.5, divisionScore: 89.0, totalScore: 90.0 },
-    'E10008': { taskId: null, planId: '2026-05', phase: 'confirmed', name: '李强', no: 'E10008', dept: '信息部', role: '技术总监', level: '总监', submitted: true, mergedReview: true, supervisorScore: 94.0, divisionScore: 94.0, totalScore: 94.0, employeeConfirmed: true, supervisorConfirmed: true },
-    'E20011': { taskId: null, planId: '2026-05', phase: 'pending_confirm', name: '赵敏', no: 'E20011', dept: '广州办事处', role: '办事处主任', level: '经理', submitted: true, mergedReview: false, supervisorScore: 87.0, divisionScore: 86.5, totalScore: 86.8, employeeConfirmed: false, supervisorConfirmed: false },
-    'E20018': { taskId: null, planId: '2026-05', phase: 'pending_supervisor', name: '孙丽', no: 'E20018', dept: '广州办事处', role: '办事处主管', level: '主管', submitted: true, mergedReview: false, supervisorScore: null, divisionScore: null, totalScore: null },
+    'E10021': { taskId: 'r-zm-202605', planId: '2026-05', phase: 'pending_confirm', name: '张明', no: 'E10021', dept: '信息部', role: '产品经理', level: '主管', submitted: true, mergedReview: false, supervisorScore: 87.2, divisionScore: 87.2, totalScore: 87.2 },
+    'E10008': { taskId: 'r-lq-202605', planId: '2026-05', phase: 'pending_supervisor', name: '李强', no: 'E10008', dept: '信息部', role: '技术总监', level: '总监', submitted: true, mergedReview: false, supervisorScore: null, divisionScore: null, totalScore: null },
+    'E20011': { taskId: 'r-zmin-202605', planId: '2026-05', phase: 'pending_confirm', name: '赵敏', no: 'E20011', dept: '广州办事处', role: '办事处主任', level: '经理', submitted: true, mergedReview: false, supervisorScore: 86.8, divisionScore: 86.8, totalScore: 86.8, employeeConfirmed: false, supervisorConfirmed: false },
+    'E20018': { taskId: 'r-sl-202605', planId: '2026-05', phase: 'pending_supervisor', name: '孙丽', no: 'E20018', dept: '广州办事处', role: '办事处主管', level: '主管', submitted: true, mergedReview: false, supervisorScore: null, divisionScore: null, totalScore: null },
     'E10042': { taskId: null, planId: '2026-05', phase: 'filling', name: '刘洋', no: 'E10042', dept: '人才开发部', role: 'HR专员', level: '职员', submitted: false, mergedReview: false },
     'E10044': { taskId: null, planId: '2026-05', phase: 'filling', name: '肖洋', no: 'E10044', dept: '信息部', role: '后端工程师', level: '职员', submitted: false, mergedReview: false },
     'E20015': { taskId: null, planId: '2026-05', phase: 'filling', name: '陈伟', no: 'E20015', dept: '广州办事处', role: '课程顾问', level: '职员', submitted: false, mergedReview: false },
     'E20022': { taskId: null, planId: '2026-05', phase: 'filling', name: '吴磊', no: 'E20022', dept: '深圳办事处', role: '办事处主管', level: '主管', submitted: false, mergedReview: false },
     'E20025': { taskId: null, planId: '2026-05', phase: 'filling', name: '马军', no: 'E20025', dept: '深圳办事处', role: '课程顾问', level: '职员', submitted: false, mergedReview: false },
-    'E10055': { taskId: null, planId: '2026-05', phase: 'confirmed', name: '周婷', no: 'E10055', dept: '行政管理部', role: '行政经理', level: '经理', submitted: true, mergedReview: false, supervisorScore: 88.0, divisionScore: 87.5, totalScore: 87.8, employeeConfirmed: true, supervisorConfirmed: true },
+    'E10055': { taskId: 'r-zt-202605', planId: '2026-05', phase: 'confirmed', name: '周婷', no: 'E10055', dept: '行政管理部', role: '行政经理', level: '经理', submitted: true, mergedReview: false, supervisorScore: 88.0, divisionScore: 87.5, totalScore: 87.8, divisionAdjusted: true, employeeConfirmed: true, supervisorConfirmed: true, divisionConfirmed: true },
     'E10048': { taskId: null, planId: '2026-05', phase: 'confirmed', name: '何欣', no: 'E10048', dept: '人才开发部', role: 'HR经理', level: '经理', submitted: true, mergedReview: false, supervisorScore: 91.0, divisionScore: 90.0, totalScore: 90.5, employeeConfirmed: true, supervisorConfirmed: true },
   };
 
@@ -213,7 +213,7 @@
           '<table class="task-detail-score-table"><thead><tr><th>上级分</th><th>分管分</th><th>总得分</th></tr></thead><tbody><tr>' +
           '<td><b>' + sOut(meta.supervisorScore) + '</b></td><td>' + (meta.divisionScore != null ? '<b>' + sOut(meta.divisionScore) + '</b>' : '—') + '</td>' +
           '<td>' + (meta.totalScore != null ? '<b>' + sOut(meta.totalScore) + '</b>' : '—') + '</td></tr></tbody></table>' +
-          '<p class="hr-hint" style="margin-top:12px">完整 KR 级明细演示数据未挂载；王芳（E10035）可查看完整填表快照。</p>';
+          '<p class="hr-hint" style="margin-top:12px">完整 KR 级明细演示数据未挂载；可试王芳（E10035）或周婷（E10055）查看完整填表快照。</p>';
         if (actionsEl) actionsEl.innerHTML = '<a class="q-btn" href="' + backHref(from, planId) + '">返回</a>';
         return;
       }
@@ -228,8 +228,12 @@
     var draftKey = 'hr-supervisor-override-' + no + '-' + planId;
     var saved = null;
     try { saved = JSON.parse(localStorage.getItem(draftKey)); } catch (e) { saved = null; }
-    var supScores = (saved && saved.scores) ? saved.scores : demoSupervisorScores(meta, items);
-    if (meta.taskId && window.SupervisorScore) {
+    var preset = meta.taskId && window.SupervisorScore && SupervisorScore.PRESET_SCORES
+      ? SupervisorScore.PRESET_SCORES[meta.taskId] : null;
+    var supScores = (saved && saved.scores) ? saved.scores
+      : (preset && preset.scores) ? Object.assign({}, preset.scores)
+      : demoSupervisorScores(meta, items);
+    if (meta.taskId && window.SupervisorScore && !preset) {
       var draft = localStorage.getItem('oa-supervisor-draft-' + meta.taskId);
       if (draft) {
         try {
@@ -238,12 +242,16 @@
         } catch (e2) { /* ignore */ }
       }
     }
-    var divScores = demoDivisionScores(meta, items, supScores);
+    var divScores = (preset && preset.divisionScores)
+      ? Object.assign({}, preset.divisionScores)
+      : demoDivisionScores(meta, items, supScores);
 
     var state = {
       scores: Object.assign({}, supScores),
-      adjustPlus: sub.adjust.plus.map(function (r) { return r.approved != null ? r.approved : r.selfScore; }),
-      adjustMinus: sub.adjust.minus.map(function (r) { return r.approved != null ? r.approved : r.selfScore; }),
+      adjustPlus: preset && preset.adjustPlus ? preset.adjustPlus.slice()
+        : sub.adjust.plus.map(function (r) { return r.approved != null ? r.approved : r.selfScore; }),
+      adjustMinus: preset && preset.adjustMinus ? preset.adjustMinus.slice()
+        : sub.adjust.minus.map(function (r) { return r.approved != null ? r.approved : r.selfScore; }),
     };
 
     function refresh() {

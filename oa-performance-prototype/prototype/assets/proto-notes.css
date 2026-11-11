@@ -28,6 +28,26 @@
   box-shadow: 0 2px 8px rgba(255, 77, 79, 0.45);
 }
 
+.proto-note-marker--ver {
+  width: auto;
+  height: 22px;
+  padding: 0 8px 0 6px;
+  border-radius: 11px;
+  gap: 4px;
+  background: #389e0d;
+  white-space: nowrap;
+}
+
+.proto-note-marker--ver:hover {
+  box-shadow: 0 2px 8px rgba(56, 158, 13, 0.45);
+}
+
+.proto-note-marker__ver {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
 .proto-note-host {
   position: relative !important;
 }
@@ -106,6 +126,11 @@
   font-size: 15px;
   font-weight: 600;
   color: #262626;
+}
+
+.proto-drawer__title .proto-ver-tag {
+  margin-left: 8px;
+  vertical-align: middle;
 }
 
 .proto-drawer__badge {
@@ -347,9 +372,20 @@
 .proto-ver { margin: 0 0 8px; padding: 6px 8px; border-radius: 4px; font-size: 12px; line-height: 1.55; }
 .proto-ver--old { color: #8c8c8c; text-decoration: line-through; background: #fafafa; border-left: 3px solid #d9d9d9; }
 .proto-ver--new { color: #389e0d; background: #f6ffed; border-left: 3px solid #95de64; text-decoration: none; }
-.proto-ver-tag { display: inline-block; margin-right: 6px; padding: 0 5px; border-radius: 3px; font-size: 10px; font-weight: 700; vertical-align: middle; }
-.proto-ver--old .proto-ver-tag { background: #f0f0f0; color: #595959; text-decoration: none; }
-.proto-ver--new .proto-ver-tag { background: #389e0d; color: #fff; }
+.proto-ver-tag { display: inline-block; margin-right: 6px; padding: 0 5px; border-radius: 3px; font-size: 10px; font-weight: 700; vertical-align: middle; line-height: 16px; }
+.proto-ver--old .proto-ver-tag,
+.proto-ver-tag--old { background: #f0f0f0; color: #595959; text-decoration: none; }
+.proto-ver--new .proto-ver-tag,
+.proto-ver-tag--new { background: #389e0d; color: #fff; }
+.proto-logic h4 .proto-ver-tag { font-size: 11px; }
+
+.proto-logic { margin: 0 0 10px; padding: 8px 10px; border-radius: 4px; background: #fafafa; }
+.proto-logic h4 { margin: 0 0 6px; font-size: 13px; color: #1d4e89; }
+.proto-logic p { margin: 0; font-size: 12px; line-height: 1.6; color: #1f2933; }
+.proto-logic--now { background: #f6ffed; }
+.proto-field-table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 12px; }
+.proto-field-table th, .proto-field-table td { border: 1px solid #e8e8e8; padding: 6px 8px; text-align: left; vertical-align: top; }
+.proto-field-table th { background: #f5f7fa; }
 
 @media (max-width: 480px) {
   .proto-drawer {

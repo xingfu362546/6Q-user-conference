@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -85,6 +85,7 @@
     </div>
   </div>
   <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-hr-store.js"></script>
   <script>
     initOaShell({
       topModule: 'hr',
@@ -94,6 +95,37 @@
         { key: 'plan', label: '计划管理', href: 'hr-plan-list.html', closable: true },
       ],
       activeTab: 'plan',
+    });
+    var planIds = ['2026-05', '2026-Q2', '2026-04'];
+    document.querySelectorAll('.q-table tbody tr').forEach(function (tr, index) {
+      var id = planIds[index];
+      var plan = id && window.PerfHrStore ? PerfHrStore.planOf(id) : null;
+      if (plan) tr.cells[0].textContent = plan.name;
+      var op = tr.cells[tr.cells.length - 1];
+      var link = document.createElement('a');
+      link.href = '#';
+      link.textContent = '编辑';
+      link.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var current = PerfHrStore.planOf(id);
+        var name = prompt('计划名称', current.name);
+        if (name === null) return;
+        var start = prompt('启动时间', current.start);
+        if (start === null) return;
+        var fillEnd = prompt('员工填写截止', current.fillEnd);
+        if (fillEnd === null) return;
+        var scoreEnd = prompt('上级评分截止', current.scoreEnd);
+        if (scoreEnd === null) return;
+        var confirmEnd = prompt('确认截止', current.confirmEnd);
+        if (confirmEnd === null) return;
+        var res = PerfHrStore.editPlan(id, {
+          name: name, start: start, fillEnd: fillEnd, scoreEnd: scoreEnd, confirmEnd: confirmEnd
+        });
+        alert(res.ok ? '已保存计划' : res.error);
+        if (res.ok) tr.cells[0].textContent = res.plan.name;
+      });
+      op.appendChild(document.createTextNode(' · '));
+      op.appendChild(link);
     });
   </script>
   <script src="../assets/proto-notes-data.js"></script>

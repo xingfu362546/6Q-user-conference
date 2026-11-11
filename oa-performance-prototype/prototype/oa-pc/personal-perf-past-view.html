@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>过往提交 · 查看自填内容</title>
+  <title>查看自填内容</title>
   <link rel="stylesheet" href="../assets/6q-theme.css" />
   <link rel="stylesheet" href="../assets/common.css" />
   <link rel="stylesheet" href="../assets/oa-perf.css" />
@@ -22,6 +22,7 @@
     .readonly-field { margin-bottom: 12px; }
     .readonly-field label { display: block; font-size: 12px; color: #999; margin-bottom: 4px; }
     .readonly-field p { margin: 0; font-size: 14px; color: #333; line-height: 1.6; }
+    .emp-past-kr .score-section-title { margin-top: 0; }
   </style>
   <link rel="stylesheet" href="../assets/proto-notes.css" />
 </head>
@@ -31,38 +32,15 @@
     <div class="q-oa-body">
       <aside id="q-oa-sidenav" class="q-oa-sidenav"></aside>
       <div class="q-oa-main">
-        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <a href="personal-perf-past.html">已提交</a> &gt; <strong>2026年3月</strong></nav>
+        <nav class="q-oa-breadcrumb">个人中心 &gt; 我的绩效 &gt; <a href="personal-perf-past.html">已提交</a> &gt; <strong id="emp-past-crumb-period">—</strong></nav>
         <div id="q-oa-pagetabs" class="q-oa-pagetabs"></div>
         <div class="q-oa-page">
           <div class="q-card-panel">
-            <div class="readonly-banner">🔒 只读模式：仅展示您提交的自填内容，上级评分与综合核定结果不可见。</div>
-
-            <div class="readonly-block">
-              <h3>表头信息</h3>
-              <div class="readonly-field"><label>姓名 / 部门</label><p>张明 · 信息部</p></div>
-              <div class="readonly-field"><label>考核期</label><p>2026年3月 月度绩效考核</p></div>
-              <div class="readonly-field"><label>提交时间</label><p>2026-03-28 17:32</p></div>
-            </div>
-
-            <div class="readonly-block">
-              <h3>核心绩效 V · 指标 1</h3>
-              <div class="readonly-field"><label>关键目标 O</label><p>推动绩效系统需求评审落地</p></div>
-              <div class="readonly-field"><label>关键成果 M</label><p>完成 PRD v1.0 并通过部门评审</p></div>
-              <div class="readonly-field"><label>自评分</label><p>4.2</p></div>
-            </div>
-
-            <div class="readonly-block">
-              <h3>自评总结</h3>
-              <div class="readonly-field"><p>本月重点完成绩效模块方案设计，协同 HR 完成两轮需求对齐。</p></div>
-            </div>
-
-            <div class="readonly-block">
-              <h3>下月核心目标（提交时填写）</h3>
-              <div class="readonly-field"><label>目标 1</label><p>输出绩效原型并完成一轮用户走查</p></div>
-            </div>
-
+            <h2 id="emp-past-title" style="margin:0 0 12px;font-size:18px">—</h2>
+            <div class="readonly-banner">🔒 只读模式：仅展示您提交的自填内容（KR / 行为 / 加减分 / 下月·下季目标 / 自评总结）。上级评分与综合核定结果不可见。</div>
+            <div id="emp-past-root">加载中…</div>
             <div style="margin-top:20px">
-              <a class="q-btn" href="personal-perf-past.html">← 返回列表</a>
+              <a class="q-btn" id="emp-past-back" href="personal-perf-past.html">← 返回</a>
             </div>
           </div>
         </div>
@@ -70,6 +48,11 @@
     </div>
   </div>
   <script src="../assets/frame.js"></script>
+  <script src="../assets/perf-kr-hierarchy.js"></script>
+  <script src="../assets/employee-past-copy.js"></script>
+  <script src="../assets/supervisor-score.js"></script>
+  <script src="../assets/employee-submit-view.js"></script>
+  <script src="../assets/employee-tasks.js"></script>
   <script>
     initOaShell({
       topModule: 'personal',
@@ -77,10 +60,11 @@
       pageTabs: [
         { key: 'home', label: '首页', href: 'index.html' },
         { key: 'past', label: '已提交', href: 'personal-perf-past.html', closable: true },
-        { key: 'view', label: '2026年3月', href: 'personal-perf-past-view.html', closable: true },
+        { key: 'view', label: '查看自填', href: location.pathname.split('/').pop() + location.search, closable: true },
       ],
       activeTab: 'view',
     });
+    EmployeeSubmitView.initOaPastViewPage();
   </script>
   <script src="../assets/proto-notes-data.js"></script>
   <script src="../assets/proto-notes.js"></script>
