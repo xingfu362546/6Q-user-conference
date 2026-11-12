@@ -739,7 +739,8 @@ window.PROTO_NOTE_PAGES = {
           '<tr><td>附件</td><td>输入</td><td>否</td><td>不拦截提交</td></tr>' +
           '<tr><td>减分事件 / 自评分</td><td>输入</td><td>有减分时说明必填</td><td>分数 ≤ 0</td></tr>' +
           '<tr><td>是否跟上级对标</td><td>下拉</td><td>是</td><td>下季每条为「是」或「否」</td></tr>' +
-          '<tr><td>保存 / 预览全部</td><td>按钮</td><td>否</td><td>保存不提交；预览不能改字</td></tr></table>',
+          '<tr><td>保存 / 预览全部</td><td>按钮</td><td>否</td><td>保存不提交；预览不能改字</td></tr></table>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.5.2</span>本页只负责申报。专项的上级分和分管分在「领导 · 季度评分」填，人才开发部最终得分和档次在「HR · 待办详情」的专项核定区填。三方按 30/30/40 加权，权重见 <code>perf-quarter-score.js</code> 的 <code>INCENTIVE_WEIGHTS</code>。</p>',
       },
       {
         n: 2,

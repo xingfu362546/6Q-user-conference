@@ -25,7 +25,7 @@ v1.5.1：导出先看整表再出图；改总分一个弹窗提交；离开初�
 
 - **本期规格**：`specs/001-perf-next-batch/spec.md`
 - **开发交付落点**：`specs/001-perf-next-batch/dev-delivery.md` · 接口 `contracts/api.md`
-- **评审整改**：v1.5.2 按《评审-v1.5.0-PC端-2026-11-12》收敛，FR-027 到 FR-034 为新增条款
+- **评审整改**：v1.5.2 按《评审-v1.5.0-PC端-2026-11-12》收敛，FR-027 到 FR-034 为新增条款。说明见 `specs/001-perf-next-batch/交付说明-v1.5.2.md`
 - **v1.5.0 交付说明**：`specs/001-perf-next-batch/交付说明-v1.5.0.md`
 - **功能清单（v1.5.0 / v1.5.1）**：`prototype/feature-list.html`
 - **版本记录**：`docs/VERSIONS.md`
