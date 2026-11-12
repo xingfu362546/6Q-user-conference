@@ -35,8 +35,15 @@
       if (time) time.remove();
       clone.querySelectorAll('[id]').forEach(function (el) { el.removeAttribute('id'); });
       var who = document.querySelector('#score-header-info');
-      var title = who ? (who.innerText || '').split('\n')[0] : '评分表';
-      PerfSheetPreview.openHtml(title || '整表预览', clone.innerHTML, PerfExportImage ? PerfExportImage.filename('评分表', '当前') : '评分表.png');
+      var title = who ? (who.innerText || '').split('\n')[0] : '整表预览';
+      var heading = who ? (who.querySelector('h2') ? who.querySelector('h2').textContent : title) : '';
+      var name = (heading.split('·')[0] || '员工').trim();
+      var period = '';
+      var quarterMatch = heading.match(/(\d{4})\s*Q([1-4])/i);
+      var monthMatch = heading.match(/(\d{4})年(\d{1,2})月/);
+      if (quarterMatch) period = quarterMatch[1] + '-Q' + quarterMatch[2];
+      else if (monthMatch) period = monthMatch[1] + '-' + ('0' + monthMatch[2]).slice(-2);
+      PerfSheetPreview.openHtml(title || '整表预览', clone.innerHTML, PerfExportImage ? PerfExportImage.filename(name, period || '考核期') : '评分表.png');
     });
   }
 

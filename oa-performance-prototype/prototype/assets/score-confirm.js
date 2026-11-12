@@ -103,6 +103,7 @@
     task.empNo = no;
     if (!stored) return task;
     if (stored.assessedTotal != null) task.systemTotal = stored.assessedTotal;
+    task.supervisorTotal = stored.supervisorTotal != null ? stored.supervisorTotal : null;
     if (stored.divisionTotal != null) {
       task.finalTotal = stored.divisionTotal;
       task.divisionAdjusted = stored.divisionTotal !== stored.assessedTotal;
@@ -157,9 +158,9 @@
     var tipQuarter = '上级与分管评分已完成。请核对折算汇总后确认。<strong>季度需员工、上级、分管三方确认</strong>。';
     var tip = isQuarter(task) ? tipQuarter : tipMonth;
 
-    var system = task.systemTotal;
-    var supApproved = task.supervisorApproved != null ? task.supervisorApproved : system;
-    var divApproved = task.finalTotal != null ? task.finalTotal : system;
+    var system = task.systemTotal != null ? task.systemTotal : null;
+    var supApproved = task.supervisorTotal != null ? task.supervisorTotal : null;
+    var divApproved = isQuarter(task) && task.finalTotal != null ? task.finalTotal : null;
     var adopted = task.hrFinalTotal != null ? task.hrFinalTotal : (divApproved != null ? divApproved : system);
     var totalLine = '<div class="confirm-copy">' +
       '<p class="score-hint">计算总分（系统汇总） <b>' + (system != null ? system : '—') + '</b></p>' +
@@ -171,7 +172,7 @@
       (task.hrFinalMeta
         ? '<p class="score-hint">HR 最终总分 <b>' + task.hrFinalTotal + '</b>（' + task.hrFinalMeta.reason + '，修改前 ' + task.hrFinalMeta.before + '）</p>'
         : '') +
-      '<p class="score-hint">采用分 <b>' + adopted + '</b></p>' +
+      '<p class="score-hint">采用分 <b>' + (adopted != null ? adopted : '—') + '</b></p>' +
       quarterExtra(task) +
       '</div>';
 
@@ -188,7 +189,7 @@
       '<dl class="proto-kv" style="margin:12px 0"><dt>确认截止</dt><dd>' + task.confirmDeadline + '</dd></dl>' +
       totalLine +
       renderDetailSheet(task, role) +
-      (S ? '<div class="score-section-title">折算汇总</div>' + S.renderConfirmPage({ full: false, divisionAdjusted: task.divisionAdjusted, finalTotal: task.finalTotal, taskType: task.type }) : '') +
+      (S && task.systemTotal == null ? '<div class="score-section-title">折算汇总</div>' + S.renderConfirmPage({ full: false, divisionAdjusted: task.divisionAdjusted, finalTotal: task.finalTotal, taskType: task.type }) : '') +
       (confirmed
         ? '<p class="hr-hint" style="margin-top:16px"><span class="q-tag q-tag-green">' + roleLabel(role) + '已确认</span>' +
           (waitWho.length ? ' 等待' + waitWho.join('、') + '确认。' : ' 全部确认完成，任务进入<strong>已确认</strong>。') + '</p>'

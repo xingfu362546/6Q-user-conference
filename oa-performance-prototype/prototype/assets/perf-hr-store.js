@@ -30,9 +30,9 @@
     var nos = allNos();
     return {
       plans: {
-        '2026-05': planShell('2026年5月月度考核', 'month', '2026-05-01T08:00', '2026-06-05T18:00', '2026-06-10T18:00', '2026-06-15T18:00', nos),
-        '2026-Q2': planShell('2026 Q2 季度考核', 'quarter', '2026-04-01T08:00', '2026-06-20T18:00', '2026-06-25T18:00', '2026-06-30T18:00', nos.slice()),
-        '2026-04': planShell('2026年4月月度考核', 'month', '2026-04-01T08:00', '2026-04-28T18:00', '2026-05-05T18:00', '2026-05-08T18:00', [])
+        '2026-05': planShell('2026年5月月度考核', 'month', '2026-05', '2026-05-01T08:00', '2026-06-05T18:00', '2026-06-10T18:00', '2026-06-15T18:00', nos),
+        '2026-Q2': planShell('2026 Q2 季度考核', 'quarter', '2026-Q2', '2026-04-01T08:00', '2026-06-20T18:00', '2026-06-25T18:00', '2026-06-30T18:00', nos.slice()),
+        '2026-04': planShell('2026年4月月度考核', 'month', '2026-04', '2026-04-01T08:00', '2026-04-28T18:00', '2026-05-05T18:00', '2026-05-08T18:00', [])
       },
       tasks: {
         '2026-Q2:E10021': {
@@ -42,6 +42,7 @@
           scoreSample: 23,
           content: '已完成 PRD v1.0 并组织 2 轮评审',
           assessedTotal: 89.2,
+          supervisorTotal: 88.4,
           divisionTotal: 89.2,
           hrFinal: null,
           voided: null,
@@ -55,6 +56,7 @@
           scoreSample: 23,
           content: '已完成 PRD v1.0 并组织 2 轮评审',
           assessedTotal: 84.7,
+          supervisorTotal: 84.4,
           divisionTotal: 84.1,
           hrFinal: null,
           voided: null,
@@ -65,14 +67,37 @@
     };
   }
 
-  function planShell(name, type, start, fillEnd, scoreEnd, confirmEnd, roster) {
-    return { name: name, type: type, start: start, fillEnd: fillEnd, scoreEnd: scoreEnd, confirmEnd: confirmEnd, roster: roster };
+  function planShell(name, type, period, start, fillEnd, scoreEnd, confirmEnd, roster) {
+    return { name: name, type: type, period: period, start: start, fillEnd: fillEnd, scoreEnd: scoreEnd, confirmEnd: confirmEnd, roster: roster };
+  }
+
+  function migrateStore(store) {
+    var changed = false;
+    Object.keys(store.plans || {}).forEach(function (id) {
+      var plan = store.plans[id];
+      if (plan && !plan.period && /^(\d{4}-\d{2}|\d{4}-Q[1-4])$/i.test(id)) {
+        plan.period = id.replace(/q([1-4])$/i, function (_, n) { return 'Q' + n; });
+        changed = true;
+      }
+    });
+    function fillSupervisor(key, value, system) {
+      var task = store.tasks[key];
+      if (!task || task.supervisorTotal != null) return;
+      if (task.assessedTotal !== system) return;
+      if (task.returns && task.returns.length) return;
+      task.supervisorTotal = value;
+      changed = true;
+    }
+    fillSupervisor('2026-Q2:E10021', 88.4, 89.2);
+    fillSupervisor('2026-05:E10021', 84.4, 84.7);
+    if (changed) save(store);
+    return store;
   }
 
   function load() {
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (raw && raw.plans && raw.tasks) return raw;
+      if (raw && raw.plans && raw.tasks) return migrateStore(raw);
     } catch (e) { /* 空 */ }
     var seed = defaultStore();
     localStorage.setItem(KEY, JSON.stringify(seed));
@@ -129,30 +154,70 @@
     return planId + ':' + no;
   }
 
+  function seedFromStatus(planId, status) {
+    var chain = nodesFor(planId);
+    var node = '填写中';
+    var upto = 1;
+    if (status === '未开始') node = '未开始';
+    else if (status === '已逾期') node = '已逾期';
+    else if (status === '已提交' || status === '待上级评价') {
+      node = '待上级评价';
+      upto = Math.min(2, chain.length);
+    } else if (status === '待分管评价') {
+      node = '待分管评价';
+      upto = Math.min(3, chain.length);
+    } else if (status === '待确认' || status === '已完成') {
+      node = status;
+      upto = chain.length;
+    }
+    return { node: node, reached: chain.slice(0, upto) };
+  }
+
+  function appendReached(task, nodes) {
+    task.reached = task.reached || [];
+    nodes.forEach(function (node) {
+      if (task.reached.indexOf(node) < 0) task.reached.push(node);
+    });
+  }
+
+  /** 当前节点及之前的节点。退至只改当前节点，不清空已到达记录。 */
+  function impliedReached(planId, node) {
+    var chain = nodesFor(planId);
+    if (node === '已完成' || node === '待确认') return chain.slice();
+    var current = statusToNode(node);
+    var idx = chain.indexOf(current);
+    if (idx < 0) return chain.slice(0, 1);
+    return chain.slice(0, idx + 1);
+  }
+
   function ensureTask(store, planId, emp) {
     var key = taskKey(planId, emp.no);
+    var seed = seedFromStatus(planId, emp.status);
     if (!store.tasks[key]) {
-      var reached = ['员工填写'];
-      var node = '填写中';
-      if (emp.status === '未开始') node = '未开始';
-      if (emp.status === '已逾期') node = '填写中';
-      if (emp.status === '已提交') {
-        node = '待上级评价';
-        reached = ['员工填写', '上级评分'];
-      }
       store.tasks[key] = {
-        node: node,
-        reached: reached,
+        node: seed.node,
+        reached: seed.reached,
         confirm: { employee: false, supervisor: false, division: false },
         scoreSample: null,
         content: '',
         assessedTotal: null,
+        supervisorTotal: null,
         divisionTotal: null,
         hrFinal: null,
         voided: null,
         reassignedTo: null,
         returns: []
       };
+    } else {
+      var task = store.tasks[key];
+      var untouched = !task.voided && !(task.returns && task.returns.length) && !task.hrFinal;
+      var early = task.node === '填写中' || task.node === '未开始';
+      if (untouched && early && seed.node !== task.node && emp.status !== '填写中' && emp.status !== '未开始') {
+        task.node = seed.node;
+        task.reached = seed.reached.slice();
+      }
+      if (task.node !== '未开始') appendReached(task, impliedReached(planId, task.node));
+      if (task.supervisorTotal === undefined) task.supervisorTotal = null;
     }
     return store.tasks[key];
   }
@@ -233,20 +298,23 @@
     return { ok: true, task: task };
   }
 
-  function voidTask(planId, emp, reason, scope) {
+  function voidTask(planId, emp, reason, scope, affected) {
     if (!reason || !String(reason).trim()) return { ok: false, error: '请填写失效原因' };
     if (!scope || !scope.id || !scope.personId) return { ok: false, error: '该员工不在已发放的范围包里，不能失效' };
     var store = load();
     var task = ensureTask(store, planId, emp);
     if (task.voided) return { ok: false, error: '已经失效' };
     if (task.node === '已完成') return { ok: false, error: '已完成的待办不能失效' };
+    var plans = affected || [];
     task.voided = {
       reason: String(reason).trim(),
       at: new Date().toISOString(),
       prevNode: task.node,
       scopePackId: scope && scope.id ? scope.id : '',
       scopePackName: scope && scope.name ? scope.name : '',
-      personId: scope && scope.personId ? scope.personId : ''
+      personId: scope && scope.personId ? scope.personId : '',
+      affectedPlanIds: plans.map(function (p) { return p.id; }),
+      affectedPlanNames: plans.map(function (p) { return p.name; })
     };
     task.reassignedPackId = '';
     var plan = store.plans[planId];
@@ -263,22 +331,6 @@
     task.reassignedPackName = packName || '';
     save(store);
     return { ok: true };
-  }
-
-  function placeOnPlan(targetPlanId, emp) {
-    var store = load();
-    var plan = store.plans[targetPlanId];
-    if (!plan) return { ok: false, error: '计划不存在' };
-    if (plan.roster.indexOf(emp.no) < 0) plan.roster.push(emp.no);
-    var task = ensureTask(store, targetPlanId, emp);
-    task.reassignedTo = targetPlanId;
-    var sourceKey = null;
-    Object.keys(store.tasks).forEach(function (k) {
-      if (k.indexOf(':' + emp.no) > 0 && store.tasks[k].voided) sourceKey = k;
-    });
-    if (sourceKey) store.tasks[sourceKey].reassignedTo = targetPlanId;
-    save(store);
-    return { ok: true, planName: plan.name };
   }
 
   function restoreTask(planId, emp) {
@@ -308,13 +360,22 @@
     return { ok: true, restored: back };
   }
 
+  function adoptedScore(planId, task) {
+    if (!task) return null;
+    if (task.hrFinal && task.hrFinal.value != null && task.hrFinal.value !== '') return task.hrFinal.value;
+    var plan = load().plans[planId];
+    if (plan && plan.type === 'quarter' && task.divisionTotal != null && task.divisionTotal !== '') return task.divisionTotal;
+    if (task.assessedTotal != null && task.assessedTotal !== '') return task.assessedTotal;
+    return null;
+  }
+
   function setHrFinal(planId, empNo, value, reason) {
     if (!reason || !String(reason).trim()) return { ok: false, error: '请填写修改原因' };
     if (value === '' || isNaN(Number(value))) return { ok: false, error: '分数须为数字' };
     var store = load();
     var emp = person(empNo) || { no: empNo, status: '已完成' };
     var task = ensureTask(store, planId, emp);
-    var before = task.hrFinal ? task.hrFinal.value : (task.divisionTotal != null ? task.divisionTotal : task.assessedTotal);
+    var before = adoptedScore(planId, task);
     task.hrFinal = {
       value: Math.round(Number(value) * 10) / 10,
       reason: String(reason).trim(),
@@ -413,8 +474,8 @@
     voidTask: voidTask,
     restoreTask: restoreTask,
     markReassigned: markReassigned,
-    placeOnPlan: placeOnPlan,
     setHrFinal: setHrFinal,
+    adoptedScore: adoptedScore,
     editPlan: editPlan,
     importEvaluators: importEvaluators,
     setEvaluator: setEvaluator,

@@ -197,9 +197,9 @@
 
   var DETAIL_SCOPE_PACKS = [
 
-    { id: 'sp1', name: '信息部-核心岗', templateId: 't-m-staff', memberIds: ['p-zm', 'p-wf', 'p-lq', 'p-xy'], status: 'issued' },
+    { id: 'sp1', name: '信息部-核心岗', templateId: 't-m-staff', memberIds: ['p-zm', 'p-wf', 'p-lq', 'p-xy'], status: 'issued', usedBy: ['2026-05', '2026-Q2'] },
 
-    { id: 'sp2', name: '办事处+职能', templateId: 't-m-mgr', memberIds: ['p-zmn', 'p-cw', 'p-sun', 'p-ly', 'p-zt', 'p-wl', 'p-ma', 'p-hx'], status: 'issued' },
+    { id: 'sp2', name: '办事处+职能', templateId: 't-m-mgr', memberIds: ['p-zmn', 'p-cw', 'p-sun', 'p-ly', 'p-zt', 'p-wl', 'p-ma', 'p-hx'], status: 'issued', usedBy: ['2026-05'] },
 
   ];
 
@@ -1923,25 +1923,44 @@
     });
   }
 
+  function plansUsingPack(scopeId) {
+    var pack = null;
+    DETAIL_SCOPE_PACKS.forEach(function (sp) { if (sp.id === scopeId) pack = sp; });
+    var ids = (pack && pack.usedBy && pack.usedBy.length) ? pack.usedBy.slice() : [detailPlanId];
+    if (ids.indexOf(detailPlanId) < 0) ids.unshift(detailPlanId);
+    return ids.map(function (id) {
+      var plan = window.PerfHrStore ? PerfHrStore.planOf(id) : null;
+      return { id: id, name: plan && plan.name ? plan.name : id };
+    });
+  }
+
+  function commitVoid(emp, reason, scope, plans, refresh) {
+    var res = PerfHrStore.voidTask(detailPlanId, emp, reason, scope, plans);
+    if (!res.ok) return res.error;
+    refresh();
+    return '';
+  }
+
   function openVoidModal(emp, refresh) {
     var scope = scopeOfEmployee(emp);
+    var plans = plansUsingPack(scope.id);
+    var names = plans.map(function (p) { return p.name; }).join('、');
+    var reused = plans.length > 1;
     openActionModal('失效 · ' + emp.name,
-      '<p class="hr-modal-readonly">失效后状态标红。员工和领导都看不到这张待办，并从范围包「' + (scope.name || '当前范围包') + '」移除。一个人同时只在一个范围包里。恢复时加回这个已发放的范围包，并重新发放同一张待办，回到未开始。</p>' +
+      '<p class="hr-modal-readonly">失效后状态标红。员工和领导都看不到这张待办，并从范围包「' + (scope.name || '当前范围包') + '」移除。该范围包目前被 <b>' + plans.length + '</b> 张计划使用：' + names + '。一个人同时只在一个范围包里。恢复时加回这个已发放的范围包，并重新发放同一张待办，回到未开始。</p>' +
+      (reused ? '<p class="hr-modal-readonly">这些计划共用该范围包。填写原因后还要再确认一次，才会把人从范围包里移除。</p>' : '') +
       '<div class="hr-modal-field"><label>失效原因</label><textarea id="hr-void-reason" rows="3"></textarea></div>',
-      '确认失效',
+      reused ? '下一步' : '确认失效',
       function (mask) {
         var reason = (mask.querySelector('#hr-void-reason').value || '').trim();
         if (!reason) return '请填写失效原因';
-        var res = PerfHrStore.voidTask(detailPlanId, emp, reason, scope);
-        if (!res.ok) return res.error;
-        if (scope.personId) {
-          DETAIL_SCOPE_PACKS.forEach(function (sp) {
-            if (scope.id && sp.id !== scope.id) return;
-            var idx = sp.memberIds.indexOf(scope.personId);
-            if (idx >= 0) sp.memberIds.splice(idx, 1);
-          });
-        }
-        refresh();
+        if (!reused) return commitVoid(emp, reason, scope, plans, refresh);
+        setTimeout(function () {
+          openActionModal('再次确认失效 · ' + emp.name,
+            '<p class="hr-modal-readonly">范围包「' + (scope.name || '当前范围包') + '」被 <b>' + plans.length + '</b> 张计划使用：' + names + '。确认后，' + emp.name + '会从这些计划共用的范围包里移除。</p>',
+            '确认失效（影响 ' + plans.length + ' 张计划）',
+            function () { return commitVoid(emp, reason, scope, plans, refresh); });
+        }, 0);
         return '';
       });
   }
@@ -1983,10 +2002,8 @@
 
   function openScoreModal(emp) {
     var task = PerfHrStore.readTask(detailPlanId, emp.no);
-    var current = '尚未核定';
-    if (task && task.hrFinal && task.hrFinal.value != null) current = String(task.hrFinal.value);
-    else if (task && task.divisionTotal != null) current = String(task.divisionTotal);
-    else if (task && task.assessedTotal != null) current = String(task.assessedTotal);
+    var adopted = window.PerfHrStore && PerfHrStore.adoptedScore ? PerfHrStore.adoptedScore(detailPlanId, task) : null;
+    var current = adopted == null ? '尚未核定' : String(adopted);
     openActionModal('改总分 · ' + emp.name,
       '<p class="hr-modal-readonly">当前采用分：<b>' + current + '</b>。保存后确认状态不变。</p>' +
       '<div class="hr-modal-field"><label>最终总分</label><input id="hr-final-score" type="number" step="0.1" /></div>' +
@@ -2006,7 +2023,8 @@
     var plan = window.PerfHrStore ? PerfHrStore.planOf(detailPlanId) : null;
     PerfSheetPreview.openEmployee(emp, {
       id: detailPlanId,
-      name: plan ? plan.name : detailPlanId,
+      name: plan ? plan.name : '',
+      period: plan && plan.period ? plan.period : '',
       quarter: isQuarterPlanId(detailPlanId)
     });
   }

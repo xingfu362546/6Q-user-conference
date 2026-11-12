@@ -8,82 +8,91 @@
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function tiers(weight) {
-    var full = Number(weight) || 0;
-    return [
-      { label: '业绩达成率 ≥ 100%', score: full },
-      { label: '100% > 业绩达成率 ≥ 90%', score: Math.round(full * 0.8 * 10) / 10 },
-      { label: '90% > 业绩达成率 ≥ 80%', score: Math.round(full * 0.6 * 10) / 10 },
-      { label: '80% > 业绩达成率 ≥ 70%', score: Math.round(full * 0.4 * 10) / 10 },
-      { label: '业绩达成率 < 70%', score: 0 }
-    ];
+  function asObjectives(list) {
+    if (!list || !list.length) return [];
+    if (list[0].targets) return list;
+    return list.map(function (kr, i) {
+      return { id: kr.id || ('ko-' + i), o: kr.o || '关键目标', targets: [kr] };
+    });
   }
 
-  function target(id, block, weight, smart, result, selfScore) {
-    return {
-      id: id, block: block, weight: weight, smart: smart,
-      standardTiers: tiers(weight), m: result, selfScore: selfScore
-    };
+  function findSubmission(emp, quarter) {
+    var SS = window.SupervisorScore;
+    if (!SS || !SS.SUBMISSIONS || !emp || !emp.name) return null;
+    var hit = null;
+    Object.keys(SS.SUBMISSIONS).forEach(function (key) {
+      var sub = SS.SUBMISSIONS[key];
+      var header = sub && sub.header;
+      if (!header || header.employee !== emp.name) return;
+      var isQuarter = /Q/i.test(String(header.period || ''));
+      if (isQuarter === !!quarter) hit = { id: key, sub: sub };
+    });
+    return hit;
   }
 
   function sheetModel(emp, quarter) {
-    var name = emp.name || '员工';
-    if (quarter) {
-      return {
-        quarter: true,
-        core: [{ id: 'pv', o: name + ' · 本季核心目标', targets: [
-          target('pv1', 'V', 30, '季度内完成主链路评审并交付可走查结果', '已完成评审，意见已收敛', 27),
-          target('pv2', 'V', 28, '季度末交付双端原型，覆盖填写、评分和确认', '原型主链路可演示', 25)
-        ] }],
-        regular: [{ id: 'px', o: '常规协同', targets: [
-          target('px1', 'X', 18, '跨部门问题按约定时限响应', '本季无超时未响应', 16),
-          target('px2', 'X', 14, '过程记录随版本可追溯', '决策和交付记录已归档', 12)
-        ] }],
-        behavior: [
-          { id: 'b1', name: '团队建设与人才培养', weight: 4, standard: '辅导、分享、反馈', event: '完成本季一次内部分享', selfScore: 3.5 },
-          { id: 'b2', name: '跨部门协同', weight: 3, standard: '按时响应，结论可追溯', event: '协同事项均有记录', selfScore: 2.8 },
-          { id: 'b3', name: '目标承接', weight: 3, standard: '对交付结果负责', event: '风险已在周报说明', selfScore: 2.6 }
-        ],
-        incentive: [
-          { objective: '方法可复制', result: '把评审清单沉淀成模板', typeName: '未选', self: '—' }
-        ],
-        penalty: '无',
-        interview: { highlight: '主链路按期可演示', improve: '确认环节说明还可以更短', plan: '下季补齐空区块示例', support: '需要业务一起看一版样表' },
-        summary: '本季核心和常规目标已填写，专项激励按申报展示，不计入核定总分。',
-        next: [{ id: 'pn', o: '下季核心目标', targets: [
-          target('pn1', 'next', 40, '下季继续沿用同一张表完成填写和确认', '待填写', ''),
-          target('pn2', 'next', 30, '和上级对标的目标单独标出', '待填写', ''),
-          target('pn3', 'next', 30, '空着的区块也保留在表上', '待填写', '')
-        ] }],
-        scores: { pv1: 26, pv2: 24, px1: 15, px2: 12, b1: 3.5, b2: 2.5, b3: 2.5 },
-        division: { pv1: 26, pv2: 24, px1: 15, px2: 11, b1: 3, b2: 2.5, b3: 2.5 }
-      };
-    }
-    return {
-      quarter: false,
-      core: [{ id: 'mv', o: name + ' · 本月核心目标', targets: [
-        target('mv1', 'V', 25, '本月完成评审并交付可走查结果', '已完成评审，意见已收敛', 23),
-        target('mv2', 'V', 20, '本月交付原型主链路', '入口和主流程可演示', 18)
-      ] }],
-      regular: [{ id: 'mx', o: '常规事项', targets: [
-        target('mx1', 'X', 8, '工作日内响应协同', '本月无超时', 7.5),
-        target('mx2', 'X', 7, '过程记录随版本更新', '记录已归档', 6)
-      ] }],
-      behavior: [
-        { id: 'b1', name: '团队建设与人才培养', weight: 4, standard: '辅导、分享、反馈', event: '完成本月一次内部分享', selfScore: 3.6 },
-        { id: 'b2', name: '跨部门协同', weight: 4, standard: '按时响应，结论可追溯', event: '协同事项均有记录', selfScore: 3.5 },
-        { id: 'b3', name: '压力应对', weight: 4, standard: '问题有结论', event: '阻塞项当天有反馈', selfScore: 3.2 },
-        { id: 'b4', name: '目标承接', weight: 3, standard: '对交付结果负责', event: '风险已说明', selfScore: 2.8 }
-      ],
-      plus: [{ type: '加分', desc: '本月额外交付一次走查', score: '1.0' }],
-      minus: [{ type: '减分', desc: '无', score: '0' }],
-      summary: '本月核心、常规、行为态度和加减分都在这张表上。',
-      next: [{ id: 'mn', o: '下月核心目标', targets: [
-        target('mn1', 'next', 45, '下月继续用同一张表完成填写', '待填写', ''),
-        target('mn2', 'next', 55, '空着的区块也保留在表上', '待填写', '')
-      ] }],
-      scores: { mv1: 22, mv2: 18, mx1: 7, mx2: 6, b1: 3.5, b2: 3.5, b3: 3, b4: 2.5 }
+    var found = findSubmission(emp, quarter);
+    var model = {
+      missing: !found,
+      core: [],
+      regular: [],
+      behavior: [],
+      plus: [],
+      minus: [],
+      penalty: '无',
+      interview: null,
+      summary: '',
+      nextRows: [],
+      scores: {},
+      division: {}
     };
+    if (!found) return model;
+    var sub = found.sub;
+    model.core = asObjectives(sub.coreKeyObjectives || sub.coreKrs);
+    model.regular = asObjectives(sub.regularKeyObjectives || sub.regularKrs);
+    model.behavior = sub.behavior || [];
+    model.summary = sub.selfSummary || '';
+    model.interview = sub.interview || null;
+    var plus = (sub.adjust && sub.adjust.plus) || [];
+    var minus = (sub.adjust && sub.adjust.minus) || [];
+    model.plus = plus.map(function (row) {
+      return { type: '加分', desc: row.desc || row.detail || '', score: row.approved != null ? row.approved : row.selfScore };
+    });
+    model.minus = minus.map(function (row) {
+      return { type: '减分', desc: row.desc || row.detail || '', score: row.approved != null ? row.approved : row.selfScore };
+    });
+    model.penalty = model.minus.length ? model.minus.map(function (row) { return row.desc + ' ' + row.score; }).join('；') : '无';
+    if (quarter) {
+      (sub.nextSeasonKeyObjectives || []).forEach(function (ko) {
+        (ko.targets || []).forEach(function (target) {
+          var standard = target.standard || (target.standardTiers || []).map(function (tier) { return tier.label; }).join('；');
+          model.nextRows.push({ o: ko.o, smart: target.smart, standard: standard, benchmark: '—' });
+        });
+      });
+    } else {
+      (sub.nextMonthKrs || []).forEach(function (kr) {
+        model.nextRows.push({ o: kr.o, smart: kr.smart, standard: kr.standard, benchmark: '—' });
+      });
+    }
+    var preset = (window.SupervisorScore.PRESET_SCORES || {})[found.id] || {};
+    model.scores = preset.scores || {};
+    model.division = preset.divisionScores || {};
+    return model;
+  }
+
+  function readTask(emp, plan) {
+    if (!window.PerfHrStore || !plan || !plan.id || !emp) return null;
+    return PerfHrStore.readTask(plan.id, emp.no);
+  }
+
+  function savedIncentive(emp, plan) {
+    if (!emp || !plan || !plan.id) return [];
+    try {
+      var rows = JSON.parse(localStorage.getItem('hr-incentive-' + emp.no + '-' + plan.id) || 'null');
+      return rows && rows.length ? rows : [];
+    } catch (e) {
+      return [];
+    }
   }
 
   function work(title, list, period, state) {
@@ -93,37 +102,104 @@
     return '<section class="perf-preview-block"><h3>' + esc(title) + '</h3>' + body + '</section>';
   }
 
-  function bodyHtml(emp, quarter, planName) {
+  function showNum(value) {
+    return value == null || value === '' ? '—' : esc(value);
+  }
+
+  function nextTable(rows) {
+    var body = (rows || []).map(function (row) {
+      return '<tr><td>' + esc(row.o) + '</td><td>' + esc(row.smart) + '</td><td>' + esc(row.standard) + '</td><td>' + esc(row.benchmark || '—') + '</td></tr>';
+    }).join('') || '<tr><td colspan="4">未填写</td></tr>';
+    return '<table class="q-table perf-preview-table"><tr><th>关键目标</th><th>考核目标</th><th>考核标准</th><th>是否对标</th></tr>' + body + '</table>';
+  }
+
+  function totalsHtml(emp, plan) {
+    var task = readTask(emp, plan);
+    if (!task) return '<p>待办还没有分数记录。</p>';
+    var hr = task.hrFinal && task.hrFinal.value != null ? task.hrFinal.value : null;
+    var adopted = window.PerfHrStore && PerfHrStore.adoptedScore ? PerfHrStore.adoptedScore(plan.id, task) : null;
+    var division = plan && plan.quarter ? ' · 分管核定 ' + showNum(task.divisionTotal) : '';
+    return '<p>计算总分 ' + showNum(task.assessedTotal) + ' · 上级核定 ' + showNum(task.supervisorTotal) + division +
+      ' · HR 最终总分 ' + showNum(hr) + ' · 采用分 ' + showNum(adopted) + '</p>';
+  }
+
+  function incentiveHtml(emp, plan) {
+    var rows = savedIncentive(emp, plan);
+    if (!rows.length) return '<p>未申报。人才开发部尚未核定专项，预览不填示例得分。</p>';
+    var QS = window.PerfQuarterScore;
+    var body = rows.map(function (row, i) {
+      var type = QS && QS.typeById ? (QS.typeById(row.typeId) || {}) : {};
+      var score = '—';
+      if (QS && QS.incentiveRowScore) {
+        var rowScore = QS.incentiveRowScore(row);
+        score = rowScore == null ? '待评定' : rowScore;
+      }
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(row.objective) + '</td><td>' + esc(row.result) + '</td><td>' + esc(type.label || row.typeId || '—') + '</td><td>' + esc(score) + '</td></tr>';
+    }).join('');
+    var summary = '';
+    if (QS && QS.compute) {
+      var task = readTask(emp, plan);
+      var hr = task && task.hrFinal && task.hrFinal.value != null ? task.hrFinal.value : (task ? task.assessedTotal : null);
+      var result = QS.compute({
+        workRows: task && task.assessedTotal != null ? [{ self: task.assessedTotal, supervisor: task.supervisorTotal, division: task.divisionTotal }] : [],
+        sixqTotal: 0,
+        penaltyRows: [],
+        incentiveRows: rows,
+        hrFinalTotal: hr,
+        level: emp.level || '职员'
+      });
+      if (result && result.ok) {
+        var names = { A: 'A 档', B: 'B 档', C: 'C 档', none: '暂不认定', pending: '暂不认定（未评定）' };
+        var amount = result.suggestedAmount === 'unmatched' ? '职级未匹配' : result.suggestedAmount;
+        summary = '<p>专项得分 ' + esc(result.incentiveTotal) + ' · 建议档次 ' + esc(names[result.finalTier] || result.finalTier) + ' · 建议金额 ' + esc(amount) + '</p>';
+      }
+    }
+    return '<table class="q-table perf-preview-table"><tr><th>#</th><th>关键目标</th><th>关键成果</th><th>超越类型</th><th>本条得分</th></tr>' + body + '</table>' + summary;
+  }
+
+  function bodyHtml(emp, quarter, plan) {
+    plan = plan || {};
     var model = sheetModel(emp, quarter);
     var state = { scores: model.scores, divisionScores: model.division || {} };
-    var head = '<p class="perf-preview-note">' + esc(emp.name) + ' · 工号 ' + esc(emp.no) + ' · ' + esc(emp.org || '') + ' · ' + esc(emp.role || '') + ' · ' + esc(planName || '') + '</p>';
-    if (quarter) {
-      var incentive = (model.incentive || []).map(function (row, i) {
-        return '<tr><td>' + (i + 1) + '</td><td>' + esc(row.objective) + '</td><td>' + esc(row.result) + '</td><td>' + esc(row.typeName) + '</td><td>' + esc(row.self) + '</td></tr>';
-      }).join('') || '<tr><td colspan="5">未申报</td></tr>';
-      return head +
-        work('核心绩效 V%', model.core, 'quarter', state) +
-        work('常规绩效 X%', model.regular, 'quarter', state) +
-        '<section class="perf-preview-block"><h3>6Q3J 人才评价</h3><p>客观分只读核对。未导入的分项保持空白，仍出现在整表里。</p></section>' +
-        '<section class="perf-preview-block"><h3>专项激励</h3><table class="q-table perf-preview-table"><tr><th>#</th><th>关键目标</th><th>关键成果</th><th>超越类型</th><th>自评</th></tr>' + incentive + '</table></section>' +
-        '<section class="perf-preview-block"><h3>减分</h3><p>' + esc(model.penalty) + '</p></section>' +
-        '<section class="perf-preview-block"><h3>绩效面谈</h3><p><b>亮点</b> ' + esc(model.interview.highlight) + '</p><p><b>待提升</b> ' + esc(model.interview.improve) + '</p><p><b>改进计划</b> ' + esc(model.interview.plan) + '</p><p><b>所需支持</b> ' + esc(model.interview.support) + '</p></section>' +
-        '<section class="perf-preview-block"><h3>自评总结</h3><p>' + esc(model.summary) + '</p></section>' +
-        work('下季核心目标', model.next, 'next', state);
+    var head = '<p class="perf-preview-note">' + esc(emp.name) + ' · 工号 ' + esc(emp.no) + ' · ' + esc(emp.org || '') + ' · ' + esc(emp.role || '') + ' · ' + esc(plan.name || '') + '</p>';
+    if (model.missing) head += '<p class="perf-preview-note">这张待办没有员工填报快照，预览不填示例分数。空区块保持空白。</p>';
+    var emptyWork = '<p>未填写</p>';
+    function workOrEmpty(title, list, period) {
+      if (!list || !list.length) return '<section class="perf-preview-block"><h3>' + esc(title) + '</h3>' + emptyWork + '</section>';
+      return work(title, list, period, state);
     }
-    var behavior = window.PerfReviewSheet
+    if (quarter) {
+      var sixq = window.PerfSixQ3J && plan.id
+        ? PerfSixQ3J.renderReadonlyPanel(plan.id, emp.no, { title: '6Q3J 人才评价' })
+        : '<p>未导入</p>';
+      var interview = model.interview
+        ? '<p><b>亮点</b> ' + esc(model.interview.highlight) + '</p><p><b>待提升</b> ' + esc(model.interview.improve) + '</p><p><b>改进计划</b> ' + esc(model.interview.plan) + '</p><p><b>所需支持</b> ' + esc(model.interview.support) + '</p>'
+        : '<p>未填写</p>';
+      return head +
+        workOrEmpty('核心绩效 V%', model.core, 'quarter') +
+        workOrEmpty('常规绩效 X%', model.regular, 'quarter') +
+        '<section class="perf-preview-block"><h3>6Q3J 人才评价</h3>' + sixq + '</section>' +
+        '<section class="perf-preview-block"><h3>专项激励</h3>' + incentiveHtml(emp, plan) + '</section>' +
+        '<section class="perf-preview-block"><h3>减分</h3><p>' + esc(model.penalty) + '</p></section>' +
+        '<section class="perf-preview-block"><h3>绩效面谈</h3>' + interview + '</section>' +
+        '<section class="perf-preview-block"><h3>自评总结</h3><p>' + esc(model.summary || '未填写') + '</p></section>' +
+        '<section class="perf-preview-block"><h3>下季核心目标</h3>' + nextTable(model.nextRows) + '</section>' +
+        '<section class="perf-preview-block"><h3>分数</h3>' + totalsHtml(emp, plan) + '</section>';
+    }
+    var behavior = model.behavior.length && window.PerfReviewSheet
       ? PerfReviewSheet.renderBehaviorTable(model.behavior, { periodType: 'month', editable: false, state: state })
-      : '';
+      : '<p>未填写</p>';
     var plus = (model.plus || []).concat(model.minus || []).map(function (row) {
       return '<tr><td>' + esc(row.type) + '</td><td>' + esc(row.desc) + '</td><td>' + esc(row.score) + '</td></tr>';
-    }).join('');
+    }).join('') || '<tr><td colspan="3">未填写</td></tr>';
     return head +
-      work('核心绩效 V%', model.core, 'month', state) +
-      work('常规绩效 X%', model.regular, 'month', state) +
+      workOrEmpty('核心绩效 V%', model.core, 'month') +
+      workOrEmpty('常规绩效 X%', model.regular, 'month') +
       '<section class="perf-preview-block"><h3>行为态度</h3>' + behavior + '</section>' +
       '<section class="perf-preview-block"><h3>加减分</h3><table class="q-table perf-preview-table"><tr><th>类型</th><th>说明</th><th>分数</th></tr>' + plus + '</table></section>' +
-      '<section class="perf-preview-block"><h3>自评总结</h3><p>' + esc(model.summary) + '</p></section>' +
-      work('下月核心目标', model.next, 'next', state);
+      '<section class="perf-preview-block"><h3>自评总结</h3><p>' + esc(model.summary || '未填写') + '</p></section>' +
+      '<section class="perf-preview-block"><h3>下月核心目标</h3>' + nextTable(model.nextRows) + '</section>' +
+      '<section class="perf-preview-block"><h3>分数</h3>' + totalsHtml(emp, plan) + '</section>';
   }
 
   function close() {
@@ -177,12 +253,21 @@
     });
   }
 
+  function periodCode(plan) {
+    var period = plan && plan.period ? String(plan.period) : '';
+    if (/^\d{4}-\d{2}$/.test(period) || /^\d{4}-Q[1-4]$/i.test(period)) {
+      return period.replace(/q([1-4])$/i, function (_, n) { return 'Q' + n; });
+    }
+    return '';
+  }
+
   function openEmployee(emp, plan) {
     var quarter = !!(plan && plan.quarter);
+    var period = periodCode(plan);
     open({
       title: (emp.name || '员工') + ' · 整表预览',
-      filename: window.PerfExportImage ? PerfExportImage.filename(emp.name, plan && plan.id) : ((emp.name || '员工') + '.png'),
-      html: bodyHtml(emp, quarter, plan && plan.name)
+      filename: window.PerfExportImage ? PerfExportImage.filename(emp.name, period || '考核期') : ((emp.name || '员工') + '.png'),
+      html: bodyHtml(emp, quarter, plan)
     });
   }
 
