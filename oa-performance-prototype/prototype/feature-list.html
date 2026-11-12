@@ -231,7 +231,7 @@
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">失效待办</td>
-            <td class="col-text">失效后状态标红，员工和领导都不再看到，并从当时的已发放范围包移除。一个人同时只在一个范围包。恢复是加回原来那个已发放范围包，并重新发放同一张待办，回到未开始。已经在另一个范围包里时不能恢复。</td>
+            <td class="col-text">失效后状态标红，员工和领导都不再看到。只从当前计划的参与名单和这次发放的范围包移除，其他计划和范围包模板不变。恢复是加回当前计划原来那个已发放范围包，并重新发放同一张待办，回到未开始。已经在本计划另一个范围包里时不能恢复。</td>
             <td class="col-plan">规格：用户故事 9、FR-023。规则以 <code>specs/001-perf-next-batch/spec.md</code> 为准，本行和 <code>docs/VERSIONS.md</code> 只记录改了什么。<br>图：<code>specs/001-perf-next-batch/diagrams/待办失效.drawio</code><br>页面：<code>prototype/oa-pc/hr-plan-detail.html</code><br>逻辑：<code>hr-plan.js</code>、<code>perf-hr-store.js</code> 的 voidTask</td>
             <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细 · 失效</a></td>
           </tr>

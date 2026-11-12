@@ -197,9 +197,9 @@
 
   var DETAIL_SCOPE_PACKS = [
 
-    { id: 'sp1', name: '信息部-核心岗', templateId: 't-m-staff', memberIds: ['p-zm', 'p-wf', 'p-lq', 'p-xy'], status: 'issued', usedBy: ['2026-05', '2026-Q2'] },
+    { id: 'sp1', name: '信息部-核心岗', templateId: 't-m-staff', memberIds: ['p-zm', 'p-wf', 'p-lq', 'p-xy'], status: 'issued' },
 
-    { id: 'sp2', name: '办事处+职能', templateId: 't-m-mgr', memberIds: ['p-zmn', 'p-cw', 'p-sun', 'p-ly', 'p-zt', 'p-wl', 'p-ma', 'p-hx'], status: 'issued', usedBy: ['2026-05'] },
+    { id: 'sp2', name: '办事处+职能', templateId: 't-m-mgr', memberIds: ['p-zmn', 'p-cw', 'p-sun', 'p-ly', 'p-zt', 'p-wl', 'p-ma', 'p-hx'], status: 'issued' },
 
   ];
 
@@ -1923,44 +1923,18 @@
     });
   }
 
-  function plansUsingPack(scopeId) {
-    var pack = null;
-    DETAIL_SCOPE_PACKS.forEach(function (sp) { if (sp.id === scopeId) pack = sp; });
-    var ids = (pack && pack.usedBy && pack.usedBy.length) ? pack.usedBy.slice() : [detailPlanId];
-    if (ids.indexOf(detailPlanId) < 0) ids.unshift(detailPlanId);
-    return ids.map(function (id) {
-      var plan = window.PerfHrStore ? PerfHrStore.planOf(id) : null;
-      return { id: id, name: plan && plan.name ? plan.name : id };
-    });
-  }
-
-  function commitVoid(emp, reason, scope, plans, refresh) {
-    var res = PerfHrStore.voidTask(detailPlanId, emp, reason, scope, plans);
-    if (!res.ok) return res.error;
-    refresh();
-    return '';
-  }
-
   function openVoidModal(emp, refresh) {
     var scope = scopeOfEmployee(emp);
-    var plans = plansUsingPack(scope.id);
-    var names = plans.map(function (p) { return p.name; }).join('、');
-    var reused = plans.length > 1;
     openActionModal('失效 · ' + emp.name,
-      '<p class="hr-modal-readonly">失效后状态标红。员工和领导都看不到这张待办，并从范围包「' + (scope.name || '当前范围包') + '」移除。该范围包目前被 <b>' + plans.length + '</b> 张计划使用：' + names + '。一个人同时只在一个范围包里。恢复时加回这个已发放的范围包，并重新发放同一张待办，回到未开始。</p>' +
-      (reused ? '<p class="hr-modal-readonly">这些计划共用该范围包。填写原因后还要再确认一次，才会把人从范围包里移除。</p>' : '') +
+      '<p class="hr-modal-readonly">失效后状态标红。员工和领导都看不到这张待办。只从当前计划这次发放的范围包「' + (scope.name || '当前范围包') + '」移除，其他计划不变，范围包模板也不改。一个人在当前计划里同时只在一个范围包。恢复时加回这个范围包，并重新发放同一张待办，回到未开始。</p>' +
       '<div class="hr-modal-field"><label>失效原因</label><textarea id="hr-void-reason" rows="3"></textarea></div>',
-      reused ? '下一步' : '确认失效',
+      '确认失效',
       function (mask) {
         var reason = (mask.querySelector('#hr-void-reason').value || '').trim();
         if (!reason) return '请填写失效原因';
-        if (!reused) return commitVoid(emp, reason, scope, plans, refresh);
-        setTimeout(function () {
-          openActionModal('再次确认失效 · ' + emp.name,
-            '<p class="hr-modal-readonly">范围包「' + (scope.name || '当前范围包') + '」被 <b>' + plans.length + '</b> 张计划使用：' + names + '。确认后，' + emp.name + '会从这些计划共用的范围包里移除。</p>',
-            '确认失效（影响 ' + plans.length + ' 张计划）',
-            function () { return commitVoid(emp, reason, scope, plans, refresh); });
-        }, 0);
+        var res = PerfHrStore.voidTask(detailPlanId, emp, reason, scope);
+        if (!res.ok) return res.error;
+        refresh();
         return '';
       });
   }

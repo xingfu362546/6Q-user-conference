@@ -154,7 +154,7 @@
 | 逻辑字段 | 表.列 | 说明 |
 | --- | --- | --- |
 | 评价人 | perf_evaluator_relation.evaluator_no | 按 employee_no 唯一；发放时优先取这里 |
-| 本期参与名单 | perf_plan_roster.employee_no / status | 发放时从范围包复制；失效改 status，不动范围包 |
+| 本期参与名单 | perf_plan_roster.employee_no / status | 发放时复制到当前计划；失效只改当前计划的名单和这次发放的范围包，不改其他计划，也不改范围包模板 |
 | 失效原因 / 时间 / 操作人 | perf_task.invalid_reason / invalid_at / invalid_by | 只允许未完成待办 |
 | HR 最终总分 | perf_task.hr_final_score / hr_final_reason | 独立字段，不写 final_total |
 | 退回目标节点 / 原因 | perf_task_score_snapshot.node + perf_task_log | 每次退一条快照 |

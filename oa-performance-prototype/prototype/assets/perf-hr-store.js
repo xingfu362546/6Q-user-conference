@@ -298,14 +298,13 @@
     return { ok: true, task: task };
   }
 
-  function voidTask(planId, emp, reason, scope, affected) {
+  function voidTask(planId, emp, reason, scope) {
     if (!reason || !String(reason).trim()) return { ok: false, error: '请填写失效原因' };
     if (!scope || !scope.id || !scope.personId) return { ok: false, error: '该员工不在已发放的范围包里，不能失效' };
     var store = load();
     var task = ensureTask(store, planId, emp);
     if (task.voided) return { ok: false, error: '已经失效' };
     if (task.node === '已完成') return { ok: false, error: '已完成的待办不能失效' };
-    var plans = affected || [];
     task.voided = {
       reason: String(reason).trim(),
       at: new Date().toISOString(),
@@ -313,8 +312,7 @@
       scopePackId: scope && scope.id ? scope.id : '',
       scopePackName: scope && scope.name ? scope.name : '',
       personId: scope && scope.personId ? scope.personId : '',
-      affectedPlanIds: plans.map(function (p) { return p.id; }),
-      affectedPlanNames: plans.map(function (p) { return p.name; })
+      planId: planId
     };
     task.reassignedPackId = '';
     var plan = store.plans[planId];
