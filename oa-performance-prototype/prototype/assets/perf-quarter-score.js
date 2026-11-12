@@ -36,6 +36,37 @@
   var LEVEL = { '专员': 1, '职员': 1, '主管': 1.1, '经理': 1.2, '总监': 1.3, '副总经理': 1.4 };
   var BASE = { A: 800, B: 600, C: 300 };
 
+  /**
+   * 专项得分 · 三方权重（v1.5.2 起）
+   * 上级 30% + 分管 30% + 人才开发部 40%，人才开发部保留终评权。
+   * 业务确认前先用这组，改这里即可，页面和汇总会一起变。
+   */
+  var INCENTIVE_WEIGHTS = { supervisor: 0.3, division: 0.3, hr: 0.4 };
+
+  /**
+   * 单条专项的三方加权分。
+   * 三方任意一方未填 → 返回 null（该条待评定，不参与汇总）。
+   * 旧数据只有 finalScore、没有三方分时，直接把 finalScore 当作已核定的最终得分。
+   */
+  function incentiveRowScore(row) {
+    if (!row) return null;
+    var hasAny = row.supervisor !== null && row.supervisor !== undefined && row.supervisor !== '' ||
+      row.division !== null && row.division !== undefined && row.division !== '' ||
+      row.hrFinalScore !== null && row.hrFinalScore !== undefined && row.hrFinalScore !== '';
+    if (!hasAny && row.finalScore != null && row.finalScore !== '') {
+      return round1(num(row.finalScore));
+    }
+    var parts = [row.supervisor, row.division, row.hrFinalScore];
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i] === null || parts[i] === undefined || parts[i] === '') return null;
+    }
+    return round1(
+      num(row.supervisor) * INCENTIVE_WEIGHTS.supervisor +
+      num(row.division) * INCENTIVE_WEIGHTS.division +
+      num(row.hrFinalScore) * INCENTIVE_WEIGHTS.hr
+    );
+  }
+
   function typeById(id) {
     for (var i = 0; i < TYPES.length; i++) if (TYPES[i].id === id) return TYPES[i];
     return null;
@@ -111,11 +142,11 @@
       if (!row || !row.typeId) return;
       var type = typeById(row.typeId);
       if (!type) return;
-      if (row.finalScore === null || row.finalScore === undefined || row.finalScore === '') {
+      var score = incentiveRowScore(row);
+      if (score === null) {
         pending = true;
         return;
       }
-      var score = Number(row.finalScore);
       if (isNaN(score)) return;
       if (score < 0) score = 0;
       if (score > type.points) score = type.points;
@@ -167,6 +198,8 @@
   return {
     TYPES: TYPES,
     employeeTypes: employeeTypes,
+    INCENTIVE_WEIGHTS: INCENTIVE_WEIGHTS,
+    incentiveRowScore: incentiveRowScore,
     typeById: typeById,
     round1: round1,
     composite: composite,

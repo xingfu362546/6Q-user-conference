@@ -39,6 +39,18 @@ var qty = S.compute({
 });
 assert.strictEqual(qty.incentiveTotal, 2);
 
+// v1.5.2：专项三方加权（上级 30% + 分管 30% + 人才开发部 40%）
+var weighted = S.compute({
+  incentiveRows: [{ objective: '甲', typeId: 'qual-3', supervisor: 2, division: 3, hrFinalScore: 2 }]
+});
+assert.strictEqual(S.incentiveRowScore({ supervisor: 2, division: 3, hrFinalScore: 2 }), 2.3);
+assert.strictEqual(weighted.dimensions['质量超越'], 2.3);
+
+var missing = S.compute({
+  incentiveRows: [{ objective: '甲', typeId: 'qual-3', supervisor: 3, division: 3 }]
+});
+assert.strictEqual(missing.pending, true);
+
 var tierC = S.compute({
   workRows: [{ self: 79.6, supervisor: 79.6, division: 79.6 }],
   sixqTotal: 10,

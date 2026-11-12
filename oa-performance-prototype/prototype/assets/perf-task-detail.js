@@ -162,6 +162,132 @@
 
   var metaMergedReview = false;
 
+  /** 专项核定 · 人才开发部终评（v1.5.2）。人才开发部给最终得分后，三方加权才参与定档。 */
+  function incentiveDemoRows(sub) {
+    var targets = [];
+    ((sub && sub.coreKeyObjectives) || []).forEach(function (ko) {
+      (ko.targets || []).forEach(function (t) { targets.push({ ko: ko, t: t }); });
+    });
+    return [
+      { id: 'inc-1', typeId: 'qty-1', objective: (targets[0] && targets[0].ko.o) || '关键目标一', result: (targets[0] && (targets[0].t.m || targets[0].t.smart)) || '关键成果一', supervisor: 1, division: 1, hrFinalScore: 1 },
+      { id: 'inc-2', typeId: 'qual-2', objective: (targets[1] && targets[1].ko.o) || '关键目标二', result: (targets[1] && (targets[1].t.m || targets[1].t.smart)) || '关键成果二', supervisor: 2, division: 1.5, hrFinalScore: 2 }
+    ];
+  }
+
+  function renderIncentiveReview(meta, planId, sub) {
+    if (!window.PerfQuarterScore || String(planId).indexOf('Q') < 0) return '';
+    var QS = window.PerfQuarterScore;
+    var key = 'hr-incentive-' + meta.no + '-' + planId;
+    var rows = null;
+    try { rows = JSON.parse(localStorage.getItem(key)); } catch (e) { rows = null; }
+    if (!rows || !rows.length) rows = incentiveDemoRows(sub);
+
+    var body = rows.map(function (row) {
+      var type = QS.typeById(row.typeId) || { label: '—', points: 0 };
+      function cell(field) {
+        return '<input type="number" min="0" max="' + type.points + '" step="0.1" class="perf-score-input" data-inc-row="' + row.id + '" data-inc-field="' + field + '" value="' + (row[field] == null ? '' : row[field]) + '" />';
+      }
+      return '<tr data-id="' + row.id + '"><td>' + esc(row.objective) + '<div class="muted" style="font-size:11px">' + esc(row.result) + '</div></td>' +
+        '<td>' + esc(type.label) + '<div class="muted" style="font-size:11px">上限 ' + type.points + '</div></td>' +
+        '<td>' + cell('supervisor') + '</td><td>' + cell('division') + '</td><td>' + cell('hrFinalScore') + '</td>' +
+        '<td class="inc-row-score">—</td></tr>';
+    }).join('');
+
+    var hrTypes = QS.TYPES.filter(function (t) { return t.hrOnly; });
+    var appendOptions = hrTypes.map(function (t) {
+      return '<option value="' + t.id + '">' + t.label + '（' + t.points + ' 分）</option>';
+    }).join('');
+
+    var W = QS.INCENTIVE_WEIGHTS;
+    var names = { A: 'A 档', B: 'B 档', C: 'C 档', none: '暂不认定', pending: '暂不认定（未评定）' };
+    return '<div class="task-detail-block-title" style="margin-top:20px">专项核定 · 人才开发部</div>' +
+      '<p class="hr-hint" style="margin:0 0 8px">三方权重：上级 ' + (W.supervisor * 100) + '% + 分管 ' + (W.division * 100) +
+      '% + 人才开发部 ' + (W.hr * 100) + '%。三方都填完该条才参与定档。专项不进核定总分。</p>' +
+      '<table class="task-detail-score-table"><thead><tr><th>关键目标 / 关键成果</th><th>超越类型</th><th>上级</th><th>分管</th><th>人才开发部最终得分</th><th>本条得分</th></tr></thead><tbody id="inc-tbody">' +
+      body + '</tbody></table>' +
+      '<div class="hr-modal-field" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:10px">' +
+      '<div style="flex:1;min-width:220px"><label>追加一条（品牌价值 / 其它超越）</label><select id="inc-append-type" style="width:100%;padding:6px;border:1px solid #d9d9d9;border-radius:4px">' + appendOptions + '</select></div>' +
+      '<button type="button" class="q-btn" id="inc-append-btn">追加</button></div>' +
+      '<p id="inc-summary" class="score-summary" style="margin-top:12px"></p>' +
+      '<div class="hr-modal-field" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">' +
+      '<div><label>最终档次（覆盖建议）</label><select id="inc-tier"><option value="">按建议</option><option value="A">A 档</option><option value="B">B 档</option><option value="C">C 档</option><option value="none">暂不认定</option></select></div>' +
+      '<div style="flex:1;min-width:220px"><label>改档原因</label><input id="inc-tier-reason" type="text" /></div></div>';
+  }
+
+  function bindIncentiveReview(meta, planId, sub) {
+    var tbody = document.getElementById('inc-tbody');
+    if (!tbody || !window.PerfQuarterScore) return;
+    var QS = window.PerfQuarterScore;
+    var key = 'hr-incentive-' + meta.no + '-' + planId;
+    var rows = null;
+    try { rows = JSON.parse(localStorage.getItem(key)); } catch (e) { rows = null; }
+    if (!rows || !rows.length) rows = incentiveDemoRows(sub);
+
+    function save() { localStorage.setItem(key, JSON.stringify(rows)); }
+
+    function summary() {
+      var tierSel = document.getElementById('inc-tier');
+      var result = QS.compute({
+        workRows: [{ self: meta.totalScore || 0, supervisor: meta.totalScore || 0, division: meta.totalScore || 0 }],
+        sixqTotal: 0,
+        penaltyRows: [],
+        incentiveRows: rows,
+        hrFinalTotal: meta.totalScore != null ? meta.totalScore : null,
+        level: meta.level,
+        tierOverride: tierSel && tierSel.value ? tierSel.value : ''
+      });
+      var names = { A: 'A 档', B: 'B 档', C: 'C 档', none: '暂不认定', pending: '暂不认定（未评定）' };
+      var amount = result.suggestedAmount === 'unmatched' ? '职级未匹配' : result.suggestedAmount;
+      var el = document.getElementById('inc-summary');
+      if (el) {
+        el.innerHTML = '专项得分 <b>' + result.incentiveTotal + '</b> · 建议档次 <b>' + (names[result.suggestedTier] || result.suggestedTier) +
+          '</b> · 最终档次 <b>' + (names[result.finalTier] || result.finalTier) + '</b> · 建议金额 <b>' + amount + '</b>' +
+          (result.pending ? ' <span class="q-tag q-tag-orange">有未填完的三方分</span>' : '');
+      }
+      rows.forEach(function (row) {
+        var tr = tbody.querySelector('tr[data-id="' + row.id + '"]');
+        if (!tr) return;
+        var cellEl = tr.querySelector('.inc-row-score');
+        var s = QS.incentiveRowScore(row);
+        if (cellEl) cellEl.innerHTML = s === null ? '<span class="muted">待三方填完</span>' : '<b>' + s + '</b>';
+      });
+    }
+
+    tbody.querySelectorAll('input[data-inc-field]').forEach(function (inp) {
+      inp.addEventListener('input', function () {
+        var row = rows.filter(function (r) { return r.id === inp.dataset.incRow; })[0];
+        if (!row) return;
+        row[inp.dataset.incField] = inp.value;
+        save();
+        summary();
+      });
+    });
+
+    var tierSel = document.getElementById('inc-tier');
+    if (tierSel) tierSel.addEventListener('change', summary);
+    var appendBtn = document.getElementById('inc-append-btn');
+    if (appendBtn) {
+      appendBtn.addEventListener('click', function () {
+        var sel = document.getElementById('inc-append-type');
+        var typeId = sel ? sel.value : '';
+        var type = QS.typeById(typeId);
+        if (!type) return;
+        rows.push({
+          id: 'inc-' + (rows.length + 1) + '-' + typeId,
+          typeId: typeId,
+          objective: '人才开发部追加',
+          result: '认定说明稍后补充',
+          supervisor: type.points,
+          division: type.points,
+          hrFinalScore: type.points
+        });
+        save();
+        location.reload();
+      });
+    }
+    summary();
+  }
+
   function renderSummaryBar(totals, label) {
     if (!totals) return '';
     return '<div class="score-summary" style="margin-bottom:12px">' +
@@ -190,8 +316,9 @@
     if (!bodyEl) return;
 
     var planLabel = planId.indexOf('Q') >= 0 ? '2026 ' + planId : '2026年' + parseInt(planId.split('-')[1], 10) + '月';
+    var periodName = planId.indexOf('Q') >= 0 ? '季度' : '月度';
     if (headerEl) {
-      headerEl.innerHTML = '<h2 style="margin:0 0 8px;font-size:18px">' + meta.name + ' · ' + planLabel + ' 月度绩效考核</h2>' +
+      headerEl.innerHTML = '<h2 style="margin:0 0 8px;font-size:18px">' + meta.name + ' · ' + planLabel + ' ' + periodName + '绩效考核</h2>' +
         '<div class="score-header-meta">' +
         '<span>工号：' + meta.no + '</span><span>部门：' + meta.dept + '</span><span>岗位：' + meta.role + '</span><span>职级：' + meta.level + '</span>' +
         '</div>' +
@@ -289,6 +416,7 @@
       html += '</tbody></table>';
     }
     html += renderConvertSection(meta);
+    html += renderIncentiveReview(meta, planId, sub);
     bodyEl.innerHTML = html;
 
     if (hrEdit) {
@@ -297,6 +425,7 @@
       });
     }
     refresh();
+    bindIncentiveReview(meta, planId, sub);
     if (sf()) sf().bindAll(bodyEl);
 
     if (actionsEl) {

@@ -382,3 +382,8 @@ body.page-score-confirm #confirm-body .score-section-title {
 .score-convert-row--audit { font-size: 12px; }
 .score-convert-formula { margin: 8px 0; padding: 8px 10px; background: #fff; border-radius: 4px; font-size: 12px; line-height: 1.55; color: #595959; }
 .task-detail-convert { margin-top: 20px; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+
+/* v1.5.2 · 确认页 14px 的例外：合计区数值保留 18px */
+body.page-score-confirm #confirm-body .score-summary b,
+body.page-score-confirm #confirm-body .score-summary-item b,
+body.page-score-confirm #confirm-body .score-summary .num { font-size: 18px; }

@@ -616,12 +616,12 @@ window.PROTO_NOTE_PAGES = {
         n: 1,
         attach: '#confirm-body',
         title: '员工/上级确认页',
-        ver: 'v1.5.0',
+        ver: 'v1.5.2',
         body:
           '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
           '<p>确认页只对照自评和上级（季度再加分管）的横表，底部是折算汇总。分管改核定总分后，已经点过确认的一方要重新确认。页面正文字号沿用绩效页约 13px。季度没有专项激励档次。</p></div>' +
-          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
-          '<p>确认页绩效表正文、表头、分数和页内说明统一为 14px，导航不改。系统汇总、上级/分管核定、HR 最终总分、当前采用分同时出现。有 HR 最终总分时，采用分取它，确认状态保持不变，不要求重确认。季度另显示核定总分（不含专项）、专项得分、建议档次和建议金额。建议金额只展示，不写入奖金发放。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.2</span>现在的逻辑</h4>' +
+          '<p>确认页固定五行：计算总分、上级核定、分管核定（季度）、HR 最终总分、采用分。采用分优先取 HR 最终总分，其次分管核定，最后计算总分。分数与表头 14px，合计区数值保留 18px。有 HR 最终总分时显示原因和修改前分数，确认状态不变。季度另显示专项得分、建议档次和建议金额。</p></div>' +
           '<p class="proto-sec">UI 要设计的状态</p>' +
           '<ol><li>尚未有 HR 改分：只显示系统汇总和核定分，采用分等于核定分</li>' +
           '<li>HR 已改分：多一行最终总分，并写出修改前分数、原因和修改人</li>' +
@@ -930,6 +930,23 @@ window.PROTO_NOTE_PAGES = {
         title: '折算公式',
         body:
           '<p>综合 = 自评×20% + 上级核定×40% + 分管核定×40%。分管改总分覆盖全表后标记「已调整」。</p>',
+      },
+      {
+        n: 4,
+        attach: '#score-kr-list',
+        title: '专项激励 · 三方评分',
+        ver: 'v1.5.2',
+        body:
+          '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.5.1</span>过往逻辑</h4>' +
+          '<p>季度评分页只有核心、常规和加减分。专项激励只有员工申报，领导看不到，也没有地方打分。</p></div>' +
+          '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.2</span>现在的逻辑</h4>' +
+          '<p>在加减分下面增加「专项激励 · 评分」区块，列出员工申报的关键目标、关键成果、超越类型和自评分。上级填一列，分管填一列，取值 0 到该档分值。人才开发部最终得分在 HR 待办详情维护。单条按上级 30%、分管 30%、人才开发部 40% 加权；三方任意一方空着，这条就待评定，不参与定档。专项得分不进核定总分。</p></div>' +
+          '<p class="proto-sec">UI 要设计的状态</p>' +
+          '<ol><li>只有一方可编辑：另一方显示只读分或「—」</li><li>三方未填完：HR 待办详情标「待三方填完」</li><li>合并评：上级和分管同值，只填一次</li><li>超过档值：输入框标红，不能提交</li></ol>' +
+          '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
+          '<tr><td>上级核定 / 分管核定</td><td>数字</td><td>参与定档时必填</td><td>0 到该档分值，可一位小数</td></tr>' +
+          '<tr><td>人才开发部最终得分</td><td>数字（HR 页）</td><td>参与定档时必填</td><td>不逐项确认</td></tr>' +
+          '<tr><td>本条得分</td><td>只读</td><td>—</td><td>三方加权后按档值封顶</td></tr></table>',
       },
     ],
   },
@@ -1273,12 +1290,12 @@ window.PROTO_NOTE_PAGES = {
         n: 5,
         attach: '.q-table-wrap',
         title: '员工任务表 · 字段',
-        ver: 'v1.5.1',
+        ver: 'v1.5.2',
         body:
           '<div class="proto-logic"><h4><span class="proto-ver-tag proto-ver-tag--old">v1.4.0</span>过往逻辑</h4>' +
           '<p>一行是计划乘员工。操作是催办、解锁、查看详情、退回至员工和批量转办。失效待办没有单独状态。范围包模板和本期名单绑在一起，不能只把一个人从本期拿掉还留着填写记录。</p></div>' +
           '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.1</span>现在的逻辑</h4>' +
-          '<p>操作随状态变化。还在初始节点时没有「退至」。离开初始节点后显示「退至」。未失效时显示「失效」，已失效时只显示「恢复」。失效必须填原因，并从当时所在的已发放范围包移除该员工，状态用红色「已失效」。一个人同时只属于一个范围包。失效后可以被新的范围包选中；若已经在另一个范围包里，不能恢复。恢复是把人加回原来那次发放的范围包，并重新发放同一张待办：不新建第二条，节点回到未开始，因此没有「退至」。原填写和分数留在记录里。改总分仍是同一个弹窗。导出仍是先看整表再导出。</p></div>' +
+          '<p>操作随状态变化。还在初始节点时没有「退至」。离开初始节点后显示「退至」。未失效且未完成时显示「失效」，已完成不可失效。已失效只显示「恢复」，不能退至、不能改总分。失效必须填原因，并从当时所在的已发放范围包移除该员工，状态用红色「已失效」。恢复是把人加回原来那次发放的范围包，并重新发放同一张待办：不新建第二条，节点回到未开始。原填写和分数留在记录里。改总分仍是同一个弹窗。导出仍是先看整表再导出。</p></div>' +
           '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
           '<tr><td>处理人</td><td>只读</td><td>是</td><td>按节点显示姓名，禁止「默认上级」</td></tr>' +
           '<tr><td>退至节点</td><td>节点步骤</td><td>已离开初始节点时必填</td><td>初始节点不出现该按钮；不能手输，也不能选当前节点</td></tr>' +
@@ -1525,8 +1542,9 @@ window.PROTO_NOTE_PAGES = {
           '<p>计划内入口 + HR 权限：pending_confirm 态可「修改上级分」→ 行内编辑 → 保存重算总分。</p>' +
           '<p class="proto-sec">规则说明</p>' +
           '<ul><li>from=results 或其他入口：<strong>不可改分</strong></li>' +
-          '<li>改分后需员工与上级重新确认（原型 alert 提示）</li>' +
-          '<li>不提供整表退回（退回在计划明细操作）</li></ul>',
+          '<li>改分后员工与上级<strong>不用重新确认</strong>，确认状态保持</li>' +
+          '<li>不提供整表退回（退至在计划明细操作）</li></ul>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.5.2</span>季度任务在本页下方增加「专项核定 · 人才开发部」：三方分、人才开发部最终得分、按权重算出的本条得分、建议档次和建议金额；可以改档并填原因，也可以追加一条品牌价值或其它超越。专项不进核定总分。</p>',
       },
     ],
   },

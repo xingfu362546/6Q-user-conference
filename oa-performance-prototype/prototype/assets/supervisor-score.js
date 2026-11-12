@@ -1506,7 +1506,7 @@
             editable: canEditSupCol || canEditDivCol,
             state: state,
           }) + '</div>';
-      }).join('');
+      }).join('') + quarterIncentiveHtml();
 
       // 已录入的列按角色只读/可编辑处理：读不到编辑权限的列在这里锁成只读输入框
       listEl.querySelectorAll('input[data-score-id]').forEach(function (inp) {
@@ -1519,7 +1519,72 @@
       });
 
       bindScoreInputs();
+      bindIncentiveInputs();
       bindLongTextToggles(listEl);
+    }
+
+    /** 专项激励 · 领导评分（v1.5.2）：三方分都填完才参与定档 */
+    function incentiveRows() {
+      if (!window.PerfQuarterScore) return [];
+      var kos = sub.coreKeyObjectives || [];
+      var targets = [];
+      kos.forEach(function (ko) {
+        (ko.targets || []).forEach(function (t) { targets.push({ ko: ko, t: t }); });
+      });
+      var plan = [
+        { id: 'inc-1', typeId: 'qty-1' },
+        { id: 'inc-2', typeId: 'qual-2' }
+      ];
+      return plan.map(function (p, i) {
+        var hit = targets[i] || targets[0] || {};
+        return {
+          id: p.id,
+          typeId: p.typeId,
+          objective: (hit.ko && hit.ko.o) || '未填写关键目标',
+          result: (hit.t && (hit.t.m || hit.t.smart)) || '未填写关键成果'
+        };
+      });
+    }
+
+    function quarterIncentiveHtml() {
+      var QS = window.PerfQuarterScore;
+      if (!QS) return '';
+      var rows = incentiveRows();
+      if (!rows.length) return '';
+      if (!state.incentive) state.incentive = {};
+      var body = rows.map(function (row) {
+        var type = QS.typeById(row.typeId) || { label: '—', points: 0 };
+        if (!state.incentive[row.id]) state.incentive[row.id] = { sup: '', div: '' };
+        var st = state.incentive[row.id];
+        var supCell = canEditSupCol
+          ? '<input type="number" min="0" max="' + type.points + '" step="0.1" class="perf-score-input" data-inc-id="' + row.id + '" data-inc-col="sup" value="' + st.sup + '" />'
+          : (st.sup === '' ? '—' : sOut(st.sup));
+        var divCell = canEditDivCol
+          ? '<input type="number" min="0" max="' + type.points + '" step="0.1" class="perf-score-input" data-inc-id="' + row.id + '" data-inc-col="div" value="' + st.div + '" />'
+          : (st.div === '' ? '—' : sOut(st.div));
+        return '<tr data-id="' + row.id + '"><td>' + esc(row.objective) + '</td><td>' + esc(row.result) +
+          '</td><td>' + esc(type.label) + '<div class="max-hint">0～' + type.points + '</div></td><td>' + type.points +
+          '</td><td>' + supCell + '</td><td>' + divCell + '</td></tr>';
+      }).join('');
+      var W = QS.INCENTIVE_WEIGHTS;
+      return '<div class="score-block-group" data-block-group="INC" style="margin-top:18px">' +
+        '<div class="score-block-head">专项激励 · 评分 <span class="score-block-limit">上级 ' + (W.supervisor * 100) +
+        '% + 分管 ' + (W.division * 100) + '% + 人才开发部 ' + (W.hr * 100) + '%</span></div>' +
+        '<table class="score-adjust-table" style="margin-top:8px"><thead><tr><th>关键目标</th><th>关键成果</th><th>超越类型</th><th>自评</th><th>上级核定</th><th>分管核定</th></tr></thead><tbody>' +
+        body + '</tbody></table>' +
+        '<p class="score-hint">三方分都填完才参与定档；人才开发部最终得分单独维护，不要求逐项确认。</p></div>';
+    }
+
+    function bindIncentiveInputs() {
+      if (!listEl || !state.incentive) return;
+      listEl.querySelectorAll('input[data-inc-id]').forEach(function (inp) {
+        inp.addEventListener('input', function () {
+          var id = inp.dataset.incId;
+          if (!state.incentive[id]) state.incentive[id] = { sup: '', div: '' };
+          state.incentive[id][inp.dataset.incCol === 'div' ? 'div' : 'sup'] = inp.value;
+          markDirty();
+        });
+      });
     }
 
     function bindScoreInputs() {

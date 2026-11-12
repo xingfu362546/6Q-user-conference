@@ -146,3 +146,22 @@
 - 一个计划有多张待办，一张待办对应一名员工和一份填写文档、一份评分文档。
 - 评价关系按员工工号挂到人，不挂到某一张计划。待办上的「当前处理人」在待上级评价时读取它。
 - HR 最终总分挂在待办上，不覆盖填写文档里的原始自评和上级分。
+
+## 附：逻辑字段 → 表 / 列（v1.5.0 交付用）
+
+本文上面按业务写，不给表结构。交付开发时按下表映射。原型不建库，这里只做对照。
+
+| 逻辑字段 | 表.列 | 说明 |
+| --- | --- | --- |
+| 评价人 | perf_evaluator_relation.evaluator_no | 按 employee_no 唯一；发放时优先取这里 |
+| 本期参与名单 | perf_plan_roster.employee_no / status | 发放时从范围包复制；失效改 status，不动范围包 |
+| 失效原因 / 时间 / 操作人 | perf_task.invalid_reason / invalid_at / invalid_by | 只允许未完成待办 |
+| HR 最终总分 | perf_task.hr_final_score / hr_final_reason | 独立字段，不写 final_total |
+| 退回目标节点 / 原因 | perf_task_score_snapshot.node + perf_task_log | 每次退一条快照 |
+| 有效分 | perf_task_score_snapshot.valid | 退回后所选节点及其后置 0；查询只取 1 |
+| 草稿 | perf_task.draft_payload / draft_saved_at | 草稿不落业务表，不覆盖核定分 |
+| 专项申报 | perf_task_incentive | 一条待办 N 条申报；附件存 attachment_url |
+| 专项三方分 | perf_task_incentive.supervisor_score / division_score / hr_final_score | 加权 30/30/40，权重常量在前端与后端各一份且必须一致 |
+| 专项最终得分 | perf_task_incentive.final_score | 只存算完的值，便于查询和导出 |
+| 建议档次 / 最终档次 | perf_task.incentive_tier / incentive_tier_reason | 最终档次有覆盖时写原因 |
+| 当前处理人 | perf_task.current_handler_no | 列表接口直接返回姓名，前端不再拼 |

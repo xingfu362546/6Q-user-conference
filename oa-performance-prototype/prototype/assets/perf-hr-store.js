@@ -174,7 +174,7 @@
     if (status === '待分管评价') return '王分管';
     if (status === '待确认') {
       var ev = evaluatorName(emp.no);
-      return [emp.name, ev || '上级'].filter(Boolean).join('、');
+      return [emp.name, '王分管'].filter(Boolean).join('、');
     }
     return emp.name;
   }
@@ -239,6 +239,7 @@
     var store = load();
     var task = ensureTask(store, planId, emp);
     if (task.voided) return { ok: false, error: '已经失效' };
+    if (task.node === '已完成') return { ok: false, error: '已完成的待办不能失效' };
     task.voided = {
       reason: String(reason).trim(),
       at: new Date().toISOString(),

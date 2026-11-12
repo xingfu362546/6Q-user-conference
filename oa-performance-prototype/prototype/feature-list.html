@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>原型导航 · v1.5.1 绩效功能清单</title>
+  <title>原型导航 · v1.5.2 绩效功能清单</title>
   <style>
     body { margin: 0; background: #f1f5f9; font-family: "Microsoft YaHei", sans-serif; color: #334155; }
     .nav-page { max-width: 1480px; margin: 28px auto 64px; padding: 0 16px; }
@@ -54,11 +54,11 @@
 <body>
   <div class="nav-page">
     <header class="nav-hero">
-      <p class="nav-hero__eye">OA PERFORMANCE · v1.5.1</p>
+      <p class="nav-hero__eye">OA PERFORMANCE · v1.5.2</p>
       <h1>绩效原型 · 功能清单</h1>
       <p>
         表的列和领袖营功能清单一致：范围、是否已在原型里、模块、需求、实现方案、页面入口。
-        序号沿用规格里的用户故事编号。v1.5.1 不另起编号，写进对应故事的实现方案。
+        序号沿用规格里的用户故事编号。v1.5.1 不另起编号，写进对应故事的实现方案；v1.5.2 补的两处（专项评分、专项核定）排在 12 和 13。
         给开发的规格正文在「目录对照」第一行，页面上的字段和状态在各页红色注释里。
       </p>
       <a href="index.html">返回原型首页</a>
@@ -254,8 +254,26 @@
             <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细 · 导出图片</a><a href="oa-pc/supervisor-score-monthly.html">月度评分</a><a href="oa-pc/supervisor-score-quarterly.html">季度评分</a></td>
           </tr>
 
-          <tr class="scope-group scope-group--skip"><td colspan="7">本次不做</td></tr>
-          <tr>
+          <tr id="req-12">
+            <td class="col-no">12</td>
+            <td class="col-scope col-scope--do">要做</td>
+            <td class="col-status">设计已实现</td>
+            <td class="col-mod">专项评分</td>
+            <td class="col-text">上级和分管给专项打分，0 到该档分值。三方加权后进入档次判定，专项本身不进核定总分。</td>
+            <td class="col-plan">规格：FR-007 与 <code>contracts/score-rules.md</code><br>页面：<code>prototype/oa-pc/supervisor-score-quarterly.html</code><br>逻辑：<code>perf-quarter-score.js</code> 的 INCENTIVE_WEIGHTS 与 incentiveRowScore</td>
+            <td class="col-ui"><a href="oa-pc/supervisor-score-quarterly.html?id=r-zs-2026q2&plan=2026-Q2&no=E10021">季度评分 · 专项区块</a></td>
+          </tr>
+          <tr id="req-13">
+            <td class="col-no">13</td>
+            <td class="col-scope col-scope--do">要做</td>
+            <td class="col-status">设计已实现</td>
+            <td class="col-mod">专项核定</td>
+            <td class="col-text">人才开发部在 HR 待办详情填最终得分、看建议档次和金额、可以改档并填原因、追加一条品牌价值或其它超越。</td>
+            <td class="col-plan">规格：FR-008 到 FR-010<br>页面：<code>prototype/oa-pc/hr-task-detail.html</code>（季度计划）<br>逻辑：<code>perf-task-detail.js</code> 的 renderIncentiveReview</td>
+            <td class="col-ui"><a href="oa-pc/hr-task-detail.html?no=E10035&plan=2026-Q2&from=plan">待办详情 · 专项核定</a></td>
+          </tr>
+
+          <tr class="scope-group scope-group--skip"><td colspan="7">本次不做</td></tr>          <tr>
             <td class="col-no">—</td>
             <td class="col-scope col-scope--skip">本次不做</td>
             <td class="col-status col-status--none">不实现</td>
@@ -267,7 +285,7 @@
         </tbody>
       </table>
     </div>
-    <p class="nav-foot">历史 51 条原文在仓库根 FEATURE_LIST.md。本表只排 v1.5.0 和 v1.5.1 要交给开发的范围。</p>
+    <p class="nav-foot">历史 51 条原文在仓库根 FEATURE_LIST.md。本表排 v1.5.0 到 v1.5.2 要交给开发的范围。</p>
   </div>
 </body>
 </html>

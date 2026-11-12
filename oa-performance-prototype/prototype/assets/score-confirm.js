@@ -128,9 +128,9 @@
       sixqTotal: 10,
       penaltyRows: [{ self: -2 }],
       incentiveRows: [
-        { objective: '数量甲', typeId: 'qty-1', finalScore: 1 },
-        { objective: '数量乙', typeId: 'qty-1', finalScore: 1 },
-        { objective: '质量', typeId: 'qual-3', finalScore: 3 }
+        { objective: '数量甲', typeId: 'qty-1', supervisor: 1, division: 1, hrFinalScore: 1 },
+        { objective: '数量乙', typeId: 'qty-1', supervisor: 1, division: 1, hrFinalScore: 1 },
+        { objective: '质量', typeId: 'qual-3', supervisor: 3, division: 3, hrFinalScore: 3 }
       ],
       hrFinalTotal: task.hrFinalTotal != null ? task.hrFinalTotal : null,
       level: '主管'
@@ -157,22 +157,27 @@
     var tipQuarter = '上级与分管评分已完成。请核对折算汇总后确认。<strong>季度需员工、上级、分管三方确认</strong>。';
     var tip = isQuarter(task) ? tipQuarter : tipMonth;
 
-    var adopted = task.hrFinalTotal != null ? task.hrFinalTotal : (task.finalTotal != null ? task.finalTotal : task.systemTotal);
+    var system = task.systemTotal;
+    var supApproved = task.supervisorApproved != null ? task.supervisorApproved : system;
+    var divApproved = task.finalTotal != null ? task.finalTotal : system;
+    var adopted = task.hrFinalTotal != null ? task.hrFinalTotal : (divApproved != null ? divApproved : system);
     var totalLine = '<div class="confirm-copy">' +
-      '<p class="score-hint">系统汇总 <b>' + (task.systemTotal != null ? task.systemTotal : '—') + '</b></p>' +
-      '<p class="score-hint">上级 / 分管核定 <b>' + (task.finalTotal != null ? task.finalTotal : '—') + '</b>' +
-      (task.divisionAdjusted ? ' <span class="q-tag q-tag-orange">已调整</span>' : '') + '</p>' +
+      '<p class="score-hint">计算总分（系统汇总） <b>' + (system != null ? system : '—') + '</b></p>' +
+      '<p class="score-hint">上级核定 <b>' + (supApproved != null ? supApproved : '—') + '</b></p>' +
+      (isQuarter(task)
+        ? '<p class="score-hint">分管核定 <b>' + (divApproved != null ? divApproved : '—') + '</b>' +
+          (task.divisionAdjusted ? ' <span class="q-tag q-tag-orange">已调整</span>' : '') + '</p>'
+        : '') +
       (task.hrFinalMeta
         ? '<p class="score-hint">HR 最终总分 <b>' + task.hrFinalTotal + '</b>（' + task.hrFinalMeta.reason + '，修改前 ' + task.hrFinalMeta.before + '）</p>'
         : '') +
-      '<p class="score-hint">当前采用分 <b>' + adopted + '</b></p>' +
+      '<p class="score-hint">采用分 <b>' + adopted + '</b></p>' +
       quarterExtra(task) +
       '</div>';
 
     var confirmed = !canRoleConfirm(task, role);
     var waitWho = [];
     if (!task.employeeConfirmed) waitWho.push('员工');
-    if (!task.supervisorConfirmed) waitWho.push('上级');
     if (isQuarter(task) && !task.divisionConfirmed) waitWho.push('分管');
 
     el.innerHTML =

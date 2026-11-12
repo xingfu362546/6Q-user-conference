@@ -1873,18 +1873,21 @@
 
   function detailActions(emp, viewRow, taskHref) {
     var voided = viewRow.status === '已失效';
+    var finished = viewRow.status === '已完成';
     var canReturn = window.PerfHrStore && PerfHrStore.returnTargets(detailPlanId, emp).length > 0;
     var parts = ['<a href="' + taskHref + '">查看详情</a>'];
     if (!voided && canReturn) {
       parts.push('<a href="#" class="link-return-node" data-no="' + emp.no + '" data-name="' + emp.name + '">退至</a>');
     }
-    if (!voided) {
+    if (!voided && !finished) {
       parts.push('<a href="#" class="link-void" data-no="' + emp.no + '" data-name="' + emp.name + '">失效</a>');
     }
     if (voided) {
       parts.push('<a href="#" class="link-restore" data-no="' + emp.no + '" data-name="' + emp.name + '">恢复</a>');
     }
-    parts.push('<a href="#" class="link-hr-score" data-no="' + emp.no + '" data-name="' + emp.name + '">改总分</a>');
+    if (!voided) {
+      parts.push('<a href="#" class="link-hr-score" data-no="' + emp.no + '" data-name="' + emp.name + '">改总分</a>');
+    }
     parts.push('<a href="#" class="link-export-img" data-no="' + emp.no + '" data-name="' + emp.name + '">导出图片</a>');
     return parts.join(' · ');
   }
