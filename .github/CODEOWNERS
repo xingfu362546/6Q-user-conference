@@ -1,0 +1,10 @@
+# 面谈官门户分支：任何改动都需要主干 owner 全量审核。
+# 如仓库改用组织/团队，把 @xingfu362546 换成团队 handle 即可。
+* @xingfu362546
+
+/6q-intent-suite/6q-interviewer-portal/ @xingfu362546
+/6q-intent-suite/shared/ @xingfu362546
+/6q-intent-suite/index-features.js @xingfu362546
+/6q-intent-suite/6q-conference-prototype/ @xingfu362546
+/6q-intent-suite/6q-conference-app-prototype/ @xingfu362546
+/index-features.js @xingfu362546

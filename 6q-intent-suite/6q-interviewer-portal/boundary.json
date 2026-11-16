@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "branch": "feature/interviewer-portal",
+  "base": "origin/main",
+  "syncedCommit": "d21ae9f503e987fc44ba9b2da0029911d581f134",
+  "syncedAt": "2026-11-16",
+  "frozen": [
+    {
+      "path": "../index-features.js",
+      "owner": "intent-suite",
+      "sha256": "32610d5e38373142009bd99a7275f872dd6bb43b7f2181b8ab9d2e1659d180ad"
+    },
+    {
+      "path": "../shared/intent-proto-notes.css",
+      "owner": "intent-suite",
+      "sha256": "edc43347af56be357d187dfc55a73f10de3180e3613c88c2e2ed169fb8e6cf5a"
+    },
+    {
+      "path": "../shared/intent-proto-notes.js",
+      "owner": "intent-suite",
+      "sha256": "08947bad74c152028bf74c87f12e1fdf75b90c50d7e035cc9ff2f3dd52d5c1ff"
+    },
+    {
+      "path": "../shared/intent-proto-enrich.js",
+      "owner": "intent-suite",
+      "sha256": "2d1d53a70d1f06f34768b08db2699eaa684bd8d251d8275acb5910339625f68a"
+    },
+    {
+      "path": "../shared/intent-proto-pages.js",
+      "owner": "intent-suite",
+      "sha256": "a871e0e8850c71549fc742b946c774504789e6abb4487c09de43261e54b1189f"
+    },
+    {
+      "path": "../shared/intent-proto-architecture.js",
+      "owner": "intent-suite",
+      "sha256": "c1d9330cdd017d8c933e4b7f07f0b4edbd35c75e12ee03a94b7a81e1ebae84b1"
+    },
+    {
+      "path": "../shared/intent-proto-field-specs.js",
+      "owner": "intent-suite",
+      "sha256": "b41854b08815ecf49bb87c282eccc59b87ca80a2c739f294870540f59e0f8c91"
+    },
+    {
+      "path": "../6q-conference-prototype/css/6q-conference.css",
+      "owner": "conference",
+      "sha256": "e04037880b6168ebd283e79035b8c691096d81ea119d3def5d3134f26a275cc1"
+    },
+    {
+      "path": "../6q-conference-prototype/css/6q-intent-premium.css",
+      "owner": "conference",
+      "sha256": "fa24bfaa08aed43687fac0b7b77d732c5d33a3bd5207a64cace071003264f9db"
+    },
+    {
+      "path": "../6q-conference-prototype/css/6q-profile.css",
+      "owner": "conference",
+      "sha256": "cd8d684febaeae592d4800695e16020893eea7e561dd540235190b3b27e7b347"
+    },
+    {
+      "path": "../6q-conference-prototype/js/tag-catalog-tree.js",
+      "owner": "conference",
+      "sha256": "5bf5a4976f263ba60b2df8664794dd51ed4731b73c83af7f2d7fbc293224d4d0"
+    },
+    {
+      "path": "../6q-conference-prototype/js/intent-strategy-core.js",
+      "owner": "conference",
+      "sha256": "95ee192cefce6439e62f3fe8a5f63de8acbe514c8bc856559cfd1aa1997196d2"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-intent.js",
+      "owner": "conference",
+      "sha256": "c8efe192b4987ed1796553a66a0d6392280e775e5ca9ed245540e8d99ba70bc2"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-data.js",
+      "owner": "conference",
+      "sha256": "ec0d0f5da4cf5be87db1aa94810f2f2855c4c126ca878b13056b40149d290321"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-behavior.js",
+      "owner": "conference",
+      "sha256": "79575f3628378cd226345f8d01be8665bd08faf6b32e0dcdbec28af3a2365dbf"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-student-profile.js",
+      "owner": "conference",
+      "sha256": "8cfd29aaa8f39d13dd06ccddc9089c593f5e7f56d6d60f63c1065e27169d475d"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-assistant-core.js",
+      "owner": "conference",
+      "sha256": "2c19fab4bde014dc4dba46f41c9cf3c3c117bf22c95cc6ce1be7ea5f422d5a40"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-assistant-mock.js",
+      "owner": "conference",
+      "sha256": "bafcd717f7cdce96c3d019bc8ce1a78b42f4ea134b012166477f03723da6d25f"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-ai-chat.js",
+      "owner": "conference",
+      "sha256": "826d7e636d738dacb95252ad5134f87896c275bb950eb4dad3739eb3dad59f39"
+    },
+    {
+      "path": "../6q-conference-app-prototype/js/course-recommend.js",
+      "owner": "app",
+      "sha256": "f25c1661679298eb66bcce11fbcf06f2052ad610b1c1f717c1a0beb3e8c2846b"
+    }
+  ]
+}
