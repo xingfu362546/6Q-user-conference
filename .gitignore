@@ -23,3 +23,8 @@ scripts/
 tools/
 *.rar
 *.zip
+
+# 仓库级脚本（分支保护等）要进仓库。必须放在 scripts/ 之后，
+# 否则会被上面的规则重新忽略。
+!.github/scripts/
+!.github/scripts/**
