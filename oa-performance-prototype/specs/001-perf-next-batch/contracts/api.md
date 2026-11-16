@@ -16,14 +16,17 @@
 | PUT | `/perf/task/v1/{id}/incentive/{rowId}` | supervisor、division、hrFinal | 只写当前角色有权的列 |
 | POST | `/perf/task/v1/{id}/incentive/append` | typeId(brand/other)、score、note | 人才开发部追加 |
 | POST | `/perf/task/v1/{id}/incentive/tier` | tier、reason | 改档，必须原因 |
+| POST | `/perf/task/v1/{id}/incentive/{rowId}/attachment` | file | 专项附件，图片或 PDF，≤2MB；员工、上级、HR 共用 |
 
 ## 评价人
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
 | GET | `/perf/evaluator/v1/list` | 全员名单，支持搜索分页 |
-| PUT | `/perf/evaluator/v1/{employeeNo}` | 单条改；evaluatorNo 为空表示清空；不能是本人 |
-| GET | `/perf/evaluator/v1/template` | CSV，UTF-8 带 BOM，四列固定 |
+| GET | `/perf/evaluator/v1/org-tree` | 组织架构树，供选人弹窗左栏使用 |
+| GET | `/perf/evaluator/v1/org-tree/{deptId}/people` | 该部门人员，支持关键字搜索；供选人弹窗右栏使用 |
+| PUT | `/perf/evaluator/v1/{employeeNo}` | 单条改上级和分管；supervisorNo 必填，divisionNo 为空表示清空；都不能是本人 |
+| GET | `/perf/evaluator/v1/template` | CSV，UTF-8 带 BOM，六列：员工工号,上级工号,分管工号,员工姓名,上级姓名,分管姓名 |
 | POST | `/perf/evaluator/v1/import` | 整批校验，任一行失败则 0 写入，返失败行 |
 
 ## 计划

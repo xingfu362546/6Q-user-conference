@@ -173,18 +173,18 @@
 
 
   var MOCK_EMPLOYEES = [
-    { scopeId: 'sp1', name: '张明', no: 'E10021', org: '信息部', role: '产品经理', level: '主管', audience: '全职员工', template: '月度·主管职员', status: '已提交', submit: '2026-05-29 17:20' },
+    { scopeId: 'sp1', name: '张明', no: 'E10021', org: '信息部', role: '产品经理', level: '主管', audience: '全职员工', template: '月度·主管职员', status: '待上级评价', submit: '2026-05-29 17:20' },
     { scopeId: 'sp1', name: '王芳', no: 'E10035', org: '信息部', role: '前端工程师', level: '职员', audience: '全职员工', template: '月度·主管职员', status: '填写中', submit: '—' },
-    { scopeId: 'sp1', name: '李强', no: 'E10008', org: '信息部', role: '技术总监', level: '总监', audience: '全职员工', template: '月度·总监经理', status: '已提交', submit: '2026-05-28 11:05' },
+    { scopeId: 'sp1', name: '李强', no: 'E10008', org: '信息部', role: '技术总监', level: '总监', audience: '全职员工', template: '月度·总监经理', status: '待上级评价', submit: '2026-05-28 11:05' },
     { scopeId: 'sp1', name: '肖洋', no: 'E10044', org: '信息部', role: '后端工程师', level: '职员', audience: '全职员工', template: '月度·主管职员', status: '未开始', submit: '—' },
-    { scopeId: 'sp2', name: '赵敏', no: 'E20011', org: '广州办事处', role: '办事处主任', level: '经理', audience: '办事处', template: '月度·总监经理', status: '已提交', submit: '2026-05-30 09:40' },
+    { scopeId: 'sp2', name: '赵敏', no: 'E20011', org: '广州办事处', role: '办事处主任', level: '经理', audience: '办事处', template: '月度·总监经理', status: '待上级评价', submit: '2026-05-30 09:40' },
     { scopeId: 'sp2', name: '陈伟', no: 'E20015', org: '广州办事处', role: '课程顾问', level: '职员', audience: '办事处', template: '月度·主管职员', status: '填写中', submit: '—' },
-    { scopeId: 'sp2', name: '孙丽', no: 'E20018', org: '广州办事处', role: '办事处主管', level: '主管', audience: '办事处', template: '月度·主管职员', status: '已提交', submit: '2026-05-27 16:30' },
+    { scopeId: 'sp2', name: '孙丽', no: 'E20018', org: '广州办事处', role: '办事处主管', level: '主管', audience: '办事处', template: '月度·主管职员', status: '待上级评价', submit: '2026-05-27 16:30' },
     { scopeId: 'sp2', name: '刘洋', no: 'E10042', org: '人才开发部', role: 'HR专员', level: '职员', audience: '全职员工', template: '月度·主管职员', status: '已逾期', submit: '—' },
-    { scopeId: 'sp2', name: '周婷', no: 'E10055', org: '行政管理部', role: '行政经理', level: '经理', audience: '全职员工', template: '月度·总监经理', status: '已提交', submit: '2026-05-27 14:18' },
+    { scopeId: 'sp2', name: '周婷', no: 'E10055', org: '行政管理部', role: '行政经理', level: '经理', audience: '全职员工', template: '月度·总监经理', status: '待上级评价', submit: '2026-05-27 14:18' },
     { scopeId: 'sp2', name: '吴磊', no: 'E20022', org: '深圳办事处', role: '办事处主管', level: '主管', audience: '办事处', template: '月度·主管职员', status: '未开始', submit: '—' },
     { scopeId: 'sp2', name: '马军', no: 'E20025', org: '深圳办事处', role: '课程顾问', level: '职员', audience: '办事处', template: '月度·主管职员', status: '填写中', submit: '—' },
-    { scopeId: 'sp2', name: '何欣', no: 'E10048', org: '人才开发部', role: 'HR经理', level: '经理', audience: '全职员工', template: '月度·总监经理', status: '已提交', submit: '2026-05-26 10:00' },
+    { scopeId: 'sp2', name: '何欣', no: 'E10048', org: '人才开发部', role: 'HR经理', level: '经理', audience: '全职员工', template: '月度·总监经理', status: '待员工确认', submit: '2026-05-26 10:00' },
   ];
 
 
@@ -209,7 +209,7 @@
 
   var LEVELS = ['全部', '总监', '经理', '主管', '职员'];
 
-  var STATUSES = ['全部', '未开始', '填写中', '已提交', '已逾期', '待上级评价', '已完成', '已失效'];
+  var STATUSES = ['全部', '未开始', '填写中', '已逾期', '待上级评价', '待分管评价', '待员工确认', '已完成', '已失效'];
 
 
 
@@ -237,11 +237,13 @@
 
       '填写中': 'q-tag q-tag-blue',
 
-      '已提交': 'q-tag q-tag-green',
-
       '已逾期': 'q-tag q-tag-orange',
 
       '待上级评价': 'q-tag q-tag-blue',
+
+      '待分管评价': 'q-tag q-tag-orange',
+
+      '待员工确认': 'q-tag q-tag-blue',
 
       '已完成': 'q-tag q-tag-green',
 
@@ -1626,7 +1628,7 @@
 
     MOCK_EMPLOYEES.forEach(function (e) {
 
-      if (e.status === '已提交') stats.submitted++;
+      if (e.status === '待上级评价' || e.status === '待分管评价') stats.submitted++;
 
       if (e.status === '填写中') stats.doing++;
 
@@ -1888,7 +1890,7 @@
     if (!voided) {
       parts.push('<a href="#" class="link-hr-score" data-no="' + emp.no + '" data-name="' + emp.name + '">改总分</a>');
     }
-    parts.push('<a href="#" class="link-export-img" data-no="' + emp.no + '" data-name="' + emp.name + '">导出图片</a>');
+    parts.push('<a href="#" class="link-export-img" data-no="' + emp.no + '" data-name="' + emp.name + '">导出PDF</a>');
     return parts.join(' · ');
   }
 
@@ -1899,7 +1901,7 @@
       return '<button type="button" class="hr-node-step' + (i === 0 ? ' is-on' : '') + '" data-node="' + node + '">' + node + '</button>';
     }).join('');
     openActionModal('退至 · ' + emp.name,
-      '<p class="hr-modal-readonly">只能退至已经走过、且不是当前所在的节点。确认后分数和填写内容仍留在原来的输入框。</p>' +
+      '<p class="hr-modal-readonly">可退至的节点随当前状态变化：待上级评价只能退员工填写；待分管评价可退员工填写和上级评分；待员工确认可退所有已走过的评分节点。确认后分数和填写内容仍留在原来的输入框。</p>' +
       '<div class="hr-node-steps" id="hr-return-steps">' + steps + '</div>' +
       '<div class="hr-modal-field"><label>退至原因</label><textarea id="hr-return-reason" rows="3"></textarea></div>',
       '确认退至',

@@ -978,7 +978,6 @@
         parts.push('<a class="q-btn q-btn-primary" style="padding:2px 10px;font-size:12px" href="' + scoreHrefForTask(t, 'division') + '">分管逐项评</a>');
       }
       if (r && canDivisionAdjustTotal(r, t)) {
-        parts.push('<button type="button" class="q-btn btn-div-adjust" data-no="' + r.no + '" style="padding:2px 10px;font-size:12px">改总分</button>');
       }
       if (t.phase === 'pending_confirm' || (r && r.phase === 'pending_confirm')) {
         parts.push('<a href="score-confirm.html?role=leader">查看确认</a>');
@@ -989,7 +988,6 @@
     }
 
     if (r && canDivisionAdjustTotal(r, t) && (!t || t.type === 'month')) {
-      parts.push('<button type="button" class="q-btn q-btn-primary btn-div-adjust" data-no="' + r.no + '" style="padding:2px 10px;font-size:12px">改总分</button>');
     }
     if (r && r.phase === 'pending_confirm' && (!t || t.type === 'month')) {
       parts.push('<a href="score-confirm.html?role=leader">查看确认</a>');
@@ -1009,7 +1007,7 @@
     if (tip && !opts.preview) {
       tip.className = isDiv ? 'perf-tip perf-tip-blue' : 'perf-tip perf-tip-orange';
       tip.innerHTML = isDiv
-        ? '📋 作为<strong>分管领导</strong>：月度上级评完后<strong>改核定总分</strong>；季度可<strong>逐项评</strong>或<strong>改总分</strong>。兼任直接上级时「去评分」一次（合并评）。'
+        ? '📋 作为<strong>分管领导</strong>：季度按<strong>逐项评分</strong>，不再单独改总分；最终总分由 HR 在计划明细核定。兼任直接上级时「去评分」一次（合并评）。'
         : '📋 下属已提交的考核任务在此评分。列表 → 评分页 → 提交后返回列表。';
     }
     var thead = document.getElementById('review-list-thead');
@@ -1286,6 +1284,7 @@
     document.getElementById('btn-submit').addEventListener('click', function () {
       var totals = calcTotals(sub, state);
       if (!totals.valid) { alert('请修正上级评分明细标红项后再提交'); return; }
+      if (window.PerfZeroWarn && !PerfZeroWarn.confirmSubmit(listEl)) return;
       clearDraft(taskId);
       var nextPhase = window.PerfWorkflow ? PerfWorkflow.nextPhaseAfterSupervisorSubmit({ type: 'month' }) : 'pending_confirm';
       REVIEW_LIST.forEach(function (t) {
@@ -1523,9 +1522,30 @@
       bindLongTextToggles(listEl);
     }
 
+    /** 员工填过的专项申报（含附件）。没有就退回两条演示行。 */
+    function savedIncentiveRows() {
+      try {
+        var raw = JSON.parse(localStorage.getItem('perf-quarter-draft-' + planId + '-' + empNo) || 'null');
+        var rows = raw && raw.extra && raw.extra.incentive;
+        return Array.isArray(rows) ? rows : [];
+      } catch (e) { return []; }
+    }
+
     /** 专项激励 · 领导评分（v1.5.2）：三方分都填完才参与定档 */
     function incentiveRows() {
       if (!window.PerfQuarterScore) return [];
+      var saved = savedIncentiveRows();
+      if (saved.length) {
+        return saved.map(function (row, i) {
+          return {
+            id: 'inc-' + (i + 1),
+            typeId: row.typeId,
+            objective: row.objective || '未填写关键目标',
+            result: row.result || '未填写关键成果',
+            attachment: row.attachment || null
+          };
+        });
+      }
       var kos = sub.coreKeyObjectives || [];
       var targets = [];
       kos.forEach(function (ko) {
@@ -1541,7 +1561,8 @@
           id: p.id,
           typeId: p.typeId,
           objective: (hit.ko && hit.ko.o) || '未填写关键目标',
-          result: (hit.t && (hit.t.m || hit.t.smart)) || '未填写关键成果'
+          result: (hit.t && (hit.t.m || hit.t.smart)) || '未填写关键成果',
+          attachment: null
         };
       });
     }
@@ -1562,15 +1583,16 @@
         var divCell = canEditDivCol
           ? '<input type="number" min="0" max="' + type.points + '" step="0.1" class="perf-score-input" data-inc-id="' + row.id + '" data-inc-col="div" value="' + st.div + '" />'
           : (st.div === '' ? '—' : sOut(st.div));
+        var attCell = row.attachment && window.PerfAttachment ? PerfAttachment.link(row.attachment) : '—';
         return '<tr data-id="' + row.id + '"><td>' + esc(row.objective) + '</td><td>' + esc(row.result) +
-          '</td><td>' + esc(type.label) + '<div class="max-hint">0～' + type.points + '</div></td><td>' + type.points +
+          '</td><td>' + attCell + '</td><td>' + esc(type.label) + '<div class="max-hint">0～' + type.points + '</div></td><td>' + type.points +
           '</td><td>' + supCell + '</td><td>' + divCell + '</td></tr>';
       }).join('');
       var W = QS.INCENTIVE_WEIGHTS;
       return '<div class="score-block-group" data-block-group="INC" style="margin-top:18px">' +
         '<div class="score-block-head">专项激励 · 评分 <span class="score-block-limit">上级 ' + (W.supervisor * 100) +
         '% + 分管 ' + (W.division * 100) + '% + 人才开发部 ' + (W.hr * 100) + '%</span></div>' +
-        '<table class="score-adjust-table" style="margin-top:8px"><thead><tr><th>关键目标</th><th>关键成果</th><th>超越类型</th><th>自评</th><th>上级核定</th><th>分管核定</th></tr></thead><tbody>' +
+        '<table class="score-adjust-table" style="margin-top:8px"><thead><tr><th>关键目标</th><th>关键成果</th><th>附件</th><th>超越类型</th><th>自评</th><th>上级核定</th><th>分管核定</th></tr></thead><tbody>' +
         body + '</tbody></table>' +
         '<p class="score-hint">三方分都填完才参与定档；人才开发部最终得分单独维护，不要求逐项确认。</p></div>';
     }
@@ -1609,8 +1631,7 @@
     function renderQuarterSummaries(supTotals, divTotals) {
       if (!summaryEl) return;
       var selfT = calcSelfTotal(sub);
-      var divFinal = state.divisionFinalOverride !== '' && !isNaN(parseFloat(state.divisionFinalOverride))
-        ? parseFloat(state.divisionFinalOverride) : divTotals.finalScore;
+      var divFinal = divTotals.finalScore;
       var composite = calcQuarterComposite(sub, supTotals.finalScore, divFinal);
       var emptyHint = (!supTotals.finalScore && !divTotals.finalScore)
         ? '<p class="score-hint score-hint--inline">上方逐项打分后，此处实时汇总；未打分时显示 0.00 属正常。</p>'
@@ -1626,8 +1647,7 @@
         '<div class="score-section-title score-section-title--sub">加权综合分</div>' +
         '<div class="score-summary-item">员工自评合计：<b>' + sOut(selfT) + '</b></div>' +
         '<div class="score-summary-item">上级核定：<b>' + sOut(supTotals.finalScore) + '</b></div>' +
-        '<div class="score-summary-item">分管核定：<b>' + sOut(divFinal) + '</b>' +
-        (state.divisionFinalOverride !== '' ? ' <span class="q-tag q-tag-orange">已改总分</span>' : '') + '</div>' +
+        '<div class="score-summary-item">分管核定：<b>' + sOut(divFinal) + '</b></div>' +
         '<div class="score-summary-item score-summary-item--emph">综合 = 自评×20% + 上级×40% + 分管×40% = <b>' + sOut(composite) + '</b></div>' +
         '</div>';
     }
@@ -1735,39 +1755,11 @@
       roleBanner.className = 'perf-tip perf-tip-blue score-role-banner' + (role === 'division' && !supervisorDone ? ' score-role-banner--warn' : '');
     }
 
+    // v1.5.3：取消分管改总分，总分只由逐项评定汇总。HR 仍在计划明细里改最终总分。
     var divOverrideEl = document.getElementById('division-final-override');
     if (divOverrideEl) {
-      if (canEditDivCol || (readonly && state.divisionFinalOverride !== '')) {
-        divOverrideEl.style.display = '';
-        divOverrideEl.innerHTML =
-          '<div class="score-section-title">分管核定总分（可选 · 覆盖逐项汇总）</div>' +
-          '<p class="score-hint">在逐项汇总基础上直接改<strong>全表综合总得分</strong>；保存后标记「已调整」。</p>' +
-          '<div class="score-override-row">' +
-          '<label>分管核定总分</label>' +
-          '<input type="number" step="0.01" id="div-final-input" class="perf-score-input" ' +
-          (canEditDivCol ? '' : 'disabled readonly ') +
-          'value="' + sIn(state.divisionFinalOverride || '') + '" placeholder="留空则按逐项汇总" /></div>';
-        var finInp = document.getElementById('div-final-input');
-        if (finInp && canEditDivCol) {
-          finInp.addEventListener('input', function () {
-            state.divisionFinalOverride = finInp.value;
-            markDirty();
-            refresh();
-          });
-        }
-      } else {
-        divOverrideEl.style.display = 'none';
-      }
-    }
-
-    var interviewEl = document.getElementById('score-interview-readonly');
-    if (interviewEl && sub.interview) {
-      interviewEl.innerHTML = '<div class="score-section-title">面谈记录（只读）</div>' +
-        '<dl class="proto-kv">' +
-        '<dt>本期亮点</dt><dd>' + esc(sub.interview.highlight) + '</dd>' +
-        '<dt>待改进</dt><dd>' + esc(sub.interview.improve) + '</dd>' +
-        '<dt>下期计划</dt><dd>' + esc(sub.interview.plan) + '</dd>' +
-        '<dt>所需支持</dt><dd>' + esc(sub.interview.support) + '</dd></dl>';
+      divOverrideEl.style.display = 'none';
+      divOverrideEl.innerHTML = '';
     }
 
     document.getElementById('score-header-info').innerHTML =
@@ -1797,6 +1789,7 @@
         var divTotals = calcTotals(sub, state, { scoreField: 'divisionScores', adjustPlusKey: 'divisionAdjustPlus', adjustMinusKey: 'divisionAdjustMinus', limits: QUARTER_BLOCK_LIMITS });
         if (canEditSupCol && !supTotals.valid) { alert('请修正上级评分明细标红项'); return; }
         if (canEditDivCol && !canEditSupCol && !divTotals.valid) { alert('请修正分管评分明细标红项'); return; }
+        if (window.PerfZeroWarn && !PerfZeroWarn.confirmSubmit(listEl)) return;
         saveDraft(taskId, state);
         if (task) {
           if (canEditSupCol) {
@@ -1821,13 +1814,13 @@
           }
           if (canEditDivCol && !canEditSupCol) {
             r.phase = 'pending_confirm';
-            r.finalTotal = state.divisionFinalOverride !== '' ? parseFloat(state.divisionFinalOverride) : divTotals.finalScore;
-            r.adjusted = state.divisionFinalOverride !== '';
+            r.finalTotal = divTotals.finalScore;
+            r.adjusted = false;
           }
         });
         clearDraft(taskId);
         alert(canEditDivCol && !canEditSupCol
-          ? '分管评分已提交，进入待确认（员工+上级+分管三方确认）。'
+          ? '分管评分已提交，进入待员工确认。'
           : (mergedReview ? '上级评分已提交，进入待确认。' : '上级评分已提交，流转至待分管评。'));
         location.href = 'supervisor-review-list.html';
       });

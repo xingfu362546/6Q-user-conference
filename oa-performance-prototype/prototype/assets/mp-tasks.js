@@ -50,8 +50,8 @@
   function actionLabel(item) {
     var t = item.reviewTask;
     var r = item.roster;
-    if (t && t.phase === 'pending_confirm') return '待确认';
-    if (r && r.phase === 'pending_confirm') return '待确认';
+    if (t && t.phase === 'pending_confirm') return '待员工确认';
+    if (r && r.phase === 'pending_confirm') return '待员工确认';
     if (t && t.type === 'quarter' && (t.phase === 'pending_division' || (r && r.phase === 'pending_division'))) return '待分管评';
     if (t && t.status === 'scoring') return '继续评分';
     if (t && t.status === 'pending') return '待上级评';
@@ -60,7 +60,7 @@
   }
 
   function tagCls(label) {
-    if (label === '待确认') return 'mp-tag-orange';
+    if (label === '待员工确认' || label === '待确认') return 'mp-tag-orange';
     if (label === '待分管评') return 'mp-tag-blue';
     if (label === '继续评分') return 'mp-tag-blue';
     return 'mp-tag-orange';
@@ -100,31 +100,13 @@
       var steps = '';
       if (t && t.phase && W()) steps = W().renderPhaseSteps(t.phase, phaseOpts(t));
       else if (r && r.phase && W()) steps = W().renderPhaseSteps(r.phase, { compact: true, task: { type: type, mergedReview: r.mergedReview } });
-      var adjustBtn = '';
-      if (r && SS().openDivisionAdjustModal && window.SupervisorScore.LEADER_CONTEXT && SupervisorScore.LEADER_CONTEXT.isDivisionLeader) {
-        var reviewTask = t || (r.taskId ? SS().REVIEW_LIST.filter(function (x) { return x.id === r.taskId; })[0] : null);
-        var canAdj = reviewTask && (reviewTask.type === 'quarter' ? (r.phase === 'pending_division' || r.phase === 'pending_confirm') : r.supervisorDone);
-        if (canAdj && r.phase !== 'pending_supervisor') {
-          adjustBtn = '<button type="button" class="q-btn mp-btn-inline btn-mp-div-adjust" data-no="' + r.no + '">改核定总分</button>';
-        }
-      }
       return '<div class="mp-task-card-row"><a class="mp-task-card" href="' + href + '">' +
         '<div class="mp-task-icon mp-task-icon--' + type + '">' + typeIcon(type) + '</div>' +
         '<div class="mp-task-body"><h4>' + name + ' · ' + period + '</h4>' +
         '<p class="mp-task-meta">' + dept + ' · ' + label + '</p>' + steps + '</div>' +
         '<span class="mp-tag ' + tagCls(label) + '">' + label + '</span>' +
-        '<span class="mp-task-arrow">›</span></a>' + adjustBtn + '</div>';
+        '<span class="mp-task-arrow">›</span></a></div>';
     }).join('');
-
-    el.querySelectorAll('.btn-mp-div-adjust').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var row = SS().DEPT_ROSTER.filter(function (x) { return x.no === btn.dataset.no; })[0];
-        var reviewTask = row && row.taskId ? SS().REVIEW_LIST.filter(function (t) { return t.id === row.taskId; })[0] : null;
-        if (row) SS().openDivisionAdjustModal(row, function () { renderLeaderTaskList(); updateBadge(); }, reviewTask);
-      });
-    });
   }
 
   function updateBadge() {

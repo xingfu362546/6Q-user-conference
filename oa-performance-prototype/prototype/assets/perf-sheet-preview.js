@@ -87,12 +87,21 @@
 
   function savedIncentive(emp, plan) {
     if (!emp || !plan || !plan.id) return [];
+    var rows = [];
     try {
-      var rows = JSON.parse(localStorage.getItem('hr-incentive-' + emp.no + '-' + plan.id) || 'null');
-      return rows && rows.length ? rows : [];
-    } catch (e) {
-      return [];
-    }
+      rows = JSON.parse(localStorage.getItem('hr-incentive-' + emp.no + '-' + plan.id) || 'null') || [];
+    } catch (e) { rows = []; }
+    // 附件只在员工填报里，按顺序补到 HR 核定行上，整表才看得到文件名
+    try {
+      var draft = JSON.parse(localStorage.getItem('perf-quarter-draft-' + plan.id + '-' + emp.no) || 'null');
+      var empRows = draft && draft.extra && draft.extra.incentive;
+      if (Array.isArray(empRows)) {
+        empRows.forEach(function (row, i) {
+          if (rows[i] && row.attachment) rows[i].attachment = row.attachment;
+        });
+      }
+    } catch (e2) { /* 没有填报快照 */ }
+    return rows;
   }
 
   function work(title, list, period, state) {
@@ -118,8 +127,7 @@
     if (!task) return '<p>待办还没有分数记录。</p>';
     var hr = task.hrFinal && task.hrFinal.value != null ? task.hrFinal.value : null;
     var adopted = window.PerfHrStore && PerfHrStore.adoptedScore ? PerfHrStore.adoptedScore(plan.id, task) : null;
-    var division = plan && plan.quarter ? ' · 分管核定 ' + showNum(task.divisionTotal) : '';
-    return '<p>计算总分 ' + showNum(task.assessedTotal) + ' · 上级核定 ' + showNum(task.supervisorTotal) + division +
+    return '<p>计算总分 ' + showNum(task.assessedTotal) + ' · 上级核定 ' + showNum(task.supervisorTotal) +
       ' · HR 最终总分 ' + showNum(hr) + ' · 采用分 ' + showNum(adopted) + '</p>';
   }
 
@@ -134,7 +142,8 @@
         var rowScore = QS.incentiveRowScore(row);
         score = rowScore == null ? '待评定' : rowScore;
       }
-      return '<tr><td>' + (i + 1) + '</td><td>' + esc(row.objective) + '</td><td>' + esc(row.result) + '</td><td>' + esc(type.label || row.typeId || '—') + '</td><td>' + esc(score) + '</td></tr>';
+      var attName = row.attachment ? row.attachment.name : '—';
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(row.objective) + '</td><td>' + esc(row.result) + '</td><td>' + esc(attName) + '</td><td>' + esc(type.label || row.typeId || '—') + '</td><td>' + esc(score) + '</td></tr>';
     }).join('');
     var summary = '';
     if (QS && QS.compute) {
@@ -154,7 +163,7 @@
         summary = '<p>专项得分 ' + esc(result.incentiveTotal) + ' · 建议档次 ' + esc(names[result.finalTier] || result.finalTier) + ' · 建议金额 ' + esc(amount) + '</p>';
       }
     }
-    return '<table class="q-table perf-preview-table"><tr><th>#</th><th>关键目标</th><th>关键成果</th><th>超越类型</th><th>本条得分</th></tr>' + body + '</table>' + summary;
+    return '<table class="q-table perf-preview-table"><tr><th>#</th><th>关键目标</th><th>关键成果</th><th>附件</th><th>超越类型</th><th>本条得分</th></tr>' + body + '</table>' + summary;
   }
 
   function bodyHtml(emp, quarter, plan) {
@@ -172,16 +181,12 @@
       var sixq = window.PerfSixQ3J && plan.id
         ? PerfSixQ3J.renderReadonlyPanel(plan.id, emp.no, { title: '6Q3J 人才评价' })
         : '<p>未导入</p>';
-      var interview = model.interview
-        ? '<p><b>亮点</b> ' + esc(model.interview.highlight) + '</p><p><b>待提升</b> ' + esc(model.interview.improve) + '</p><p><b>改进计划</b> ' + esc(model.interview.plan) + '</p><p><b>所需支持</b> ' + esc(model.interview.support) + '</p>'
-        : '<p>未填写</p>';
       return head +
         workOrEmpty('核心绩效 V%', model.core, 'quarter') +
         workOrEmpty('常规绩效 X%', model.regular, 'quarter') +
         '<section class="perf-preview-block"><h3>6Q3J 人才评价</h3>' + sixq + '</section>' +
         '<section class="perf-preview-block"><h3>专项激励</h3>' + incentiveHtml(emp, plan) + '</section>' +
         '<section class="perf-preview-block"><h3>减分</h3><p>' + esc(model.penalty) + '</p></section>' +
-        '<section class="perf-preview-block"><h3>绩效面谈</h3>' + interview + '</section>' +
         '<section class="perf-preview-block"><h3>自评总结</h3><p>' + esc(model.summary || '未填写') + '</p></section>' +
         '<section class="perf-preview-block"><h3>下季核心目标</h3>' + nextTable(model.nextRows) + '</section>' +
         '<section class="perf-preview-block"><h3>分数</h3>' + totalsHtml(emp, plan) + '</section>';
@@ -218,7 +223,7 @@
     panel.innerHTML =
       '<div class="perf-preview-bar"><h2>' + esc(opts.title || '整表预览') + '</h2>' +
       '<span style="display:flex;gap:8px">' +
-      '<button type="button" class="q-btn q-btn-primary" id="preview-export">导出图片</button>' +
+      '<button type="button" class="q-btn q-btn-primary" id="preview-export">导出PDF</button>' +
       '<button type="button" class="q-btn" id="preview-close">关闭</button></span></div>' +
       '<p id="preview-export-msg" class="hr-modal-error"></p>' +
       '<div class="perf-preview-scale" id="perf-preview-export-root">' + (opts.html || '') + '</div>';
@@ -242,9 +247,9 @@
       clone.style.padding = '24px';
       holder.appendChild(clone);
       document.body.appendChild(holder);
-      if (msg) msg.textContent = '正在导出整张表…';
-      PerfExportImage.exportNode(clone, opts.filename || '绩效表.png').then(function () {
-        if (msg) msg.textContent = '已导出整张表';
+      if (msg) msg.textContent = '已打开打印窗口。在「目标打印机」里选「另存为 PDF」，文件名默认是 ' + (opts.filename || '绩效表.pdf');
+      PerfExportImage.exportPdf(clone, opts.filename || '绩效表.pdf').then(function () {
+        if (msg) msg.textContent = '打印窗口已打开，选「另存为 PDF」即可';
         holder.remove();
       }).catch(function (err) {
         if (msg) msg.textContent = '导出失败：' + (err && err.message ? err.message : err);
@@ -266,7 +271,7 @@
     var period = periodCode(plan);
     open({
       title: (emp.name || '员工') + ' · 整表预览',
-      filename: window.PerfExportImage ? PerfExportImage.filename(emp.name, period || '考核期') : ((emp.name || '员工') + '.png'),
+      filename: window.PerfExportImage ? PerfExportImage.filename(emp.name, period || '考核期') : ((emp.name || '员工') + '.pdf'),
       html: bodyHtml(emp, quarter, plan)
     });
   }

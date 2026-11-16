@@ -82,7 +82,7 @@
   function renderConvertSection(meta) {
     if (!window.PerfScoreSummary || meta.totalScore == null) return '';
     return '<div class="task-detail-block-title">折算汇总</div><div class="task-detail-convert">' +
-      PerfScoreSummary.renderConfirmPage({ full: true, divisionAdjusted: !!meta.divisionAdjusted, finalTotal: meta.totalScore }) +
+      PerfScoreSummary.renderConfirmPage({ full: true, divisionAdjusted: false, finalTotal: meta.totalScore }) +
       '</div>';
   }
 
@@ -181,13 +181,24 @@
     var rows = null;
     try { rows = JSON.parse(localStorage.getItem(key)); } catch (e) { rows = null; }
     if (!rows || !rows.length) rows = incentiveDemoRows(sub);
+    try {
+      var empDraft = JSON.parse(localStorage.getItem('perf-quarter-draft-' + planId + '-' + meta.no) || 'null');
+      var empRows = empDraft && empDraft.extra && empDraft.extra.incentive;
+      if (Array.isArray(empRows) && empRows.length) {
+        empRows.forEach(function (row, i) {
+          if (rows[i] && row.attachment) rows[i].attachment = row.attachment;
+        });
+      }
+    } catch (e) { /* 没有员工填报快照 */ }
 
     var body = rows.map(function (row) {
       var type = QS.typeById(row.typeId) || { label: '—', points: 0 };
       function cell(field) {
         return '<input type="number" min="0" max="' + type.points + '" step="0.1" class="perf-score-input" data-inc-row="' + row.id + '" data-inc-field="' + field + '" value="' + (row[field] == null ? '' : row[field]) + '" />';
       }
+      var attCell = row.attachment && window.PerfAttachment ? PerfAttachment.link(row.attachment) : '—';
       return '<tr data-id="' + row.id + '"><td>' + esc(row.objective) + '<div class="muted" style="font-size:11px">' + esc(row.result) + '</div></td>' +
+        '<td>' + attCell + '</td>' +
         '<td>' + esc(type.label) + '<div class="muted" style="font-size:11px">上限 ' + type.points + '</div></td>' +
         '<td>' + cell('supervisor') + '</td><td>' + cell('division') + '</td><td>' + cell('hrFinalScore') + '</td>' +
         '<td class="inc-row-score">—</td></tr>';
@@ -203,7 +214,7 @@
     return '<div class="task-detail-block-title" style="margin-top:20px">专项核定 · 人才开发部</div>' +
       '<p class="hr-hint" style="margin:0 0 8px">三方权重：上级 ' + (W.supervisor * 100) + '% + 分管 ' + (W.division * 100) +
       '% + 人才开发部 ' + (W.hr * 100) + '%。三方都填完该条才参与定档。专项不进核定总分。</p>' +
-      '<table class="task-detail-score-table"><thead><tr><th>关键目标 / 关键成果</th><th>超越类型</th><th>上级</th><th>分管</th><th>人才开发部最终得分</th><th>本条得分</th></tr></thead><tbody id="inc-tbody">' +
+      '<table class="task-detail-score-table"><thead><tr><th>关键目标 / 关键成果</th><th>附件</th><th>超越类型</th><th>上级</th><th>分管</th><th>人才开发部最终得分</th><th>本条得分</th></tr></thead><tbody id="inc-tbody">' +
       body + '</tbody></table>' +
       '<div class="hr-modal-field" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:10px">' +
       '<div style="flex:1;min-width:220px"><label>追加一条（品牌价值 / 其它超越）</label><select id="inc-append-type" style="width:100%;padding:6px;border:1px solid #d9d9d9;border-radius:4px">' + appendOptions + '</select></div>' +
@@ -315,7 +326,7 @@
     var actionsEl = document.getElementById('task-detail-actions');
     if (!bodyEl) return;
 
-    var planLabel = planId.indexOf('Q') >= 0 ? '2026 ' + planId : '2026年' + parseInt(planId.split('-')[1], 10) + '月';
+    var planLabel = planId.indexOf('Q') >= 0 ? planId.replace(/q([1-4])$/i, 'Q$1') : parseInt(planId.split('-')[1], 10) + '月';
     var periodName = planId.indexOf('Q') >= 0 ? '季度' : '月度';
     if (headerEl) {
       headerEl.innerHTML = '<h2 style="margin:0 0 8px;font-size:18px">' + meta.name + ' · ' + planLabel + ' ' + periodName + '绩效考核</h2>' +

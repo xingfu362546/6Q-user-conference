@@ -86,10 +86,9 @@
     return html;
   }
 
+  /** v1.5.3：待员工确认节点只等员工；上级和分管提交评分即视为已确认。 */
   function canRoleConfirm(task, role) {
     if (role === 'employee') return !task.employeeConfirmed;
-    if (role === 'leader' || role === 'supervisor') return !task.supervisorConfirmed;
-    if (role === 'division') return isQuarter(task) && !task.divisionConfirmed;
     return false;
   }
 
@@ -118,7 +117,7 @@
       task.divisionConfirmed = !!stored.confirm.division;
     }
     if (stored.node === '已完成') task.phase = 'confirmed';
-    if (stored.node === '待确认') task.phase = 'pending_confirm';
+    if (stored.node === '待确认' || stored.node === '待员工确认') task.phase = 'pending_confirm';
     return task;
   }
 
@@ -155,20 +154,15 @@
     var W = window.PerfWorkflow;
 
     var tipMonth = '上级评分已完成。请核对各模块自评与上级评及<strong>折算汇总</strong>后确认。HR 改最终总分后，已确认状态保持不变。';
-    var tipQuarter = '上级与分管评分已完成。请核对折算汇总后确认。<strong>季度需员工、上级、分管三方确认</strong>。';
+    var tipQuarter = '上级与分管评分已完成。请核对折算汇总后确认。上级和分管提交评分即视为已确认，<strong>只剩员工点确认</strong>。';
     var tip = isQuarter(task) ? tipQuarter : tipMonth;
 
     var system = task.systemTotal != null ? task.systemTotal : null;
     var supApproved = task.supervisorTotal != null ? task.supervisorTotal : null;
-    var divApproved = isQuarter(task) && task.finalTotal != null ? task.finalTotal : null;
-    var adopted = task.hrFinalTotal != null ? task.hrFinalTotal : (divApproved != null ? divApproved : system);
+    var adopted = task.hrFinalTotal != null ? task.hrFinalTotal : system;
     var totalLine = '<div class="confirm-copy">' +
       '<p class="score-hint">计算总分（系统汇总） <b>' + (system != null ? system : '—') + '</b></p>' +
       '<p class="score-hint">上级核定 <b>' + (supApproved != null ? supApproved : '—') + '</b></p>' +
-      (isQuarter(task)
-        ? '<p class="score-hint">分管核定 <b>' + (divApproved != null ? divApproved : '—') + '</b>' +
-          (task.divisionAdjusted ? ' <span class="q-tag q-tag-orange">已调整</span>' : '') + '</p>'
-        : '') +
       (task.hrFinalMeta
         ? '<p class="score-hint">HR 最终总分 <b>' + task.hrFinalTotal + '</b>（' + task.hrFinalMeta.reason + '，修改前 ' + task.hrFinalMeta.before + '）</p>'
         : '') +
@@ -179,7 +173,6 @@
     var confirmed = !canRoleConfirm(task, role);
     var waitWho = [];
     if (!task.employeeConfirmed) waitWho.push('员工');
-    if (isQuarter(task) && !task.divisionConfirmed) waitWho.push('分管');
 
     el.innerHTML =
       (isMini ? '' : '<div class="perf-tip perf-tip-blue" style="margin-bottom:12px">' + tip + '</div>') +
@@ -189,7 +182,7 @@
       '<dl class="proto-kv" style="margin:12px 0"><dt>确认截止</dt><dd>' + task.confirmDeadline + '</dd></dl>' +
       totalLine +
       renderDetailSheet(task, role) +
-      (S && task.systemTotal == null ? '<div class="score-section-title">折算汇总</div>' + S.renderConfirmPage({ full: false, divisionAdjusted: task.divisionAdjusted, finalTotal: task.finalTotal, taskType: task.type }) : '') +
+      (S && task.systemTotal == null ? '<div class="score-section-title">折算汇总</div>' + S.renderConfirmPage({ full: false, divisionAdjusted: false, finalTotal: null, taskType: task.type }) : '') +
       (confirmed
         ? '<p class="hr-hint" style="margin-top:16px"><span class="q-tag q-tag-green">' + roleLabel(role) + '已确认</span>' +
           (waitWho.length ? ' 等待' + waitWho.join('、') + '确认。' : ' 全部确认完成，任务进入<strong>已确认</strong>。') + '</p>'

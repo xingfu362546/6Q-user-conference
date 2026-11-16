@@ -6,7 +6,7 @@
 
   var EXPORT_COLUMNS = [
     '考核计划', '姓名', '工号', '部门', '职级', '状态',
-    '自评', '上级分', '系统汇总分', '分管核定总分', '确认态', '退回次数',
+    '自评', '上级分', '系统汇总分', '采用分', '确认态', '退回次数',
   ];
 
   function closeExportModal() {
@@ -84,7 +84,7 @@
       filling: ['填写中', 'q-tag-blue'],
       pending_supervisor: ['待上级评', 'q-tag-orange'],
       pending_division: ['待分管评', 'q-tag-orange'],
-      pending_confirm: ['待确认', 'q-tag-blue'],
+      pending_confirm: ['待员工确认', 'q-tag-blue'],
       confirmed: ['已确认', 'q-tag-green'],
       completed: ['已确认', 'q-tag-green'],
     };

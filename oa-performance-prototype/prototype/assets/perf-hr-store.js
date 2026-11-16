@@ -6,6 +6,7 @@
 
   var KEY = 'perf-plan-store';
   var EVAL_KEY = 'perf-evaluator-map';
+  var DIV_KEY = 'perf-division-map';
 
   var PEOPLE = [
     { no: 'E10021', name: '张明', org: '信息部', role: '产品经理', level: '主管' },
@@ -140,6 +141,48 @@
     localStorage.setItem(EVAL_KEY, JSON.stringify(map));
   }
 
+  function defaultDivision() {
+    return {
+      E10021: 'E10008',
+      E10035: 'E10008',
+      E10044: 'E10008',
+      E10008: 'E10021',
+      E20011: 'E10008',
+      E20015: 'E20011',
+      E20018: 'E20011',
+      E10042: 'E10048',
+      E10055: 'E10008',
+      E20022: 'E10008',
+      E20025: 'E20022',
+      E10048: 'E10008'
+    };
+  }
+
+  function divisionMap() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(DIV_KEY) || 'null');
+      if (raw) return raw;
+    } catch (e) { /* 空 */ }
+    var seed = defaultDivision();
+    localStorage.setItem(DIV_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  function saveDivision(map) {
+    localStorage.setItem(DIV_KEY, JSON.stringify(map));
+  }
+
+  function divisionNo(empNo) {
+    return divisionMap()[empNo] || '';
+  }
+
+  function divisionName(empNo) {
+    var no = divisionNo(empNo);
+    if (!no) return '王分管';
+    var p = person(no);
+    return p ? p.name : '王分管';
+  }
+
   function evaluatorNo(empNo) {
     return evalMap()[empNo] || '';
   }
@@ -166,8 +209,11 @@
     } else if (status === '待分管评价') {
       node = '待分管评价';
       upto = Math.min(3, chain.length);
-    } else if (status === '待确认' || status === '已完成') {
-      node = status;
+    } else if (status === '待确认' || status === '待员工确认') {
+      node = '待员工确认';
+      upto = chain.length;
+    } else if (status === '已完成') {
+      node = '已完成';
       upto = chain.length;
     }
     return { node: node, reached: chain.slice(0, upto) };
@@ -183,7 +229,7 @@
   /** 当前节点及之前的节点。退至只改当前节点，不清空已到达记录。 */
   function impliedReached(planId, node) {
     var chain = nodesFor(planId);
-    if (node === '已完成' || node === '待确认') return chain.slice();
+    if (node === '已完成' || node === '待确认' || node === '待员工确认') return chain.slice();
     var current = statusToNode(node);
     var idx = chain.indexOf(current);
     if (idx < 0) return chain.slice(0, 1);
@@ -227,7 +273,7 @@
     var task = store.tasks[taskKey(planId, emp.no)];
     var status = task ? task.node : emp.status;
     if (task && task.voided) status = '已失效';
-    if (task && task.node === '待上级评价') status = '待上级评价';
+    if (task && task.node === '待确认') status = '待员工确认';
     if (task && task.node === '已完成' && !task.voided) status = '已完成';
     return { status: status, handler: handlerFor(status, emp), task: task };
   }
@@ -236,11 +282,8 @@
     if (status === '已失效') return '已失效';
     if (status === '已完成') return '已完成';
     if (status === '待上级评价' || status === '已提交') return evaluatorName(emp.no) || '未指定评价人';
-    if (status === '待分管评价') return '王分管';
-    if (status === '待确认') {
-      var ev = evaluatorName(emp.no);
-      return [emp.name, '王分管'].filter(Boolean).join('、');
-    }
+    if (status === '待分管评价') return divisionName(emp.no) || '未指定分管';
+    if (status === '待员工确认' || status === '待确认') return emp.name;
     return emp.name;
   }
 
@@ -255,10 +298,11 @@
     if (node === '员工填写') return '填写中';
     if (node === '上级评分') return '待上级评价';
     if (node === '分管评分') return '待分管评价';
+    if (node === '待确认') return '待员工确认';
     return node;
   }
 
-  /** 列表状态对应的流程节点。待确认、已完成已经离开评分链，返回空字符串。 */
+  /** 列表状态对应的流程节点。待员工确认、已完成已经离开评分链，返回空字符串。 */
   function statusToNode(status) {
     if (status === '未开始' || status === '填写中' || status === '已逾期' || status === '员工填写') return '员工填写';
     if (status === '已提交' || status === '待上级评价' || status === '上级评分') return '上级评分';
@@ -274,12 +318,25 @@
     return allowed.filter(function (node) { return reached.indexOf(node) >= 0; });
   }
 
+  /**
+   * 可退至节点（v1.5.3）：
+   * 待上级评价 → 只能退员工填写；待分管评价 → 员工填写 / 上级评分；
+   * 待员工确认 → 员工填写 / 上级评分 / 分管评分。已完成不可退，初始节点不显示。
+   */
   function returnTargets(planId, emp) {
     var currentView = view(planId, emp);
-    if (!currentView || currentView.status === '已失效') return [];
-    if (statusToNode(currentView.status) === '员工填写') return [];
-    var current = statusToNode(currentView.status);
-    return reachedNodes(planId, emp).filter(function (node) { return node !== current; });
+    if (!currentView || currentView.status === '已失效' || currentView.status === '已完成') return [];
+    var chain = nodesFor(planId);
+    var byStatus = {
+      '待上级评价': ['员工填写'],
+      '待分管评价': ['员工填写', '上级评分'],
+      '待员工确认': chain.slice()
+    };
+    var list = byStatus[currentView.status] || [];
+    var reached = reachedNodes(planId, emp);
+    return list.filter(function (node) {
+      return chain.indexOf(node) >= 0 && reached.indexOf(node) >= 0;
+    });
   }
 
   function returnTask(planId, emp, node, reason) {
@@ -358,11 +415,10 @@
     return { ok: true, restored: back };
   }
 
+  /** 采用分：HR 最终总分优先，没有就用计算总分。v1.5.3 起分管不再单独核定总分。 */
   function adoptedScore(planId, task) {
     if (!task) return null;
     if (task.hrFinal && task.hrFinal.value != null && task.hrFinal.value !== '') return task.hrFinal.value;
-    var plan = load().plans[planId];
-    if (plan && plan.type === 'quarter' && task.divisionTotal != null && task.divisionTotal !== '') return task.divisionTotal;
     if (task.assessedTotal != null && task.assessedTotal !== '') return task.assessedTotal;
     return null;
   }
@@ -415,8 +471,9 @@
     var lines = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/).filter(function (l) { return l.trim(); });
     if (!lines.length) return { ok: false, error: '文件是空的', errors: [] };
     var head = lines[0].split(',').map(function (s) { return s.trim(); });
-    if (head[0] !== '员工工号' || head[1] !== '评价人工号') {
-      return { ok: false, error: '表头必须是：员工工号,评价人工号,员工姓名,评价人姓名', errors: [] };
+    var okHead = head[0] === '员工工号' && head[1] === '上级工号' && head[2] === '分管工号';
+    if (!okHead) {
+      return { ok: false, error: '表头必须是：员工工号,上级工号,分管工号,员工姓名,上级姓名,分管姓名', errors: [] };
     }
     var errors = [];
     var seen = {};
@@ -424,29 +481,51 @@
     for (var i = 1; i < lines.length; i++) {
       var cols = lines[i].split(',');
       var empNo = (cols[0] || '').trim();
-      var evNo = (cols[1] || '').trim();
-      var empName = (cols[2] || '').trim();
-      var evName = (cols[3] || '').trim();
+      var supNo = (cols[1] || '').trim();
+      var divNo = (cols[2] || '').trim();
+      var empName = (cols[3] || '').trim();
+      var supName = (cols[4] || '').trim();
+      var divName = (cols[5] || '').trim();
       var row = i + 1;
-      function fail(msg) { errors.push({ row: row, no: empNo || evNo, message: msg }); }
+      function fail(msg) { errors.push({ row: row, no: empNo || supNo || divNo, message: msg }); }
       if (!person(empNo)) { errors.push({ row: row, no: empNo, message: '员工工号不存在' }); continue; }
-      if (!person(evNo)) { errors.push({ row: row, no: evNo, message: '评价人工号不存在' }); continue; }
-      if (empNo === evNo) { fail('评价人不能是员工本人'); continue; }
+      if (!person(supNo)) { errors.push({ row: row, no: supNo, message: '上级工号不存在' }); continue; }
+      if (divNo && !person(divNo)) { errors.push({ row: row, no: divNo, message: '分管工号不存在' }); continue; }
+      if (empNo === supNo) { fail('上级不能是员工本人'); continue; }
+      if (divNo && empNo === divNo) { fail('分管不能是员工本人'); continue; }
       if (seen[empNo]) { fail('员工工号在文件中重复'); continue; }
       seen[empNo] = true;
       if (empName && person(empNo).name !== empName) { fail('员工姓名与工号不一致'); continue; }
-      if (evName && person(evNo).name !== evName) { fail('评价人姓名与工号不一致'); continue; }
-      updates.push({ empNo: empNo, evNo: evNo });
+      if (supName && person(supNo).name !== supName) { fail('上级姓名与工号不一致'); continue; }
+      if (divName && divNo && person(divNo).name !== divName) { fail('分管姓名与工号不一致'); continue; }
+      updates.push({ empNo: empNo, supNo: supNo, divNo: divNo });
     }
     if (errors.length) return { ok: false, error: '有 ' + errors.length + ' 行未通过，本次未写入', errors: errors };
     var map = evalMap();
-    updates.forEach(function (u) { map[u.empNo] = u.evNo; });
+    var divMap = divisionMap();
+    updates.forEach(function (u) {
+      map[u.empNo] = u.supNo;
+      if (u.divNo) divMap[u.empNo] = u.divNo;
+      else delete divMap[u.empNo];
+    });
     saveEval(map);
+    saveDivision(divMap);
     return { ok: true, count: updates.length, errors: [] };
   }
 
   function setEvaluator(empNo, evNo) {
-    return importEvaluators('员工工号,评价人工号\n' + empNo + ',' + evNo);
+    var store = evalMap();
+    store[empNo] = evNo;
+    saveEval(store);
+    return { ok: true };
+  }
+
+  function setDivision(empNo, divNo) {
+    var map = divisionMap();
+    if (divNo) map[empNo] = divNo;
+    else delete map[empNo];
+    saveDivision(map);
+    return { ok: true };
   }
 
   function readTask(planId, no) {
@@ -466,6 +545,10 @@
     evaluatorNo: evaluatorNo,
     evaluatorName: evaluatorName,
     evalMap: evalMap,
+    divisionMap: divisionMap,
+    divisionNo: divisionNo,
+    divisionName: divisionName,
+    setDivision: setDivision,
     reachedNodes: reachedNodes,
     returnTargets: returnTargets,
     returnTask: returnTask,

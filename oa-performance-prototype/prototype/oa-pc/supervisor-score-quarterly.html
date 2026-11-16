@@ -25,7 +25,7 @@
 
             <div id="score-sixq3j" style="margin-bottom:16px"></div>
 
-            <div class="perf-tip" style="margin-bottom:12px">季度 KR 权重合计 90%。上级/分管分列；6Q3J、面谈只读。公式：<strong>自评×20% + 上级×40% + 分管×40%</strong>。</div>
+            <div class="perf-tip" style="margin-bottom:12px">季度 KR 权重合计 90%。上级/分管分列；6Q3J 只读。公式：<strong>自评×20% + 上级×40% + 分管×40%</strong>。面谈改由 v1.6.0 单独发起流程。</div>
 
             <div class="score-section-title">本季考评 · 打分区</div>
             <div class="score-kr-list" id="score-kr-list"></div>
@@ -49,7 +49,7 @@
             <div class="score-actions">
               <a class="q-btn" href="supervisor-review-list.html" id="btn-back">← 返回列表</a>
               <button class="q-btn" type="button" id="btn-save-score">保存</button>
-              <button class="q-btn" type="button" id="btn-export-sheet">导出图片</button>
+              <button class="q-btn" type="button" id="btn-export-sheet">导出PDF</button>
               <button class="q-btn q-btn-primary" type="button" id="btn-submit">提交评分</button>
             </div>
             <p id="save-time" class="hr-hint">尚未保存</p>
@@ -69,6 +69,8 @@
   <script src="../assets/vendor/html-to-image.js"></script>
   <script src="../assets/perf-export-image.js"></script>
   <script src="../assets/perf-sheet-preview.js"></script>
+  <script src="../assets/perf-attachment.js"></script>
+  <script src="../assets/perf-zero-warn.js"></script>
   <script src="../assets/supervisor-score.js"></script>
   <script>
     initOaShell({

@@ -82,7 +82,7 @@
       {
         id: 'q2026q2-wait',
         title: '2026 Q2 · 季度绩效考核',
-        shortTitle: '2026 Q2 · 已提交待分管',
+        shortTitle: '2026 Q2 · 待分管评价',
         type: 'quarter',
         phase: 'pending_division',
         mergedReview: false,
@@ -179,9 +179,8 @@
     if (ph === 'pending_supervisor') return '已于 ' + (t.submittedAt || '').slice(5, 16) + ' 提交 · 等待上级评分';
     if (ph === 'pending_division') return '上级已评 · 等待分管评分';
     if (ph === 'pending_confirm') {
-      if (t.employeeConfirmed) return '您已确认 · 等待上级确认';
-      if (t.divisionAdjusted) return '待确认 · 分管已调整核定分';
-      return '待确认评分 · 可见上级评分明细';
+      if (t.employeeConfirmed) return '您已确认 · 已完成';
+      return '待员工确认 · 可见上级评分明细';
     }
     if (ph === 'confirmed') return '流程已结束 · 自填内容可回看';
     return '';
@@ -351,7 +350,7 @@
     }
     if (detailEl) {
       detailEl.innerHTML = '<p class="hr-hint">' + taskSubtitle(task) + '</p>' +
-        '<p class="hr-hint">员工端<strong>只读</strong>跟踪流程；填表在向导完成，待确认请进入确认页操作。</p>';
+        '<p class="hr-hint">员工端<strong>只读</strong>跟踪流程；填表在向导完成，待员工确认请进入确认页操作。</p>';
     }
     if (actionsEl) {
       var ph = W() ? W().normalizePhase(task.phase) : task.phase;

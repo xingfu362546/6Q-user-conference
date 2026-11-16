@@ -523,26 +523,56 @@
       '<button type="button" class="btn btn-block" id="add-ko" style="margin-top:8px">+ 增加关键目标</button>';
   }
 
+  /**
+   * 下季目标：每条目标一行，列是 O / 考核目标 / 考核标准 / 是否对标 / 挑战资源 / 备注。
+   * 不展示权重，也不做权重校验。
+   */
+  function renderNextKo(ko, koIdx, open) {
+    var preview = (ko.o || '').trim().slice(0, 36) || '关键目标 ' + (koIdx + 1);
+    var targets = ko.targets || [];
+    var rows = targets.map(function (t, ti) {
+      return '<tr class="kr-sheet-row" data-ko="' + koIdx + '" data-ti="' + ti + '">' +
+        (ti === 0 ? '<td class="kr-sheet-o" rowspan="' + targets.length + '"><textarea data-ko="o" placeholder="描述该关键目标">' + escText(ko.o) + '</textarea></td>' : '') +
+        '<td class="kr-sheet-smart"><textarea data-t="smart" placeholder="填写考核目标">' + escText(t.smart) + '</textarea></td>' +
+        '<td class="kr-sheet-std"><div class="kr-rich" contenteditable="true" data-t="standard" data-placeholder="填写考核标准">' + escText(t.standard || '') + '</div></td>' +
+        '<td class="kr-sheet-aligned"><select data-t="aligned">' +
+        '<option value="">请选择</option><option value="是">是</option><option value="否">否</option>' +
+        '</select></td>' +
+        '<td class="kr-sheet-m"><textarea data-t="challenge" placeholder="存在挑战 / 需求资源">' + escText(t.challenge) + '</textarea></td>' +
+        '<td class="kr-sheet-remark"><input data-t="remark" placeholder="备注" value="' + escText(t.remark || '') + '" /></td>' +
+        '<td class="kr-sheet-op">' + (ti > 0 ? delBtn('remove-target', '删除', { ko: koIdx, ti: ti }) : '') + '</td>' +
+        '</tr>';
+    }).join('');
+    return '<div class="collapse-card ko-card ko-card--l2 ' + (open ? 'open' : '') + '" data-ko-idx="' + koIdx + '">' +
+      '<div class="ko-card-rail" aria-hidden="true"></div>' +
+      '<div class="ko-card-main">' +
+      '<div class="ko-head-row">' +
+      '<button type="button" class="collapse-head">' +
+      levelBadge('l2', 'L2') +
+      '<span class="collapse-title">关键目标 ' + (koIdx + 1) + '</span>' +
+      '<span class="ko-target-count-badge">' + targets.length + ' 个考核目标</span>' +
+      '<span class="collapse-preview">' + preview + '</span>' +
+      '<span class="collapse-chevron">▼</span></button>' +
+      (koIdx > 0 ? delBtn('remove-ko', '删除关键目标', { 'ko-idx': koIdx }) : '') +
+      '</div>' +
+      '<div class="collapse-body">' +
+      '<div class="kr-sheet-wrap">' +
+      '<table class="kr-sheet kr-sheet--next">' +
+      '<colgroup><col class="kr-sheet-o"><col class="kr-sheet-smart"><col class="kr-sheet-std"><col class="kr-sheet-aligned"><col class="kr-sheet-m"><col class="kr-sheet-remark"><col class="kr-sheet-op"></colgroup>' +
+      '<thead><tr><th class="kr-sheet-o">关键目标 O</th><th class="kr-sheet-smart">考核目标</th><th class="kr-sheet-std">考核标准</th>' +
+      '<th class="kr-sheet-aligned">是否对标</th><th class="kr-sheet-m">挑战 / 资源</th><th class="kr-sheet-remark">备注</th><th class="kr-sheet-op-h"></th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table></div>' +
+      '<button type="button" class="btn btn-sm btn-add-target add-target-btn" data-ko-idx="' + koIdx + '">+ 增加考核目标</button>' +
+      '</div></div></div>';
+  }
+
   function renderNextPeriodStep(state, listKey, opts) {
     opts = opts || {};
-    var block = listKey === 'coreKeyObjectives' ? 'V' : (listKey === 'regularKeyObjectives' ? 'X' : 'next');
-    var list = ensureKeyObjectiveList(state, listKey, block);
-    var ws = weightStatus(state, 'next');
-    var cap = ws.target;
-    return '<p class="section-desc">' + (opts.desc || '下月/下季：可增多个关键目标；各关键目标下考核目标权重合计须使全区 = 100%。') + '</p>' +
-      renderWeightBar(ws) +
-      '<div class="block-weight-hint" data-block-weight-hint style="display:none"></div>' +
+    var list = ensureKeyObjectiveList(state, listKey, 'next');
+    return '<p class="section-desc">' + (opts.desc || '下季核心目标 3–5 条。每条目标后面标明是否跟上级对标，并填写挑战、所需资源和备注。') + '</p>' +
       (typeof collapseToolbar === 'function' ? collapseToolbar('ko-list') : '') +
       '<div id="ko-list" class="ko-list">' +
-      list.map(function (ko, i) {
-        return renderKeyObjective(ko, i, {
-          isOpen: isKoOpen(state, 'next', i),
-          planning: true,
-          showChallenge: true,
-          weightCap: cap,
-          periodType: 'next',
-        });
-      }).join('') +
+      list.map(function (ko, i) { return renderNextKo(ko, i, isKoOpen(state, 'next', i)); }).join('') +
       '</div>' +
       '<button type="button" class="btn btn-block" id="add-ko">+ 增加关键目标</button>';
   }
@@ -570,7 +600,7 @@
         var t = ko.targets[ti];
         if (!t) return;
         tc.querySelectorAll('[data-t]').forEach(function (inp) {
-          inp.addEventListener('input', function () {
+          function applyField() {
             t[inp.dataset.t] = inp.getAttribute('contenteditable') != null ? inp.innerText : inp.value;
             if (inp.dataset.t === 'weight') {
               var chip = tc.querySelector('.kr-target-weight-chip');
@@ -580,7 +610,9 @@
               applyWeightFieldHints(root, state, { listKey: listKey, periodType: periodType });
             }
             onChange(false);
-          });
+          }
+          inp.addEventListener('input', applyField);
+          if (inp.tagName === 'SELECT') inp.addEventListener('change', applyField);
         });
         if (tc.querySelector('[data-std-tier-field]') && typeof bindStandardTiers === 'function') bindStandardTiers(tc, t, onChange);
       });
@@ -628,12 +660,10 @@
   function markStepperWeightErrors(container, state, periodType, workSteps, nextStep) {
     if (!container) return;
     var ws = weightStatus(state, periodType);
-    var nextWs = weightStatus(state, 'next');
     container.querySelectorAll('.step-dot').forEach(function (dot) {
       var step = +dot.dataset.step;
       dot.classList.remove('step-dot--error');
       if (workSteps.indexOf(step) >= 0 && !ws.ok) dot.classList.add('step-dot--error');
-      if (step === nextStep && !nextWs.ok) dot.classList.add('step-dot--error');
     });
   }
 
@@ -647,19 +677,7 @@
       }
       return false;
     }
-    if (nextListKey) {
-      var list = state[nextListKey] || state.nextMonthKeyObjectives;
-      var nsum = sumTargets(list);
-      var nextTarget = WEIGHT_TARGETS.next;
-      if (nsum > nextTarget + 0.05) {
-        alert('下月/下季 KR 权重超出 ' + (nsum - nextTarget).toFixed(1) + '%，须 = 100%，当前 ' + nsum.toFixed(1) + '%');
-        return false;
-      }
-      if (nsum < nextTarget - 0.05) {
-        alert('下月/下季 KR 权重还差 ' + (nextTarget - nsum).toFixed(1) + '%，须 = 100%，当前 ' + nsum.toFixed(1) + '%');
-        return false;
-      }
-    }
+    // 下季目标没有权重列，也不做权重校验（FR-011）。
     return true;
   }
 

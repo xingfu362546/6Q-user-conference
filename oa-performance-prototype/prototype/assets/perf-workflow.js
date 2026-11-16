@@ -10,7 +10,7 @@
     filling: { label: '填写中', short: '填写' },
     pending_supervisor: { label: '待上级评', short: '上级' },
     pending_division: { label: '待分管评', short: '分管' },
-    pending_confirm: { label: '待确认', short: '确认' },
+    pending_confirm: { label: '待员工确认', short: '确认' },
     confirmed: { label: '已确认', short: '已确认' },
     completed: { label: '已确认', short: '已确认' },
   };
@@ -62,13 +62,11 @@
     return taskType(task) === 'quarter';
   }
 
-  /** 是否已达「已确认」终态（月=员工+上级；季=员工+上级+分管） */
+  /** 是否已达「已确认」终态。上级提交即确认，季度分管提交即确认，只剩员工需要点确认。 */
   function isFullyConfirmed(task) {
     if (!task) return false;
     if (normalizePhase(task.phase) === 'confirmed') return true;
-    if (!task.employeeConfirmed || !task.supervisorConfirmed) return false;
-    if (isQuarterTask(task)) return !!task.divisionConfirmed;
-    return true;
+    return !!(task.employeeConfirmed && task.supervisorConfirmed);
   }
 
   /** 分管/HR 是否仍可改核定总分 */
@@ -128,11 +126,9 @@
     if (ph !== 'pending_confirm' && ph !== 'confirmed') return '';
     var html = '<span class="q-tag' + (task.employeeConfirmed ? ' q-tag-green' : ' q-tag-orange') + '">员工' +
       (task.employeeConfirmed ? '已确认' : '待确认') + '</span> ' +
-      '<span class="q-tag' + (task.supervisorConfirmed ? ' q-tag-green' : ' q-tag-orange') + '">上级' +
-      (task.supervisorConfirmed ? '已确认' : '待确认') + '</span>';
+      '<span class="q-tag q-tag-green">上级已确认</span>';
     if (isQuarterTask(task)) {
-      html += ' <span class="q-tag' + (task.divisionConfirmed ? ' q-tag-green' : ' q-tag-orange') + '">分管' +
-        (task.divisionConfirmed ? '已确认' : '待确认') + '</span>';
+      html += ' <span class="q-tag q-tag-green">分管已确认</span>';
     }
     if (task.divisionAdjusted) {
       html += ' <span class="q-tag q-tag-orange">总分已调整</span>';

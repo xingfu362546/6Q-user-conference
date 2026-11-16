@@ -51,48 +51,84 @@
     else if (step === 5) renderPenalty(bodyEl, ctx);
   }
 
+  function incentiveAttachmentCell(row, i) {
+    var name = row.attachment && window.PerfAttachment ? PerfAttachment.link(row.attachment) : (row.fileName ? '<span class="perf-attach-empty">' + esc(row.fileName) + '（旧附件仅文件名）</span>' : '<span class="perf-attach-empty">未上传</span>');
+    return '<div class="perf-attach-cell">' + name +
+      '<div class="perf-attach-actions">' +
+      '<button type="button" class="q-btn q-btn-sm" data-att-upload="' + i + '">' + (row.attachment ? '替换' : '上传') + '</button>' +
+      (row.attachment ? '<button type="button" class="q-btn q-btn-sm" data-att-remove="' + i + '">移除</button>' : '') +
+      '</div></div>';
+  }
+
   function renderIncentive(bodyEl, ctx) {
     var rows = bag.incentive;
     var opts = types().map(function (t) {
-      return '<option value="' + t.id + '">' + esc(t.label) + '</option>';
+      return '<option value="' + t.id + '">' + esc(t.label) + '（' + t.points + ' 分）</option>';
     }).join('');
-    var html = '<p class="section-desc">专项激励（选填，最多 3 条）。替代原来的加分项，不进入核定总分。选定类型后自评分自动带出。</p>';
-    html += rows.map(function (row, i) {
-      return '<div class="q-card-panel" style="padding:12px;margin-bottom:10px" data-inc="' + i + '">' +
-        '<div class="field"><label>关键目标</label><input data-k="objective" value="' + esc(row.objective) + '" /></div>' +
-        '<div class="field"><label>关键成果</label><textarea data-k="result" rows="2">' + esc(row.result) + '</textarea></div>' +
-        '<div class="field"><label>附件</label><input data-k="fileName" placeholder="选填" value="' + esc(row.fileName || '') + '" /></div>' +
-        '<div class="field"><label>超越类型</label><select data-k="typeId"><option value="">请选择</option>' + opts + '</select></div>' +
-        '<div class="field"><label>自评分</label><input data-k="self" readonly value="' + esc(scoreOf(row.typeId)) + '" /></div>' +
-        '<button type="button" class="q-btn" data-del="' + i + '">删除这条</button></div>';
-    }).join('');
-    html += '<button type="button" class="q-btn" id="add-inc"' + (rows.length >= 3 ? ' disabled' : '') + '>+ 添加申报（' + rows.length + '/3）</button>';
-    html += '<p class="hr-hint" id="inc-hint" style="margin-top:8px"></p>';
+    var body = rows.map(function (row, i) {
+      return '<tr data-inc="' + i + '">' +
+        '<td class="perf-inc-o"><textarea data-k="objective" rows="2" placeholder="填写关键目标">' + esc(row.objective) + '</textarea></td>' +
+        '<td class="perf-inc-r"><textarea data-k="result" rows="2" placeholder="填写关键成果">' + esc(row.result) + '</textarea></td>' +
+        '<td class="perf-inc-att">' + incentiveAttachmentCell(row, i) + '</td>' +
+        '<td class="perf-inc-type"><select data-k="typeId"><option value="">请选择</option>' + opts + '</select></td>' +
+        '<td class="perf-inc-self"><input data-k="self" readonly value="' + esc(scoreOf(row.typeId)) + '" /></td>' +
+        '<td class="perf-inc-op"><button type="button" class="perf-del-btn" data-del="' + i + '"><span class="perf-del-btn__icon">×</span><span class="perf-del-btn__text">删除</span></button></td>' +
+        '</tr>';
+    }).join('') || '<tr><td colspan="6" class="muted">还没有申报。专项是选填项。</td></tr>';
+    var html = '<p class="section-desc">专项激励（选填，最多 5 条）。替代原来的加分项，不进入核定总分。选定超越类型后自评分自动带出，附件支持图片和 PDF，上传后点文件名可预览。</p>' +
+      '<div class="q-table-wrap"><table class="q-table perf-inc-table"><thead><tr>' +
+      '<th>关键目标</th><th>关键成果</th><th>附件</th><th>超越类型</th><th>自评分</th><th></th>' +
+      '</tr></thead><tbody>' + body + '</tbody></table></div>' +
+      '<button type="button" class="q-btn" id="add-inc" style="margin-top:10px"' + (rows.length >= 5 ? ' disabled' : '') + '>+ 添加申报（' + rows.length + '/5）</button>' +
+      '<p class="hr-hint" id="inc-hint" style="margin-top:8px"></p>';
     bodyEl.innerHTML = html;
-    bodyEl.querySelectorAll('[data-inc]').forEach(function (box) {
-      var i = +box.dataset.inc;
-      var sel = box.querySelector('[data-k="typeId"]');
+    bodyEl.querySelectorAll('[data-inc]').forEach(function (tr) {
+      var i = +tr.dataset.inc;
+      var sel = tr.querySelector('[data-k="typeId"]');
       sel.value = rows[i].typeId || '';
-      box.querySelectorAll('[data-k]').forEach(function (el) {
+      tr.querySelectorAll('[data-k]').forEach(function (el) {
         el.addEventListener('input', function () {
           rows[i][el.dataset.k] = el.value;
           if (el.dataset.k === 'typeId') {
-            box.querySelector('[data-k="self"]').value = scoreOf(el.value);
+            tr.querySelector('[data-k="self"]').value = scoreOf(el.value);
           }
           touch(ctx);
           paintHint();
         });
         el.addEventListener('change', function () {
           rows[i][el.dataset.k] = el.value;
-          if (el.dataset.k === 'typeId') box.querySelector('[data-k="self"]').value = scoreOf(el.value);
+          if (el.dataset.k === 'typeId') tr.querySelector('[data-k="self"]').value = scoreOf(el.value);
           touch(ctx);
         });
+      });
+      var up = tr.querySelector('[data-att-upload]');
+      if (up) up.addEventListener('click', function () {
+        if (!window.PerfAttachment) { alert('附件组件未加载'); return; }
+        PerfAttachment.pick(function (att, err) {
+          if (err) { alert(err); return; }
+          var total = rows.reduce(function (sum, row) {
+            if (!row.attachment || row.attachment === (rows[i] && rows[i].attachment)) return sum;
+            return sum + (row.attachment.size || 0);
+          }, att.size || 0);
+          if (total > 4 * 1024 * 1024) { alert('专项附件合计不能超过 4MB，先删掉一个再传'); return; }
+          rows[i].attachment = att;
+          rows[i].fileName = att.name;
+          touch(ctx);
+          render(4, bodyEl, ctx);
+        });
+      });
+      var rm = tr.querySelector('[data-att-remove]');
+      if (rm) rm.addEventListener('click', function () {
+        rows[i].attachment = null;
+        rows[i].fileName = '';
+        touch(ctx);
+        render(4, bodyEl, ctx);
       });
     });
     var add = bodyEl.querySelector('#add-inc');
     if (add) add.addEventListener('click', function () {
-      if (bag.incentive.length >= 3) return;
-      bag.incentive.push({ objective: '', result: '', fileName: '', typeId: '' });
+      if (bag.incentive.length >= 5) return;
+      bag.incentive.push({ objective: '', result: '', fileName: '', typeId: '', attachment: null });
       touch(ctx);
       render(4, bodyEl, ctx);
     });
@@ -144,38 +180,9 @@
     if (ctx && ctx.mark) ctx.mark();
   }
 
-  function enhanceNext(bodyEl, ctx) {
-    if (!bodyEl || bodyEl.querySelector('#next-meta')) return;
-    var list = (ctx.state && ctx.state.nextSeasonKeyObjectives) || [];
-    while (bag.nextMeta.length < list.length) bag.nextMeta.push({ aligned: '', challenge: '', remark: '' });
-    var html = '<div id="next-meta" style="margin-top:12px"><p class="section-desc">每条下季目标还需标明是否已跟上级对标。条数须为 3 到 5 条。</p>';
-    list.forEach(function (ko, i) {
-      var meta = bag.nextMeta[i];
-      html += '<div class="field" data-meta="' + i + '"><label>目标 ' + (i + 1) + '「' + esc(ko.o || '未写关键目标') + '」是否跟上级对标</label>' +
-        '<select data-aligned><option value="">请选择</option><option value="是">是</option><option value="否">否</option></select>' +
-        '<input data-challenge placeholder="存在挑战 / 需求资源" value="' + esc(meta.challenge || '') + '" style="margin-top:6px" />' +
-        '</div>';
-    });
-    html += '</div>';
-    bodyEl.insertAdjacentHTML('beforeend', html);
-    bodyEl.querySelectorAll('[data-meta]').forEach(function (box) {
-      var i = +box.dataset.meta;
-      var sel = box.querySelector('[data-aligned]');
-      sel.value = bag.nextMeta[i].aligned || '';
-      sel.addEventListener('change', function () {
-        bag.nextMeta[i].aligned = sel.value;
-        touch(ctx);
-      });
-      box.querySelector('[data-challenge]').addEventListener('input', function (e) {
-        bag.nextMeta[i].challenge = e.target.value;
-        touch(ctx);
-      });
-    });
-  }
-
   function validate(ctx) {
     var rows = bag.incentive || [];
-    if (rows.length > 3) { alert('专项激励最多 3 条'); return false; }
+    if (rows.length > 5) { alert('专项激励最多 5 条'); return false; }
     for (var i = 0; i < rows.length; i++) {
       if (!rows[i].typeId) continue;
       if (!String(rows[i].objective || '').trim() || !String(rows[i].result || '').trim()) {
@@ -205,7 +212,8 @@
         alert('第 ' + (j + 1) + ' 条下季目标需要考核标准');
         return false;
       }
-      if (meta.aligned !== '是' && meta.aligned !== '否') {
+      var aligned = target.aligned || meta.aligned;
+      if (aligned !== '是' && aligned !== '否') {
         alert('第 ' + (j + 1) + ' 条下季目标需要选择是否跟上级对标');
         return false;
       }
@@ -218,6 +226,23 @@
       ? PerfReviewSheet.renderWorkTable(list || [], { periodType: period, editable: false, state: {} })
       : '<p>尚未加载横表。</p>';
     return '<section class="perf-preview-block"><h3>' + title + '</h3>' + body + '</section>';
+  }
+
+  /** 下季目标：不带权重列，是否对标在每条目标后面 */
+  function nextBlock(list) {
+    var rows = [];
+    (list || []).forEach(function (ko) {
+      (ko.targets || []).forEach(function (t, ti) {
+        var standard = t.standard || (t.standardTiers || []).map(function (tier) { return tier.label + ' ' + tier.score; }).join('；');
+        rows.push('<tr>' +
+          (ti === 0 ? '<td rowspan="' + (ko.targets || []).length + '">' + esc(ko.o) + '</td>' : '') +
+          '<td>' + esc(t.smart) + '</td><td>' + esc(standard) + '</td>' +
+          '<td>' + esc(t.aligned || '—') + '</td><td>' + esc(t.challenge || '—') + '</td><td>' + esc(t.remark || '—') + '</td></tr>');
+      });
+    });
+    return '<section class="perf-preview-block"><h3>下季核心目标</h3>' +
+      '<table class="q-table perf-preview-table"><tr><th>关键目标</th><th>考核目标</th><th>考核标准</th><th>是否对标</th><th>挑战 / 资源</th><th>备注</th></tr>' +
+      (rows.join('') || '<tr><td colspan="6">未填写</td></tr>') + '</table></section>';
   }
 
   function sixqBlock(ctx) {
@@ -236,19 +261,19 @@
       return t ? t.label : (id || '未选');
     };
     var rows = bag.incentive.map(function (r, i) {
-      return '<tr><td>' + (i + 1) + '</td><td>' + esc(r.objective) + '</td><td>' + esc(r.result) + '</td><td>' + esc(typeName(r.typeId)) + '</td><td>' + esc(scoreOf(r.typeId)) + '</td></tr>';
-    }).join('') || '<tr><td colspan="5">未申报</td></tr>';
+      var att = r.attachment ? r.attachment.name : (r.fileName || '—');
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(r.objective) + '</td><td>' + esc(r.result) + '</td><td>' + esc(att) + '</td><td>' + esc(typeName(r.typeId)) + '</td><td>' + esc(scoreOf(r.typeId)) + '</td></tr>';
+    }).join('') || '<tr><td colspan="6">未申报</td></tr>';
     var summary = typeof ctx.summary === 'function' ? ctx.summary() : (ctx.summary || '');
     return '<div class="perf-preview-bar"><h2>提交前预览</h2><button type="button" class="q-btn" id="preview-close">返回修改</button></div>' +
       '<div class="perf-preview-scale"><p class="perf-preview-note">整张表只读，包含已填的工作 KR。这里不能改字。</p>' +
       workBlock('核心绩效 V%', state.coreKeyObjectives, period) +
       workBlock('常规绩效 X%', state.regularKeyObjectives, period) +
       sixqBlock(ctx) +
-      '<section class="perf-preview-block"><h3>专项激励</h3><table class="q-table perf-preview-table"><tr><th>#</th><th>关键目标</th><th>关键成果</th><th>超越类型</th><th>自评</th></tr>' + rows + '</table></section>' +
+      '<section class="perf-preview-block"><h3>专项激励</h3><table class="q-table perf-preview-table"><tr><th>#</th><th>关键目标</th><th>关键成果</th><th>附件</th><th>超越类型</th><th>自评</th></tr>' + rows + '</table></section>' +
       '<section class="perf-preview-block"><h3>减分</h3><p>' + esc((bag.penalty[0] || {}).event || '无') + ' · 自评 ' + esc((bag.penalty[0] || {}).self || '空') + '</p></section>' +
-      '<section class="perf-preview-block"><h3>绩效面谈</h3><p><b>亮点</b> ' + esc(interview.highlight || '未填') + '</p><p><b>待提升</b> ' + esc(interview.improve || '未填') + '</p><p><b>改进计划</b> ' + esc(interview.plan || '未填') + '</p><p><b>所需支持</b> ' + esc(interview.support || '未填') + '</p></section>' +
       '<section class="perf-preview-block"><h3>自评总结</h3><p>' + esc(summary || '未填') + '</p></section>' +
-      workBlock('下季核心目标', state.nextSeasonKeyObjectives, 'next') +
+      nextBlock(state.nextSeasonKeyObjectives) +
       '</div>';
   }
 
@@ -302,7 +327,6 @@
     restore: restore,
     snapshot: snapshot,
     render: render,
-    enhanceNext: enhanceNext,
     validate: validate,
     openPreview: openPreview,
     openMonthly: openMonthly,

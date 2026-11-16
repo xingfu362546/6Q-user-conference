@@ -1287,6 +1287,7 @@ function initMonthlyWizard(opts) {
 
     if (state.step === 6) {
       if (window.PerfKrHierarchy && !PerfKrHierarchy.validateSubmit(state, 'month', 'nextMonthKeyObjectives')) return;
+      if (window.PerfZeroWarn && !PerfZeroWarn.confirmSubmit(document.getElementById('wizard-content'))) return;
       alert('已提交（原型演示）');
 
       localStorage.removeItem(storageKey);
@@ -1315,30 +1316,28 @@ function initMonthlyWizard(opts) {
 
 const QUARTERLY_STEPS = [
 
-  { id: 1, title: '核心绩效 V%', phase: 0, subtitle: '【A】本季考评 · 1/9' },
+  { id: 1, title: '核心绩效 V%', phase: 0, subtitle: '【A】本季考评 · 1/8' },
 
-  { id: 2, title: '常规绩效 X%', phase: 0, subtitle: '【A】本季考评 · 2/9' },
+  { id: 2, title: '常规绩效 X%', phase: 0, subtitle: '【A】本季考评 · 2/8' },
 
-  { id: 3, title: '6Q3J 人才评价', phase: 0, subtitle: '【A】本季考评 · 3/9' },
+  { id: 3, title: '6Q3J 人才评价', phase: 0, subtitle: '【A】本季考评 · 3/8' },
 
-  { id: 4, title: '专项激励', phase: 0, subtitle: '【A】本季考评 · 4/9' },
+  { id: 4, title: '专项激励', phase: 0, subtitle: '【A】本季考评 · 4/8' },
 
-  { id: 5, title: '减分项', phase: 0, subtitle: '【A】本季考评 · 5/9' },
+  { id: 5, title: '减分项', phase: 0, subtitle: '【A】本季考评 · 5/8' },
 
-  { id: 6, title: '绩效面谈', phase: 0, subtitle: '【A】本季考评 · 6/9' },
+  { id: 6, title: '自评总结', phase: 0, subtitle: '【A】本季考评 · 6/8' },
 
-  { id: 7, title: '自评总结', phase: 0, subtitle: '【A】本季考评 · 7/9' },
+  { id: 7, title: '下季核心目标', phase: 1, subtitle: '【B】下季目标 · 7/8' },
 
-  { id: 8, title: '下季核心目标', phase: 1, subtitle: '【B】下季目标 · 8/9' },
-
-  { id: 9, title: '确认提交', phase: 2, subtitle: '确认提交 · 9/9' },
+  { id: 8, title: '确认提交', phase: 2, subtitle: '确认提交 · 8/8' },
 
 ];
 
 const Q_PHASE_BLOCKS = [
-  { id: 0, name: '【A】本季考评', desc: '工作 KR · 6Q3J · 专项 · 减分 · 面谈 · 总结', steps: [1, 2, 3, 4, 5, 6, 7] },
-  { id: 1, name: '【B】下季目标', desc: '下季核心目标 3–5 条', steps: [8] },
-  { id: 2, name: '确认提交', desc: '预览并提交', steps: [9] },
+  { id: 0, name: '【A】本季考评', desc: '工作 KR · 6Q3J · 专项 · 减分 · 总结', steps: [1, 2, 3, 4, 5, 6] },
+  { id: 1, name: '【B】下季目标', desc: '下季核心目标 3–5 条', steps: [7] },
+  { id: 2, name: '确认提交', desc: '预览并提交', steps: [8] },
 ];
 
 const QUARTER_MOCK_HEADER = {
@@ -1362,8 +1361,6 @@ function initQuarterlyWizard(opts) {
 
   const qPlanId = opts.planId || (window.PerfSixQ3J && PerfSixQ3J.DEFAULT_PLAN) || '2026-Q2';
   const qEmpNo = opts.empNo || (opts.header && opts.header.empNo) || 'E10021';
-
-  const interview = { highlight: '', improve: '', plan: '', support: '' };
 
   let selfSummary = '';
 
@@ -1406,7 +1403,6 @@ function initQuarterlyWizard(opts) {
   try { qSavedRaw = JSON.parse(localStorage.getItem(qKey) || 'null'); } catch (e1) { qSavedRaw = null; }
   if (qSavedRaw && qSavedRaw.qState) {
     Object.keys(qSavedRaw.qState).forEach(function (k) { qState[k] = qSavedRaw.qState[k]; });
-    if (qSavedRaw.interview) Object.keys(qSavedRaw.interview).forEach(function (k) { interview[k] = qSavedRaw.interview[k]; });
     if (typeof qSavedRaw.selfSummary === 'string') selfSummary = qSavedRaw.selfSummary;
     if (qSavedRaw.step) step = qSavedRaw.step;
     if (window.PerfQuarterFill) PerfQuarterFill.restore(qSavedRaw.extra);
@@ -1420,7 +1416,6 @@ function initQuarterlyWizard(opts) {
       localStorage.setItem(qKey, JSON.stringify({
         step: step,
         qState: qState,
-        interview: interview,
         selfSummary: selfSummary,
         extra: window.PerfQuarterFill ? PerfQuarterFill.snapshot() : null,
         savedAt: new Date().toISOString()
@@ -1437,7 +1432,6 @@ function initQuarterlyWizard(opts) {
   function quarterCtx() {
     return {
       state: qState,
-      interview: interview,
       summary: function () { return selfSummary; },
       planId: qPlanId,
       empNo: qEmpNo,
@@ -1461,7 +1455,7 @@ function initQuarterlyWizard(opts) {
       step = n;
       refresh();
     }, function (el) {
-      if (window.PerfKrHierarchy) PerfKrHierarchy.markStepperWeightErrors(el, qState, 'quarter', [1, 2], 8);
+      if (window.PerfKrHierarchy) PerfKrHierarchy.markStepperWeightErrors(el, qState, 'quarter', [1, 2], 7);
     });
 
   }
@@ -1525,48 +1519,14 @@ function initQuarterlyWizard(opts) {
       if (window.PerfQuarterFill) PerfQuarterFill.render(step, bodyEl, quarterCtx());
     } else if (step === 6) {
 
-      bodyEl.innerHTML = `
-
-        <p class="section-desc">绩效面谈四段（折叠填写）。</p>
-
-        ${['工作亮点','待提升方面','改进计划','所需支持'].map((l,i)=>`
-
-          <div class="collapse-card ${i===0?'open':''}">
-
-            <button type="button" class="collapse-head"><span class="collapse-title">${l}</span><span class="collapse-preview">${Object.values(interview)[i] || '选填'}</span><span class="collapse-chevron">▼</span></button>
-
-            <div class="collapse-body"><textarea rows="3" data-iv="${i}">${Object.values(interview)[i]}</textarea></div>
-
-          </div>
-
-        `).join('')}
-
-      `;
-
-      bindCollapseCards(bodyEl);
-
-      bodyEl.querySelectorAll('[data-iv]').forEach(ta => {
-
-        ta.addEventListener('input', () => {
-
-          interview[Object.keys(interview)[+ta.dataset.iv]] = ta.value;
-
-          ta.closest('.collapse-card').querySelector('.collapse-preview').textContent = ta.value || '选填';
-
-        });
-
-      });
-
-    } else if (step === 7) {
-
       bodyEl.innerHTML = `<div class="field"><label>自评总结</label><textarea rows="6" id="q-summary">${selfSummary}</textarea></div>`;
 
       bodyEl.querySelector('#q-summary').addEventListener('input', e => { selfSummary = e.target.value; });
 
-    } else if (step === 8) {
+    } else if (step === 7) {
       if (window.PerfKrHierarchy) {
         bodyEl.innerHTML = PerfKrHierarchy.renderNextPeriodStep(qState, 'nextSeasonKeyObjectives', {
-          desc: '【B】下季核心目标 3–5 条 · 关键目标 → 考核目标；KR 权重合计 = 100%',
+          desc: '【B】下季核心目标 3–5 条 · 每条目标后面选是否跟上级对标，不填权重',
         });
         PerfKrHierarchy.bindKeyObjectiveList(bodyEl, qState, 'nextSeasonKeyObjectives', 'next', 'next', function (full) {
           if (full) renderQBody();
@@ -1613,8 +1573,6 @@ function initQuarterlyWizard(opts) {
 
     renderQBody();
 
-    if (step === 8 && window.PerfQuarterFill) PerfQuarterFill.enhanceNext(bodyEl, quarterCtx());
-
     btnPrev.disabled = step === 1;
 
     btnNext.textContent = step === QUARTERLY_STEPS.length ? '确认提交' : '下一步';
@@ -1646,6 +1604,7 @@ function initQuarterlyWizard(opts) {
         qState.nextMonthKeyObjectives = qState.nextSeasonKeyObjectives;
         if (!PerfKrHierarchy.validateSubmit(qState, 'quarter', 'nextSeasonKeyObjectives')) return;
       }
+      if (window.PerfZeroWarn && !PerfZeroWarn.confirmSubmit(document.getElementById('wizard-content'))) return;
       alert('季度表已提交（原型）'); if (opts.onSubmit) opts.onSubmit(); return;
     }
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>原型导航 · v1.5.2 绩效功能清单</title>
+  <title>原型导航 · v1.5.3 绩效功能清单</title>
   <style>
     body { margin: 0; background: #f1f5f9; font-family: "Microsoft YaHei", sans-serif; color: #334155; }
     .nav-page { max-width: 1480px; margin: 28px auto 64px; padding: 0 16px; }
@@ -54,11 +54,11 @@
 <body>
   <div class="nav-page">
     <header class="nav-hero">
-      <p class="nav-hero__eye">OA PERFORMANCE · v1.5.2</p>
+      <p class="nav-hero__eye">OA PERFORMANCE · v1.5.3</p>
       <h1>绩效原型 · 功能清单</h1>
       <p>
         表的列和领袖营功能清单一致：范围、是否已在原型里、模块、需求、实现方案、页面入口。
-        序号沿用规格里的用户故事编号。v1.5.1 不另起编号，写进对应故事的实现方案；v1.5.2 补的两处（专项评分、专项核定）排在 12 和 13。
+        序号沿用规格里的用户故事编号。v1.5.1 不另起编号，写进对应故事的实现方案；v1.5.2 补的两处（专项评分、专项核定）排在 12 和 13。v1.5.3 只改已有行，不新增编号；面谈流程留给 v1.6.0，本期不做。
         给开发的规格正文在「目录对照」第一行，页面上的字段和状态在各页红色注释里。
       </p>
       <a href="index.html">返回原型首页</a>
@@ -110,7 +110,7 @@
           </tr>
           <tr>
             <td>交付说明和版本</td>
-            <td><code>specs/001-perf-next-batch/交付说明-v1.5.0.md</code><br><code>docs/VERSIONS.md</code></td>
+            <td><code>specs/001-perf-next-batch/交付说明-v1.5.3.md</code><br><code>specs/001-perf-next-batch/交付说明-v1.5.0.md</code><br><code>docs/VERSIONS.md</code></td>
             <td>v1.5.0 交付说明。v1.5.1 的四项调整写在 VERSIONS.md 和本表对应行。</td>
           </tr>
           <tr>
@@ -152,14 +152,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="scope-group scope-group--do"><td colspan="7">要做 · 规格用户故事 1–11，v1.5.1 改的是 2、3、9、11</td></tr>
+          <tr class="scope-group scope-group--do"><td colspan="7">要做 · 规格用户故事 1–11；v1.5.3 改的是 2、3、4、5、10、11、12、13</td></tr>
 
           <tr id="req-1">
             <td class="col-no"><a class="req-jump" href="../specs/001-perf-next-batch/spec.md">1</a></td>
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">季度填写</td>
-            <td class="col-text">加分项改为专项激励。专项只定档和建议金额，不进核定总分。减分仍计入。下季目标 3 到 5 条，并选择是否跟上级对标。</td>
+            <td class="col-text">加分项改为专项激励。v1.5.3：最多 5 条，横表一行一条，每条可传 1 个图片或 PDF 附件并预览；专项只定档和建议金额，不进核定总分。减分仍计入。下季目标 3 到 5 条，每条后面选是否跟上级对标，不展示权重。</td>
             <td class="col-plan">规格：<code>specs/001-perf-next-batch/spec.md</code> 用户故事 1<br>计分：<code>prototype/assets/perf-quarter-score.js</code><br>填写：<code>prototype/assets/perf-quarter-fill.js</code><br>图：<code>specs/001-perf-next-batch/diagrams/季度绩效构成.drawio</code><br>样例：工作成果 79.6 + 6Q3J 10 + 减分 -0.4 = 核定总分 89.2。</td>
             <td class="col-ui"><a href="oa-pc/quarterly-wizard.html">季度填表</a><a href="oa-pc/score-confirm.html?type=quarter">确认页看档次</a></td>
           </tr>
@@ -168,8 +168,8 @@
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">HR 改总分</td>
-            <td class="col-text">双方或分管已经确认后，HR 仍可改最终总分。确认页同时看到原核定分和 HR 最终分。v1.5.1：分数和原因放在同一个弹窗里提交，不再连续弹两次。</td>
-            <td class="col-plan">规格：用户故事 2<br>页面：<code>prototype/oa-pc/hr-plan-detail.html</code><br>逻辑：<code>prototype/assets/hr-plan.js</code> 的改总分弹窗，<code>perf-hr-store.js</code> 的 setHrFinal<br>确认页：<code>prototype/oa-pc/score-confirm.html</code>、<code>prototype/assets/score-confirm.js</code><br>v1.5.1 记录：<code>docs/VERSIONS.md</code></td>
+            <td class="col-text">待员工确认和已完成时，HR 仍可改最终总分。v1.5.3：确认页只保留计算总分、上级核定、HR 最终总分、采用分；采用分 = HR 最终总分 ?? 计算总分，不再有分管核定。分数和原因在同一个弹窗提交。</td>
+            <td class="col-plan">规格：用户故事 2、FR-012、FR-013<br>页面：<code>prototype/oa-pc/hr-plan-detail.html</code><br>逻辑：<code>prototype/assets/hr-plan.js</code> 的改总分弹窗，<code>perf-hr-store.js</code> 的 setHrFinal<br>确认页：<code>prototype/oa-pc/score-confirm.html</code>、<code>prototype/assets/score-confirm.js</code><br>v1.5.3 记录：<code>docs/VERSIONS.md</code></td>
             <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细 · 改总分</a><a href="oa-pc/score-confirm.html?role=employee">确认页</a></td>
           </tr>
           <tr id="req-3">
@@ -177,7 +177,7 @@
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">HR 退回</td>
-            <td class="col-text">离开初始节点后才出现「退至」。只能点选已经走过、且不是当前所在的节点。月度是员工填写、上级评分；季度再加分管评分。已全部确认也能退至。内容和分数留在输入框。</td>
+            <td class="col-text">可退节点随状态变化。员工填写中没有「退至」；待上级评价只能退员工填写；待分管评价可退员工填写和上级评分；待员工确认可退员工填写、上级评分、分管评分（月度只有前两个）。已完成不能退至，只能由 HR 改总分。内容和分数留在输入框。</td>
             <td class="col-plan">规格：用户故事 3<br>图：<code>specs/001-perf-next-batch/diagrams/hr-退回节点.drawio</code><br>页面：<code>prototype/oa-pc/hr-plan-detail.html</code><br>逻辑：<code>hr-plan.js</code> 退回弹窗，<code>perf-hr-store.js</code> 的 returnTask</td>
             <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细 · 退回</a><a href="oa-pc/hr-plan-detail.html?plan=2026-Q2">季度计划明细</a></td>
           </tr>
@@ -186,7 +186,7 @@
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">评价人</td>
-            <td class="col-text">按工号维护员工和评价人。导入时工号对不上则整批不写入。</td>
+            <td class="col-text">上级和分管都从组织架构里选人：点人员格子打开弹窗，左侧部门、右侧人员，支持搜索，员工本人不可选，选中后自动带出工号。分管可清空。仍支持 CSV，表头：员工工号,上级工号,分管工号,员工姓名,上级姓名,分管姓名。</td>
             <td class="col-plan">规格：用户故事 4<br>约定：<code>specs/001-perf-next-batch/contracts/evaluator-import.md</code><br>页面：<code>prototype/oa-pc/hr-evaluators.html</code></td>
             <td class="col-ui"><a href="oa-pc/hr-evaluators.html">评价人维护</a></td>
           </tr>
@@ -240,18 +240,18 @@
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">计划明细</td>
-            <td class="col-text">待办显示当前处理人姓名，不再出现「默认上级」。筛选增加待上级评价、已完成、已失效。</td>
-            <td class="col-plan">规格：用户故事 10<br>页面：<code>prototype/oa-pc/hr-plan-detail.html</code><br>注释：<code>prototype/assets/proto-notes-data.js</code> 里计划明细两条，标签 v1.5.1</td>
+            <td class="col-text">待办显示当前处理人姓名，不再出现「默认上级」。v1.5.3 状态固定为：未开始、填写中、已逾期、待上级评价、待分管评价、待员工确认、已完成、已失效；删掉已提交，增加待员工确认。待员工确认只显示员工姓名。</td>
+            <td class="col-plan">规格：用户故事 10、FR-024、FR-036<br>页面：<code>prototype/oa-pc/hr-plan-detail.html</code><br>注释：<code>prototype/assets/proto-notes-data.js</code> 里计划明细，标签 v1.5.3</td>
             <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细</a></td>
           </tr>
           <tr id="req-11">
             <td class="col-no">11</td>
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
-            <td class="col-mod">导出图片</td>
-            <td class="col-text">HR 和领导导出员工绩效表。v1.5.1：先打开和「预览全部」一样的整表，看完再导出，不直接下载局部区块。</td>
+            <td class="col-mod">导出 PDF</td>
+            <td class="col-text">HR 和领导导出员工绩效表。先打开和「预览全部」一样的整表，看完再导出为 PDF，文件名是「姓名-考核期.pdf」。</td>
             <td class="col-plan">规格：用户故事 11<br>整表：<code>prototype/assets/perf-sheet-preview.js</code><br>导出：<code>prototype/assets/perf-export-image.js</code><br>HR：<code>hr-plan.js</code>。评分页：<code>perf-score-tools.js</code></td>
-            <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细 · 导出图片</a><a href="oa-pc/supervisor-score-monthly.html">月度评分</a><a href="oa-pc/supervisor-score-quarterly.html">季度评分</a></td>
+            <td class="col-ui"><a href="oa-pc/hr-plan-detail.html?plan=2026-05">计划明细 · 导出PDF</a><a href="oa-pc/supervisor-score-monthly.html">月度评分</a><a href="oa-pc/supervisor-score-quarterly.html">季度评分</a></td>
           </tr>
 
           <tr id="req-12">
@@ -259,7 +259,7 @@
             <td class="col-scope col-scope--do">要做</td>
             <td class="col-status">设计已实现</td>
             <td class="col-mod">专项评分</td>
-            <td class="col-text">上级和分管给专项打分，0 到该档分值。三方加权后进入档次判定，专项本身不进核定总分。</td>
+            <td class="col-text">上级和分管给专项打分，0 到该档分值。可以点开员工上传的附件预览。三方加权后进入档次判定，专项本身不进核定总分。</td>
             <td class="col-plan">规格：FR-007 与 <code>contracts/score-rules.md</code><br>页面：<code>prototype/oa-pc/supervisor-score-quarterly.html</code><br>逻辑：<code>perf-quarter-score.js</code> 的 INCENTIVE_WEIGHTS 与 incentiveRowScore</td>
             <td class="col-ui"><a href="oa-pc/supervisor-score-quarterly.html?id=r-zs-2026q2&plan=2026-Q2&no=E10021">季度评分 · 专项区块</a></td>
           </tr>
@@ -285,7 +285,7 @@
         </tbody>
       </table>
     </div>
-    <p class="nav-foot">历史 51 条原文在仓库根 FEATURE_LIST.md。本表排 v1.5.0 到 v1.5.2 要交给开发的范围。</p>
+    <p class="nav-foot">历史 51 条原文在仓库根 FEATURE_LIST.md。本表排 v1.5.0 到 v1.5.3 要交给开发的范围；面谈流程属于 v1.6.0，不在本表。</p>
   </div>
 </body>
 </html>

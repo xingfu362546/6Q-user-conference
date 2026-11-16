@@ -43,7 +43,7 @@
       var monthMatch = heading.match(/(\d{4})年(\d{1,2})月/);
       if (quarterMatch) period = quarterMatch[1] + '-Q' + quarterMatch[2];
       else if (monthMatch) period = monthMatch[1] + '-' + ('0' + monthMatch[2]).slice(-2);
-      PerfSheetPreview.openHtml(title || '整表预览', clone.innerHTML, PerfExportImage ? PerfExportImage.filename(name, period || '考核期') : '评分表.png');
+      PerfSheetPreview.openHtml(title || '整表预览', clone.innerHTML, PerfExportImage ? PerfExportImage.filename(name, period || '考核期') : '评分表.pdf');
     });
   }
 
