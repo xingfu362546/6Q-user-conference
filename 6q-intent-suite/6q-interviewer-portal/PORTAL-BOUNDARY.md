@@ -2,6 +2,8 @@
 
 本目录是面谈官门户（v1.2.x）的独立维护区。分支 `feature/interviewer-portal` 从 `origin/main` 切出，基线提交记录在 `boundary.json` 的 `syncedCommit`。
 
+拉代码、演示账号、迭代流程、验收清单见 [HANDOVER.md](./HANDOVER.md)；本文只讲边界与审核规则。
+
 ## 1. 归属区（可自由改动）
 
 - 本目录下所有 `*.html`
@@ -84,7 +86,7 @@ npx serve .
 自检命令：
 
 ```bash
-node --test 6q-intent-suite/6q-interviewer-portal/tests
+node --test "6q-intent-suite/6q-interviewer-portal/tests/*.test.mjs"
 node 6q-intent-suite/6q-interviewer-portal/checks/check-boundary.mjs
 node --test 6q-intent-suite/shared/intent-proto-notes.test.mjs
 node --test 6q-intent-suite/index-features.test.mjs
@@ -132,3 +134,35 @@ node 6q-intent-suite/6q-interviewer-portal/checks/check-boundary.mjs
 - [ ] 六个页面冒烟截图是否归档
 
 合并方式：squash merge，合并后打标签 `portal-v1.2.x`。回滚直接 revert 该 squash 提交。
+
+## 7. main 分支保护
+
+仓库需要在 GitHub 上开启 main 保护，否则 CODEOWNERS 不生效。配置脚本：
+
+```bash
+gh auth login    # 需要 admin 权限
+bash .github/scripts/setup-branch-protection.sh          # macOS / Linux
+powershell -File .github/scripts/setup-branch-protection.ps1   # Windows
+```
+
+设置的规则：
+
+| 规则 | 值 | 效果 |
+| --- | --- | --- |
+| Require a pull request | 1 人批准 | 禁止直推 main |
+| Require review from Code Owners | 开 | 门户与共享路径必须 owner 批准 |
+| Dismiss stale reviews | 开 | 新提交作废旧批准 |
+| Require linear history | 开 | 只允许 squash / rebase 合并 |
+| Allow force push / deletions | 关 | 不能改历史、不能删分支 |
+| Require conversation resolution | 开 | 评论未解决不能合 |
+| Do not allow bypassing | 关 | owner 自己的 PR 必要时可由 admin 放行 |
+
+**为什么最后一条留了口子**：CODEOWNERS 只绑了一位 owner，GitHub 不允许自审自批。owner 自己提交的 PR 若卡在「必须有 1 人批准」，会死锁；留 admin bypass 是有意的。后续加上第二位 reviewer 后，可以改成强制。
+
+复核配置：
+
+```bash
+gh api repos/xingfu362546/6Q-user-conference/branches/main/protection
+```
+
+没装 gh 时，在 GitHub 仓库 Settings → Branches → Add branch protection rule，分支填 `main`，按上表勾选即可。
