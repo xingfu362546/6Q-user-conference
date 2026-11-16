@@ -23,3 +23,6 @@ scripts/
 tools/
 *.rar
 *.zip
+
+# 绩效原型独立仓库（工作区在本目录，版本控制在 oa-performancec）
+oa-performance-prototype/
