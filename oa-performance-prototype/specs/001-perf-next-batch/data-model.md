@@ -91,7 +91,7 @@
 | 待分管评价 | HR 退至员工填写 / 上级评分 | 填写中 / 待上级评价 |
 | 待员工确认 | HR 退至员工填写 / 上级评分 / 分管评分 | 对应节点，确认状态作废 |
 | 除已失效外的任意节点 | HR 填写原因后失效 | 已失效，并从本期参与名单移除 |
-| 已失效 | HR 恢复，且该员工没有占用本计划另一个范围包 | 恢复到未开始 |
+| 已失效 | HR 恢复，且该员工没有占用本计划另一个范围包 | 恢复到未开始，失效前内容只读保留 |
 
 填写中、未开始、已逾期没有退至；已完成不能退至，只能由 HR 改总分。
 
@@ -156,15 +156,16 @@
 
 | 逻辑字段 | 表.列 | 说明 |
 | --- | --- | --- |
-| 评价人 | perf_evaluator_relation.evaluator_no | 按 employee_no 唯一；发放时优先取这里 |
+| 评价人 | perf_evaluator_relation.supervisor_no / division_no | 按 employee_no 唯一；发放时优先取这里，分管为空回退部门负责人 |
 | 本期参与名单 | perf_plan_roster.employee_no / status | 发放时复制到当前计划；失效只改当前计划的名单和这次发放的范围包，不改其他计划，也不改范围包模板 |
 | 失效原因 / 时间 / 操作人 | perf_task.invalid_reason / invalid_at / invalid_by | 只允许未完成待办 |
 | HR 最终总分 | perf_task.hr_final_score / hr_final_reason | 独立字段，不写 final_total |
 | 退回目标节点 / 原因 | perf_task_score_snapshot.node + perf_task_log | 每次退一条快照 |
 | 有效分 | perf_task_score_snapshot.valid | 退回后所选节点及其后置 0；查询只取 1 |
-| 草稿 | perf_task.draft_payload / draft_saved_at | 草稿不落业务表，不覆盖核定分 |
+| 草稿 | perf_task.draft_payload / draft_saved_at | 草稿不落业务表，不覆盖 HR 最终总分 |
 | 专项申报 | perf_task_incentive | 一条待办 N 条申报；附件存 attachment_url |
 | 专项三方分 | perf_task_incentive.supervisor_score / division_score / hr_final_score | 加权 30/30/40，权重常量在前端与后端各一份且必须一致 |
 | 专项最终得分 | perf_task_incentive.final_score | 只存算完的值，便于查询和导出 |
+| 采用分 | perf_task.hr_final_score ?? perf_task.system_total | v1.5.3 起 `final_total`、`division_adjusted` 只读历史字段，不再写入；结果、奖金、历史、导出都按这个口径取值 |
 | 建议档次 / 最终档次 | perf_task.incentive_tier / incentive_tier_reason | 最终档次有覆盖时写原因 |
 | 当前处理人 | perf_task.current_handler_no | 列表接口直接返回姓名，前端不再拼 |

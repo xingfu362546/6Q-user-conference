@@ -811,7 +811,7 @@ window.PROTO_NOTE_PAGES = {
         title: '入口合并',
         body:
           '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3+</span>原独立「部门待办」已合并至 <code>supervisor-review-list.html</code>。</p>' +
-          '<p>判定为分管领导时，在<strong>领导·待我审核</strong>同一列表查看本部门全员；待分管核定行显示「改总分」。</p>',
+          '<p>判定为分管领导时，在<strong>领导·待我审核</strong>同一列表查看本部门全员。v1.5.3 起不再提供「改总分」按钮，最终总分统一由 HR 在计划明细核定。</p>',
       },
     ],
   },
@@ -872,11 +872,12 @@ window.PROTO_NOTE_PAGES = {
       {
         n: 5,
         attach: '#score-summary',
-        title: '分管核定 · 不在本页',
+        title: '分管改总分 · v1.5.3 已下线',
         body:
           '<p class="proto-ver proto-ver--old"><span class="proto-ver-tag">v1.1</span>本页底部有<strong>分管领导逐项评分</strong>列</p>' +
           '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.3</span>月度<strong>不出现分管评分区</strong>；上级提交后进入待确认</p>' +
           '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.4</span>提交调用 <code>nextPhaseAfterSupervisorSubmit</code> → 月直进 pending_confirm；分管改总分用 <code>canAdjustDivisionTotal</code></p>' +
+          '<p class="proto-ver proto-ver--new"><span class="proto-ver-tag">v1.5.3</span>取消分管改总分：本页不再有分管核定总分输入，列表也不再出现「改总分」。对外采用分 = HR 最终总分 ?? 计算总分，由 HR 在计划明细修改。</p>' +
           '<p>同人合并（上级=分管）时亦不在此页填分管列。</p>',
       },
       {
@@ -932,7 +933,7 @@ window.PROTO_NOTE_PAGES = {
         attach: '#score-summary',
         title: '折算公式',
         body:
-          '<p>综合 = 自评×20% + 上级核定×40% + 分管核定×40%。分管改总分覆盖全表后标记「已调整」。</p>',
+          '<p>综合 = 自评×20% + 上级核定×40% + 分管评分×40%。v1.5.3 起分管只逐项评分，不再改总分，也不再有「已调整」标记。</p>',
       },
       {
         n: 4,
@@ -947,7 +948,7 @@ window.PROTO_NOTE_PAGES = {
           '<p class="proto-sec">UI 要设计的状态</p>' +
           '<ol><li>只有一方可编辑：另一方显示只读分或「—」</li><li>三方未填完：HR 待办详情标「待三方填完」</li><li>合并评：上级和分管同值，只填一次</li><li>超过档值：输入框标红，不能提交</li></ol>' +
           '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +
-          '<tr><td>上级核定 / 分管核定</td><td>数字</td><td>参与定档时必填</td><td>0 到该档分值，可一位小数</td></tr>' +
+          '<tr><td>上级核定 / 分管评分</td><td>数字</td><td>参与定档时必填</td><td>0 到该档分值，整数</td></tr>' +
           '<tr><td>人才开发部最终得分</td><td>数字（HR 页）</td><td>参与定档时必填</td><td>不逐项确认</td></tr>' +
           '<tr><td>本条得分</td><td>只读</td><td>—</td><td>三方加权后按档值封顶</td></tr></table>',
       },
@@ -969,7 +970,7 @@ window.PROTO_NOTE_PAGES = {
           '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.0</span>现在的逻辑</h4>' +
           '<p>绩效管理下新增「评价人维护」，与计划管理并列。一名员工对应一名评价人，双方都用工号识别，评价人就是直接上级。可以改单行，也可以下载当前名单后按 CSV 导入。先校验全部行，整批不通过就一行都不写，并列出失败行号和工号。变更后，尚未完成上级评分的待办，当前处理人改为新评价人；已经评完的历史评分人不改。</p></div>' +
           '<div class="proto-logic proto-logic--now"><h4><span class="proto-ver-tag proto-ver-tag--new">v1.5.3</span>本次调整</h4>' +
-          '<p>一行同时显示上级和分管两个人。两列都不再手输工号：点人员格子打开「组织架构选人」弹窗，左侧按部门切换，右侧点选人员，顶部可以按姓名、工号、部门、岗位搜索，员工本人置灰不可选，选中后点「确定」，工号自动带出。分管可以点「清除」留空。选完先存在页面上，点这一行的「保存」才落库，未保存的行按钮会高亮。CSV 表头改为员工工号、上级工号、分管工号、员工姓名、上级姓名、分管姓名，后三列可空，校验规则不变。计划明细的待分管评价处理人取这里的分管。</p></div>' +
+          '<p>一行同时显示上级和分管两个人。两列都不再手输工号：点人员格子打开「组织架构选人」弹窗，左侧按部门切换，右侧点选人员，顶部可以按姓名、工号、部门、岗位搜索，员工本人置灰不可选，选中后点「确定」，工号自动带出。分管可以点「清除」留空。选完先存在页面上，点这一行的「保存」才落库，未保存的行按钮会高亮。CSV 表头改为员工工号、上级工号、分管工号、员工姓名、上级姓名、分管姓名，后三列可空，校验规则不变。计划明细的待分管评价处理人取这里的分管。发放时上级和分管都取这张表：上级为空回退现有自动解析，分管为空回退现有季度分管（部门负责人）解析，两种回退都在发放结果提示。存量按最近一张任务的上级回填，分管列先留空。</p></div>' +
           '<p class="proto-sec">UI 要设计的状态</p>' +
           '<ol><li>没有评价人：评价人姓名显示未指定</li><li>单行保存失败：行上不改，页顶写出原因</li><li>导入失败：成功行数为 0，错误列出每一行</li><li>导入成功：只更新文件中的员工，并提示人数</li></ol>' +
           '<table class="proto-field-table"><tr><th>名称</th><th>控件</th><th>必填</th><th>说明</th></tr>' +

@@ -38,3 +38,5 @@
 - [ ] D09 导出整表接口与前端入口（HR、领导）
 - [ ] D10 权限与幂等：后端取角色、状态机校验、重复提交
 - [ ] D11 结果列表加专项/档次/金额/采用分，季度隐藏加分列
+- [ ] D12 下线分管改总分并切换采用分口径：停用 `adjustTotal`，`final_total`/`division_adjusted` 转只读；确认状态机季度不再要求 `division_confirmed`，逾期自动确认只置员工位；结果/奖金/历史/导出统一读 `hr_final_score ?? system_total`；出历史对账清单（见 dev-delivery 迁移二）
+- [ ] D13 季度填表面谈步下线：删步骤与校验，历史 `perf_task_interview` 保留只读，不在本期页面与导出中输出
