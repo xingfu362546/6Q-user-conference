@@ -11,13 +11,14 @@
 
 门户自己的样式和交互优先放在上述文件里解决。
 
-## 2. 冻结依赖（只读）
+## 2. 共享文件
+
+### 2.1 只读冻结（不改）
 
 下列文件由主干的会务/意向模块维护，门户只引用、不修改：
 
 | 路径 | 用途 |
 | --- | --- |
-| `../index-features.js` | 功能清单、版本范围、页面注释源 |
 | `../shared/intent-proto-notes.css` / `.js` | 注释气泡运行时 |
 | `../shared/intent-proto-enrich.js` | 注释富文本 |
 | `../shared/intent-proto-pages.js` | 页面标题、注释映射 |
@@ -35,6 +36,16 @@
 | `../6q-conference-prototype/js/conference-profile-assistant-*.js` | 分析助手 |
 | `../6q-conference-app-prototype/js/course-recommend.js` | 课程推荐 |
 
+### 2.2 受限共享文件（只能改门户条目）
+
+| 路径 | 允许的改动 |
+| --- | --- |
+| `../index-features.js` | 只追加/修改面谈官门户相关条目（portal 端、v1.2.x 版本块、note 46/51、版本范围里的门户行），其他版本和其他端保持不动 |
+| `../../index-features.js`（根目录镜像） | 与上一份保持一致，不单独改 |
+| `../index.html` / `../../index.html` | 只改门户/套件标题文案 |
+
+改完受限文件后运行 `check-boundary.mjs --update` 回写哈希，并在提交信息里写明改了哪些条目。
+
 完整清单和哈希见 `boundary.json`。
 
 ## 3. 改动规则
@@ -44,10 +55,11 @@
 - 改门户页面、门户样式、门户自有脚本
 - 在 `css/portal-*.css` 里写覆盖样式
 - 在门户目录里加适配层（例如 `portal-context.js`）
+- 按 2.2 的约束维护门户在功能清单里的条目
 
 不允许：
 
-- 直接修改冻结依赖
+- 直接修改 2.1 的冻结依赖
 - 把冻结文件复制进门户目录（会产生第二份真源）
 - 在门户页面新增未登记的 `../` 引用
 
@@ -55,7 +67,7 @@
 
 1. 单独提交，提交信息前缀 `upstream:`
 2. 在 PR 描述里写清影响面（会务后台 / APP / 门户）
-3. rebase 后运行 `--update` 回写 `boundary.json`
+3. rebase 后运行 `check-boundary.mjs --update` 回写 `boundary.json`
 4. 必须由主干 owner 审核
 
 ## 4. 本地运行与自检
@@ -99,7 +111,7 @@ node 6q-intent-suite/6q-interviewer-portal/checks/check-boundary.mjs
 
 1. 先看漂移文件的上游 diff，确认对门户无影响
 2. 需要的话在门户覆盖层里补适配
-3. 运行 `node .../check-boundary.mjs --update`
+3. 运行 `node 6q-intent-suite/6q-interviewer-portal/checks/check-boundary.mjs --update`
 4. 把“漂移文件清单 + 结论”写进 PR
 
 ## 6. 合并回 main 的审核
@@ -107,12 +119,12 @@ node 6q-intent-suite/6q-interviewer-portal/checks/check-boundary.mjs
 门户分支只通过 PR 合并，不直推 `main`。PR 标题用 `[portal]` 前缀，描述包含三块：
 
 1. 改了什么（页面 / 交互 / 数据）
-2. 是否动了冻结依赖（有就逐条列出）
+2. 是否动了共享文件（有就逐条列出：冻结依赖 / 受限共享文件）
 3. 验证结果（命令输出 + 页面截图）
 
 主干 owner 全量审核清单：
 
-- [ ] diff 是否只落在归属区
+- [ ] diff 是否只落在归属区，或 2.2 允许的门户条目
 - [ ] 若含 `upstream:` 提交，是否说明影响面并同步 `boundary.json`
 - [ ] 业务口径：只读、无策略配置、无导出、无会务空态
 - [ ] 旧 `localStorage` 会话 / 会务上下文是否兼容
