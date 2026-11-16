@@ -27,7 +27,9 @@ const frozen = Array.isArray(manifest.frozen) ? manifest.frozen : [];
 const frozenByPath = new Map(frozen.map((item) => [item.path, item]));
 
 function sha256(absPath) {
-  return createHash("sha256").update(readFileSync(absPath)).digest("hex");
+  // 统一按 LF 计算，避免 core.autocrlf 导致跨平台哈希不一致
+  const content = readFileSync(absPath, "utf8").replace(/\r\n/g, "\n");
+  return createHash("sha256").update(content).digest("hex");
 }
 
 function listPortalHtml() {
