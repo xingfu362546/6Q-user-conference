@@ -17,22 +17,22 @@
   <div class="iv-portal-main">
     <main class="q-page">
       <section class="intent-hero" aria-labelledby="intent-hero-title">
-        <div class="intent-hero__inner">
-          <div>
+        <div class="intent-hero__inner intent-hero__inner--portal">
+          <div class="intent-hero__main">
             <p class="intent-hero__eyebrow">6Q 面谈官 · 学员意向</p>
             <h1 class="intent-hero__title" id="intent-hero-title">会务学员意向</h1>
-            <p class="intent-hero__sub">
-              只读查看本期学员购买意向。点击学员姓名进入画像档案。
-            </p>
+            <div id="portal-conf-meta"></div>
             <div class="intent-hero__meta">
               <span class="intent-hero__pill" id="hero-cf-id">—</span>
               <span class="intent-hero__pill" id="hero-cf-city">—</span>
-              <span class="intent-hero__pill">门户 v1.0.3</span>
+              <span class="intent-hero__pill">门户 v1.2.3</span>
             </div>
           </div>
-          <div class="intent-hero__actions"></div>
+          <div class="intent-hero__side" id="portal-member-card"></div>
         </div>
       </section>
+
+      <div id="portal-tabs"></div>
 
       <div class="intent-kpi" role="group" aria-label="汇总指标">
         <div class="intent-kpi__card">
@@ -123,6 +123,7 @@
   <script src="js/auth-mock.js"></script>
   <script src="js/conference-mock.js"></script>
   <script src="js/portal-shell.js"></script>
+  <script src="js/portal-context.js"></script>
   <script>
     window.INTENT_PORTAL_CONFIG = {
       profilePage: "student-profile.html",
@@ -132,7 +133,13 @@
       if (!InterviewerAuth.requireAuth("login.html")) return;
       if (!InterviewerAuth.requireConference("conference-select.html")) return;
       InterviewerShell.mount({ containerSelector: "#portal-topbar", active: "intent" });
-      var c = InterviewerAuth.getConference();
+      var ctx = InterviewerPortalContext.mountWorkspace({
+        memberSelector: "#portal-member-card",
+        metaSelector: "#portal-conf-meta",
+        tabsSelector: "#portal-tabs",
+        activeTab: "intent",
+      });
+      var c = ctx && ctx.conf;
       if (c) {
         var title = document.getElementById("intent-hero-title");
         if (title) title.textContent = (c.periodLabel || "") + " · " + (c.title || "");

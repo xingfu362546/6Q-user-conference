@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>功能占位 · 6Q面谈官</title>
+  <link rel="stylesheet" href="../6q-conference-prototype/css/6q-conference.css" />
+  <link rel="stylesheet" href="../6q-conference-prototype/css/6q-intent-premium.css" />
+  <link rel="stylesheet" href="css/portal-tokens.css" />
+  <link rel="stylesheet" href="css/portal-shell.css" />
+  <link rel="stylesheet" href="css/portal-intent.css" />
+</head>
+<body class="q-app intent-theme portal-app iv-body" data-cf-page="placeholder">
+  <header class="iv-topbar" id="portal-topbar"></header>
+
+  <div class="iv-portal-main">
+    <main class="q-page">
+      <section class="intent-hero" aria-labelledby="ph-hero-title">
+        <div class="intent-hero__inner intent-hero__inner--portal">
+          <div class="intent-hero__main">
+            <p class="intent-hero__eyebrow">6Q 面谈官</p>
+            <h1 class="intent-hero__title" id="ph-hero-title">会务工作台</h1>
+            <div id="portal-conf-meta"></div>
+            <div class="intent-hero__meta">
+              <span class="intent-hero__pill" id="hero-cf-id">—</span>
+              <span class="intent-hero__pill" id="hero-cf-city">—</span>
+              <span class="intent-hero__pill">门户 v1.2.3</span>
+            </div>
+          </div>
+          <div class="intent-hero__side" id="portal-member-card"></div>
+        </div>
+      </section>
+
+      <div id="portal-tabs"></div>
+
+      <div class="iv-placeholder">
+        <h2 id="ph-title">功能占位</h2>
+        <p id="ph-desc">本页为面谈官门户导航占位，后续迭代接入。</p>
+        <p style="margin-top:16px">
+          <a class="iv-btn iv-btn--primary" href="student-intent.html">返回本期学员意向一览</a>
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/auth-mock.js"></script>
+  <script src="js/conference-mock.js"></script>
+  <script src="js/portal-shell.js"></script>
+  <script src="js/portal-context.js"></script>
+  <script>
+    (function () {
+      if (!InterviewerAuth.requireAuth("login.html")) return;
+      if (!InterviewerAuth.requireConference("conference-select.html")) return;
+      var params = new URLSearchParams(location.search);
+      var tab = params.get("tab") || "qa";
+      var copy = InterviewerPortalContext.placeholderCopy(tab);
+      InterviewerShell.mount({ containerSelector: "#portal-topbar", active: tab });
+      var ctx = InterviewerPortalContext.mountWorkspace({
+        memberSelector: "#portal-member-card",
+        metaSelector: "#portal-conf-meta",
+        tabsSelector: "#portal-tabs",
+        activeTab: tab,
+      });
+      var c = ctx && ctx.conf;
+      if (c) {
+        var title = document.getElementById("ph-hero-title");
+        if (title) title.textContent = (c.periodLabel || "") + " · " + (c.title || "");
+        var idEl = document.getElementById("hero-cf-id");
+        if (idEl) idEl.textContent = c.id;
+        var cityEl = document.getElementById("hero-cf-city");
+        if (cityEl) cityEl.textContent = (c.city || "") + " · 进行中";
+      }
+      var t = document.getElementById("ph-title");
+      var d = document.getElementById("ph-desc");
+      if (t) t.textContent = copy.title;
+      if (d) d.textContent = copy.desc;
+      document.title = copy.title + " · 6Q面谈官";
+    })();
+  </script>
+</body>
+</html>

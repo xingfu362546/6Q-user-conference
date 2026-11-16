@@ -280,7 +280,7 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "portal",
       name: "面谈官门户",
-      tag: "v1.2.0 查档 · v1.3.0 助手",
+      tag: "v1.2.3 头图/Tab · v1.3.0 助手",
       color: "#ea580c",
       entry: "6q-interviewer-portal/login.html",
       archIds: [
@@ -312,6 +312,18 @@ window.INTENT_FEATURE_SPEC = {
             {
               text: "[v1.2.0] 不包含策略配置/跟进入录/导出",
               notes: [46]
+            },
+            {
+              text: "[v1.2.3] 会务期数下展示开课时间、开课地址",
+              notes: [46]
+            },
+            {
+              text: "[v1.2.3] 头图右上展示当前登录会员姓名与岗位",
+              notes: [46]
+            },
+            {
+              text: "[v1.2.3] 业务 Tab：学员列表 / 意向 / 答疑 / 面谈 / 跟进 / 调研；意向为当前页",
+              notes: [46]
             }
           ]
         },
@@ -326,6 +338,10 @@ window.INTENT_FEATURE_SPEC = {
             {
               text: "[v1.2.0] 点姓名进画像；查看明细只读",
               notes: [46, 29]
+            },
+            {
+              text: "[v1.2.3] 「本期学员意向一览」为当前激活 Tab",
+              notes: [46]
             }
           ]
         },
@@ -883,9 +899,10 @@ window.INTENT_FEATURE_SPEC = {
     rule: "v1.1.0 标签管理；v1.2.0 学员档案（跳转原系统用户档案，模块对照只体现）；v1.2.1 分析策略+会务后台意向分析；v1.2.2 面谈官门户+会务工作台 APP；v1.3.0 AI 分析助手。每个版本一块清单，内部用编号罗列。历史 v1.0.0～v1.0.4 与原档案补丁号 v1.2.1～v1.2.4 不再作为开发拆分依据。",
     lines: [
       { version: "v1.1.0", name: "标签管理系统", next: "v1.1.1" },
-      { version: "v1.2.0", name: "学员档案（跳转原系统用户档案）", next: "v1.2.3" },
-      { version: "v1.2.1", name: "分析策略 + 会务后台意向分析", next: "v1.2.3" },
+      { version: "v1.2.0", name: "学员档案（跳转原系统用户档案）", next: "v1.2.4" },
+      { version: "v1.2.1", name: "分析策略 + 会务后台意向分析", next: "v1.2.4" },
       { version: "v1.2.2", name: "面谈官门户 + 会务工作台 APP", next: "v1.2.3" },
+      { version: "v1.2.3", name: "面谈官门户头图与业务 Tab", next: "v1.2.4" },
       { version: "v1.3.0", name: "AI 分析助手", next: "v1.3.1" },
     ],
   },
@@ -1105,7 +1122,7 @@ window.INTENT_FEATURE_SPEC = {
       id: "v122",
       version: "v1.2.2",
       date: "2026.09.11",
-      current: true,
+      current: false,
       theme: "面谈官门户 + 会务工作台 APP",
       href: "6q-interviewer-portal/login.html",
       rows: [
@@ -1131,6 +1148,34 @@ window.INTENT_FEATURE_SPEC = {
             { name: "APP 学员列表", href: "6q-conference-app-prototype/app-students.html" },
             { name: "APP 意向中控", href: "6q-conference-app-prototype/app-intent-dashboard.html" },
             { name: "APP 学员详情", href: "6q-conference-app-prototype/app-student-detail.html" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "v123",
+      version: "v1.2.3",
+      date: "2026.11.13",
+      current: true,
+      theme: "面谈官门户头图与业务 Tab",
+      href: "6q-interviewer-portal/student-intent.html",
+      rows: [
+        {
+          req: [
+            "1. 会务期数标题下方展示开课时间、开课地址。",
+            "2. 头图右上展示当前登录会员姓名与岗位信息。",
+            "3. 增加业务 Tab：学员列表、本期学员意向一览、答疑管理、面谈管理、跟进记录、意向调研；「本期学员意向一览」为当前页。",
+            "4. 其余 Tab 可先占位，不回改 v1.2.2 只读意向与登录链路。",
+          ],
+          impl: [
+            "前端：portal-context.js 渲染会务 meta、会员卡与 Tab；conference-mock 补 startTime/endTime/address。",
+            "前端：auth-mock 登录态带 roles；旧会话/旧会务上下文兼容补齐。",
+            "前端：students.html / tab-placeholder.html 为导航占位，意向页保持现网列表能力。",
+          ],
+          pages: [
+            { name: "面谈官意向（当前 Tab）", href: "6q-interviewer-portal/student-intent.html" },
+            { name: "学员列表 Tab", href: "6q-interviewer-portal/students.html" },
+            { name: "其它 Tab 占位", href: "6q-interviewer-portal/tab-placeholder.html?tab=qa" },
           ],
         },
       ],

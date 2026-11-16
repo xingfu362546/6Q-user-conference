@@ -10,7 +10,8 @@
   var USERS = [
     {
       userId: "iv_demo",
-      displayName: "面谈官·演示",
+      displayName: "张三",
+      roles: ["总统筹", "助教"],
       phone: "13800001111",
       email: "interviewer@6q.test",
       password: "Passw0rd!",
@@ -18,6 +19,7 @@
     {
       userId: "iv_empty",
       displayName: "面谈官·无会务",
+      roles: ["面谈官"],
       phone: "13900002222",
       email: "",
       password: "Passw0rd!",
@@ -83,6 +85,7 @@
         var session = {
           userId: user.userId,
           displayName: user.displayName,
+          roles: Array.isArray(user.roles) ? user.roles.slice() : [],
           phone: user.phone || undefined,
           email: user.email || undefined,
         };
@@ -96,7 +99,20 @@
       },
 
       getSession: function () {
-        return readJson(KEY_SESSION);
+        var s = readJson(KEY_SESSION);
+        if (!s) return null;
+        // 兼容旧登录态：补齐岗位 / 演示姓名
+        for (var i = 0; i < USERS.length; i++) {
+          if (USERS[i].userId !== s.userId) continue;
+          if (!Array.isArray(s.roles) || !s.roles.length) {
+            s.roles = Array.isArray(USERS[i].roles) ? USERS[i].roles.slice() : [];
+          }
+          if (!s.displayName || s.displayName === "面谈官·演示") {
+            s.displayName = USERS[i].displayName;
+          }
+          break;
+        }
+        return s;
       },
 
       setConference: function (c) {
@@ -107,11 +123,31 @@
           periodLabel: c.periodLabel || "",
           city: c.city || "",
           status: c.status || "ongoing",
+          startTime: c.startTime || "",
+          endTime: c.endTime || "",
+          address: c.address || "",
+          timeRange: c.timeRange || "",
         });
       },
 
       getConference: function () {
-        return readJson(KEY_CONFERENCE);
+        var c = readJson(KEY_CONFERENCE);
+        if (!c) return null;
+        // 兼容旧会务上下文：补齐开课时间 / 地址
+        var confApi =
+          (typeof window !== "undefined" && window.InterviewerConferences) ||
+          null;
+        if ((!c.address || !c.startTime) && confApi && confApi.getById) {
+          var full = confApi.getById(c.id);
+          if (full) {
+            c.startTime = c.startTime || full.startTime || "";
+            c.endTime = c.endTime || full.endTime || "";
+            c.timeRange = c.timeRange || full.timeRange || "";
+            c.address = c.address || full.address || "";
+            c.city = c.city || full.city || "";
+          }
+        }
+        return c;
       },
 
       clearConference: function () {

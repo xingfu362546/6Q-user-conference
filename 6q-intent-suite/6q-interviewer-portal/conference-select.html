@@ -54,7 +54,10 @@
           escapeHtml(c.city) +
           " · " +
           escapeHtml(c.timeRange || "") +
-          "</p>";
+          "</p>" +
+          (c.address
+            ? '<p class="iv-conf-card__meta">' + escapeHtml(c.address) + "</p>"
+            : "");
         btn.addEventListener("click", function () {
           InterviewerAuth.setConference(c);
           location.href = "student-intent.html";

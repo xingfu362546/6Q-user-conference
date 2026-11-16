@@ -31,12 +31,42 @@
   border-color: var(--iv-border, #f0d9b5);
 }
 
+.portal-app .intent-hero__inner--portal {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.portal-app .intent-hero__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.portal-app .intent-hero__side {
+  flex-shrink: 0;
+}
+
 .portal-app .intent-hero__actions,
 .portal-app #btn-export-mock,
 .portal-app .intent-notice a[href*="INTENT-STRATEGY"],
 .portal-app a[href*="conference-intent-strategy"],
 .portal-app a[href*="tag-list"] {
   display: none !important;
+}
+
+@media (max-width: 860px) {
+  .portal-app .intent-hero__inner--portal {
+    flex-direction: column;
+  }
+
+  .portal-app .intent-hero__side {
+    width: 100%;
+  }
+
+  .portal-app .iv-member-card {
+    width: 100%;
+  }
 }
 
 .portal-app #intent-strategy-banner,
