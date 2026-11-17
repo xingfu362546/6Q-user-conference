@@ -1,5 +1,5 @@
 /**
- * 面谈官门户 · 会务头图 / 登录会员卡 / 业务 Tab（v1.2.3）
+ * 面谈官门户 · 会务头图 / 登录会员卡 / 业务 Tab（v1.2.4）
  */
 (function (global) {
   var TABS = [
@@ -12,10 +12,10 @@
   ];
 
   var TAB_META = {
-    qa: { title: "答疑管理", desc: "会务现场答疑登记与处理。本页为门户导航占位，后续迭代接入答疑业务。" },
-    interview: { title: "面谈管理", desc: "面谈官排期与面谈记录。本页为门户导航占位，后续迭代接入面谈业务。" },
-    followup: { title: "跟进记录", desc: "本期会务跟进只读聚合。本页为门户导航占位；跟进录入仍在会务后台。" },
-    survey: { title: "意向调研", desc: "会务意向调研问卷与回收。本页为门户导航占位，后续迭代接入调研业务。" },
+    qa: { title: "答疑管理", desc: "会务现场答疑登记与处理。内容来自 v3.4.7 原型「会务详情 · 答疑管理」。", axureTab: "答疑管理" },
+    interview: { title: "面谈管理", desc: "面谈官排期与面谈记录。内容来自 v3.4.7 原型「会务详情 · 面谈管理」。", axureTab: "面谈管理" },
+    followup: { title: "跟进记录", desc: "本期会务跟进只读聚合。内容来自 v3.4.7 原型「会务详情 · 跟进记录」。", axureTab: "跟进记录" },
+    survey: { title: "意向调研", desc: "会务意向调研问卷与回收。内容来自 v3.4.7 原型「会务详情 · 意向调研」。", axureTab: "意向调研" },
   };
 
   function escapeHtml(s) {
@@ -118,6 +118,17 @@
       desc: "本页为面谈官门户导航占位，后续迭代接入。",
     };
   }
+
+  // 共享意向列表在点击时显式补齐会务路由，避免档案读取残留会务选择。
+  document.addEventListener("click", function (event) {
+    var link = event.target.closest('a[href*="student-profile.html"]');
+    var conf = global.InterviewerAuth && global.InterviewerAuth.getConference();
+    if (!link || !conf) return;
+    var url = new URL(link.href, location.href);
+    url.searchParams.set("from", "conference"); url.searchParams.set("conferenceId", conf.id);
+    if (link.matches(".intent-student__link")) url.searchParams.set("profileSource", "intent");
+    link.href = url.href;
+  }, true);
 
   global.InterviewerPortalContext = {
     TABS: TABS,

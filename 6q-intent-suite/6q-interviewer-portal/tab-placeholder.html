@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/portal-tokens.css" />
   <link rel="stylesheet" href="css/portal-shell.css" />
   <link rel="stylesheet" href="css/portal-intent.css" />
+  <link rel="stylesheet" href="css/portal-conference-business.css" />
 </head>
 <body class="q-app intent-theme portal-app iv-body" data-cf-page="placeholder">
   <header class="iv-topbar" id="portal-topbar"></header>
@@ -24,7 +25,7 @@
             <div class="intent-hero__meta">
               <span class="intent-hero__pill" id="hero-cf-id">—</span>
               <span class="intent-hero__pill" id="hero-cf-city">—</span>
-              <span class="intent-hero__pill">门户 v1.2.3</span>
+              <span class="intent-hero__pill">门户 v1.2.4</span>
             </div>
           </div>
           <div class="intent-hero__side" id="portal-member-card"></div>
@@ -33,13 +34,7 @@
 
       <div id="portal-tabs"></div>
 
-      <div class="iv-placeholder">
-        <h2 id="ph-title">功能占位</h2>
-        <p id="ph-desc">本页为面谈官门户导航占位，后续迭代接入。</p>
-        <p style="margin-top:16px">
-          <a class="iv-btn iv-btn--primary" href="student-intent.html">返回本期学员意向一览</a>
-        </p>
-      </div>
+      <div id="portal-business" aria-label="会务业务"></div>
     </main>
   </div>
 
@@ -47,6 +42,8 @@
   <script src="js/conference-mock.js"></script>
   <script src="js/portal-shell.js"></script>
   <script src="js/portal-context.js"></script>
+  <script src="js/portal-business-notes-data.js"></script>
+  <script src="js/portal-conference-business.js"></script>
   <script>
     (function () {
       if (!InterviewerAuth.requireAuth("login.html")) return;
@@ -70,11 +67,8 @@
         var cityEl = document.getElementById("hero-cf-city");
         if (cityEl) cityEl.textContent = (c.city || "") + " · 进行中";
       }
-      var t = document.getElementById("ph-title");
-      var d = document.getElementById("ph-desc");
-      if (t) t.textContent = copy.title;
-      if (d) d.textContent = copy.desc;
       document.title = copy.title + " · 6Q面谈官";
+      InterviewerConferenceBusiness.mount({ containerSelector: "#portal-business", tab: tab });
     })();
   </script>
 </body>

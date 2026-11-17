@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/portal-shell.css" />
   <link rel="stylesheet" href="css/portal-intent.css" />
   <link rel="stylesheet" href="../shared/intent-proto-notes.css" />
+  <link rel="stylesheet" href="css/portal-conference-business.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
   <style>
@@ -28,7 +29,7 @@
           <a class="q-btn" href="student-intent.html">← 返回学员列表</a>
           <h1 class="pf-toolbar__title">
             画像档案
-            <span class="pf-ver">v1.0.4</span>
+            <span class="pf-ver">v1.2.4</span>
           </h1>
           <span class="pf-toolbar__ctx" id="ctxLine">会员全局档案 · 面谈官只读</span>
         </div>
@@ -39,7 +40,7 @@
 
       <div id="profileRoot"></div>
       <p class="pf-note" style="margin-top:8px">
-        面谈官门户 v1.0.4：画像保持只读；大型分析助手含演示按钮、追问条与意图流注释。对话为 Mock，生产以 Dify 回传为准。
+        面谈官门户 v1.2.4：画像保持只读；大型分析助手含演示按钮、追问条与意图流注释。对话为 Mock，生产以 Dify 回传为准。
       </p>
     </main>
   </div>
@@ -50,16 +51,25 @@
   <script>
     (function () {
       if (!InterviewerAuth.requireAuth("login.html")) return;
-      if (!InterviewerAuth.requireConference("conference-select.html")) return;
       InterviewerShell.mount({ containerSelector: "#portal-topbar", active: "profile" });
     })();
   </script>
   <script src="../6q-conference-prototype/js/conference-profile-data.js"></script>
   <script src="../6q-conference-prototype/js/conference-profile-behavior.js"></script>
+  <script src="js/portal-business-notes-data.js"></script>
+  <script src="js/portal-student-source.js"></script>
+  <script src="js/portal-conference-business.js"></script>
+  <script src="js/portal-student-profile.js"></script>
   <script src="../6q-conference-prototype/js/conference-student-profile.js"></script>
+  <script>InterviewerStudentProfile.mount();</script>
   <script src="../6q-conference-prototype/js/conference-profile-assistant-core.js"></script>
   <script src="../6q-conference-prototype/js/conference-profile-assistant-mock.js"></script>
+  <script>
+    var portalOriginalGetConference = InterviewerAuth.getConference;
+    InterviewerAuth.getConference = function () { return InterviewerStudentProfile.context; };
+  </script>
   <script src="../6q-conference-prototype/js/conference-profile-ai-chat.js"></script>
+  <script>InterviewerAuth.getConference = portalOriginalGetConference;</script>
   <script>
     (function () {
       var btn = document.getElementById("pfAiOpenBtn");
@@ -70,12 +80,5 @@
       });
     })();
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script src="../index-features.js"></script>
-  <script src="../shared/intent-proto-enrich.js"></script>
-  <script src="../shared/intent-proto-pages.js"></script>
-  <script src="../shared/intent-proto-architecture.js"></script>
-  <script src="../shared/intent-proto-field-specs.js"></script>
-  <script src="../shared/intent-proto-notes.js"></script>
 </body>
 </html>
