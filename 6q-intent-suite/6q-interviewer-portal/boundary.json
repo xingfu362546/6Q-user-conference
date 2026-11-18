@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "branch": "feature/interviewer-portal",
+  "base": "origin/main",
+  "syncedCommit": "dd51dc997ec3be5461ce98f73775e1786fafb6f0",
+  "syncedAt": "2026-11-18",
+  "frozen": [
+    {
+      "path": "../index-features.js",
+      "owner": "intent-suite",
+      "sha256": "57bf16dc240c6646d512eb281a4e62b8f5950ecda710a492395aa536c956885c"
+    },
+    {
+      "path": "../shared/intent-proto-notes.css",
+      "owner": "intent-suite",
+      "sha256": "cfc41b55f0c42dc6c2db35d49d44766d51e6b656816c58b3b40a03c5505fae90"
+    },
+    {
+      "path": "../shared/intent-proto-notes.js",
+      "owner": "intent-suite",
+      "sha256": "6d134b19ef6de414c24e8626cefcec054321cbf658d3c3572fe98957c81d9ad5"
+    },
+    {
+      "path": "../shared/intent-proto-enrich.js",
+      "owner": "intent-suite",
+      "sha256": "2d1d53a70d1f06f34768b08db2699eaa684bd8d251d8275acb5910339625f68a"
+    },
+    {
+      "path": "../shared/intent-proto-pages.js",
+      "owner": "intent-suite",
+      "sha256": "d22e7b1716be757c609ebbcf8314c38a61e03bb7e7c23fc02f0befef99608657"
+    },
+    {
+      "path": "../shared/intent-proto-architecture.js",
+      "owner": "intent-suite",
+      "sha256": "c1d9330cdd017d8c933e4b7f07f0b4edbd35c75e12ee03a94b7a81e1ebae84b1"
+    },
+    {
+      "path": "../shared/intent-proto-field-specs.js",
+      "owner": "intent-suite",
+      "sha256": "b41854b08815ecf49bb87c282eccc59b87ca80a2c739f294870540f59e0f8c91"
+    },
+    {
+      "path": "../6q-conference-prototype/css/6q-conference.css",
+      "owner": "conference",
+      "sha256": "e04037880b6168ebd283e79035b8c691096d81ea119d3def5d3134f26a275cc1"
+    },
+    {
+      "path": "../6q-conference-prototype/css/6q-intent-premium.css",
+      "owner": "conference",
+      "sha256": "8850d4ea53c8ecca44dde1415637fb8b300fae1e29dd645b8e3c1cbbb415134f"
+    },
+    {
+      "path": "../6q-conference-prototype/css/6q-profile.css",
+      "owner": "conference",
+      "sha256": "cd8d684febaeae592d4800695e16020893eea7e561dd540235190b3b27e7b347"
+    },
+    {
+      "path": "../6q-conference-prototype/js/tag-catalog-tree.js",
+      "owner": "conference",
+      "sha256": "f0baeec8c82ba08a0d01e0be43ea0664c3f6f7cb349a5f9d981e37619f6e806c"
+    },
+    {
+      "path": "../6q-conference-prototype/js/intent-strategy-core.js",
+      "owner": "conference",
+      "sha256": "87f1a69d839fb710cd618db57e80c2ccd4222a1a8eae87432f7c1f59c1ced475"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-intent.js",
+      "owner": "conference",
+      "sha256": "e13be342e2cf20b330005a08c1286f39d94b8d0191087e632852b8a50f3dcc92"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-data.js",
+      "owner": "conference",
+      "sha256": "89e3387c7885d965f6ee343ba19b458f54505fece48c5d41ac9be1efabb351cb"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-behavior.js",
+      "owner": "conference",
+      "sha256": "45a2a494bb1c4837f82fa640706c150539e82d93743a50c680cf58ae871a246a"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-student-profile.js",
+      "owner": "conference",
+      "sha256": "8cfd29aaa8f39d13dd06ccddc9089c593f5e7f56d6d60f63c1065e27169d475d"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-assistant-core.js",
+      "owner": "conference",
+      "sha256": "2c19fab4bde014dc4dba46f41c9cf3c3c117bf22c95cc6ce1be7ea5f422d5a40"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-assistant-mock.js",
+      "owner": "conference",
+      "sha256": "c2be88aa8fde228f0ac374b3f76a7f7128aea5208512a11757b689228f3d6b94"
+    },
+    {
+      "path": "../6q-conference-prototype/js/conference-profile-ai-chat.js",
+      "owner": "conference",
+      "sha256": "826d7e636d738dacb95252ad5134f87896c275bb950eb4dad3739eb3dad59f39"
+    },
+    {
+      "path": "../6q-conference-app-prototype/js/course-recommend.js",
+      "owner": "app",
+      "sha256": "9b0d65aac1d67785532c569203df2a3e7708d42e75a7dec92a58a62211015d75"
+    }
+  ]
+}

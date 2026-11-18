@@ -22,13 +22,13 @@ test("总功能清单脚本可加载四端与完整版本数据", () => {
   );
   assert.deepEqual(
     Array.from(spec.conferenceVersions, (item) => item.version),
-    ["v1.3.0", "v1.2.2", "v1.2.1", "v1.2.0", "v1.1.0"],
+    ["v1.3.0", "v1.2.4", "v1.2.3", "v1.2.2", "v1.2.1", "v1.2.0", "v1.1.0"],
   );
   assert.equal(spec.versionPolicy.dept, "市场部");
   assert.equal(spec.versionPolicy.owner, "姜玲玲");
   assert.deepEqual(
     Array.from(spec.versionScopes, (item) => item.version),
-    ["v1.1.0", "v1.2.0", "v1.2.1", "v1.2.2", "v1.3.0"],
+    ["v1.1.0", "v1.2.0", "v1.2.1", "v1.2.2", "v1.2.3", "v1.2.4", "v1.3.0"],
   );
   assert.ok(spec.versionScopes[0].rows.length >= 6);
   assert.ok(spec.versionScopes[1].rows[0].req.length >= 3);
@@ -44,6 +44,13 @@ test("总功能清单脚本可加载四端与完整版本数据", () => {
   assert.match(scopesByVer["v1.2.0"].rows[0].req.join("\n"), /关系图谱本期不做/);
   assert.match(scopesByVer["v1.2.1"].theme, /分析策略/);
   assert.match(scopesByVer["v1.2.2"].theme, /面谈官/);
+  assert.match(scopesByVer["v1.2.3"].theme, /面谈官/);
+  assert.match(scopesByVer["v1.2.3"].rows[0].req.join("\n"), /业务 Tab/);
+  assert.match(scopesByVer["v1.2.4"].theme, /业务页/);
+  assert.equal(scopesByVer["v1.2.4"].current, true);
+  assert.match(scopesByVer["v1.2.4"].rows[0].req.join("\n"), /导出/);
+  assert.match(scopesByVer["v1.2.4"].rows[0].req.join("\n"), /录入/);
+  assert.match(scopesByVer["v1.2.4"].rows[0].impl.join("\n"), /后端缺口/);
   assert.match(spec.conferenceVersions[0].theme, /分析助手/);
   assert.equal(spec.conferenceVersions[0].current, true);
   assert.match(spec.conferenceVersions[1].theme, /面谈官/);

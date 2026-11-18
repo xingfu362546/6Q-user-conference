@@ -24,7 +24,7 @@
     el.innerHTML =
       '<a class="iv-topbar__brand" href="hub.html">' +
       "6Q面谈官" +
-      '<span class="iv-topbar__badge">v1.0.3</span></a>' +
+      '<span class="iv-topbar__badge">v1.2.4</span></a>' +
       '<div class="iv-topbar__conf">' +
       confText +
       "</div>" +

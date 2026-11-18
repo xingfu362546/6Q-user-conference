@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学员列表 · 6Q面谈官</title>
+  <link rel="stylesheet" href="../6q-conference-prototype/css/6q-conference.css" />
+  <link rel="stylesheet" href="../6q-conference-prototype/css/6q-intent-premium.css" />
+  <link rel="stylesheet" href="css/portal-tokens.css" />
+  <link rel="stylesheet" href="css/portal-shell.css" />
+  <link rel="stylesheet" href="css/portal-intent.css" />
+  <link rel="stylesheet" href="css/portal-conference-business.css" />
+</head>
+<body class="q-app intent-theme portal-app iv-body" data-cf-page="students">
+  <header class="iv-topbar" id="portal-topbar"></header>
+
+  <div class="iv-portal-main">
+    <main class="q-page">
+      <section class="intent-hero" aria-labelledby="students-hero-title">
+        <div class="intent-hero__inner intent-hero__inner--portal">
+          <div class="intent-hero__main">
+            <p class="intent-hero__eyebrow">6Q 面谈官 · 学员列表</p>
+            <h1 class="intent-hero__title" id="students-hero-title">会务学员列表</h1>
+            <div id="portal-conf-meta"></div>
+            <div class="intent-hero__meta">
+              <span class="intent-hero__pill" id="hero-cf-id">—</span>
+              <span class="intent-hero__pill" id="hero-cf-city">—</span>
+              <span class="intent-hero__pill">门户 v1.2.4</span>
+            </div>
+          </div>
+          <div class="intent-hero__side" id="portal-member-card"></div>
+        </div>
+      </section>
+
+      <div id="portal-tabs"></div>
+
+      <div id="portal-business" aria-label="学员列表"></div>
+    </main>
+  </div>
+
+  <script src="js/auth-mock.js"></script>
+  <script src="js/conference-mock.js"></script>
+  <script src="js/portal-shell.js"></script>
+  <script src="js/portal-context.js"></script>
+  <script src="js/portal-business-notes-data.js"></script>
+  <script src="js/portal-student-source.js"></script>
+  <script src="js/portal-conference-business.js"></script>
+  <script>
+    (function () {
+      if (!InterviewerAuth.requireAuth("login.html")) return;
+      if (!InterviewerAuth.requireConference("conference-select.html")) return;
+      InterviewerShell.mount({ containerSelector: "#portal-topbar", active: "students" });
+      var ctx = InterviewerPortalContext.mountWorkspace({
+        memberSelector: "#portal-member-card",
+        metaSelector: "#portal-conf-meta",
+        tabsSelector: "#portal-tabs",
+        activeTab: "students",
+      });
+      var c = ctx && ctx.conf;
+      if (c) {
+        var title = document.getElementById("students-hero-title");
+        if (title) title.textContent = (c.periodLabel || "") + " · " + (c.title || "");
+        var idEl = document.getElementById("hero-cf-id");
+        if (idEl) idEl.textContent = c.id;
+        var cityEl = document.getElementById("hero-cf-city");
+        if (cityEl) cityEl.textContent = (c.city || "") + " · 进行中";
+      }
+      InterviewerConferenceBusiness.mount({ containerSelector: "#portal-business", tab: "students" });
+    })();
+  </script>
+</body>
+</html>

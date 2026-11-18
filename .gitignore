@@ -26,3 +26,11 @@ tools/
 
 # 绩效原型独立仓库（工作区在本目录，版本控制在 oa-performancec）
 oa-performance-prototype/
+
+# 仓库级脚本（分支保护等）要进仓库。必须放在 scripts/ 之后，
+# 否则会被上面的规则重新忽略。
+!.github/scripts/
+!.github/scripts/**
+
+# 验收截图属于本地产物，不进版本库
+6q-intent-suite/6q-interviewer-portal/checks/*.png

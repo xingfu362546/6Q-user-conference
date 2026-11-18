@@ -29,6 +29,37 @@
 .portal-app .intent-hero {
   background: linear-gradient(135deg, #fff8ef, #ffffff 55%);
   border-color: var(--iv-border, #f0d9b5);
+  color: var(--iv-text, #1e293b);
+}
+
+.portal-app .intent-hero__title {
+  color: var(--iv-text, #1e293b);
+}
+
+.portal-app .intent-hero__eyebrow {
+  color: #945100;
+}
+
+.portal-app .intent-hero__pill {
+  color: #795119;
+  background: #fff7e8;
+  border-color: #efd4a8;
+}
+
+.portal-app .intent-hero__inner--portal {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.portal-app .intent-hero__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.portal-app .intent-hero__side {
+  flex-shrink: 0;
 }
 
 .portal-app .intent-hero__actions,
@@ -37,6 +68,20 @@
 .portal-app a[href*="conference-intent-strategy"],
 .portal-app a[href*="tag-list"] {
   display: none !important;
+}
+
+@media (max-width: 860px) {
+  .portal-app .intent-hero__inner--portal {
+    flex-direction: column;
+  }
+
+  .portal-app .intent-hero__side {
+    width: 100%;
+  }
+
+  .portal-app .iv-member-card {
+    width: 100%;
+  }
 }
 
 .portal-app #intent-strategy-banner,
