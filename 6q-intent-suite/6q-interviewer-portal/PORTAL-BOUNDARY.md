@@ -128,10 +128,13 @@ node 6q-intent-suite/6q-interviewer-portal/checks/check-boundary.mjs
 
 - [ ] diff 是否只落在归属区，或 2.2 允许的门户条目
 - [ ] 若含 `upstream:` 提交，是否说明影响面并同步 `boundary.json`
-- [ ] 业务口径：只读、无策略配置、无导出、无会务空态
+- [ ] 业务口径按版本核对：v1.2.0～v1.2.3 只读；v1.2.4 起允许「学员列表导出 + 答疑/面谈/跟进录入改删」，且这些写操作只落在 sessionStorage 且有原型演示数据声明
+- [ ] 意向页始终只读；无策略配置入口；无会务空态文案保留
+- [ ] 冻结依赖未修改（`boundary ok` 且 `boundary.json` 哈希未无故变更）
+- [ ] 新增页面无真实手机号/邮箱等个人信息，或已脱敏
 - [ ] 旧 `localStorage` 会话 / 会务上下文是否兼容
 - [ ] 四组测试是否全绿
-- [ ] 六个页面冒烟截图是否归档
+- [ ] 页面冒烟截图是否归档（截图放仓库外，不提交二进制）
 
 合并方式：squash merge，合并后打标签 `portal-v1.2.x`。回滚直接 revert 该 squash 提交。
 

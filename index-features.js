@@ -161,8 +161,8 @@ window.INTENT_FEATURE_SPEC = {
       body: "<ul><li><strong>跟进记录</strong>：一律按创建时间倒序；卡片预览最近 5 条，「查看更多」展开会员详情全字段表。</li><li><strong>从会务进入</strong>：本场会务的跟进明细旁标注「来自于本场会务」。</li><li><strong>近期行为明细</strong>：社区 / 学习 / 视频 / 直播四 Tab，各预览 5 条，查看更多按类型看全量。</li></ul>",
     },
     46: {
-      title: "6Q 面谈官门户（v1.2.0）",
-      body: "<p>独立 PC 门户：会员账号登录（手机/邮箱+密码+验证码）→ 选进行中会务 → 只读意向列表/明细抽屉 → 画像（含 AI）。</p><ul><li>角色来自会务内「面谈官」赋权；看会务全部学员</li><li>不搬策略配置；无跟进入录/导出</li><li>无会务空态：「当前无正在进行中的会务」</li></ul><p>入口：<code>6q-interviewer-portal/login.html</code></p>",
+      title: "6Q 面谈官门户（v1.2.0 起，v1.2.4 扩业务页）",
+      body: "<p>独立 PC 门户：会员账号登录（手机/邮箱+密码+验证码）→ 选进行中会务 → 业务 Tab（学员列表 / 意向 / 答疑 / 面谈 / 跟进 / 调研）→ 画像（含 AI）。</p><ul><li>角色来自会务内「面谈官」赋权；看会务全部学员</li><li>不搬策略配置</li><li>v1.2.0～v1.2.3 只读；v1.2.4 起放开跟进录入与导出（学员列表一个导出入口，答疑/面谈/跟进可增改删，均为原型演示，无后端持久化）</li><li>无会务空态：「当前无正在进行中的会务」</li></ul><p>入口：<code>6q-interviewer-portal/login.html</code></p>",
     },
     47: {
       flag: "changed",
@@ -280,7 +280,7 @@ window.INTENT_FEATURE_SPEC = {
     {
       id: "portal",
       name: "面谈官门户",
-      tag: "v1.2.3 头图/Tab · v1.3.0 助手",
+      tag: "v1.2.4 业务页 · v1.3.0 助手",
       color: "#ea580c",
       entry: "6q-interviewer-portal/login.html",
       archIds: [
@@ -324,6 +324,22 @@ window.INTENT_FEATURE_SPEC = {
             {
               text: "[v1.2.3] 业务 Tab：学员列表 / 意向 / 答疑 / 面谈 / 跟进 / 调研；意向为当前页",
               notes: [46]
+            },
+            {
+              text: "[v1.2.4] 五业务页原生化：学员列表 / 答疑 / 面谈 / 跟进 / 调研，不再用 iframe 或缩放画布",
+              notes: [46]
+            },
+            {
+              text: "[v1.2.4] 学员列表单一导出入口（29 个业务字段，按当前筛选，文件名带日期）",
+              notes: [46]
+            },
+            {
+              text: "[v1.2.4] 答疑/面谈/跟进支持录入、编辑、删除、特别关注、标签与附件名（原型本地演示）",
+              notes: [46]
+            },
+            {
+              text: "[v1.2.4] 筛选项超一行时默认收起，查询/重置常驻；缩放与切换保留输入",
+              notes: [46]
             }
           ]
         },
@@ -341,6 +357,10 @@ window.INTENT_FEATURE_SPEC = {
             },
             {
               text: "[v1.2.3] 「本期学员意向一览」为当前激活 Tab",
+              notes: [46]
+            },
+            {
+              text: "[v1.2.4] 意向页保持只读；点姓名带 profileSource=intent 进画像，不复用残留会务",
               notes: [46]
             }
           ]
@@ -896,13 +916,14 @@ window.INTENT_FEATURE_SPEC = {
     dept: "市场部",
     owner: "姜玲玲",
     date: "2026-09-11",
-    rule: "v1.1.0 标签管理；v1.2.0 学员档案（跳转原系统用户档案，模块对照只体现）；v1.2.1 分析策略+会务后台意向分析；v1.2.2 面谈官门户+会务工作台 APP；v1.3.0 AI 分析助手。每个版本一块清单，内部用编号罗列。历史 v1.0.0～v1.0.4 与原档案补丁号 v1.2.1～v1.2.4 不再作为开发拆分依据。",
+    rule: "v1.1.0 标签管理；v1.2.0 学员档案（跳转原系统用户档案，模块对照只体现）；v1.2.1 分析策略+会务后台意向分析；v1.2.2 面谈官门户+会务工作台 APP；v1.2.3 门户头图与业务 Tab；v1.2.4 门户五业务页原生化+导出与跟进录入；v1.3.0 AI 分析助手。每个版本一块清单，内部用编号罗列。历史 v1.0.0～v1.0.4 与原档案补丁号 v1.2.1～v1.2.4 不再作为开发拆分依据。",
     lines: [
       { version: "v1.1.0", name: "标签管理系统", next: "v1.1.1" },
       { version: "v1.2.0", name: "学员档案（跳转原系统用户档案）", next: "v1.2.4" },
       { version: "v1.2.1", name: "分析策略 + 会务后台意向分析", next: "v1.2.4" },
       { version: "v1.2.2", name: "面谈官门户 + 会务工作台 APP", next: "v1.2.3" },
       { version: "v1.2.3", name: "面谈官门户头图与业务 Tab", next: "v1.2.4" },
+      { version: "v1.2.4", name: "面谈官门户五业务页 + 导出与跟进", next: "v1.3.0" },
       { version: "v1.3.0", name: "AI 分析助手", next: "v1.3.1" },
     ],
   },
@@ -1156,7 +1177,7 @@ window.INTENT_FEATURE_SPEC = {
       id: "v123",
       version: "v1.2.3",
       date: "2026.11.13",
-      current: true,
+      current: false,
       theme: "面谈官门户头图与业务 Tab",
       href: "6q-interviewer-portal/student-intent.html",
       rows: [
@@ -1176,6 +1197,42 @@ window.INTENT_FEATURE_SPEC = {
             { name: "面谈官意向（当前 Tab）", href: "6q-interviewer-portal/student-intent.html" },
             { name: "学员列表 Tab", href: "6q-interviewer-portal/students.html" },
             { name: "其它 Tab 占位", href: "6q-interviewer-portal/tab-placeholder.html?tab=qa" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "v124",
+      version: "v1.2.4",
+      date: "2026.11.17",
+      current: true,
+      theme: "面谈官门户五业务页 + 导出与跟进",
+      href: "6q-interviewer-portal/students.html",
+      rows: [
+        {
+          req: [
+            "1. 学员列表、答疑管理、面谈管理、跟进记录、意向调研五个业务页在门户内原生化，复用门户组件与表格样式，不再使用 iframe 或缩放画布。",
+            "2. 学员列表统一一个「导出」入口：29 个业务字段，按当前筛选输出，文件名带导出日期。",
+            "3. 答疑、面谈、跟进支持录入、编辑、删除、特别关注；跟进内容 1000 字、标签、示例模板、附件文件名与门户一致。",
+            "4. 筛选项超过一行时默认显示第一行，可展开/收起；查询与重置常驻，切换与缩放保留已输入条件。",
+            "5. 画像按会务入口显式带 conferenceId，新增「本场会务订单」「本场会务学员问卷」页签；普通入口不显示这两个页签。",
+            "6. 学员列表与意向列表的姓名统一打开同一画像页；无效 ID 或姓名/手机号不一致时明确空态，不回退到其他学员。",
+            "7. 每页右上角「说明」提供交互路径、功能说明与字段表，浮窗可调宽，不遮挡正文。",
+          ],
+          impl: [
+            "前端：portal-conference-business.js 统一五业务页的表格、筛选、跟进表单与 CSV 导出；portal-business-notes-data.js 承载页面说明。",
+            "前端：portal-student-profile.js 适配冻结画像脚本，按 ID 校验身份、按会务上下文裁订单与问卷；冻结文件未改。",
+            "前端：portal-context.js 在点击姓名时补齐 from=conference&conferenceId，避免残留会务污染。",
+            "数据：学员、订单、问卷、跟进均为原型演示数据；跟进写 sessionStorage，附件只记文件名。",
+            "后端缺口：真实同步、权限控制、附件上传、服务端持久化与导出权限未接入，交付开发时按本条清单实现。",
+          ],
+          pages: [
+            { name: "学员列表", href: "6q-interviewer-portal/students.html" },
+            { name: "答疑管理", href: "6q-interviewer-portal/tab-placeholder.html?tab=qa" },
+            { name: "面谈管理", href: "6q-interviewer-portal/tab-placeholder.html?tab=interview" },
+            { name: "跟进记录", href: "6q-interviewer-portal/tab-placeholder.html?tab=followup" },
+            { name: "意向调研", href: "6q-interviewer-portal/tab-placeholder.html?tab=survey" },
+            { name: "会务画像档案", href: "6q-interviewer-portal/student-profile.html?id=XE78PV&from=conference&conferenceId=cf_a" },
           ],
         },
       ],

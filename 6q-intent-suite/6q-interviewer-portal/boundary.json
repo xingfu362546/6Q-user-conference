@@ -2,13 +2,13 @@
   "version": 1,
   "branch": "feature/interviewer-portal",
   "base": "origin/main",
-  "syncedCommit": "d21ae9f503e987fc44ba9b2da0029911d581f134",
-  "syncedAt": "2026-11-16",
+  "syncedCommit": "dd51dc997ec3be5461ce98f73775e1786fafb6f0",
+  "syncedAt": "2026-11-18",
   "frozen": [
     {
       "path": "../index-features.js",
       "owner": "intent-suite",
-      "sha256": "32610d5e38373142009bd99a7275f872dd6bb43b7f2181b8ab9d2e1659d180ad"
+      "sha256": "57bf16dc240c6646d512eb281a4e62b8f5950ecda710a492395aa536c956885c"
     },
     {
       "path": "../shared/intent-proto-notes.css",

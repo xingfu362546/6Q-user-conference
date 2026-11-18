@@ -31,3 +31,6 @@ oa-performance-prototype/
 # 否则会被上面的规则重新忽略。
 !.github/scripts/
 !.github/scripts/**
+
+# 验收截图属于本地产物，不进版本库
+6q-intent-suite/6q-interviewer-portal/checks/*.png
