@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   'use strict';
 
   var S = {
@@ -522,7 +522,7 @@
   }
 
   function Q_IMG(h) {
-    return '<span class="q-figure" style="height:' + h + 'px"><img src="assets/mascot-head.png" alt="\u5c0fq"></span>';
+    return '<span class="q-figure" style="height:' + h + 'px"><img src="assets/mascot-xiaoq.svg" alt="\u5c0fq"></span>';
   }
 
   function mascot(o) {
@@ -2867,6 +2867,10 @@
         if (S.assessed) go('s-mentor');
         else startAssess(true);
       } else if (k === 'study') go('s-home');
+      else if (k === 'tutor') {
+        if (S.assessed) go('s-home');
+        else startAssess(true);
+      }
       else if (k === 'me') go('s-me');
       else {
         toast('这个 tab 还在做');

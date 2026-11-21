@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>6Q 导学师</title>
-<link rel="stylesheet" href="css/app.css?v=2.0.1">
+<link rel="stylesheet" href="css/app.css?v=2.0.2">
 </head>
 <body>
 <div class="stage">
@@ -101,7 +101,8 @@
         <nav class="tabbar" id="tabbar-app">
           <button class="tab on" data-tab="app"><i>🏠</i><span>首页</span></button>
           <button class="tab" data-tab="courses"><i>📚</i><span>课程</span></button>
-          <button class="tab" data-tab="study"><i>🧭</i><span>学习</span></button>
+          <button class="tab tab-hero" data-tab="tutor"><i>🧭<b class="hero-dot">新</b></i><span>导学师</span></button>
+          <button class="tab" data-tab="study"><i>📖</i><span>学习</span></button>
           <button class="tab" data-tab="me"><i>👤</i><span>我的</span></button>
         </nav>
       </section>
@@ -115,7 +116,7 @@
             <div class="hw-halo"></div>
             <div class="hw-orbit"><b style="--d:0s">✧</b><b style="--d:1.4s">✦</b><b style="--d:2.6s">·</b></div>
             <div class="q-figure big" id="hello-mascot">
-              <img src="assets/mascot-head.png" alt="小q">
+              <img src="assets/mascot-xiaoq.svg" alt="小q">
             </div>
             <div class="q-shadow"></div>
           </div>
@@ -144,7 +145,7 @@
 
         <div class="aw-narr" id="aw-narr">
           <div class="an-av">
-            <img class="an-img" src="assets/mascot-face.png" alt="小q">
+            <img class="an-img" src="assets/mascot-xiaoq.svg" alt="小q">
           </div>
           <div class="an-bubble" id="an-bubble">先认识一下你，<br>这样我给的例子才像你家的。</div>
         </div>
@@ -160,7 +161,7 @@
           <div class="st-aurora"><i></i><i></i><i></i></div>
           <div class="st-in">
             <div class="st-fig">
-              <div class="q-figure lg" id="st-mascot"><img src="assets/mascot-head.png" alt="小q"></div>
+              <div class="q-figure lg" id="st-mascot"><img src="assets/mascot-xiaoq.svg" alt="小q"></div>
               <div class="st-ring"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="58" class="st-ring-bg"></circle><circle cx="66" cy="66" r="58" class="st-ring-fg" id="st-arc"></circle></svg></div>
             </div>
             <div class="st-done" id="st-done">第 1 段完成</div>
@@ -510,6 +511,6 @@
     </div>
   </div>
 </div>
-<script src="js/app.js?v=2.0.1"></script>
+<script src="js/app.js?v=2.0.2"></script>
 </body>
 </html>
