@@ -217,12 +217,29 @@
     .scope-table li { margin-bottom: 4px; }
     .scope-pages a { display: block; color: #2563eb; text-decoration: none; font-weight: 600; margin-bottom: 4px; }
     .scope-pages a:hover { text-decoration: underline; }
+    .other-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+    .other-card {
+      display: block; text-decoration: none; color: inherit;
+      border: 1px solid #dbe3ec; border-radius: 10px; background: #fbfdff;
+      padding: 14px 16px 12px; transition: border-color .15s, box-shadow .15s, transform .15s;
+      position: relative;
+    }
+    .other-card:hover { border-color: #7c3aed; box-shadow: 0 6px 18px -12px rgba(76,29,149,.6); transform: translateY(-1px); }
+    .other-card__tag {
+      display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .06em;
+      color: #7c3aed; background: #ede9fe; border-radius: 999px; padding: 2px 8px; margin-bottom: 8px;
+    }
+    .other-card__title { font-size: 15px; font-weight: 700; color: #1e1b4b; }
+    .other-card__desc { font-size: 12px; color: #475569; margin: 6px 0 10px; }
+    .other-card__meta { font-size: 11px; color: #7c8798; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+    .other-card__meta code, .other-card__meta span { font-family: inherit; }
+    .other-card__go { margin-top: 10px; font-size: 12px; font-weight: 700; color: #7c3aed; }
   </style>
 </head>
 <body>
   <header class="top">
     <div class="top__inner">
-      <p class="top__eyebrow">Feature Spec · v1.1.0 标签 · v1.2.0～v1.2.3 档案/策略/门户 · v1.3.0 AI 助手</p>
+      <p class="top__eyebrow">Feature Spec · v1.1.0 标签 · v1.2.0～v1.2.3 档案/策略/门户 · v1.3.0 AI 助手 · 另有「6Q 导学师 2.0」DEMO 原型</p>
       <h1>课程会务 · 学员意向分析 · 功能清单</h1>
       <p>开发按版本号拆范围。三条产品线各自封 <strong>.0</strong>，之后只在第三个小数点递增（如 v1.2.1）。需求部门市场部，产品负责人姜玲玲。下方「版本范围」按需求描述 / 实现方案 / 页面链接列出每版要做的事。</p>
       <nav class="top__links" id="jump-nav"></nav>
@@ -230,6 +247,23 @@
   </header>
 
   <div class="container">
+    <section class="flows" id="other-prototypes">
+      <h2>其他原型（独立产品线，不计入上表版本）</h2>
+      <p style="font-size:12px;color:#64748b;margin:0 0 14px">与「学员意向分析」版本表无版本继承关系，单独维护；括号内为状态，未决策内容不进本仓库。</p>
+      <div class="other-list">
+        <a class="other-card" href="6q-tutor-app/index.html">
+          <div class="other-card__tag">DEMO 草稿</div>
+          <div class="other-card__title">6Q 导学师 2.0</div>
+          <div class="other-card__desc">C 端学习成长 App：入学测评 → 定制路径 → 学 / 练 / 评 / 修 关卡 → 导师 BOSS 对练 → 订阅。对齐 Duolingo 形态，入口挂在「超级爸妈」App 首页宫格。</div>
+          <div class="other-card__meta">
+            <span>入口：6q-tutor-app/index.html</span>
+            <span>状态：纯前端原型 · 无后端持久化</span>
+          </div>
+          <div class="other-card__go">打开原型 →</div>
+        </a>
+      </div>
+    </section>
+
     <section class="flows" id="conference-versions">
       <h2>版本范围（开发拆分依据）</h2>
       <p style="font-size:12px;color:#64748b;margin:0 0 12px">v1.1.0 标签管理系统 · v1.2.0 学员档案/分析策略/意向分析/会务 APP · v1.3.0 AI 分析助手。面谈官门户：<a href="6q-intent-suite/6q-interviewer-portal/login.html" style="color:#f39800;font-weight:600">打开入口 →</a></p>
@@ -370,9 +404,13 @@
 
       var jump = document.getElementById("jump-nav");
       var verJump = document.createElement("a");
-      verJump.href = "#conference-versions";
-      verJump.textContent = "版本范围";
+      verJump.href = "#other-prototypes";
+      verJump.textContent = "其他原型 · 导学师 2.0";
       jump.appendChild(verJump);
+      var verJump2 = document.createElement("a");
+      verJump2.href = "#conference-versions";
+      verJump2.textContent = "版本范围";
+      jump.appendChild(verJump2);
       var portalJump = document.createElement("a");
       portalJump.href = prototypeHref("6q-interviewer-portal/login.html");
       portalJump.textContent = "面谈官门户";

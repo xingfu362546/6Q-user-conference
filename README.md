@@ -27,6 +27,19 @@
 |------|------|
 | [`index.html`](index.html) | **Cloudflare 首页 / 全量功能清单**：版本范围表 + 四端模块清单 |
 | [`6q-intent-suite/index.html`](6q-intent-suite/index.html) | 套件内折叠式功能清单（同一套版本数据） |
+| [`6q-tutor-app/index.html`](6q-tutor-app/index.html) | **6Q 导学师 2.0（DEMO 草稿）**，独立产品线，不计入下方版本表 |
+
+### 6Q 导学师 2.0（DEMO）
+
+C 端学习成长 App 原型，对齐 Duolingo 形态：入学测评 → 按测评结果定制学习路径 → 学 / 练 / 评 / 修 关卡 → 导师 BOSS 对练（认可度 80 过关）→ 订阅。入口挂在「超级爸妈」App 首页宫格的「导学师」。
+
+| 项 | 值 |
+|----|----|
+| 入口 | [`6q-tutor-app/index.html`](6q-tutor-app/index.html) |
+| 状态 | 纯前端 DEMO 草稿，无后端持久化 |
+| 版本口径 | **不继承** v1.x 版本表；产品形态与待决策项独立维护 |
+
+> 这是草稿视图，只用于看交互与视觉。业务规则（测评深度、Boss 频率、本体建模、付费点等）尚未定稿，定稿前不作为开发拆分依据。
 
 线上 Pages：<https://6q-user-conference.pages.dev/>
 
