@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>6Q 导学师</title>
+<link rel="stylesheet" href="css/app.css?v=2.0.1">
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="app" id="app">
+      <div class="confetti" id="confetti"></div>
+
+      <!-- ============ 启动 ============ -->
+      <section class="screen" id="s-splash">
+        <div class="aurafx"></div>
+        <div class="splash">
+          <div class="mascot-wrap" id="splash-mascot"></div>
+          <h1 class="hero">先懂自己<br>再懂孩子</h1>
+          <p class="sub center">按你的起点，生成一条<br>只属于你的成长路径</p>
+        </div>
+        <div class="bottom">
+          <button class="btn" data-go="s-app">开始</button>
+          <p class="fine">已有账号？<b>登录</b></p>
+        </div>
+      </section>
+
+      <!-- ============ 超级爸妈 APP 首页（套外） ============ -->
+      <section class="screen" id="s-app">
+        <div class="appbar">
+          <div class="applogo"><i>6Q</i><b>6Q教育官方平台</b></div>
+          <div class="appacts">
+            <button class="aact"><span>🧡</span><small>分享家</small></button>
+            <button class="aact"><span>💬</span><small>消息中心</small></button>
+            <button class="aact"><span>🎧</span><small>云客服</small></button>
+          </div>
+        </div>
+        <div class="body app-scroll">
+          <div class="appsearch">
+            <span class="as-ico">🔍</span>
+            <span class="as-ph">搜索课程 / 商品 / 资讯</span>
+            <span class="as-scan">▣</span>
+          </div>
+
+          <div class="promos">
+            <button class="promo big">
+              <div class="pr-t"><b>高EQ智慧父母</b><small>幸福家庭，EQ先行！</small></div>
+              <span class="pr-btn">立即学习 ›</span>
+              <i class="pr-art">🧸</i>
+            </button>
+            <div class="promo-col">
+              <button class="promo mini">
+                <div class="pr-t"><b>6Q周边</b><small>周边随心逛</small></div>
+                <i class="pr-art">🎁</i>
+              </button>
+              <button class="promo mini warm">
+                <div class="pr-t"><b>亲子沟通心灵密码</b><small>沟通顺畅无障碍</small></div>
+                <i class="pr-art">💌</i>
+              </button>
+            </div>
+          </div>
+
+          <div class="notice">
+            <span class="nt-tag">🔔 公告</span>
+            <span class="nt-txt">新手指引：三大福利，等你来解锁</span>
+            <span class="nt-go">›</span>
+          </div>
+
+          <div class="grid6" id="app-grid"></div>
+
+          <button class="appbanner" id="app-banner">
+            <div class="ab-txt">
+              <small>6Q教育</small>
+              <b>释放孩子天性<br>促进全能发展</b>
+              <em>《青少年6Q领袖营》火爆开启中</em>
+            </div>
+            <div class="ab-art">🚀</div>
+          </button>
+
+          <div class="appsec-h"><span>🔥 热门文章</span><em>查看更多 ›</em></div>
+          <div class="artlist">
+            <div class="artrow">
+              <div class="ar-thumb">🌻</div>
+              <div class="ar-txt"><b>孩子易自卑摆烂，父母可以检查一下自己…</b><small>成长问答 · 3 分钟</small></div>
+            </div>
+            <div class="artrow">
+              <div class="ar-thumb alt">🌤️</div>
+              <div class="ar-txt"><b>你总觉得累，可能不是因为懒，而是…</b><small>情绪力 · 4 分钟</small></div>
+            </div>
+          </div>
+
+          <div class="appsec-h"><span>🔥 热门话题</span><em>查看更多 ›</em></div>
+          <div class="topicgrid">
+            <button class="topic"><b># 高考打卡风</b><small>1.2 万人参与</small></button>
+            <button class="topic"><b># 6Q专列</b><small>8600 人参与</small></button>
+          </div>
+          <div class="appfoot">做一个懂孩子的父母 · 6Q教育</div>
+        </div>
+        <nav class="tabbar" id="tabbar-app">
+          <button class="tab on" data-tab="app"><i>🏠</i><span>首页</span></button>
+          <button class="tab" data-tab="courses"><i>📚</i><span>课程</span></button>
+          <button class="tab" data-tab="study"><i>🧭</i><span>学习</span></button>
+          <button class="tab" data-tab="me"><i>👤</i><span>我的</span></button>
+        </nav>
+      </section>
+
+      <!-- ============ 打招呼 ============ -->
+      <section class="screen" id="s-hello">
+        <div class="sky sky-warm"><i></i><i></i><i></i><i></i></div>
+        <div class="hw-brand"><span class="hw-dot"></span>6Q 导学师 · 入学测评</div>
+        <div class="body hello">
+          <div class="hw-stage">
+            <div class="hw-halo"></div>
+            <div class="hw-orbit"><b style="--d:0s">✧</b><b style="--d:1.4s">✦</b><b style="--d:2.6s">·</b></div>
+            <div class="q-figure big" id="hello-mascot">
+              <img src="assets/mascot-head.png" alt="小q">
+            </div>
+            <div class="q-shadow"></div>
+          </div>
+          <div class="hw-bubble">
+            <b class="hw-arrow"></b>
+            <span id="hello-say">嗨，我是小q。<br>先花 <b>3 分钟</b>，聊 <b>4 小段</b>。<br>没有对错，凭第一反应就好。</span>
+          </div>
+          <div class="hw-tags">
+            <span>基本情况</span><span>学习经历</span><span>现状与目标</span><span>条件与节奏</span>
+          </div>
+        </div>
+        <div class="bottom">
+          <button class="btn" data-go="s-assess">开始 · 大概 3 分钟</button>
+          <p class="fine">只在第一次进入时问一次 · 随时可以退出</p>
+        </div>
+      </section>
+
+      <!-- ============ 测评向导 ============ -->
+      <section class="screen" id="s-assess">
+        <div class="sky sky-warm light"><i></i><i></i></div>
+        <div class="aw-head">
+          <button class="icon-btn soft" id="assess-close" aria-label="退出">✕</button>
+          <div class="aw-prog"><i id="assess-prog"></i></div>
+          <div class="qcount" id="qcount">1/18</div>
+        </div>
+
+        <div class="aw-narr" id="aw-narr">
+          <div class="an-av">
+            <img class="an-img" src="assets/mascot-face.png" alt="小q">
+          </div>
+          <div class="an-bubble" id="an-bubble">先认识一下你，<br>这样我给的例子才像你家的。</div>
+        </div>
+
+        <div class="body pad" id="qwrap"></div>
+        <div class="aw-foot" id="aw-foot">
+          <button class="btn" id="qnext" disabled>下一步</button>
+        </div>
+
+        <!-- 段间过渡 -->
+        <div class="stage-trans" id="stage-trans">
+          <div class="st-sun"></div>
+          <div class="st-aurora"><i></i><i></i><i></i></div>
+          <div class="st-in">
+            <div class="st-fig">
+              <div class="q-figure lg" id="st-mascot"><img src="assets/mascot-head.png" alt="小q"></div>
+              <div class="st-ring"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="58" class="st-ring-bg"></circle><circle cx="66" cy="66" r="58" class="st-ring-fg" id="st-arc"></circle></svg></div>
+            </div>
+            <div class="st-done" id="st-done">第 1 段完成</div>
+            <h3 class="st-title" id="st-title">接下来聊聊<br>你走过哪些路</h3>
+            <p class="st-sub" id="st-sub">慢慢来，这些只用来给你排路</p>
+            <div class="st-hearts" id="st-hearts"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 测评结果 ============ -->
+      <section class="screen" id="s-result">
+        <div class="sky sky-warm light"><i></i><i></i><i></i></div>
+        <div class="body pad rw-body">
+          <p class="eyebrow">你的起点</p>
+          <h2 class="h2" id="res-h2">你不是不会，<br>是还没找到入口。</h2>
+          <div class="reschips" id="res-chips"></div>
+          <div class="reshero" id="res-hero"></div>
+          <div class="rw-h"><span>能力画像</span><em>越低越该先练</em></div>
+          <div class="bars" id="bars"></div>
+          <div class="insight" id="insight"></div>
+        </div>
+        <div class="bottom">
+          <button class="btn" data-go="s-preview">看看我的路径</button>
+        </div>
+      </section>
+
+      <!-- ============ 路径预览 ============ -->
+      <section class="screen" id="s-preview">
+        <div class="body pad">
+          <p class="eyebrow">为你生成</p>
+          <h2 class="h2" id="prev-h2">先从「情绪」开始，<br>那是你的卡点。</h2>
+          <div class="units" id="preview-units"></div>
+        </div>
+        <div class="bottom">
+          <button class="btn" data-go="s-paywall">解锁完整路径</button>
+          <p class="fine">第 1 个单元可以免费体验</p>
+        </div>
+      </section>
+
+      <!-- ============ 付费 ============ -->
+      <section class="screen" id="s-paywall">
+        <div class="topbar">
+          <button class="icon-btn" id="pay-back" data-dir="back">‹</button>
+          <div class="topbar-title">解锁你的路径</div>
+          <div style="width:40px"></div>
+        </div>
+        <div class="body pad">
+          <div class="plans" id="plans"></div>
+        </div>
+        <div class="bottom">
+          <button class="btn" id="pay-btn">立即解锁</button>
+          <p class="fine">7 天内不满意，全额退</p>
+        </div>
+      </section>
+
+      <!-- ============ 解锁成功 ============ -->
+      <section class="screen" id="s-success">
+        <div class="body success">
+          <div class="check">
+            <svg viewBox="0 0 52 52" width="52" height="52">
+              <path d="M14 27l8 8 16-18" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 class="h2">解锁成功</h2>
+          <p class="sub center">19 个单元 · 全部导师对练<br>已经为你打开</p>
+        </div>
+        <div class="bottom">
+          <button class="btn" data-go="s-home">进入我的路径</button>
+        </div>
+      </section>
+
+      <!-- ============ 我的 ============ -->
+      <section class="screen" id="s-me">
+        <div class="topbar">
+          <button class="icon-btn" data-go="s-home" data-dir="back">‹</button>
+          <div class="topbar-title">我的</div>
+          <div style="width:40px"></div>
+        </div>
+        <div class="body pad mebody" id="me-body"></div>
+        <nav class="tabbar" id="tabbar-me">
+          <button class="tab" data-tab="app"><i>🏠</i><span>首页</span></button>
+          <button class="tab" data-tab="home"><i>◉</i><span>学习</span></button>
+          <button class="tab" data-tab="review"><i>↻</i><span>复习</span></button>
+          <button class="tab on" data-tab="me"><i>☺</i><span>我的</span></button>
+        </nav>
+      </section>
+
+      <!-- ============ 首页路径 ============ -->
+      <section class="screen" id="s-home">
+        <header class="home-head">
+          <button class="avatar" id="home-avatar" aria-label="个人">
+            <span id="home-avatar-txt">A</span>
+            <i class="av-dot"></i>
+          </button>
+          <div class="hh-left">
+            <div class="hh-hi" id="hh-date">WED · 11 月 20 日</div>
+            <div class="hh-name">阿 May<em>，</em></div>
+            <button class="hh-path" id="hh-path">情绪力路径 <i>⌄</i></button>
+          </div>
+          <div class="ring" id="ring">
+            <svg viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="20" class="ring-bg"></circle>
+              <circle cx="24" cy="24" r="20" class="ring-fg" id="ring-fg"></circle>
+            </svg>
+            <span id="ring-txt">0/7</span>
+          </div>
+        </header>
+        <div class="body home-scroll" id="home-scroll">
+          <div class="home-bgfx"><i></i><i></i><i></i></div>
+
+          <div class="tcard" id="today"></div>
+          <div class="ucard" id="unit-card"></div>
+          <div class="chapsep" id="chapsep"><b>第 1 单元</b> · 情绪力</div>
+
+          <div class="path" id="path">
+            <svg class="path-line" id="path-line"></svg>
+            <div class="path-nodes" id="path-nodes"></div>
+          </div>
+
+          <div class="nextstage" id="next-stage"></div>
+          <button class="proto-fab" id="proto-fab">⚡ 原型测试</button>
+          <div class="upeek" id="unit-card2"></div>
+        </div>
+        <nav class="tabbar" id="tabbar-home">
+          <button class="tab" data-tab="app"><i>🏠</i><span>首页</span></button>
+          <button class="tab on" data-tab="home"><i>◉</i><span>学习</span></button>
+          <button class="tab" data-tab="review"><i>↻</i><span>复习</span></button>
+          <button class="tab" data-tab="me"><i>☺</i><span>我的</span></button>
+        </nav>
+      </section>
+
+      <!-- ============ 导学师 ============ -->
+      <section class="screen" id="s-mentor">
+        <header class="mhead">
+          <div class="mhead-l">
+            <div class="mhead-k">我的导学师</div>
+            <div class="mhead-t">小q 已经帮你排好路</div>
+          </div>
+          <div class="mhead-badge" id="m-badge">已测评</div>
+        </header>
+        <div class="body pad mbody">
+          <div class="mentor-hero">
+            <div class="mh-mascot" id="mh-mascot"></div>
+            <div class="mh-txt">
+              <div class="mh-k">测评结论</div>
+              <div class="mh-t" id="mh-title">你最该先动的是「情绪力」</div>
+              <div class="mh-s" id="mh-sub">从循环 2 开始 · 每周 2–3 次 · 约 12 分钟一次</div>
+            </div>
+          </div>
+
+          <div class="sec-h"><span>9 项能力</span><em>越低越该先练</em></div>
+          <div class="mbars" id="m-bars"></div>
+
+          <div class="sec-h"><span>导学安排</span><em>按你的条件排的</em></div>
+          <div class="mplan" id="m-plan"></div>
+
+          <button class="btn ghost" id="m-retest">重新做一次测评</button>
+          <p class="fine center">重测不会清掉你已经走过的关卡</p>
+        </div>
+        <nav class="tabbar" id="tabbar-mentor">
+          <button class="tab" data-tab="app"><i>🏠</i><span>首页</span></button>
+          <button class="tab" data-tab="home"><i>◉</i><span>学习</span></button>
+          <button class="tab" data-tab="review"><i>↻</i><span>复习</span></button>
+          <button class="tab" data-tab="me"><i>☺</i><span>我的</span></button>
+        </nav>
+      </section>
+
+      <!-- ============ 场景前置 ============ -->
+      <section class="screen" id="s-brief">
+        <div class="brief-hero" id="brief-hero">
+          <div class="brief-glow"></div>
+          <div class="brief-art" id="brief-art"></div>
+          <div class="brief-tag" id="brief-tag">情境练习</div>
+        </div>
+        <div class="body pad brief-body">
+          <h2 class="h2" id="brief-title">孩子摔门进屋，<br>说「你根本不懂我」</h2>
+          <div class="brief-cards" id="brief-cards"></div>
+        </div>
+        <div class="bottom">
+          <button class="btn" id="brief-go">我准备好了</button>
+          <p class="fine">随时可以退出，不会扣分</p>
+        </div>
+      </section>
+
+      <!-- ============ ABC 对练 ============ -->
+      <section class="screen" id="s-practice">
+        <div class="pstage">
+          <div class="pstage-art" id="p-stage-art"></div>
+          <button class="icon-btn light pclose" data-go="s-home" data-dir="back">✕</button>
+          <div class="relay" id="p-relay"></div>
+          <div class="rolecard" id="p-rolecard"></div>
+        </div>
+        <div class="chat" id="p-chat"></div>
+        <div class="composer" id="p-composer">
+          <div class="hints" id="p-hints"></div>
+          <div class="cbox">
+            <textarea id="p-input" rows="1" placeholder="说说你会怎么回应…"></textarea>
+            <button class="send" id="p-send" aria-label="发送">
+              <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 8 6 8-16-8z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 第一次进入该角色：角色说明 -->
+        <div class="roleintro" id="role-intro">
+          <div class="ri-bg"><i></i><i></i></div>
+          <div class="ri-card">
+            <div class="ri-k" id="ri-k">第 1 幕 · 你的角色</div>
+            <div class="ri-fig" id="ri-fig"></div>
+            <h3 class="ri-t" id="ri-t">现在你是<br>诉说者</h3>
+            <p class="ri-s" id="ri-s">你要做的事很简单</p>
+            <ul class="ri-list" id="ri-list"></ul>
+            <button class="btn" id="ri-go">我知道了，开始</button>
+            <p class="fine center">这个说明只在第一次扮演这个角色时出现</p>
+          </div>
+        </div>
+
+        <!-- 换角色幕布 -->
+        <div class="curtain" id="curtain">
+          <div class="curtain-in">
+            <div class="curtain-illo" id="curtain-illo"></div>
+            <div class="curtain-k">换角色</div>
+            <h3 class="curtain-t" id="curtain-t">现在你是<br>倾听者</h3>
+            <p class="curtain-s" id="curtain-s">先接情绪，别急着给建议</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 学节点 ============ -->
+      <section class="screen" id="s-lesson">
+        <div class="topbar">
+          <button class="icon-btn" data-go="s-home" data-dir="back">‹</button>
+          <div class="topbar-title" id="lesson-top">学 · 这一关</div>
+          <div style="width:40px"></div>
+        </div>
+        <div class="body pad" id="lesson-body"></div>
+      </section>
+
+      <!-- ============ 导师对练 ============ -->
+      <section class="screen" id="s-boss">
+        <div class="mentor-stage">
+          <img src="assets/mentor-cut.png" alt="陈老师" class="mentor-img" id="mentor-img">
+          <div class="mentor-shade"></div>
+          <button class="mentor-exit" data-go="s-home" data-dir="back" aria-label="退出对练">✕</button>
+          <div class="mentor-live"><i></i>对练中</div>
+          <div class="mentor-id">
+            <div class="mid-name">陈老师</div>
+            <div class="mid-role">6Q 认证导师 · 情绪力单元</div>
+          </div>
+          <div class="mentor-wave" id="mentor-wave"><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="rzone">
+          <div class="rrow">
+            <span class="rl">认可度</span>
+            <span class="rgoal"><i></i>过关线 80</span>
+            <span class="rv"><b id="rnum">20</b><small>/100</small></span>
+          </div>
+          <div class="rbar">
+            <div class="rbar-fill" id="rbar"></div>
+            <div class="rmark"></div>
+          </div>
+          <button class="rskip" id="boss-skip">跳过对练（原型）</button>
+        </div>
+        <div class="chat boss-chat" id="b-chat"></div>
+        <div class="composer" id="b-composer">
+          <div class="cbox">
+            <textarea id="b-input" rows="1" placeholder="回答陈老师的提问…"></textarea>
+            <button class="send" id="b-send" aria-label="发送">
+              <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 8 6 8-16-8z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="typing" id="typing"><span></span><span></span><span></span></div>
+      </section>
+
+      <!-- ============ 单元学习方式选择 ============ -->
+      <div class="routepop" id="route-pop">
+        <div class="route-sheet">
+          <div class="route-art" id="route-art"></div>
+          <div class="route-k" id="route-k">第 2 单元</div>
+          <h3 class="route-t" id="route-t">这个单元会学到<br>【沟通力】相关的课程</h3>
+          <p class="route-s">你更偏向线上学习，还是线下学习？</p>
+          <div class="route-opts" id="route-opts"></div>
+          <p class="route-note">选完后，路径里的「学」会换成对应内容；以后想改，点学节点右上角就能改</p>
+        </div>
+      </div>
+
+      <!-- ============ 路径切换（个人 + 学习路径） ============ -->
+      <div class="pathsheet" id="path-sheet">
+        <div class="ps-top">
+          <button class="ps-close" id="ps-close" aria-label="关闭">✕</button>
+          <div class="ps-me">
+            <div class="ps-av" id="ps-av">A</div>
+            <div class="ps-info">
+              <b>阿 May</b>
+              <small id="ps-sub">7 岁男孩的妈妈 · 已测评</small>
+            </div>
+          </div>
+          <div class="ps-stats">
+            <div><b id="ps-streak">6</b><small>连续天数</small></div>
+            <div><b id="ps-done">18</b><small>已过关卡</small></div>
+            <div><b id="ps-badges">3</b><small>获得徽章</small></div>
+          </div>
+        </div>
+        <div class="ps-body">
+          <div class="ps-h">我的学习路径<em>点一下就切换</em></div>
+          <div class="ps-cur" id="ps-cur"></div>
+          <div class="ps-h">更多路径<em>测评后自动排序</em></div>
+          <div class="ps-grid" id="ps-grid"></div>
+          <p class="ps-note">切换路径只会换「学什么」，已通过的关卡记录都保留</p>
+        </div>
+      </div>
+
+      <!-- ============ 原型测试 ============ -->
+      <div class="sheet" id="proto-sheet">
+        <div class="sheet-in wide">
+          <div class="sheet-ico">⚡</div>
+          <h3 class="sheet-t">原型测试面板</h3>
+          <p class="sheet-p">这里是为了方便你验收，正式版不会出现</p>
+          <div class="proto-list" id="proto-list"></div>
+          <button class="btn ghost" id="proto-close">关闭</button>
+        </div>
+      </div>
+
+      <!-- ============ 通用弹层 ============ -->
+      <div class="sheet" id="sheet">
+        <div class="sheet-in">
+          <div class="sheet-ico" id="sheet-ico"></div>
+          <h3 class="sheet-t" id="sheet-t"></h3>
+          <p class="sheet-p" id="sheet-p"></p>
+          <button class="btn" id="sheet-btn">继续</button>
+          <button class="btn ghost" id="sheet-alt" style="display:none">跳过（原型）</button>
+        </div>
+      </div>
+
+      <div class="result-pop" id="result-pop">
+        <div class="rp-in">
+          <div class="stars" id="stars"></div>
+          <h2 class="h2" id="rp-title">干得漂亮</h2>
+          <p class="sub center" id="rp-sub"></p>
+          <button class="btn" id="rp-btn">回到路径</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+</div>
+<script src="js/app.js?v=2.0.1"></script>
+</body>
+</html>

@@ -34,3 +34,15 @@ oa-performance-prototype/
 
 # 验收截图属于本地产物，不进版本库
 6q-intent-suite/6q-interviewer-portal/checks/*.png
+
+# 6Q 导学师 2.0 DEMO：界面验收截图与本地调试脚本属于本地产物
+6q-tutor-app/shots/
+6q-tutor-app/shots2/
+6q-tutor-app/shots3/
+6q-tutor-app/_*.py
+6q-tutor-app/assets/_*.png
+6q-tutor-app/assets/mentor-cut-full.png
+
+# 待决策的脑暴 / 会议记录 / 演示数据，暂不进版本库
+02-memory/
+docs/course-student-intent/kb-demo/
